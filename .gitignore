@@ -1,0 +1,77 @@
+# Build artifacts
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.list
+*.map
+*.su
+*.cyclo
+*.su
+
+# Debug directory (build output)
+Debug/
+Release/
+build/
+*.build/
+
+# Build system files
+makefile
+*.mk
+objects.list
+objects.mk
+sources.mk
+subdir.mk
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.cproject
+.settings/
+*.launch
+*.pydevproject
+
+# STM32CubeIDE
+.metadata/
+RemoteSystemsTempFiles/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+*.cache
+
+# Compiled libraries
+*.a
+*.lib
+*.so
+*.dylib
+
+# Backup files
+*~
+*.orig
+*.rej
+
+# Coverage reports
+*.gcov
+*.gcda
+*.gcno
+
+# Dependencies (if using package managers)
+node_modules/
+vendor/
