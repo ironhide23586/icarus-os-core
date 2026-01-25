@@ -402,9 +402,28 @@ void test_task_a(void) {
 
 ## Build System
 
-The project uses STM32CubeIDE build system (GCC ARM toolchain). Build artifacts are placed in the `Debug/` directory and are ignored by git.
+The project includes both STM32CubeIDE and standalone Makefile build systems. The standalone Makefile provides enhanced features for DO-178C compliance.
 
-### Building
+### Building with Makefile (Recommended for DO-178C)
+
+See `build/README.md` for detailed build instructions.
+
+**Quick start:**
+```bash
+cd build
+make                    # Build project
+make check-build        # Run static analysis + build
+make COVERAGE=yes all   # Build with code coverage
+make coverage-html      # Generate HTML coverage report
+```
+
+**Features:**
+- Enhanced compiler warnings (DO-178C preparation)
+- Static analysis with cppcheck
+- Code coverage with gcov/lcov
+- Clean build system without IDE dependencies
+
+### Building with STM32CubeIDE
 
 1. Open project in STM32CubeIDE
 2. Build project (Project → Build All)
@@ -446,6 +465,40 @@ static inline void exit_critical() {
 ```
 
 Critical sections disable preemption but do not disable interrupts. Use for short operations only.
+
+## DO-178C Compliance Status
+
+This project is being developed with DO-178C standards in mind. Current compliance features:
+
+✅ **Completed:**
+- Static analysis with cppcheck (0 errors, 0 warnings)
+- Enhanced compiler warnings (-Wall -Wextra -Wpedantic, etc.)
+- Code coverage support (gcov/lcov)
+- Unit testing framework (Unity)
+- Host-based unit tests with mocks
+- Test build system integrated with coverage
+
+🔄 **In Progress:**
+- Expanding test coverage (currently 5 tests, targeting 100% statement coverage)
+- Code coverage collection and reporting
+- Requirements traceability
+
+📋 **Planned:**
+- MISRA-C compliance checking
+- MC/DC coverage analysis
+- Integration tests
+- Formal verification documentation
+
+### Running Tests
+
+```bash
+cd tests
+make test              # Run tests
+make COVERAGE=yes test # Run tests with coverage
+make coverage-html     # Generate HTML coverage report
+```
+
+See `tests/README.md` for detailed testing documentation.
 
 ## Limitations
 

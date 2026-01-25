@@ -10,10 +10,12 @@
 #include "bsp/display.h"
 
 
+#ifndef SKIP_STATIC_ASSERTS
 _Static_assert(offsetof(task_t, stack_pointer) == 12, "task_t.stack_pointer offset mismatch");
 _Static_assert(offsetof(task_t, task_state) == 16, "task_t.task_state offset mismatch");
 _Static_assert(offsetof(task_t, global_tick_paused) == 20, "task_t.global_tick_paused offset mismatch");
 _Static_assert(offsetof(task_t, ticks_to_pause) == 24, "task_t.ticks_to_pause offset mismatch");
+#endif
 
 
 task_t* task_list[MAX_TASKS];

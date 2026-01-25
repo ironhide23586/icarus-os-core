@@ -78,6 +78,10 @@ Desktop.ini
 *.gcov
 *.gcda
 *.gcno
+build/coverage/
+coverage/
+tests/build/
+tests/coverage/
 
 # Static analysis reports
 build/cppcheck_report.xml

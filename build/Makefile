@@ -92,6 +92,14 @@ INCLUDES = \
 	-isystem $(MIDDLEWARE_USB_CORE_INC) \
 	-isystem $(MIDDLEWARE_USB_CDC_INC)
 
+# Coverage support (for DO-178C)
+# WARNING: Coverage instrumentation significantly increases code size and should
+#          ONLY be used for host-based unit tests, NOT for embedded target builds.
+#          Use TEST=yes with COVERAGE=yes for test builds.
+# Enable with: make TEST=yes COVERAGE=yes
+COVERAGE ?= no
+TEST ?= no
+
 # Compiler flags
 MCU = -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard
 
@@ -138,11 +146,24 @@ ifeq ($(WERROR),yes)
 	WARNING_FLAGS += -Werror
 endif
 
+# Coverage flags (when enabled)
+ifeq ($(COVERAGE),yes)
+	COVERAGE_CFLAGS = -fprofile-arcs -ftest-coverage --coverage
+	COVERAGE_LDFLAGS = --coverage
+	# Coverage requires -O0 for accurate line coverage
+	COVERAGE_OPT = -O0
+else
+	COVERAGE_CFLAGS =
+	COVERAGE_LDFLAGS =
+	COVERAGE_OPT = -O2
+endif
+
 # Base CFLAGS for application code
 # Using -isystem for vendor includes suppresses warnings from vendor headers
 CFLAGS = $(MCU) \
-	-O2 \
+	$(COVERAGE_OPT) \
 	$(WARNING_FLAGS) \
+	$(COVERAGE_CFLAGS) \
 	-fdata-sections \
 	-ffunction-sections \
 	-MMD \
@@ -156,13 +177,14 @@ CFLAGS = $(MCU) \
 
 # CFLAGS for vendor code (suppress some warnings)
 VENDOR_CFLAGS = $(MCU) \
-	-O2 \
+	$(COVERAGE_OPT) \
 	-Wall \
 	-Wextra \
 	-Wno-sign-conversion \
 	-Wno-undef \
 	-Wno-unused-parameter \
 	-Wno-missing-field-initializers \
+	$(COVERAGE_CFLAGS) \
 	-fdata-sections \
 	-ffunction-sections \
 	-MMD \
@@ -192,6 +214,7 @@ LDFLAGS = $(MCU) \
 	-T$(LINKER_SCRIPT) \
 	-Wl,-Map=$(BUILD_DIR)/$(PROJECT).map \
 	-Wl,--gc-sections \
+	$(COVERAGE_LDFLAGS) \
 	-static \
 	-Wl,--start-group \
 	-lc \
@@ -205,6 +228,12 @@ BIN_FILE = $(BUILD_DIR)/$(PROJECT).bin
 LIST_FILE = $(BUILD_DIR)/$(PROJECT).list
 CPPCHECK_REPORT = $(BUILD_DIR)/cppcheck_report.xml
 CPPCHECK_HTML = $(BUILD_DIR)/cppcheck_report.html
+
+# Coverage directories and files
+COVERAGE_DIR = $(BUILD_DIR)/coverage
+COVERAGE_INFO = $(COVERAGE_DIR)/coverage.info
+COVERAGE_HTML = $(COVERAGE_DIR)/html
+COVERAGE_SOURCES = $(CPPCHECK_SOURCES)  # Same as cppcheck sources (application code only)
 
 # cppcheck configuration
 # Only analyze our application code, not vendor HAL drivers
@@ -268,7 +297,19 @@ $(DEP_DIR):
 	@mkdir -p $(DEP_DIR)/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src
 
 # Link ELF file
+# Prevent coverage builds for embedded target (code too large)
 $(ELF_FILE): $(ALL_OBJECTS) | $(BUILD_DIR)
+	@if [ "$(COVERAGE)" = "yes" ] && [ "$(TEST)" != "yes" ]; then \
+		echo "ERROR: Coverage cannot be used for embedded target builds."; \
+		echo "Coverage instrumentation makes code too large for flash."; \
+		echo ""; \
+		echo "Coverage is only for host-based unit tests."; \
+		echo "Run tests with coverage: cd tests && make COVERAGE=yes test"; \
+		echo ""; \
+		echo "For embedded target, build normally without coverage:"; \
+		echo "  make clean all"; \
+		exit 1; \
+	fi
 	@echo "Linking $@"
 	@$(LD) $(ALL_OBJECTS) $(LDFLAGS) -o $@
 	@echo "Build complete: $@"
@@ -366,9 +407,60 @@ clean-cppcheck:
 	@echo "cppcheck reports cleaned"
 
 # Clean everything including cppcheck
-clean-all: clean clean-cppcheck
+clean-all: clean clean-cppcheck clean-coverage
+
+# Code Coverage (DO-178C)
+# Generate coverage data from .gcda files (requires running tests first)
+coverage: $(COVERAGE_INFO)
+	@echo "Coverage report generated: $(COVERAGE_INFO)"
+	@echo "Coverage summary:"
+	@lcov --summary $(COVERAGE_INFO) 2>/dev/null || echo "Install lcov to view summary: brew install lcov (macOS) or apt-get install lcov (Ubuntu)"
+
+# Generate HTML coverage report
+coverage-html: coverage
+	@echo "Generating HTML coverage report..."
+	@if ! command -v lcov >/dev/null 2>&1; then \
+		echo "ERROR: lcov not found. Install it with:"; \
+		echo "  macOS:   brew install lcov"; \
+		echo "  Ubuntu:  sudo apt-get install lcov"; \
+		exit 1; \
+	fi
+	@mkdir -p $(COVERAGE_HTML)
+	@genhtml $(COVERAGE_INFO) --output-directory $(COVERAGE_HTML) --title "ICARUS OS Coverage Report" || true
+	@echo ""
+	@echo "HTML coverage report generated: $(COVERAGE_HTML)/index.html"
+	@echo "Open in browser: open $(COVERAGE_HTML)/index.html"
+
+# Generate coverage.info from .gcda files
+$(COVERAGE_INFO): $(COVERAGE_SOURCES)
+	@echo "Collecting coverage data..."
+	@if ! command -v lcov >/dev/null 2>&1; then \
+		echo "ERROR: lcov not found. Install it with:"; \
+		echo "  macOS:   brew install lcov"; \
+		echo "  Ubuntu:  sudo apt-get install lcov"; \
+		exit 1; \
+	fi
+	@mkdir -p $(COVERAGE_DIR)
+	@lcov --capture --directory $(OBJ_DIR) --output-file $(COVERAGE_INFO) --base-directory $(PROJECT_ROOT) --no-external || true
+	@# Remove vendor code from coverage (only analyze application code)
+	@lcov --remove $(COVERAGE_INFO) '/Drivers/*' '/Middlewares/*' '/USB_DEVICE/*' --output-file $(COVERAGE_INFO) || true
+	@lcov --remove $(COVERAGE_INFO) '*/lsm9ds1_reg.c' --output-file $(COVERAGE_INFO) || true
+
+# Show coverage summary (text)
+coverage-summary: coverage
+	@echo "=== Code Coverage Summary ==="
+	@lcov --summary $(COVERAGE_INFO) 2>/dev/null || echo "No coverage data available. Build with COVERAGE=yes and run tests."
+
+# Clean coverage files
+clean-coverage:
+	@echo "Cleaning coverage files..."
+	@find $(OBJ_DIR) -name "*.gcda" -delete 2>/dev/null || true
+	@find $(OBJ_DIR) -name "*.gcno" -delete 2>/dev/null || true
+	@find $(OBJ_DIR) -name "*.gcov" -delete 2>/dev/null || true
+	@rm -rf $(COVERAGE_DIR)
+	@echo "Coverage files cleaned"
 
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean rebuild size flash build-and-flash rebuild-and-flash cppcheck check-build clean-cppcheck clean-all
+.PHONY: all clean rebuild size flash build-and-flash rebuild-and-flash cppcheck check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage

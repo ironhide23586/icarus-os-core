@@ -204,6 +204,82 @@ make clean-all
 
 **Note:** cppcheck analyzes only application code (`Core/Src/`), not vendor HAL drivers, to reduce false positives.
 
+## Code Coverage (DO-178C)
+
+### gcov/lcov Integration
+
+The Makefile includes code coverage support using GCC's `gcov` and `lcov` for generating coverage reports. This is essential for DO-178C compliance as it provides statement, branch, and function coverage metrics.
+
+**Install lcov:**
+```bash
+# macOS
+brew install lcov
+
+# Ubuntu/Debian
+sudo apt-get install lcov
+```
+
+**⚠️ Important:** Coverage instrumentation significantly increases code size and **cannot be used for embedded target builds**. Coverage is only for **host-based unit tests**.
+
+**Build with coverage enabled (for tests only):**
+```bash
+# When test framework is set up, use:
+# make TEST=yes COVERAGE=yes clean all
+
+# For now, coverage requires a unit testing framework to be set up first.
+# See "Unit Testing" section below.
+```
+
+**After running tests:**
+```bash
+# Generate coverage report
+make coverage
+
+# Generate HTML coverage report
+make coverage-html
+
+# View summary
+make coverage-summary
+```
+
+**Coverage Workflow:**
+1. Build with `COVERAGE=yes` to instrument code with coverage markers
+2. Run your test suite (unit tests, integration tests, etc.)
+3. Generate coverage report with `make coverage` or `make coverage-html`
+4. Review coverage metrics and identify untested code
+
+**Output:**
+- Coverage info file: `build/coverage/coverage.info`
+- HTML report: `build/coverage/html/index.html`
+- Coverage data files: `.gcda` and `.gcno` files in `build/obj/`
+
+**Coverage Features:**
+- **Statement Coverage**: Tracks which lines of code are executed
+- **Branch Coverage**: Tracks which branches (if/else, switch) are taken
+- **Function Coverage**: Tracks which functions are called
+- **Excludes Vendor Code**: Only analyzes application code (`Core/Src/`)
+
+**Clean coverage files:**
+```bash
+make clean-coverage
+# or clean everything
+make clean-all
+```
+
+**Important Notes:**
+- ⚠️ **Coverage cannot be used for embedded target builds** - it makes code too large for flash
+- Coverage requires `-O0` optimization (automatically set when `COVERAGE=yes`)
+- Coverage is **only** for host-based unit tests, not target execution
+- `.gcda` files are generated at runtime when instrumented code executes
+- You must set up a unit testing framework first (Unity, CppUTest, etc.)
+- Use `TEST=yes COVERAGE=yes` when building tests (prevents accidental target builds)
+
+**DO-178C Coverage Requirements:**
+- **Level A**: 100% statement coverage + Modified Condition/Decision Coverage (MC/DC)
+- **Level B**: 100% statement coverage + decision coverage
+- **Level C**: 100% statement coverage
+- **Level D**: Statement coverage (target: 100%)
+
 ## Troubleshooting
 
 ### "arm-none-eabi-gcc: command not found"
@@ -235,7 +311,11 @@ Available targets:
 - `make cppcheck`: Run static analysis
 - `make check-build`: Run static analysis then build
 - `make clean-cppcheck`: Remove cppcheck reports
-- `make clean-all`: Clean everything including cppcheck
+- `make coverage`: Generate coverage report (requires COVERAGE=yes build)
+- `make coverage-html`: Generate HTML coverage report
+- `make coverage-summary`: Show coverage summary
+- `make clean-coverage`: Remove coverage files
+- `make clean-all`: Clean everything including cppcheck and coverage
 
 ## Differences from STM32CubeIDE Build
 
@@ -247,3 +327,4 @@ This standalone Makefile:
 - Provides clean, flash, and size targets
 - Includes enhanced compiler warnings for safety-critical code
 - Integrates cppcheck static analysis
+- Supports code coverage with gcov/lcov for DO-178C compliance
