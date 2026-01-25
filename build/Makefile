@@ -23,6 +23,9 @@ PROJECT_ROOT = ..
 BUILD_DIR = .
 OBJ_DIR = $(BUILD_DIR)/obj
 DEP_DIR = $(BUILD_DIR)/dep
+REPORTS_DIR = $(BUILD_DIR)/reports
+CPPCHECK_HTML_DIR = $(REPORTS_DIR)/cppcheck
+COVERAGE_HTML_DIR = $(REPORTS_DIR)/coverage
 
 # Linker script
 LINKER_SCRIPT = $(PROJECT_ROOT)/STM32H750VBTX_FLASH.ld
@@ -226,8 +229,7 @@ ELF_FILE = $(BUILD_DIR)/$(PROJECT).elf
 HEX_FILE = $(BUILD_DIR)/$(PROJECT).hex
 BIN_FILE = $(BUILD_DIR)/$(PROJECT).bin
 LIST_FILE = $(BUILD_DIR)/$(PROJECT).list
-CPPCHECK_REPORT = $(BUILD_DIR)/cppcheck_report.xml
-CPPCHECK_HTML = $(BUILD_DIR)/cppcheck_report.html
+CPPCHECK_REPORT = $(REPORTS_DIR)/cppcheck_report.xml
 
 # Coverage directories and files
 COVERAGE_DIR = $(BUILD_DIR)/coverage
@@ -245,6 +247,7 @@ CPPCHECK_SOURCES = \
 # cppcheck flags
 # --enable=all: Enable all checks
 # --suppress=missingIncludeSystem: Suppress warnings about system headers
+# --suppress=missingInclude: Suppress "Include file not found" for vendor HAL/USB headers
 # --suppress=unusedFunction: Suppress unused function warnings (common in embedded)
 # --inline-suppr: Allow inline suppressions
 # --xml: Output XML format
@@ -255,6 +258,7 @@ CPPCHECK_SOURCES = \
 # Note: cppcheck accepts -I flags directly, same as GCC
 CPPCHECK_FLAGS = --enable=all \
 	--suppress=missingIncludeSystem \
+	--suppress=missingInclude \
 	--suppress=unusedFunction \
 	--suppress=uninitStructMember:../Core/Src/bsp/lsm9ds1_reg.c \
 	--suppress=uninitvar:../Core/Src/bsp/lsm9ds1_reg.c \
@@ -270,8 +274,8 @@ CPPCHECK_FLAGS = --enable=all \
 	--force \
 	$(INCLUDES)
 
-# Default target
-all: $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) size
+# Default target - build, analyze, test, and generate reports
+all: $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) size cppcheck cppcheck-html test-reports
 
 # Create object directories
 $(OBJ_DIR):
@@ -354,16 +358,24 @@ size: $(ELF_FILE)
 	@$(SIZE) $<
 	@echo ""
 
-# Clean build artifacts
+# Clean build artifacts (including static analysis reports and HTML)
 clean:
-	@echo "Cleaning..."
-	@rm -rf $(OBJ_DIR)
-	@rm -rf $(DEP_DIR)
+	@echo "Cleaning build artifacts..."
+	@rm -rf $(OBJ_DIR) $(DEP_DIR)
 	@rm -f $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) $(LIST_FILE) $(BUILD_DIR)/$(PROJECT).map
+	@echo "Cleaning reports..."
+	@rm -rf $(REPORTS_DIR)
+	@find . -name "*.gcda" -delete 2>/dev/null || true
+	@find . -name "*.gcno" -delete 2>/dev/null || true
+	@find . -name "*.gcov" -delete 2>/dev/null || true
 	@echo "Clean complete"
 
 # Rebuild: clean and build everything
 rebuild: clean all
+
+# Rebuild script target (clean rebuild with all reports)
+rebuild-script:
+	@./rebuild.sh
 
 # Flash target (uses DFU mode via flash.sh script)
 flash: $(ELF_FILE)
@@ -386,14 +398,42 @@ cppcheck:
 		echo "  Ubuntu:  sudo apt-get install cppcheck"; \
 		exit 1; \
 	fi
-	@mkdir -p $(BUILD_DIR)
-	@cppcheck $(CPPCHECK_FLAGS) --output-file=$(CPPCHECK_REPORT) $(CPPCHECK_SOURCES) 2>&1 | tee $(BUILD_DIR)/cppcheck_output.txt || true
+	@mkdir -p $(REPORTS_DIR)
+	@cppcheck $(CPPCHECK_FLAGS) --output-file=$(CPPCHECK_REPORT) $(CPPCHECK_SOURCES) 2>&1 | tee $(REPORTS_DIR)/cppcheck_output.txt || true
 	@echo ""
 	@echo "cppcheck analysis complete. Report saved to: $(CPPCHECK_REPORT)"
-	@echo "Text output saved to: $(BUILD_DIR)/cppcheck_output.txt"
-	@if [ -f $(CPPCHECK_REPORT) ]; then \
-		echo "To view HTML report, install cppcheck-htmlreport or use:"; \
-		echo "  cppcheck-htmlreport --file=$(CPPCHECK_REPORT) --report-dir=$(BUILD_DIR)/cppcheck_html --source-dir=$(PROJECT_ROOT)"; \
+	@echo "Text output saved to: $(REPORTS_DIR)/cppcheck_output.txt"
+
+# Generate cppcheck HTML report
+cppcheck-html: cppcheck
+	@if command -v cppcheck-htmlreport >/dev/null 2>&1; then \
+		echo "Generating cppcheck HTML report..."; \
+		mkdir -p $(CPPCHECK_HTML_DIR); \
+		cppcheck-htmlreport --file=$(CPPCHECK_REPORT) --report-dir=$(CPPCHECK_HTML_DIR) --source-dir=$(BUILD_DIR) 2>&1 | tail -3; \
+		echo "✅ cppcheck HTML report: $(CPPCHECK_HTML_DIR)/index.html"; \
+	else \
+		echo "Note: cppcheck-htmlreport not found. Install with:"; \
+		echo "  macOS:   pip install cppcheck-htmlreport"; \
+		echo "  Ubuntu:  pip install cppcheck-htmlreport"; \
+	fi
+
+# Run unit tests and generate coverage reports
+# Note: tests/ is a separate directory with its own Makefile
+# Coverage HTML will be copied to build/reports/coverage/
+test-reports:
+	@echo "Running unit tests and generating coverage reports..."
+	@TEST_DIR="$(PROJECT_ROOT)/tests"; \
+	if [ -d "$$TEST_DIR" ] && [ -f "$$TEST_DIR/Makefile" ]; then \
+		echo "  Test directory: $$TEST_DIR"; \
+		cd $$TEST_DIR && \
+		$(MAKE) COVERAGE=yes COVERAGE_OUTPUT_DIR=$(abspath $(COVERAGE_HTML_DIR)) clean test coverage-html 2>&1 | tail -10; \
+		echo ""; \
+		if [ -f "$(COVERAGE_HTML_DIR)/index.html" ]; then \
+			echo "✅ Test coverage report: $(COVERAGE_HTML_DIR)/index.html"; \
+		fi; \
+	else \
+		echo "Note: tests/ directory or Makefile not found. Skipping unit tests."; \
+		echo "  Expected: $$TEST_DIR/Makefile"; \
 	fi
 
 # Run cppcheck and build (static analysis before compilation)
@@ -402,8 +442,8 @@ check-build: cppcheck all
 # Clean cppcheck reports
 clean-cppcheck:
 	@echo "Cleaning cppcheck reports..."
-	@rm -f $(CPPCHECK_REPORT) $(CPPCHECK_HTML) $(BUILD_DIR)/cppcheck_output.txt
-	@rm -rf $(BUILD_DIR)/cppcheck_html
+	@rm -f $(CPPCHECK_REPORT) $(REPORTS_DIR)/cppcheck_output.txt
+	@rm -rf $(CPPCHECK_HTML_DIR)
 	@echo "cppcheck reports cleaned"
 
 # Clean everything including cppcheck
@@ -457,10 +497,10 @@ clean-coverage:
 	@find $(OBJ_DIR) -name "*.gcda" -delete 2>/dev/null || true
 	@find $(OBJ_DIR) -name "*.gcno" -delete 2>/dev/null || true
 	@find $(OBJ_DIR) -name "*.gcov" -delete 2>/dev/null || true
-	@rm -rf $(COVERAGE_DIR)
+	@rm -rf $(COVERAGE_HTML_DIR) $(COVERAGE_DIR)
 	@echo "Coverage files cleaned"
 
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean rebuild size flash build-and-flash rebuild-and-flash cppcheck check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage
+.PHONY: all clean rebuild rebuild-script size flash build-and-flash rebuild-and-flash cppcheck cppcheck-html test-reports check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage
