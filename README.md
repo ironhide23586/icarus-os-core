@@ -48,6 +48,7 @@ ICARUS OS is a lightweight, preemptive real-time operating system kernel designe
 └─────────────────────────────────────────────────────────┘
 ```
 
+
 ## Kernel Components
 
 ### Task Control Block (TCB)
