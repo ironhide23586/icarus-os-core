@@ -2,7 +2,8 @@
  * stm32h7xx_hal_timebase.c
  *
  *  Created on: Jan 21, 2026
- *      Author: souhamb
+ *      Author: Souham Biswas
+ *      GitHub: https://github.com/ironhide23586/icarus-os-core
  */
 
 

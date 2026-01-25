@@ -2,7 +2,8 @@
  * error.c
  *
  *  Created on: Jan 23, 2026
- *      Author: souhamb
+ *      Author: Souham Biswas
+ *      GitHub: https://github.com/ironhide23586/icarus-os-core
  */
 
 #ifndef SRC_BSP_ERROR_C_

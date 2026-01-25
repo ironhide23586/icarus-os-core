@@ -2,7 +2,8 @@
  * task.c
  *
  *  Created on: May 14, 2025
- *      Author: souhamb
+ *      Author: Souham Biswas
+ *      GitHub: https://github.com/ironhide23586/icarus-os-core
  */
 
 #include "kernel/task.h"

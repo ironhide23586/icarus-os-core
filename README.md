@@ -463,4 +463,4 @@ Apache License 2.0 - See LICENSE file for details.
 
 ## Author
 
-Created by souhamb for deterministic real-time embedded systems.
+Created by Souham Biswas for deterministic real-time embedded systems.

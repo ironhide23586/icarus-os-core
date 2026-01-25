@@ -2,7 +2,8 @@
  * error.h
  *
  *  Created on: Jan 23, 2026
- *      Author: souhamb
+ *      Author: Souham Biswas
+ *      GitHub: https://github.com/ironhide23586/icarus-os-core
  */
 
 #ifndef INC_BSP_ERROR_H_

@@ -79,6 +79,12 @@ Desktop.ini
 *.gcda
 *.gcno
 
+# Static analysis reports
+build/cppcheck_report.xml
+build/cppcheck_report.html
+build/cppcheck_output.txt
+build/cppcheck_html/
+
 # Dependencies (if using package managers)
 node_modules/
 vendor/

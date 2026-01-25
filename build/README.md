@@ -142,6 +142,68 @@ The Makefile uses optimized settings for STM32H750:
 - Optimization: -O2
 - Link-time garbage collection enabled
 
+### Enhanced Warnings (DO-178C Preparation)
+
+The Makefile includes comprehensive warning flags for safety-critical code:
+- `-Wall -Wextra -Wpedantic`: Standard and extra warnings
+- `-Wstrict-prototypes`: Enforce function prototypes
+- `-Wmissing-prototypes`: Warn about missing prototypes
+- `-Wuninitialized`: Detect uninitialized variables
+- `-Wconversion -Wsign-conversion`: Warn about type conversions
+- `-Wformat=2`: Enhanced format string checking
+- `-Wshadow`: Warn about variable shadowing
+- And many more...
+
+**By default, warnings are treated as errors** (`-Werror`). To disable this:
+```bash
+make WERROR=no
+```
+
+## Static Analysis
+
+### cppcheck Integration
+
+The Makefile includes cppcheck static analysis for detecting bugs, undefined behavior, and code quality issues.
+
+**Install cppcheck:**
+```bash
+# macOS
+brew install cppcheck
+
+# Ubuntu/Debian
+sudo apt-get install cppcheck
+```
+
+**Run static analysis:**
+```bash
+# Run cppcheck only
+make cppcheck
+
+# Run cppcheck and then build
+make check-build
+```
+
+**Output:**
+- XML report: `build/cppcheck_report.xml`
+- Text output: `build/cppcheck_output.txt`
+
+**View HTML report (optional):**
+```bash
+# Install cppcheck-htmlreport (if available)
+cppcheck-htmlreport --file=build/cppcheck_report.xml \
+  --report-dir=build/cppcheck_html \
+  --source-dir=..
+```
+
+**Clean cppcheck reports:**
+```bash
+make clean-cppcheck
+# or clean everything
+make clean-all
+```
+
+**Note:** cppcheck analyzes only application code (`Core/Src/`), not vendor HAL drivers, to reduce false positives.
+
 ## Troubleshooting
 
 ### "arm-none-eabi-gcc: command not found"
@@ -160,6 +222,21 @@ The Makefile uses optimized settings for STM32H750:
 - The linker script defines memory regions for STM32H750
 - Check that your code fits within available flash/RAM
 
+## Makefile Targets
+
+Available targets:
+- `make` or `make all`: Build the project
+- `make clean`: Remove build artifacts
+- `make rebuild`: Clean and rebuild
+- `make size`: Show memory usage
+- `make flash`: Flash to device (requires DFU mode)
+- `make build-and-flash`: Build and flash
+- `make rebuild-and-flash`: Clean, rebuild, and flash
+- `make cppcheck`: Run static analysis
+- `make check-build`: Run static analysis then build
+- `make clean-cppcheck`: Remove cppcheck reports
+- `make clean-all`: Clean everything including cppcheck
+
 ## Differences from STM32CubeIDE Build
 
 This standalone Makefile:
@@ -168,3 +245,5 @@ This standalone Makefile:
 - Automatically discovers source files
 - Generates dependency files for incremental builds
 - Provides clean, flash, and size targets
+- Includes enhanced compiler warnings for safety-critical code
+- Integrates cppcheck static analysis

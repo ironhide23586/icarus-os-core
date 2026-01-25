@@ -95,9 +95,52 @@ INCLUDES = \
 # Compiler flags
 MCU = -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard
 
+# Enhanced warning flags for safety-critical code (DO-178C preparation)
+# -Wall: Enable all standard warnings
+# -Wextra: Enable extra warnings
+# -Wpedantic: Strict ISO C compliance
+# -Werror: Treat warnings as errors (can be disabled with WERROR=no)
+# -Wstrict-prototypes: Warn about non-prototyped functions
+# -Wmissing-prototypes: Warn about missing function prototypes
+# -Wmissing-declarations: Warn about missing declarations
+# -Wuninitialized: Warn about uninitialized variables
+# -Wconversion: Warn about implicit conversions
+# -Wsign-conversion: Warn about sign conversions
+# -Wcast-qual: Warn about casting away qualifiers
+# -Wcast-align: Warn about alignment issues
+# -Wformat=2: Enhanced format string checking
+# -Wundef: Warn about undefined macros
+# -Wshadow: Warn about shadowed variables
+# -Wpointer-arith: Warn about pointer arithmetic
+# -Wbad-function-cast: Warn about function pointer casts
+# -Wstrict-overflow: Warn about overflow in signed arithmetic
+WERROR ?= yes
+WARNING_FLAGS = -Wall \
+	-Wextra \
+	-Wpedantic \
+	-Wstrict-prototypes \
+	-Wmissing-prototypes \
+	-Wmissing-declarations \
+	-Wuninitialized \
+	-Wconversion \
+	-Wsign-conversion \
+	-Wcast-qual \
+	-Wcast-align \
+	-Wformat=2 \
+	-Wundef \
+	-Wshadow \
+	-Wpointer-arith \
+	-Wbad-function-cast \
+	-Wstrict-overflow=5
+
+# Conditionally add -Werror
+ifeq ($(WERROR),yes)
+	WARNING_FLAGS += -Werror
+endif
+
 CFLAGS = $(MCU) \
 	-O2 \
-	-Wall \
+	$(WARNING_FLAGS) \
 	-fdata-sections \
 	-ffunction-sections \
 	-MMD \
@@ -136,6 +179,38 @@ ELF_FILE = $(BUILD_DIR)/$(PROJECT).elf
 HEX_FILE = $(BUILD_DIR)/$(PROJECT).hex
 BIN_FILE = $(BUILD_DIR)/$(PROJECT).bin
 LIST_FILE = $(BUILD_DIR)/$(PROJECT).list
+CPPCHECK_REPORT = $(BUILD_DIR)/cppcheck_report.xml
+CPPCHECK_HTML = $(BUILD_DIR)/cppcheck_report.html
+
+# cppcheck configuration
+# Only analyze our application code, not vendor HAL drivers
+CPPCHECK_SOURCES = \
+	$(wildcard $(CORE_SRC)/*.c) \
+	$(wildcard $(CORE_BSP_SRC)/*.c) \
+	$(wildcard $(CORE_KERNEL_SRC)/*.c)
+
+# cppcheck flags
+# --enable=all: Enable all checks
+# --suppress=missingIncludeSystem: Suppress warnings about system headers
+# --suppress=unusedFunction: Suppress unused function warnings (common in embedded)
+# --inline-suppr: Allow inline suppressions
+# --xml: Output XML format
+# --xml-version=2: Use XML version 2
+# --platform=unix64: Platform (closest to ARM, adjust if needed)
+# --std=c99: C standard
+# --error-exitcode=1: Exit with error if issues found
+# Note: cppcheck accepts -I flags directly, same as GCC
+CPPCHECK_FLAGS = --enable=all \
+	--suppress=missingIncludeSystem \
+	--suppress=unusedFunction \
+	--inline-suppr \
+	--xml \
+	--xml-version=2 \
+	--platform=unix64 \
+	--std=c99 \
+	--error-exitcode=1 \
+	--force \
+	$(INCLUDES)
 
 # Default target
 all: $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) size
@@ -228,7 +303,39 @@ build-and-flash: all
 rebuild-and-flash: rebuild
 	@./rebuild_and_flash.sh
 
+# Static analysis with cppcheck
+cppcheck:
+	@echo "Running cppcheck static analysis..."
+	@if ! command -v cppcheck >/dev/null 2>&1; then \
+		echo "ERROR: cppcheck not found. Install it with:"; \
+		echo "  macOS:   brew install cppcheck"; \
+		echo "  Ubuntu:  sudo apt-get install cppcheck"; \
+		exit 1; \
+	fi
+	@mkdir -p $(BUILD_DIR)
+	@cppcheck $(CPPCHECK_FLAGS) --output-file=$(CPPCHECK_REPORT) $(CPPCHECK_SOURCES) 2>&1 | tee $(BUILD_DIR)/cppcheck_output.txt || true
+	@echo ""
+	@echo "cppcheck analysis complete. Report saved to: $(CPPCHECK_REPORT)"
+	@echo "Text output saved to: $(BUILD_DIR)/cppcheck_output.txt"
+	@if [ -f $(CPPCHECK_REPORT) ]; then \
+		echo "To view HTML report, install cppcheck-htmlreport or use:"; \
+		echo "  cppcheck-htmlreport --file=$(CPPCHECK_REPORT) --report-dir=$(BUILD_DIR)/cppcheck_html --source-dir=$(PROJECT_ROOT)"; \
+	fi
+
+# Run cppcheck and build (static analysis before compilation)
+check-build: cppcheck all
+
+# Clean cppcheck reports
+clean-cppcheck:
+	@echo "Cleaning cppcheck reports..."
+	@rm -f $(CPPCHECK_REPORT) $(CPPCHECK_HTML) $(BUILD_DIR)/cppcheck_output.txt
+	@rm -rf $(BUILD_DIR)/cppcheck_html
+	@echo "cppcheck reports cleaned"
+
+# Clean everything including cppcheck
+clean-all: clean clean-cppcheck
+
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean rebuild size flash build-and-flash rebuild-and-flash
+.PHONY: all clean rebuild size flash build-and-flash rebuild-and-flash cppcheck check-build clean-cppcheck clean-all
