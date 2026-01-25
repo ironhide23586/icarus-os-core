@@ -16,15 +16,14 @@
 // ANSI escape code helper: show cursor (used in error path)
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
 
-void test_task_a(void) {
-    uint32_t period_start_tick;
+static void test_task_a(void) {
     uint32_t elapsed;
     uint32_t remaining;
     const char* task_name = os_get_current_task_name();
     
     while (1) {
         // Start a new period
-        period_start_tick = os_get_tick_count();
+        uint32_t period_start_tick = os_get_tick_count();
         
         // Render progress bar continuously during sleep period
         // This loop allows preemption - other tasks can run between renders
@@ -53,15 +52,14 @@ void test_task_a(void) {
     }
 }
 
-void test_task_b(void) {
-    uint32_t period_start_tick;
+static void test_task_b(void) {
     uint32_t elapsed;
     uint32_t remaining;
     const char* task_name = os_get_current_task_name();
     
     while (1) {
         // Start a new period
-        period_start_tick = os_get_tick_count();
+        uint32_t period_start_tick = os_get_tick_count();
         
         // Render progress bar continuously during sleep period
         do {
@@ -86,15 +84,14 @@ void test_task_b(void) {
     }
 }
 
-void test_task_c(void) {
-    uint32_t period_start_tick;
+static void test_task_c(void) {
     uint32_t elapsed;
     uint32_t remaining;
     const char* task_name = os_get_current_task_name();
     
     while (1) {
         // Start a new period
-        period_start_tick = os_get_tick_count();
+        uint32_t period_start_tick = os_get_tick_count();
         
         // Render progress bar continuously during sleep period
         do {

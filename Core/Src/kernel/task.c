@@ -43,23 +43,26 @@ extern void start_cold_task(task_t *task);
 extern void os_yield_trampoline(void);
 extern void os_yield_pendsv(void);
 
+/* Function prototypes */
+void os_transmit_printf_task(void);
+
 volatile uint8_t critical_stack_depth = 0;
 
 
-static inline void enter_critical() {
+static inline void enter_critical(void) {
 	scheduler_enabled = false;
 	critical_stack_depth++;
 }
 
 
-static inline void exit_critical() {
+static inline void exit_critical(void) {
 	if (--critical_stack_depth == 0)
 		scheduler_enabled = true;
 //	task_active_sleep(3);
 }
 
 
-bool dequeue_print_buffer(uint8_t *out_c) {
+static bool dequeue_print_buffer(uint8_t *out_c) {
 	enter_critical();
 	if (print_buffer_enqueue_idx == print_buffer_dequeue_idx) {
 		exit_critical();
@@ -75,7 +78,7 @@ bool dequeue_print_buffer(uint8_t *out_c) {
 
 bool enqueue_print_buffer(uint8_t c) {
 	enter_critical();
-	uint8_t next_enqueue_idx = (print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES;
+	uint8_t next_enqueue_idx = (uint8_t)((print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES);
 	if (next_enqueue_idx != print_buffer_dequeue_idx) {
 		print_buffer[print_buffer_enqueue_idx] = c;
 		print_buffer_enqueue_idx = next_enqueue_idx;
@@ -89,21 +92,27 @@ bool enqueue_print_buffer(uint8_t c) {
 
 uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical section
 	uint32_t st = os_tick_count;
-	uint32_t delta = os_tick_count - st;
-	while (delta < ticks) {
+	uint32_t delta;
+	while (1) {
+		// cppcheck-suppress duplicateExpression
+		// Initial delta may be 0, but will increase on subsequent iterations
 		delta = os_tick_count - st;
+		// cppcheck-suppress unsignedLessThanZero
+		// ticks is unsigned, but comparison is correct - checking if enough time passed
+		if (delta >= ticks) {
+			break;
+		}
 	}
 	return delta;
 }
 
 
 
-void os_transmit_printf_task() {
+void os_transmit_printf_task(void) {
 	uint8_t retry_count;
-	uint8_t num_chars_to_print;
 	static uint8_t send_buffer[PRINT_BUFFER_BYTES];
 	while (1) {
-		num_chars_to_print = 0;
+		uint8_t num_chars_to_print = 0;
 		while (num_chars_to_print < sizeof(send_buffer)) {
 			if(!dequeue_print_buffer(&send_buffer[num_chars_to_print]))
 				break;
@@ -128,7 +137,7 @@ void os_transmit_printf_task() {
 }
 
 
-void os_idle_task() {
+static void os_idle_task(void) {
     // Initialize display (only first task to run will do this)
     display_init();
     while (1) {
@@ -138,7 +147,7 @@ void os_idle_task() {
 }
 
 
-void os_heartbeart_task() {
+static void os_heartbeart_task(void) {
 #if ENABLE_HEARTBEAT_VISUALIZATION
     const char* task_name = os_get_current_task_name();
 #endif
@@ -270,22 +279,25 @@ void os_exit_task() {
     if (running_task_count > 0)
     	running_task_count--;
     if (current_cleanup_task_idx < (MAX_TASKS - 1)) {
-        cleanup_task_idx[++current_cleanup_task_idx] = current_task_index;
+        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)current_task_index;
     }
     os_yield();
 }
 
 
 void os_kill_process(uint8_t task_index) {
-    if (task_index >= num_created_tasks) 
+    if (task_index >= num_created_tasks) {
         return;
-    else if (task_index > 0 && task_list[task_index]->task_state < 4) {
+    }
+    // After the check above, we know task_index < num_created_tasks
+    // Explicit check for static analysis (cppcheck can't track num_created_tasks <= MAX_TASKS)
+    if (task_index > 0 && task_index < num_created_tasks && task_list[task_index]->task_state < 4) {
         printf("[INFO] %s task killed %s task\r\n", task_list[current_task_index]->name, task_list[task_index]->name);
         task_list[task_index]->task_state = TASK_KILLED;  // KILLED
         if (running_task_count > 0)
         	running_task_count--;
         if (current_cleanup_task_idx < (MAX_TASKS - 1)) {
-            cleanup_task_idx[++current_cleanup_task_idx] = task_index;
+            cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)task_index;
         }
         if (task_index == current_task_index)  // suicide 
             os_yield();

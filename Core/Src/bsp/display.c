@@ -9,6 +9,7 @@
 #include "bsp/display.h"
 #include "kernel/task.h"
 #include <string.h>
+#include <inttypes.h>
 
 // ANSI escape code helper: move cursor to row, col (1-indexed)
 #define ANSI_GOTO(row, col) printf("\033[%d;%dH", (row), (col))
@@ -24,12 +25,19 @@
  * @param period_ticks: total ticks for this period
  */
 void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_ticks, uint32_t period_ticks) {
+    // Guard against division by zero
+    if (period_ticks == 0) {
+        period_ticks = 1;
+    }
+    
     // Clamp elapsed to period to avoid overflow
     if (elapsed_ticks > period_ticks) {
         elapsed_ticks = period_ticks;
     }
     
     // Calculate filled portion (0 to BAR_WIDTH)
+    // cppcheck-suppress zerodivcond
+    // period_ticks is guaranteed > 0 by guard above, but cppcheck can't track this
     uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
     if (filled > BAR_WIDTH) {
         filled = BAR_WIDTH;
@@ -51,7 +59,7 @@ void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_tic
     }
     
     // Print period in ticks (right-aligned)
-    printf(" %4lu / %4lu ticks", elapsed_ticks, period_ticks);
+    printf(" %4" PRIu32 " / %4" PRIu32 " ticks", elapsed_ticks, period_ticks);
     
     // Clear to end of line to avoid leftover characters
     printf("\033[K");

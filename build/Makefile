@@ -77,20 +77,20 @@ ALL_OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 # Dependency files
 DEP_FILES = $(C_SOURCES:$(PROJECT_ROOT)/%.c=$(DEP_DIR)/%.d)
 
-# Include paths
+# Include paths - use -isystem for vendor code to suppress warnings
 INCLUDES = \
 	-I$(CORE_INC) \
 	-I$(CORE_BSP_INC) \
 	-I$(CORE_KERNEL_INC) \
-	-I$(DRIVERS_HAL_INC) \
-	-I$(DRIVERS_HAL_LEGACY_INC) \
-	-I$(DRIVERS_CMSIS_DEVICE) \
-	-I$(DRIVERS_CMSIS_INC) \
-	-I$(DRIVERS_BSP_INC) \
-	-I$(USB_DEVICE_APP_INC) \
-	-I$(USB_DEVICE_TARGET_INC) \
-	-I$(MIDDLEWARE_USB_CORE_INC) \
-	-I$(MIDDLEWARE_USB_CDC_INC)
+	-isystem $(DRIVERS_HAL_INC) \
+	-isystem $(DRIVERS_HAL_LEGACY_INC) \
+	-isystem $(DRIVERS_CMSIS_DEVICE) \
+	-isystem $(DRIVERS_CMSIS_INC) \
+	-isystem $(DRIVERS_BSP_INC) \
+	-isystem $(USB_DEVICE_APP_INC) \
+	-isystem $(USB_DEVICE_TARGET_INC) \
+	-isystem $(MIDDLEWARE_USB_CORE_INC) \
+	-isystem $(MIDDLEWARE_USB_CDC_INC)
 
 # Compiler flags
 MCU = -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard
@@ -138,6 +138,8 @@ ifeq ($(WERROR),yes)
 	WARNING_FLAGS += -Werror
 endif
 
+# Base CFLAGS for application code
+# Using -isystem for vendor includes suppresses warnings from vendor headers
 CFLAGS = $(MCU) \
 	-O2 \
 	$(WARNING_FLAGS) \
@@ -148,7 +150,29 @@ CFLAGS = $(MCU) \
 	-MF"$(@:%.o=%.d)" \
 	$(INCLUDES) \
 	-DUSE_HAL_DRIVER \
-	-DSTM32H750xx
+	-DSTM32H750xx \
+	-DUSE_FLASH_ECC=0 \
+	-DUSBD_USER_REGISTER_CALLBACK=0
+
+# CFLAGS for vendor code (suppress some warnings)
+VENDOR_CFLAGS = $(MCU) \
+	-O2 \
+	-Wall \
+	-Wextra \
+	-Wno-sign-conversion \
+	-Wno-undef \
+	-Wno-unused-parameter \
+	-Wno-missing-field-initializers \
+	-fdata-sections \
+	-ffunction-sections \
+	-MMD \
+	-MP \
+	-MF"$(@:%.o=%.d)" \
+	$(INCLUDES) \
+	-DUSE_HAL_DRIVER \
+	-DSTM32H750xx \
+	-DUSE_FLASH_ECC=0 \
+	-DUSBD_USER_REGISTER_CALLBACK=0
 
 # Assembly flags
 ASFLAGS = $(MCU) \
@@ -203,6 +227,11 @@ CPPCHECK_SOURCES = \
 CPPCHECK_FLAGS = --enable=all \
 	--suppress=missingIncludeSystem \
 	--suppress=unusedFunction \
+	--suppress=uninitStructMember:../Core/Src/bsp/lsm9ds1_reg.c \
+	--suppress=uninitvar:../Core/Src/bsp/lsm9ds1_reg.c \
+	--suppress=unknownMacro:../USB_DEVICE/App/usbd_desc.c \
+	--suppress=constParameterPointer \
+	--suppress=staticFunction \
 	--inline-suppr \
 	--xml \
 	--xml-version=2 \
@@ -244,12 +273,16 @@ $(ELF_FILE): $(ALL_OBJECTS) | $(BUILD_DIR)
 	@$(LD) $(ALL_OBJECTS) $(LDFLAGS) -o $@
 	@echo "Build complete: $@"
 
-# Compile C sources
+# Compile C sources - use VENDOR_CFLAGS for vendor code, CFLAGS for application code
 $(OBJ_DIR)/%.o: $(PROJECT_ROOT)/%.c | $(OBJ_DIR) $(DEP_DIR)
 	@echo "Compiling $<"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $(@:$(OBJ_DIR)/%.o=$(DEP_DIR)/%.d))
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@if echo "$<" | grep -qE "(Drivers/|Middlewares/|USB_DEVICE/|lsm9ds1_reg\.c)"; then \
+		$(CC) $(VENDOR_CFLAGS) -c $< -o $@; \
+	else \
+		$(CC) $(CFLAGS) -c $< -o $@; \
+	fi
 
 # Assemble ASM sources
 $(OBJ_DIR)/%.o: $(PROJECT_ROOT)/%.s | $(OBJ_DIR) $(DEP_DIR)

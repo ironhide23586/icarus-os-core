@@ -39,9 +39,28 @@ extern int __io_getchar(void) __attribute__((weak));
 char *__env[1] = { 0 };
 char **environ = __env;
 
+/* Function prototypes */
+void initialise_monitor_handles(void);
+int _getpid(void);
+void _exit(int status);
+int _read(int file, char *ptr, int len);
+int _write(int file, char *ptr, int len);
+int _close(int file);
+int _fstat(int file, struct stat *st);
+int _isatty(int file);
+int _lseek(int file, int ptr, int dir);
+int _open(char *path, int flags, ...);
+int _wait(int *status);
+int _unlink(char *name);
+int _times(struct tms *buf);
+int _stat(char *file, struct stat *st);
+int _link(char *old, char *new);
+int _fork(void);
+int _execve(char *name, char **argv, char **env);
+static int _kill(int pid, int sig);
 
 /* Functions */
-void initialise_monitor_handles()
+void initialise_monitor_handles(void)
 {
 }
 
@@ -50,7 +69,7 @@ int _getpid(void)
   return 1;
 }
 
-int _kill(int pid, int sig)
+static int _kill(int pid, int sig)
 {
   (void)pid;
   (void)sig;
@@ -71,7 +90,7 @@ __attribute__((weak)) int _read(int file, char *ptr, int len)
 
   for (DataIdx = 0; DataIdx < len; DataIdx++)
   {
-    *ptr++ = __io_getchar();
+    *ptr++ = (char)__io_getchar();
   }
 
   return len;

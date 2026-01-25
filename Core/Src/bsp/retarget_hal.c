@@ -10,8 +10,13 @@
 #include "retarget_hal.h"
 
 
-void SystemClock_Config(void);
+static void SystemClock_Config(void);
 extern uint32_t task_active_sleep(uint32_t ticks);
+
+/* Function prototypes */
+int32_t platform_write(void* handle, uint8_t reg, const uint8_t *bufp, uint16_t len);
+int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len);
+void platform_delay(uint32_t ms);
 
 static void MPU_Config(void)
 {
@@ -78,8 +83,13 @@ void LED_Off(void) {
 }
 
 int32_t platform_write(void* handle, uint8_t reg, const uint8_t *bufp, uint16_t len) {
+	// HAL_I2C_Mem_Write requires non-const pointer, but we receive const
+	// This is safe as HAL will only read from the buffer
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	HAL_I2C_Mem_Write((I2C_HandleTypeDef*) handle, IMU_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT,
 			(uint8_t *)bufp, len, HAL_MAX_DELAY);
+#pragma GCC diagnostic pop
 	return 0;
 }
 

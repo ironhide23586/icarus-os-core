@@ -25,7 +25,7 @@
 
 #define IMU_ADDRESS 0x6B
 
-void hal_init();
+void hal_init(void);
 void LED_Blink(uint32_t Hdelay, uint32_t Ldelay);
 void LED_On(void);
 void LED_Off(void);
