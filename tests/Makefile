@@ -17,13 +17,27 @@ RUNNERS_DIR = $(TEST_DIR)/runners
 BUILD_DIR = $(TEST_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj
 
-# Source code to test (kernel only for now)
+# Source code to test (all application code that can be tested)
 KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/kernel/task.c
+BSP_SRC = \
+	$(PROJECT_ROOT)/Core/Src/bsp/error.c \
+	$(PROJECT_ROOT)/Core/Src/bsp/retarget_stdio.c \
+	$(PROJECT_ROOT)/Core/Src/bsp/retarget_hal.c \
+	$(PROJECT_ROOT)/Core/Src/bsp/stm32h7xx_it.c
+# Note: display.c is excluded because we use mocks for it
+# Note: gpio.c, tim.c, i2c.c, spi.c, rtc.c are STM32CubeMX-generated initialization code
+# Note: context_switch.s is assembly and cannot be tested on host (requires ARM hardware)
+
+# All application source files
+APP_SRC = $(KERNEL_SRC) $(BSP_SRC)
+
 KERNEL_INC = $(PROJECT_ROOT)/Core/Inc/kernel
 
-# Test sources
+# Test sources (all test_*.c files)
 TEST_SOURCES = $(wildcard $(SRC_DIR)/test_*.c)
-MOCK_SOURCES = $(wildcard $(MOCKS_DIR)/*.c)
+# Mock sources - exclude mocks for files we're testing (main, retarget_hal)
+# Note: mock_display.c is needed because we don't compile display.c (use mock instead)
+MOCK_SOURCES = $(filter-out $(MOCKS_DIR)/mock_main.c $(MOCKS_DIR)/mock_retarget_hal.c, $(wildcard $(MOCKS_DIR)/*.c))
 
 # Include directories
 # MOCKS_DIR must come FIRST to override real headers with mocks
@@ -77,6 +91,8 @@ LDFLAGS = \
 # Object files
 UNITY_OBJ = $(OBJ_DIR)/unity.o
 KERNEL_OBJ = $(OBJ_DIR)/task.o
+BSP_OBJS = $(BSP_SRC:$(PROJECT_ROOT)/Core/Src/bsp/%.c=$(OBJ_DIR)/bsp_%.o)
+APP_OBJS = $(KERNEL_OBJ) $(BSP_OBJS)
 TEST_OBJS = $(TEST_SOURCES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 MOCK_OBJS = $(MOCK_SOURCES:$(MOCKS_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -84,9 +100,11 @@ MOCK_OBJS = $(MOCK_SOURCES:$(MOCKS_DIR)/%.c=$(OBJ_DIR)/%.o)
 TEST_EXE = $(BUILD_DIR)/test_runner
 
 # Coverage directories
+# Allow override from parent Makefile to output to build/reports/coverage/
+COVERAGE_OUTPUT_DIR ?= $(BUILD_DIR)/coverage/html
 COVERAGE_DIR = $(BUILD_DIR)/coverage
 COVERAGE_INFO = $(COVERAGE_DIR)/coverage.info
-COVERAGE_HTML = $(COVERAGE_DIR)/html
+COVERAGE_HTML = $(COVERAGE_OUTPUT_DIR)
 
 .PHONY: all test clean coverage coverage-html coverage-summary
 
@@ -99,9 +117,9 @@ test: $(TEST_EXE)
 	@$(TEST_EXE) || true
 
 # Link test executable
-$(TEST_EXE): $(UNITY_OBJ) $(KERNEL_OBJ) $(TEST_OBJS) $(MOCK_OBJS) | $(BUILD_DIR) $(OBJ_DIR)
+$(TEST_EXE): $(UNITY_OBJ) $(APP_OBJS) $(TEST_OBJS) $(MOCK_OBJS) | $(BUILD_DIR) $(OBJ_DIR)
 	@echo "Linking test executable..."
-	@$(CC) $(UNITY_OBJ) $(KERNEL_OBJ) $(TEST_OBJS) $(MOCK_OBJS) $(LDFLAGS) -o $(TEST_EXE)
+	@$(CC) $(UNITY_OBJ) $(APP_OBJS) $(TEST_OBJS) $(MOCK_OBJS) $(LDFLAGS) -o $(TEST_EXE)
 
 # Compile Unity
 $(UNITY_OBJ): $(UNITY_DIR)/unity.c | $(OBJ_DIR)
@@ -114,6 +132,13 @@ $(KERNEL_OBJ): $(KERNEL_SRC) | $(OBJ_DIR)
 	@echo "Compiling kernel source for testing..."
 	@mkdir -p $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
+
+# Compile BSP source files
+$(OBJ_DIR)/bsp_%.o: $(PROJECT_ROOT)/Core/Src/bsp/%.c | $(OBJ_DIR)
+	@echo "Compiling BSP source: $<"
+	@mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
 
 # Compile test sources
 $(OBJ_DIR)/test_%.o: $(SRC_DIR)/test_%.c | $(OBJ_DIR)
@@ -164,16 +189,23 @@ $(COVERAGE_INFO): test
 		exit 1; \
 	fi
 	@mkdir -p $(COVERAGE_DIR)
-	@lcov --capture --directory $(OBJ_DIR) --output-file $(COVERAGE_INFO) --base-directory $(PROJECT_ROOT) --no-external --ignore-errors source || true
+	@# Capture all coverage data - use test directory as base to capture relative paths correctly
+	@lcov --capture --directory $(OBJ_DIR) --output-file $(COVERAGE_INFO) --base-directory $(TEST_DIR) --ignore-errors source || true
+	@# Remove system paths
 	@lcov --remove $(COVERAGE_INFO) '/usr/*' '/Applications/*' '/Library/*' --output-file $(COVERAGE_INFO) || true
-	@lcov --remove $(COVERAGE_INFO) '*/mocks/*' '*/unity/*' --output-file $(COVERAGE_INFO) || true
-	@# Fix source file paths: replace incorrect paths with correct test paths
+	@# Remove test files, mocks, and unity framework (keep only application source)
+	@lcov --remove $(COVERAGE_INFO) '*/tests/src/*' '*/mocks/*' '*/unity/*' --output-file $(COVERAGE_INFO) || true
+	@# Fix paths: replace relative paths with absolute paths for all source files
 	@if [ -f $(COVERAGE_INFO) ]; then \
-		TEST_ABS_DIR=$$(cd $(TEST_DIR) && pwd); \
-		perl -pi -e "s|$(PROJECT_ROOT)/tes?\.?/src/|$$TEST_ABS_DIR/src/|g" $(COVERAGE_INFO) 2>/dev/null || \
-		sed -i.bak "s|$(PROJECT_ROOT)/tes\./src/|$$TEST_ABS_DIR/src/|g" $(COVERAGE_INFO) 2>/dev/null || \
-		sed -i '' "s|$(PROJECT_ROOT)/tes\./src/|$$TEST_ABS_DIR/src/|g" $(COVERAGE_INFO) 2>/dev/null || true; \
+		PROJECT_ABS=$$(cd $(PROJECT_ROOT) && pwd); \
+		perl -pi -e "s|SF:\.\./Core/Src/|SF:$$PROJECT_ABS/Core/Src/|g" $(COVERAGE_INFO) 2>/dev/null || \
+		sed -i.bak "s|SF:\.\./Core/Src/|SF:$$PROJECT_ABS/Core/Src/|g" $(COVERAGE_INFO) 2>/dev/null || \
+		sed -i '' "s|SF:\.\./Core/Src/|SF:$$PROJECT_ABS/Core/Src/|g" $(COVERAGE_INFO) 2>/dev/null || true; \
 		rm -f $(COVERAGE_INFO).bak 2>/dev/null || true; \
+	fi
+	@# Extract only application source files (Core/Src/kernel/*, Core/Src/bsp/*)
+	@if [ -f $(COVERAGE_INFO) ]; then \
+		lcov --extract $(COVERAGE_INFO) '*/Core/Src/kernel/*' '*/Core/Src/bsp/*' --output-file $(COVERAGE_INFO) || true; \
 	fi
 
 coverage-summary: coverage

@@ -24,6 +24,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#ifdef HOST_TEST
+// For host testing, include mock header for os_yield_pendsv
+#include "mock_asm.h"
+#endif
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -169,6 +173,18 @@ void DebugMon_Handler(void)
 /**
   * @brief This function handles Pendable request for system service.
   */
+#ifdef HOST_TEST
+// For host testing, use regular function (not naked) to call mock
+void PendSV_Handler(void)
+{
+  /* USER CODE BEGIN PendSV_IRQn 0 */
+  os_yield_pendsv();
+  /* USER CODE END PendSV_IRQn 0 */
+  /* USER CODE BEGIN PendSV_IRQn 1 */
+
+  /* USER CODE END PendSV_IRQn 1 */
+}
+#else
  __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
@@ -181,6 +197,7 @@ void DebugMon_Handler(void)
 
   /* USER CODE END PendSV_IRQn 1 */
 }
+#endif
 
 /**
   * @brief This function handles System tick timer.

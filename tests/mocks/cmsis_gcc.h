@@ -25,11 +25,14 @@
 // System Control Block (SCB) - minimal mock
 typedef struct {
 	volatile uint32_t ICSR;  // Interrupt Control and State Register
+	volatile uint32_t VTOR;  // Vector Table Offset Register
 } SCB_Type;
 
 #define SCB_ICSR_PENDSVSET_Msk (1UL << 28U)
 
-// SCB base address (mock - just a pointer)
-#define SCB ((SCB_Type*) 0xE000ED00UL)
+// SCB base address (mock - use static memory instead of fixed address)
+// This prevents segfaults when writing to SCB->ICSR in host tests
+static SCB_Type scb_mock = {0};
+#define SCB (&scb_mock)
 
 #endif /* CMSIS_GCC_H */

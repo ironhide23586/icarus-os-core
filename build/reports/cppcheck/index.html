@@ -1,0 +1,285 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Cppcheck - HTML report - [project name]</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+
+    </style>
+    <script>
+      function getStyle(el, styleProp) {
+        var y;
+
+        if (el.currentStyle) {
+          y = el.currentStyle[styleProp];
+        } else if (window.getComputedStyle) {
+          y = document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+        }
+
+        return y;
+      }
+
+      function toggle() {
+        var el = this.expandable_content;
+        var mark = this.expandable_marker;
+
+        if (el.style.display === "block") {
+          el.style.display = "none";
+          mark.textContent = "[+]";
+        } else {
+          el.style.display = "block";
+          mark.textContent = "[-]";
+        }
+      }
+
+      function initExpandables() {
+        var elements = document.querySelectorAll(".expandable");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          var el = elements[i];
+          var clickable = el.querySelector("span");
+          var marker = clickable.querySelector(".marker");
+          var content = el.querySelector(".content");
+          var width = clickable.clientWidth - parseInt(getStyle(content, "padding-left")) - parseInt(getStyle(content, "padding-right"));
+          content.style.width = width + "px";
+          clickable.expandable_content = content;
+          clickable.expandable_marker = marker;
+          clickable.addEventListener("click", toggle);
+        }
+      }
+
+      function toggleDisplay(cb) {
+        var elements = document.querySelectorAll("." + cb.id);
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          elements[i].classList.toggle("id-filtered", !cb.checked);
+        }
+
+        updateFileRows();
+      }
+
+      function toggleSeverity(cb) {
+        cb.parentElement.classList.toggle("unchecked", !cb.checked);
+        var elements = document.querySelectorAll(".sev_" + cb.id);
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          elements[i].classList.toggle("severity-filtered", !cb.checked);
+        }
+
+        updateFileRows();
+      }
+      
+      function toggleClassification(cb) {
+        cb.parentElement.classList.toggle("unchecked", !cb.checked);
+        var elements = document.querySelectorAll(".class_" + cb.id);
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          elements[i].classList.toggle("classification-filtered", !cb.checked);
+        }
+
+        updateFileRows();
+      }
+    
+      function toggleTool(cb) {
+        cb.parentElement.classList.toggle("unchecked", !cb.checked);
+
+        var elements;
+        if (cb.id == "clang-tidy")
+            elements = document.querySelectorAll("[class^=clang-tidy-]");
+        else
+            elements = document.querySelectorAll(".issue:not([class^=clang-tidy-])");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          elements[i].classList.toggle("tool-filtered", !cb.checked);
+        }
+
+        updateFileRows();
+      }
+
+      function toggleAll() {
+        var elements = document.querySelectorAll(".idToggle");
+
+        // starting from 1 since 0 is the "toggle all" input
+        for (var i = 1, len = elements.length; i < len; i++) {
+          var changed = elements[i].checked != elements[0].checked;
+          if (changed) {
+            elements[i].checked = elements[0].checked;
+            toggleDisplay(elements[i]);
+          }
+        }
+      }
+
+      function filterFile(filter) {
+        var elements = document.querySelectorAll(".fileEntry");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          var visible = elements[i].querySelector("tr").querySelector("td").textContent.toLowerCase().includes(filter.toLowerCase());
+          elements[i].classList.toggle("text-filtered", !visible);
+        }
+      }
+
+      function filterText(text) {
+        filter = text.toLowerCase();
+        var elements = document.querySelectorAll(".issue");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          var visible = false;
+          var fields = elements[i].querySelectorAll("td");
+          for (var n = 0, num = fields.length; n < num; n++) {
+            if (fields[n].textContent.toLowerCase().includes(filter)) {
+              visible = true;
+              break;
+            }
+          }
+          elements[i].classList.toggle("text-filtered", !visible);
+        }
+
+        updateFileRows();
+      }
+
+      function updateFileRows(element) {
+        var elements = document.querySelectorAll(".fileEntry");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+          var visible = elements[i].querySelector(".issue:not(.id-filtered):not(.severity-filtered):not(.classification-filtered):not(.tool-filtered):not(.text-filtered)");
+          elements[i].classList.toggle("file-filtered", !visible);
+        }
+      }
+
+      function reapplyFilters() {
+        // Reapply ID filters
+        var idToggles = document.querySelectorAll(".idToggle");
+        for (var i = 1; i < idToggles.length; i++) {
+          var cb = idToggles[i];
+          var elements = document.querySelectorAll("." + cb.id);
+          for (var j = 0; j < elements.length; j++) {
+            elements[j].classList.toggle("id-filtered", !cb.checked);
+          }
+        }
+
+        // Reapply severity filters
+        var sevToggles = document.querySelectorAll(".sev_toggle");
+        for (var i = 0; i < sevToggles.length; i++) {
+          var cb = sevToggles[i];
+            var elements = document.querySelectorAll(".sev_" + cb.id);
+          for (var j = 0; j < elements.length; j++) {
+            elements[j].classList.toggle("severity-filtered", !cb.checked);
+          }
+        }
+
+        // Reapply classification filters
+        var classToggles = document.querySelectorAll(".class_toggle");
+        for (var i = 0; i < classToggles.length; i++) {
+          var cb = classToggles[i];
+          var elements = document.querySelectorAll(".class_" + cb.id);
+          for (var j = 0; j < elements.length; j++) {
+            elements[j].classList.toggle("classification-filtered", !cb.checked);
+          }
+        }
+
+        // Reapply tool filters
+        var toolToggles = document.querySelectorAll(".tool_toggle");
+        for (var i = 0; i < toolToggles.length; i++) {
+          var cb = toolToggles[i];
+          var elements;
+          if (cb.id == "clang-tidy")
+            elements = document.querySelectorAll("[class^=clang-tidy-]");
+          else
+            elements = document.querySelectorAll(".issue:not([class^=clang-tidy-])");
+
+          for (var j = 0; j < elements.length; j++) {
+            elements[j].classList.toggle("tool-filtered", !cb.checked);
+          }
+        }
+
+        // Update file rows
+        updateFileRows();
+      }
+
+      window.addEventListener("pageshow", reapplyFilters);
+      window.addEventListener("load", initExpandables);
+    </script>
+  </head>
+  <body>
+    <div id="wrapper">
+    <div id="header" class="header">
+      <h1>Cppcheck report - [project name]</h1>
+      <div id="filters">
+
+        <label class="checkBtn"><input type="checkbox" onclick="toggleTool(this)" id="cppcheck" checked>cppcheck</label>
+        <label class="checkBtn disabled"><input type="checkbox" onclick="toggleTool(this)" id="clang-tidy" disabled>clang-tidy</label>
+        | 
+        <label class="severityHeader">File: <input type="search" oninput="filterFile(this.value)"></label>
+        <label class="severityHeader">Filter: <input type="search" oninput="filterText(this.value)"></label>
+      </div>
+
+    </div>
+
+    <div id="menu_index">
+     <p><a href="index.html">Defect summary</a> </p>
+
+       <label><input type="checkbox" class="idToggle" onclick="toggleAll()" checked> Toggle all</label>
+       <table>
+           <tr><th>Show</th><th>#</th><th>Defect ID</th></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="variableScope" name="variableScope" checked></td><td>8</td><td>variableScope</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="normalCheckLevelMaxBranches" name="normalCheckLevelMaxBranches" checked></td><td>3</td><td>normalCheckLevelMaxBranches</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="constParameterCallback" name="constParameterCallback" checked></td><td>2</td><td>constParameterCallback</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="checkersReport" name="checkersReport" checked></td><td>1</td><td>checkersReport</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="constVariablePointer" name="constVariablePointer" checked></td><td>1</td><td>constVariablePointer</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="knownConditionTrueFalse" name="knownConditionTrueFalse" checked></td><td>1</td><td>knownConditionTrueFalse</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="redundantAssignment" name="redundantAssignment" checked></td><td>1</td><td>redundantAssignment</td></tr>
+            <tr><td><input type="checkbox" class="idToggle" onclick="toggleDisplay(this)" id="unassignedVariable" name="unassignedVariable" checked></td><td>1</td><td>unassignedVariable</td></tr>
+           <tr><td></td><td>18</td><td>total</td></tr>
+       </table>
+       <p><a href="stats.html">Statistics</a></p>
+    </div>
+    <div id="content_index">
+
+       <table class="summaryTable">
+       <tr><th>Line</th><th>Id</th><th>CWE</th><th>Severity</th><th>Message</th><th>Timestamp</th></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6"><a href="6.html"></a></td></tr>
+         <tr class="checkersReport sev_information class_ issue"><td></td><td>checkersReport</td><td></td><td>information</td><td>Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6"><a href="4.html">../Core/Src/bsp/display.c</a></td></tr>
+         <tr class="normalCheckLevelMaxBranches sev_information class_ issue"><td><a href="4.html#line-0">0</a></td><td>normalCheckLevelMaxBranches</td><td></td><td>information</td><td>Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6"><a href="5.html">../Core/Src/kernel/task.c</a></td></tr>
+         <tr class="knownConditionTrueFalse sev_style class_ issue"><td><a href="5.html#line-296">296</a></td><td>knownConditionTrueFalse</td><td><a href="https://cwe.mitre.org/data/definitions/571.html">571</a></td><td>style</td><td>Condition &apos;task_index&lt;num_created_tasks&apos; is always true</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6"><a href="0.html">../Drivers/BSP/ST7735/lcd.c</a></td></tr>
+         <tr class="normalCheckLevelMaxBranches sev_information class_ issue"><td><a href="0.html#line-0">0</a></td><td>normalCheckLevelMaxBranches</td><td></td><td>information</td><td>Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td><a href="0.html#line-142">142</a></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;set&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6">../Drivers/BSP/ST7735/st7735.c</td></tr>
+       <tr><td colspan="6">Could not generated due to UnicodeDecodeError</td></tr>
+         <tr class="normalCheckLevelMaxBranches sev_information class_ issue"><td></td><td>normalCheckLevelMaxBranches</td><td></td><td>information</td><td>Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="redundantAssignment sev_style class_ issue"><td></td><td>redundantAssignment</td><td><a href="https://cwe.mitre.org/data/definitions/563.html">563</a></td><td>style</td><td>Variable &apos;ret&apos; is reassigned a value before the old one has been used.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="constParameterCallback sev_style class_ issue"><td></td><td>constParameterCallback</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>Parameter &apos;pDriver&apos; can be declared as pointer to const. However it seems that &apos;ST7735_SetOrientation&apos; is a callback function, if &apos;pDriver&apos; is declared with const you might also need to cast function pointer(s).</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;pixel_val&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;counter&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;rgb_data&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;i&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;j&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;i&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="variableScope sev_style class_ issue"><td></td><td>variableScope</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>The scope of the variable &apos;counter&apos; can be reduced.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6"><a href="2.html">../USB_DEVICE/App/usbd_cdc_if.c</a></td></tr>
+         <tr class="constParameterCallback sev_style class_ issue"><td><a href="2.html#line-180">180</a></td><td>constParameterCallback</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s).</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+         <tr class="constVariablePointer sev_style class_ issue"><td><a href="2.html#line-285">285</a></td><td>constVariablePointer</td><td><a href="https://cwe.mitre.org/data/definitions/398.html">398</a></td><td>style</td><td>Variable &apos;hcdc&apos; can be declared as pointer to const</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      <tbody class="fileEntry">
+       <tr><td colspan="6"><a href="3.html">../USB_DEVICE/Target/usbd_conf.c</a></td></tr>
+         <tr class="unassignedVariable sev_style class_ issue"><td><a href="3.html#line-643">643</a></td><td>unassignedVariable</td><td><a href="https://cwe.mitre.org/data/definitions/665.html">665</a></td><td>style</td><td>Variable &apos;mem&apos; is not assigned a value.</td><td>Sun Jan 25 18:28:11 2026</td></tr>
+      </tbody>
+       </table>
+    </div>
+    <div id="footer" class="footer">
+      <p>
+        Created by Cppcheck 2.19.0 (<a href="https://cppcheck.sourceforge.io">Sourceforge</a>, <a href="irc://irc.libera.chat/#cppcheck">IRC</a>)
+      </p>
+    </div>
+    </div>
+  </body>
+</html>

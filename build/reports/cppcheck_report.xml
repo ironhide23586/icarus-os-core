@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="2.19.0"/>
+    <errors>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Drivers/BSP/ST7735/lcd.c">
+            <location file="../Drivers/BSP/ST7735/lcd.c" line="0" column="0"/>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;set&apos; can be reduced." verbose="The scope of the variable &apos;set&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/lcd.c">
+            <location file="../Drivers/BSP/ST7735/lcd.c" line="142" column="10"/>
+            <symbol>set</symbol>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="0" column="0"/>
+        </error>
+        <error id="redundantAssignment" severity="style" msg="Variable &apos;ret&apos; is reassigned a value before the old one has been used." verbose="Variable &apos;ret&apos; is reassigned a value before the old one has been used." cwe="563" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="163" column="9" info="ret is overwritten"/>
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="159" column="9" info="ret is assigned"/>
+            <symbol>ret</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;pixel_val&apos; can be reduced." verbose="The scope of the variable &apos;pixel_val&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="614" column="11"/>
+            <symbol>pixel_val</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;counter&apos; can be reduced." verbose="The scope of the variable &apos;counter&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="616" column="12"/>
+            <symbol>counter</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;rgb_data&apos; can be reduced." verbose="The scope of the variable &apos;rgb_data&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="705" column="12"/>
+            <symbol>rgb_data</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;i&apos; can be reduced." verbose="The scope of the variable &apos;i&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="706" column="12"/>
+            <symbol>i</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;j&apos; can be reduced." verbose="The scope of the variable &apos;j&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="706" column="15"/>
+            <symbol>j</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;i&apos; can be reduced." verbose="The scope of the variable &apos;i&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="751" column="12"/>
+            <symbol>i</symbol>
+        </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;counter&apos; can be reduced." verbose="The scope of the variable &apos;counter&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="794" column="12"/>
+            <symbol>counter</symbol>
+        </error>
+        <error id="constParameterCallback" severity="style" msg="Parameter &apos;pDriver&apos; can be declared as pointer to const. However it seems that &apos;ST7735_SetOrientation&apos; is a callback function, if &apos;pDriver&apos; is declared with const you might also need to cast function pointer(s)." verbose="Parameter &apos;pDriver&apos; can be declared as pointer to const. However it seems that &apos;ST7735_SetOrientation&apos; is a callback function, if &apos;pDriver&apos; is declared with const you might also need to cast function pointer(s)." cwe="398" file0="../Drivers/BSP/ST7735/st7735.c">
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="472" column="68" info="Parameter &apos;pDriver&apos; can be declared as pointer to const"/>
+            <location file="../Drivers/BSP/ST7735/st7735.c" line="49" column="3" info="You might need to cast the function pointer here"/>
+            <symbol>pDriver</symbol>
+        </error>
+        <error id="constParameterCallback" severity="style" msg="Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s)." verbose="Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s)." cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="180" column="52" info="Parameter &apos;pbuf&apos; can be declared as pointer to const"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="142" column="3" info="You might need to cast the function pointer here"/>
+            <symbol>pbuf</symbol>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;hcdc&apos; can be declared as pointer to const" verbose="Variable &apos;hcdc&apos; can be declared as pointer to const" cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="285" column="27" info="Variable &apos;hcdc&apos; can be declared as pointer to const"/>
+            <symbol>hcdc</symbol>
+        </error>
+        <error id="unassignedVariable" severity="style" msg="Variable &apos;mem&apos; is not assigned a value." verbose="Variable &apos;mem&apos; is not assigned a value." cwe="665" file0="../USB_DEVICE/Target/usbd_conf.c">
+            <location file="../USB_DEVICE/Target/usbd_conf.c" line="643" column="19"/>
+            <symbol>mem</symbol>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/bsp/display.c">
+            <location file="../Core/Src/bsp/display.c" line="0" column="0"/>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" verbose="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" cwe="571" file0="../Core/Src/kernel/task.c">
+            <location file="../Core/Src/kernel/task.c" line="296" column="38" info="Condition &apos;task_index&lt;num_created_tasks&apos; is always true"/>
+            <location file="../Core/Src/kernel/task.c" line="291" column="20" info="Assuming that condition &apos;task_index&gt;=num_created_tasks&apos; is not redundant"/>
+        </error>
+        <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>
+    </errors>
+</results>

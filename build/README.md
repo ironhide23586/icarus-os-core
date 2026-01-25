@@ -190,10 +190,13 @@ make check-build
 **View HTML report (optional):**
 ```bash
 # Install cppcheck-htmlreport (if available)
-cppcheck-htmlreport --file=build/cppcheck_report.xml \
-  --report-dir=build/cppcheck_html \
-  --source-dir=..
+# From build/ directory:
+cppcheck-htmlreport --file=./cppcheck_report.xml \
+  --report-dir=./cppcheck_html \
+  --source-dir=.
 ```
+
+**Note:** The cppcheck configuration suppresses "missingInclude" warnings for vendor HAL/USB headers, as these are expected in embedded code and don't indicate real issues.
 
 **Clean cppcheck reports:**
 ```bash

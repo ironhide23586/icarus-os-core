@@ -21,5 +21,8 @@ void display_init(void);
 #define ROW_TASK_A 11
 #define ROW_TASK_B 12
 #define ROW_TASK_C 13
+#define ROW_HEARTBEAT 10
+#define HEARTBEAT_ON_TICKS 50
+#define HEARTBEAT_OFF_TICKS 50
 
 #endif /* DISPLAY_H_ */
