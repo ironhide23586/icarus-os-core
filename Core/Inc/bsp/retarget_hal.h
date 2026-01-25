@@ -20,7 +20,7 @@
 #include "lcd.h"
 #include "lsm9ds1_reg.h"
 
-#include "kernel/task.h"
+// #include "kernel/task.h"
 
 #define IMU_ADDRESS 0x6B
 

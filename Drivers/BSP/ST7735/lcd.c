@@ -32,7 +32,7 @@ static int32_t lcd_recvdata(uint8_t* pdata,uint32_t length);
 ST7735_IO_t st7735_pIO = {
 	lcd_init,
 	NULL,
-	NULL,
+	0,  // Address is uint16_t, not a pointer
 	lcd_writereg,
 	lcd_readreg,
 	lcd_senddata,

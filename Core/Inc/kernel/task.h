@@ -30,6 +30,7 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #define MAX_TASK_NAME_LENGTH 32
 
 #include "main.h"
+#include "retarget_hal.h"
 
 
 #if (STACK_WORDS % 2) != 0

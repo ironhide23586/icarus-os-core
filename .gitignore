@@ -13,11 +13,18 @@
 # Debug directory (build output)
 Debug/
 Release/
-build/
+# build/ directory - ignore artifacts but keep Makefile and README
+build/obj/
+build/dep/
+build/*.elf
+build/*.hex
+build/*.bin
+build/*.list
+build/*.map
 *.build/
 
-# Build system files
-makefile
+# Build system files (but keep build/Makefile)
+Debug/makefile
 *.mk
 objects.list
 objects.mk
