@@ -9,7 +9,7 @@
 #include "main.h"
 #include "retarget_hal.h"
 #include "kernel/task.h"
-#include "bsp/display.h"
+#include "display.h"
 
 
 // ANSI escape code helper: show cursor (used in error path)

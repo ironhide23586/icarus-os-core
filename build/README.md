@@ -50,23 +50,36 @@ make clean
 
 ## Flashing
 
-The Makefile includes a `flash` target, but you need to configure it for your programmer:
+The project includes a flash script for DFU mode:
 
 ```bash
+# Using the script directly
+./flash.sh
+
+# Or using make
 make flash
 ```
 
-Currently, it's a placeholder. You can modify the `flash` target in the Makefile to use:
-- `st-flash` (ST-Link)
-- `openocd`
-- `JLinkExe` (SEGGER J-Link)
-- Or your preferred flashing tool
+**Prerequisites:**
+- Install `dfu-util`: 
+  - macOS: `brew install dfu-util`
+  - Ubuntu/Debian: `sudo apt-get install dfu-util`
 
-Example modification for st-flash:
-```makefile
-flash: $(HEX_FILE)
-	st-flash write $(HEX_FILE) 0x08000000
-```
+**Put device in DFU mode:**
+1. Hold BOOT button
+2. Press and release RESET button
+3. Release BOOT button
+
+The script will:
+- Check if `dfu-util` is installed
+- Verify device is in DFU mode
+- Convert ELF to BIN if needed
+- Flash to STM32H750 at address 0x08000000
+
+**Alternative flashing methods:**
+- ST-Link: `st-flash write build/icarus_os.hex 0x08000000`
+- OpenOCD: Configure for your setup
+- J-Link: Use SEGGER J-Flash
 
 ## Project Structure
 

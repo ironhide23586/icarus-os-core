@@ -213,13 +213,14 @@ clean:
 	@rm -f $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) $(LIST_FILE) $(BUILD_DIR)/$(PROJECT).map
 	@echo "Clean complete"
 
-# Flash target (requires st-flash or openocd)
-flash: $(HEX_FILE)
-	@echo "Flashing $(HEX_FILE) to target..."
-	@echo "Note: Configure flash command for your programmer (st-flash, openocd, etc.)"
-	@echo "Example: st-flash write $(HEX_FILE) 0x08000000"
+# Rebuild: clean and build everything
+rebuild: clean all
+
+# Flash target (uses DFU mode via flash.sh script)
+flash: $(ELF_FILE)
+	@./flash.sh
 
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean size flash
+.PHONY: all clean rebuild size flash
