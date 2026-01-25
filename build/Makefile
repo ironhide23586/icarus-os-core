@@ -220,7 +220,15 @@ rebuild: clean all
 flash: $(ELF_FILE)
 	@./flash.sh
 
+# Build and flash target
+build-and-flash: all
+	@./build_and_flash.sh
+
+# Rebuild and flash target
+rebuild-and-flash: rebuild
+	@./rebuild_and_flash.sh
+
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean rebuild size flash
+.PHONY: all clean rebuild size flash build-and-flash rebuild-and-flash

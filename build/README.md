@@ -28,6 +28,49 @@ This will:
 - Generate HEX and BIN files
 - Display size information
 
+## Build and Flash
+
+To build and flash in one command:
+
+```bash
+cd build
+./build_and_flash.sh
+# or
+make build-and-flash
+```
+
+This will:
+- Build the project
+- Flash it to the device (if in DFU mode)
+- Reset the device automatically
+
+**Test mode** (builds but doesn't flash):
+```bash
+./build_and_flash.sh --test
+```
+
+## Rebuild and Flash
+
+To clean, rebuild, and flash in one command:
+
+```bash
+cd build
+./rebuild_and_flash.sh
+# or
+make rebuild-and-flash
+```
+
+This will:
+- Clean all build artifacts
+- Rebuild the project from scratch
+- Flash it to the device (if in DFU mode)
+- Reset the device automatically
+
+**Test mode** (rebuilds but doesn't flash):
+```bash
+./rebuild_and_flash.sh --test
+```
+
 ## Build Output
 
 The build artifacts are placed in the `build/` directory:
