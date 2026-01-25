@@ -1,0 +1,8 @@
+# Test build artifacts
+build/
+*.gcda
+*.gcno
+*.gcov
+
+# Coverage reports
+coverage/

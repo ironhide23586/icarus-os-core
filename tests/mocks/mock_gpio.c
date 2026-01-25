@@ -1,0 +1,17 @@
+/*
+ * mock_gpio.c
+ * Mock GPIO implementation
+ */
+
+#include "mock_gpio.h"
+
+void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint32_t PinState) {
+	(void)GPIOx;
+	(void)GPIO_Pin;
+	(void)PinState;
+}
+
+void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin) {
+	(void)GPIOx;
+	(void)GPIO_Pin;
+}
