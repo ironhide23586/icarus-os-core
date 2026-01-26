@@ -8,7 +8,7 @@ This folder contains software lifecycle documentation organized according to DO-
 docs/do178c/
 ├── README.md                           # This file
 ├── plans/                              # Software Planning Documents
-│   └── (future: PSAC, SDP, SVP, etc.)
+│   └── PSAC.md                         # Plan for Software Aspects of Certification
 ├── standards/                          # Software Standards
 │   └── (future: coding standards, etc.)
 ├── requirements/                       # Software Requirements
@@ -29,6 +29,7 @@ docs/do178c/
 
 | Objective | Document | Status |
 |-----------|----------|--------|
+| A-1: Software Planning | `plans/PSAC.md` | ✅ Draft |
 | A-7: Structural Coverage Analysis | `verification/coverage_analysis.md` | ✅ Initial |
 | A-7: Deactivated Code Analysis | `verification/deactivated_code.md` | ✅ Initial |
 | A-5: Test Traceability | `verification/test_traceability.md` | ✅ Initial |
