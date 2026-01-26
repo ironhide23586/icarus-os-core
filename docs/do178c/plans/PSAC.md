@@ -4,7 +4,7 @@
 **Version:** 0.1  
 **Date:** 2026-01-26  
 **Status:** Draft  
-**Classification:** Company Confidential  
+**Classification:** Public (Open Source)  
 
 ---
 
@@ -389,11 +389,11 @@ The following data items are produced per DO-178C:
 | Data Item | Document ID | Status |
 |-----------|-------------|--------|
 | Plan for Software Aspects of Certification | ICARUS-PSAC-001 | Draft |
-| Software Development Plan | ICARUS-SDP-001 | Planned |
-| Software Verification Plan | ICARUS-SVP-001 | Planned |
-| Software Configuration Management Plan | ICARUS-SCMP-001 | Planned |
-| Software Quality Assurance Plan | ICARUS-SQAP-001 | Planned |
-| Software Requirements Specification | ICARUS-SRS-001 | Planned |
+| Software Development Plan | ICARUS-SDP-001 | Draft |
+| Software Verification Plan | ICARUS-SVP-001 | Draft |
+| Software Configuration Management Plan | ICARUS-SCMP-001 | Draft |
+| Software Quality Assurance Plan | ICARUS-SQAP-001 | Draft |
+| Software Requirements Specification | ICARUS-SRS-001 | Draft |
 | Software Design Description | ICARUS-SDD-001 | Planned |
 | Source Code | Repository | In Progress |
 | Executable Object Code | Build artifacts | In Progress |
