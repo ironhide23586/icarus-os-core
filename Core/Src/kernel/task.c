@@ -96,6 +96,10 @@ uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical sectio
 	uint32_t st = os_tick_count;
 	uint32_t delta;
 	while (1) {
+#ifdef HOST_TEST
+		// In test mode, auto-advance ticks to prevent infinite loop
+		os_tick_count++;
+#endif
 		// cppcheck-suppress duplicateExpression
 		// Initial delta may be 0, but will increase on subsequent iterations
 		delta = os_tick_count - st;
