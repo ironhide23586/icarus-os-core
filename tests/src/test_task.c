@@ -329,6 +329,22 @@ void test_os_exit_task_with_running_count(void) {
 	TEST_ASSERT_EQUAL(0, current_cleanup_task_idx);
 }
 
+// Test: os_exit_task - cleanup_task_idx at max (boundary case)
+void test_os_exit_task_cleanup_idx_max(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	current_task_index = 0;
+	running_task_count = 1;
+	current_cleanup_task_idx = MAX_TASKS - 1;  // At max, can't add more
+	
+	os_exit_task();
+	
+	// Task should be FINISHED
+	TEST_ASSERT_EQUAL(TASK_FINISHED, task_list[0]->task_state);
+	// cleanup_task_idx should stay at max (can't increment past MAX_TASKS - 1)
+	TEST_ASSERT_EQUAL(MAX_TASKS - 1, current_cleanup_task_idx);
+}
+
 // Test: os_exit_task - with running_task_count == 0 (should not decrement below 0)
 void test_os_exit_task_zero_running_count(void) {
 	test_init_task_list();
@@ -720,6 +736,26 @@ void test_os_kill_process_suicide(void) {
 	TEST_ASSERT_EQUAL(1, running_task_count);
 }
 
+// Test: os_kill_process - cleanup_idx at max (boundary case)
+void test_os_kill_process_cleanup_idx_max(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	os_register_task(test_task_2, "task2");
+	
+	task_list[0]->task_state = TASK_READY;
+	task_list[1]->task_state = TASK_READY;
+	current_task_index = 0;
+	running_task_count = 2;
+	current_cleanup_task_idx = MAX_TASKS - 1;  // At max
+	
+	os_kill_process(1);
+	
+	// Task should be killed
+	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	// cleanup_task_idx should stay at max
+	TEST_ASSERT_EQUAL(MAX_TASKS - 1, current_cleanup_task_idx);
+}
+
 // Test: os_create_task - boundary: running_task_count == MAX_TASKS - 1
 void test_os_create_task_boundary_max_minus_one(void) {
 	running_task_count = MAX_TASKS - 1;
@@ -1081,6 +1117,7 @@ int main(void) {
 	RUN_TEST(test_os_start_no_tasks);
 	RUN_TEST(test_os_start_valid_tasks);
 	RUN_TEST(test_os_exit_task_with_running_count);
+	RUN_TEST(test_os_exit_task_cleanup_idx_max);
 	RUN_TEST(test_os_exit_task_zero_running_count);
 	
 	// Task management tests
@@ -1090,6 +1127,7 @@ int main(void) {
 	RUN_TEST(test_os_kill_process_index_zero_error);
 	RUN_TEST(test_os_kill_process_already_killed);
 	RUN_TEST(test_os_kill_process_suicide);
+	RUN_TEST(test_os_kill_process_cleanup_idx_max);
 	RUN_TEST(test_suicide);
 	RUN_TEST(test_print_finished_tasks);
 	
