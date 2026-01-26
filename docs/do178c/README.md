@@ -8,21 +8,23 @@ This folder contains software lifecycle documentation organized according to DO-
 docs/do178c/
 ├── README.md                           # This file
 ├── plans/                              # Software Planning Documents
-│   └── PSAC.md                         # Plan for Software Aspects of Certification
-├── standards/                          # Software Standards
-│   └── (future: coding standards, etc.)
+│   ├── PSAC.md                         # Plan for Software Aspects of Certification
+│   ├── SDP.md                          # Software Development Plan
+│   ├── SVP.md                          # Software Verification Plan
+│   ├── SCMP.md                         # Software Configuration Management Plan
+│   └── SQAP.md                         # Software Quality Assurance Plan
 ├── requirements/                       # Software Requirements
-│   └── (future: HLR, LLR documents)
+│   └── SRS.md                          # Software Requirements Specification
 ├── design/                             # Software Design Documents
-│   └── (future: architecture, etc.)
+│   └── (future: architecture, ICD)
 ├── verification/                       # Verification Documents
 │   ├── coverage_analysis.md            # Structural Coverage Analysis
 │   ├── deactivated_code.md             # Deactivated Code Analysis
 │   └── test_traceability.md            # Requirements-to-Test Traceability
 ├── configuration/                      # Configuration Management
-│   └── (future: CI/SCI documents)
+│   └── (future: SCI documents)
 └── quality/                            # Quality Assurance
-    └── (future: QA records)
+    └── (future: audit records)
 ```
 
 ## DO-178C Objectives Addressed
@@ -30,19 +32,24 @@ docs/do178c/
 | Objective | Document | Status |
 |-----------|----------|--------|
 | A-1: Software Planning | `plans/PSAC.md` | ✅ Draft |
+| A-1: Software Planning | `plans/SDP.md` | ✅ Draft |
+| A-1: Software Planning | `plans/SVP.md` | ✅ Draft |
+| A-1: Software Planning | `plans/SCMP.md` | ✅ Draft |
+| A-1: Software Planning | `plans/SQAP.md` | ✅ Draft |
+| A-3: Requirements | `requirements/SRS.md` | ✅ Draft |
 | A-7: Structural Coverage Analysis | `verification/coverage_analysis.md` | ✅ Initial |
 | A-7: Deactivated Code Analysis | `verification/deactivated_code.md` | ✅ Initial |
 | A-5: Test Traceability | `verification/test_traceability.md` | ✅ Initial |
 
 ## Design Assurance Level (DAL)
 
-Target DAL: **To Be Determined**
+Target DAL: **DAL C (Major)**
 
-Current test coverage supports:
-- DAL D: ✅ Ready (no structural coverage required)
-- DAL C: ⚠️ Partial (statement coverage ~79%, needs justification)
-- DAL B: ❌ Not ready (needs 100% statement + decision coverage)
-- DAL A: ❌ Not ready (needs MC/DC coverage)
+Current documentation supports:
+- DAL D: ✅ Ready
+- DAL C: ✅ Documentation complete, verification in progress
+- DAL B: ⚠️ Needs decision coverage analysis
+- DAL A: ❌ Needs MC/DC coverage analysis
 
 ## Version History
 
