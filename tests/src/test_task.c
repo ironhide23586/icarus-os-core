@@ -431,6 +431,24 @@ void test_print_finished_tasks(void) {
 	TEST_PASS(); // If we get here, no crash
 }
 
+// Test: os_yield
+void test_os_yield(void) {
+	// os_yield should:
+	// 1. Reset current_task_ticks_remaining to ticks_per_task
+	// 2. Set PendSV pending bit
+	
+	current_task_ticks_remaining = 10;  // Some arbitrary value
+	TEST_CLEAR_PENDSV();
+	
+	os_yield();
+	
+	// Verify ticks were reset
+	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	
+	// Verify PendSV was triggered
+	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
+}
+
 // Test: task_active_sleep
 void test_task_active_sleep(void) {
 	// Initialize task system
@@ -914,10 +932,19 @@ void test_platform_delay_zero(void) {
 }
 
 // Test: hal_init
-// Note: hal_init calls many HAL functions and may access hardware registers
-// For now, we'll skip this test as it may cause segfaults without proper hardware simulation
+// hal_init calls hardware initialization functions, all of which are mocked
 void test_hal_init(void) {
-	TEST_IGNORE_MESSAGE("hal_init calls hardware initialization - requires extensive hardware simulation");
+	// hal_init calls:
+	// - MPU_Config (mocked via HAL_MPU_* functions)
+	// - CPU_CACHE_Enable (mocked via SCB_Enable* functions)
+	// - HAL_Init (mocked)
+	// - SystemClock_Config (mocked via HAL_RCC_* functions)
+	// - MX_*_Init functions (all mocked)
+	
+	// This should not crash since all HAL functions are mocked
+	hal_init();
+	
+	TEST_PASS();
 }
 
 // ============================================================================
@@ -1067,6 +1094,7 @@ int main(void) {
 	RUN_TEST(test_print_finished_tasks);
 	
 	// Sleep tests
+	RUN_TEST(test_os_yield);
 	RUN_TEST(test_task_active_sleep);
 	RUN_TEST(test_task_blocking_sleep);
 	
