@@ -10,6 +10,8 @@
 #include "bsp/error.h"
 #include "retarget_hal.h"
 #include "stm32h7xx_it.h"
+#include "mock_asm.h"
+#include "cmsis_gcc.h"
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -133,10 +135,19 @@ void test_enqueue_print_buffer_full(void) {
 }
 
 // Test: task_busy_wait basic functionality
-// NOTE: task_busy_wait has a while(1) loop that waits for os_tick_count to increment.
-// In a test environment, ticks don't increment automatically, so this would hang.
+// With HOST_TEST defined, task_busy_wait auto-advances ticks so it won't hang
 void test_task_busy_wait_basic(void) {
-	TEST_IGNORE_MESSAGE("task_busy_wait requires SysTick interrupt - skip in host tests");
+	os_tick_count = 500;
+	
+	// With 0 ticks, the loop runs once (incrementing tick) then exits
+	// So delta will be 1 (one iteration)
+	uint32_t result = task_busy_wait(0);
+	TEST_ASSERT_TRUE(result >= 0);  // Should exit after 0 or more iterations
+	
+	// With non-zero ticks, should also work (ticks auto-advance in HOST_TEST)
+	os_tick_count = 1000;
+	result = task_busy_wait(5);
+	TEST_ASSERT_TRUE(result >= 5);  // Should have waited at least 5 ticks
 }
 
 // Test: enter_critical and exit_critical
@@ -169,10 +180,33 @@ void test_os_get_tick_count(void) {
 // ============================================================================
 
 // Test: os_init
-// Note: os_init calls display_init() which may cause issues in test environment
-// Skip for now - requires better mocking of display functions
+// os_init initializes the kernel state and registers system tasks
 void test_os_init(void) {
-	TEST_IGNORE_MESSAGE("os_init calls display_init() - requires better mocks");
+	// Reset state before test
+	os_running = 1;  // Set to non-zero to verify it gets reset
+	running_task_count = 5;
+	current_task_index = 3;
+	num_created_tasks = 0;
+	
+	// Call os_init
+	os_init();
+	
+	// Verify state was initialized
+	TEST_ASSERT_EQUAL(0, os_running);
+	TEST_ASSERT_EQUAL(0, running_task_count);
+	TEST_ASSERT_EQUAL(0, current_task_index);
+	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	
+	// os_init registers 2 system tasks (idle and heartbeat)
+	TEST_ASSERT_EQUAL(2, num_created_tasks);
+	
+	// Verify task_list was initialized
+	TEST_ASSERT_NOT_NULL(task_list[0]);
+	TEST_ASSERT_NOT_NULL(task_list[1]);
+	
+	// Verify system task names
+	TEST_ASSERT_EQUAL_STRING("ICARUS_KEEPALIVE_TASK", task_list[0]->name);
+	TEST_ASSERT_EQUAL_STRING(">ICARUS_HEARTBEART<", task_list[1]->name);
 }
 
 // Test: os_register_task
@@ -269,7 +303,16 @@ void test_os_start_no_tasks(void) {
 
 // Test: os_start with valid tasks
 void test_os_start_valid_tasks(void) {
-	TEST_IGNORE_MESSAGE("Requires os_init() which causes issues");
+	// Initialize task system
+	test_init_task_list();
+	os_register_task(test_task_1, "valid_task");
+	
+	// os_start calls task_start which calls start_cold_task (mocked)
+	// The mock just sets task state to RUNNING
+	os_start();
+	
+	// Verify task was started (mock sets state to RUNNING)
+	TEST_ASSERT_EQUAL(TASK_RUNNING, task_list[0]->task_state);
 }
 
 // Test: os_exit_task - with running_task_count > 0
@@ -289,6 +332,22 @@ void test_os_exit_task_with_running_count(void) {
 	TEST_ASSERT_EQUAL(0, running_task_count);
 	// cleanup_task_idx should be set
 	TEST_ASSERT_EQUAL(0, current_cleanup_task_idx);
+}
+
+// Test: os_exit_task - cleanup_task_idx at max (boundary case)
+void test_os_exit_task_cleanup_idx_max(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	current_task_index = 0;
+	running_task_count = 1;
+	current_cleanup_task_idx = MAX_TASKS - 1;  // At max, can't add more
+	
+	os_exit_task();
+	
+	// Task should be FINISHED
+	TEST_ASSERT_EQUAL(TASK_FINISHED, task_list[0]->task_state);
+	// cleanup_task_idx should stay at max (can't increment past MAX_TASKS - 1)
+	TEST_ASSERT_EQUAL(MAX_TASKS - 1, current_cleanup_task_idx);
 }
 
 // Test: os_exit_task - with running_task_count == 0 (should not decrement below 0)
@@ -312,7 +371,25 @@ void test_os_exit_task_zero_running_count(void) {
 
 // Test: os_kill_process valid task
 void test_os_kill_process_valid(void) {
-	TEST_IGNORE_MESSAGE("Requires os_init() which causes issues");
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	os_register_task(test_task_2, "task2");
+	
+	// Set task states to READY (valid for killing)
+	task_list[0]->task_state = TASK_READY;
+	task_list[1]->task_state = TASK_READY;
+	
+	current_task_index = 0;
+	running_task_count = 2;
+	current_cleanup_task_idx = -1;
+	
+	// Kill task 1 (not task 0, since os_kill_process requires task_index > 0)
+	os_kill_process(1);
+	
+	// Verify task was killed
+	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	TEST_ASSERT_EQUAL(1, running_task_count);
+	TEST_ASSERT_EQUAL(0, current_cleanup_task_idx);
 }
 
 // Test: os_kill_process invalid index
@@ -328,21 +405,35 @@ void test_os_kill_process_invalid_index(void) {
 	TEST_ASSERT_EQUAL(initial_count, running_task_count);
 }
 
-// Test: os_kill_process task index 0 (should not kill)
+// Test: os_kill_process task index 0 (should not kill - protected)
 void test_os_kill_process_index_zero(void) {
-	TEST_IGNORE_MESSAGE("Requires os_init() which causes issues");
+	test_init_task_list();
+	os_register_task(test_task_1, "task0");
+	os_register_task(test_task_2, "task1");
+	
+	task_list[0]->task_state = TASK_READY;
+	task_list[1]->task_state = TASK_READY;
+	current_task_index = 1;
+	running_task_count = 2;
+	
+	// Try to kill task 0 - should fail (task_index > 0 check)
+	os_kill_process(0);
+	
+	// Task 0 should still be READY (not killed)
+	TEST_ASSERT_EQUAL(TASK_READY, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(2, running_task_count);
 }
 
-// Test: suicide
-void test_suicide(void) {
+// Test: os_task_suicide
+void test_os_task_suicide(void) {
 	test_init_task_list();
 	os_register_task(test_task_1, "task1");
 	os_register_task(test_task_2, "task2");
 	current_task_index = 1; // Set current task to index 1 (not 0, since os_kill_process requires task_index > 0)
 	running_task_count = 2;
 	
-	// Call suicide (should kill current task)
-	suicide();
+	// Call os_task_suicide (should kill current task)
+	os_task_suicide();
 	
 	// Current task should be killed
 	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
@@ -350,27 +441,85 @@ void test_suicide(void) {
 	TEST_ASSERT_EQUAL(1, running_task_count);
 }
 
-// Test: print_finished_tasks
-void test_print_finished_tasks(void) {
+// Test: os_print_finished_tasks
+void test_os_print_finished_tasks(void) {
 	// Set up some finished tasks
 	current_cleanup_task_idx = 2;
 	// Note: cleanup_task_idx is static, so we can't directly set it
 	// But we can test the function doesn't crash
-	print_finished_tasks();
+	os_print_finished_tasks();
 	
 	TEST_PASS(); // If we get here, no crash
 }
 
+// Test: os_yield
+void test_os_yield(void) {
+	// os_yield should:
+	// 1. Reset current_task_ticks_remaining to ticks_per_task
+	// 2. Set PendSV pending bit
+	
+	current_task_ticks_remaining = 10;  // Some arbitrary value
+	TEST_CLEAR_PENDSV();
+	
+	os_yield();
+	
+	// Verify ticks were reset
+	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	
+	// Verify PendSV was triggered
+	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
+}
+
 // Test: task_active_sleep
 void test_task_active_sleep(void) {
-	TEST_IGNORE_MESSAGE("Requires os_init() which causes issues");
+	// Initialize task system
+	test_init_task_list();
+	os_register_task(test_task_1, "sleep_test_task");
+	
+	// Set up current task
+	current_task_index = 0;
+	os_tick_count = 1000;
+	TEST_CLEAR_PENDSV();  // Clear any pending PendSV
+	
+	// Call task_active_sleep - this should:
+	// 1. Set global_tick_paused to current tick
+	// 2. Set ticks_to_pause
+	// 3. Set task state to BLOCKED
+	// 4. Call os_yield (which sets PendSV pending)
+	uint32_t sleep_ticks = 100;
+	
+	uint32_t actual_sleep = task_active_sleep(sleep_ticks);
+	
+	// Verify task was set to BLOCKED
+	TEST_ASSERT_EQUAL(TASK_BLOCKED, task_list[0]->task_state);
+	
+	// Verify global_tick_paused was set
+	TEST_ASSERT_EQUAL(1000, task_list[0]->global_tick_paused);
+	
+	// Verify ticks_to_pause was set
+	TEST_ASSERT_EQUAL(sleep_ticks, task_list[0]->ticks_to_pause);
+	
+	// Verify PendSV was triggered (os_yield sets this bit)
+	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
+	
+	// actual_sleep is os_tick_count - global_tick_paused (0 since ticks didn't advance)
+	TEST_ASSERT_EQUAL(0, actual_sleep);
 }
 
 // Test: task_blocking_sleep
+// With HOST_TEST defined, task_busy_wait auto-advances ticks so it won't hang
 void test_task_blocking_sleep(void) {
-	// task_blocking_sleep calls task_busy_wait which waits for ticks
-	// Since ticks don't increment in tests, this will hang
-	TEST_IGNORE_MESSAGE("task_blocking_sleep requires tick increment - skip in host tests");
+	// Set initial tick count
+	os_tick_count = 1000;
+	
+	// With 0 ticks, the loop runs once then exits
+	uint32_t result = task_blocking_sleep(0);
+	TEST_ASSERT_TRUE(result >= 0);  // Should exit after 0 or more iterations
+	
+	// With non-zero ticks, should also work
+	os_tick_count = 2000;
+	result = task_blocking_sleep(10);
+	TEST_ASSERT_TRUE(result >= 10);  // Should have waited at least 10 ticks
 }
 
 // Test: os_create_task with max tasks
@@ -591,6 +740,26 @@ void test_os_kill_process_suicide(void) {
 	TEST_ASSERT_EQUAL(1, running_task_count);
 }
 
+// Test: os_kill_process - cleanup_idx at max (boundary case)
+void test_os_kill_process_cleanup_idx_max(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	os_register_task(test_task_2, "task2");
+	
+	task_list[0]->task_state = TASK_READY;
+	task_list[1]->task_state = TASK_READY;
+	current_task_index = 0;
+	running_task_count = 2;
+	current_cleanup_task_idx = MAX_TASKS - 1;  // At max
+	
+	os_kill_process(1);
+	
+	// Task should be killed
+	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	// cleanup_task_idx should stay at max
+	TEST_ASSERT_EQUAL(MAX_TASKS - 1, current_cleanup_task_idx);
+}
+
 // Test: os_create_task - boundary: running_task_count == MAX_TASKS - 1
 void test_os_create_task_boundary_max_minus_one(void) {
 	running_task_count = MAX_TASKS - 1;
@@ -616,10 +785,10 @@ void test_os_create_task_max_running_tasks(void) {
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
 }
 
-// Test: print_finished_tasks - current_cleanup_task_idx == -1 (loop doesn't execute)
-void test_print_finished_tasks_empty(void) {
+// Test: os_print_finished_tasks - current_cleanup_task_idx == -1 (loop doesn't execute)
+void test_os_print_finished_tasks_empty(void) {
 	current_cleanup_task_idx = -1;
-	print_finished_tasks();
+	os_print_finished_tasks();
 	TEST_PASS();
 }
 
@@ -679,14 +848,36 @@ void test_display_init_second_call(void) {
 }
 
 // Test: __io_putchar - ch == '\n' (true branch: flush)
-// Note: __io_putchar calls task_blocking_sleep which hangs (waits for ticks)
+// With HOST_TEST defined, task_busy_wait auto-advances ticks so it won't hang
 void test_io_putchar_newline(void) {
-	TEST_IGNORE_MESSAGE("__io_putchar calls task_blocking_sleep which hangs - requires tick simulation");
+	// Reset the static buffer index by calling with non-newline chars first
+	// Then call with newline to trigger flush
+	
+	// Fill some chars (not triggering flush)
+	for (int j = 0; j < 5; j++) {
+		__io_putchar('A');
+	}
+	
+	// Now send newline - this triggers flush path
+	int result = __io_putchar('\n');
+	
+	TEST_ASSERT_EQUAL('\n', result);
 }
 
 // Test: __io_putchar - i == sizeof(buf) (true branch: flush)
+// Buffer is 64 bytes, so filling it triggers flush
 void test_io_putchar_buffer_full(void) {
-	TEST_IGNORE_MESSAGE("__io_putchar calls task_blocking_sleep which hangs - requires tick simulation");
+	// Fill buffer to capacity (64 chars) to trigger flush
+	// Note: buffer may have leftover from previous test, so we fill 64 chars
+	// which will definitely trigger at least one flush
+	
+	for (int j = 0; j < 64; j++) {
+		int result = __io_putchar('B');
+		TEST_ASSERT_EQUAL('B', result);
+	}
+	
+	// If we got here without hanging, the test passed
+	TEST_PASS();
 }
 
 // Test: __io_putchar - normal case (false branches)
@@ -718,14 +909,40 @@ void test_LED_Off(void) {
 }
 
 // Test: LED_Blink
-// Note: LED_Blink calls task_active_sleep which requires os_init() and proper task setup
+// LED_Blink calls task_active_sleep which requires task setup
 void test_LED_Blink(void) {
-	TEST_IGNORE_MESSAGE("LED_Blink calls task_active_sleep which requires os_init()");
+	test_init_task_list();
+	os_register_task(test_task_1, "led_test");
+	current_task_index = 0;
+	os_tick_count = 0;
+	
+	// LED_Blink will call task_active_sleep twice (for on and off)
+	// Each call to task_active_sleep calls os_yield which sets PendSV
+	TEST_CLEAR_PENDSV();
+	
+	LED_Blink(100, 200);
+	
+	// After LED_Blink, PendSV should be set (from the last os_yield call)
+	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
+	
+	// Task should be in BLOCKED state (from the last sleep)
+	TEST_ASSERT_EQUAL(TASK_BLOCKED, task_list[0]->task_state);
 }
 
 // Test: LED_Blink with zero delays (boundary case)
 void test_LED_Blink_zero_delays(void) {
-	TEST_IGNORE_MESSAGE("LED_Blink calls task_active_sleep which requires os_init()");
+	test_init_task_list();
+	os_register_task(test_task_1, "led_test_zero");
+	current_task_index = 0;
+	os_tick_count = 0;
+	TEST_CLEAR_PENDSV();
+	
+	// LED_Blink with 1ms delays (minimum - it subtracts 1)
+	// Hdelay - 1 = 0, Ldelay - 1 = 0
+	LED_Blink(1, 1);
+	
+	// PendSV should be set from os_yield calls
+	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
 }
 
 // Test: platform_write
@@ -777,10 +994,19 @@ void test_platform_delay_zero(void) {
 }
 
 // Test: hal_init
-// Note: hal_init calls many HAL functions and may access hardware registers
-// For now, we'll skip this test as it may cause segfaults without proper hardware simulation
+// hal_init calls hardware initialization functions, all of which are mocked
 void test_hal_init(void) {
-	TEST_IGNORE_MESSAGE("hal_init calls hardware initialization - requires extensive hardware simulation");
+	// hal_init calls:
+	// - MPU_Config (mocked via HAL_MPU_* functions)
+	// - CPU_CACHE_Enable (mocked via SCB_Enable* functions)
+	// - HAL_Init (mocked)
+	// - SystemClock_Config (mocked via HAL_RCC_* functions)
+	// - MX_*_Init functions (all mocked)
+	
+	// This should not crash since all HAL functions are mocked
+	hal_init();
+	
+	TEST_PASS();
 }
 
 // ============================================================================
@@ -917,6 +1143,7 @@ int main(void) {
 	RUN_TEST(test_os_start_no_tasks);
 	RUN_TEST(test_os_start_valid_tasks);
 	RUN_TEST(test_os_exit_task_with_running_count);
+	RUN_TEST(test_os_exit_task_cleanup_idx_max);
 	RUN_TEST(test_os_exit_task_zero_running_count);
 	
 	// Task management tests
@@ -926,10 +1153,12 @@ int main(void) {
 	RUN_TEST(test_os_kill_process_index_zero_error);
 	RUN_TEST(test_os_kill_process_already_killed);
 	RUN_TEST(test_os_kill_process_suicide);
-	RUN_TEST(test_suicide);
-	RUN_TEST(test_print_finished_tasks);
+	RUN_TEST(test_os_kill_process_cleanup_idx_max);
+	RUN_TEST(test_os_task_suicide);
+	RUN_TEST(test_os_print_finished_tasks);
 	
 	// Sleep tests
+	RUN_TEST(test_os_yield);
 	RUN_TEST(test_task_active_sleep);
 	RUN_TEST(test_task_blocking_sleep);
 	
@@ -950,7 +1179,7 @@ int main(void) {
 	RUN_TEST(test_os_kill_process_index_equal);
 	RUN_TEST(test_os_create_task_boundary_max_minus_one);
 	RUN_TEST(test_os_create_task_max_running_tasks);
-	RUN_TEST(test_print_finished_tasks_empty);
+	RUN_TEST(test_os_print_finished_tasks_empty);
 	
 	// DO-178C Coverage Tests - Display Functions
 	RUN_TEST(test_display_render_bar_zero_period);

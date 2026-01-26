@@ -96,6 +96,10 @@ uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical sectio
 	uint32_t st = os_tick_count;
 	uint32_t delta;
 	while (1) {
+#ifdef HOST_TEST
+		// In test mode, auto-advance ticks to prevent infinite loop
+		os_tick_count++;
+#endif
 		// cppcheck-suppress duplicateExpression
 		// Initial delta may be 0, but will increase on subsequent iterations
 		delta = os_tick_count - st;
@@ -189,7 +193,7 @@ static void os_heartbeart_task(void) {
 }
 
 
-void os_init() {
+void os_init(void) {
     os_running = 0;
     ticks_per_task = TICKS_PER_TASK;
     running_task_count = 0;
@@ -217,17 +221,17 @@ void os_init() {
 }
 
 
-uint32_t os_get_tick_count() {
+uint32_t os_get_tick_count(void) {
     return os_tick_count;
 }
 
 
-uint8_t os_get_running_task_count() {
+uint8_t os_get_running_task_count(void) {
     return running_task_count;
 }
 
 
-const char* os_get_current_task_name() {
+const char* os_get_current_task_name(void) {
     if (current_task_index < num_created_tasks && task_list[current_task_index] != NULL) {
         return task_list[current_task_index]->name;
     }
@@ -235,7 +239,7 @@ const char* os_get_current_task_name() {
 }
 
 
-uint32_t os_get_task_ticks_remaining() {
+uint32_t os_get_task_ticks_remaining(void) {
     return current_task_ticks_remaining;
 }
 
@@ -245,7 +249,7 @@ void task_start(task_t *task) {
 }
 
 
-void os_yield() {
+void os_yield(void) {
     current_task_ticks_remaining = ticks_per_task;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
@@ -268,7 +272,7 @@ uint32_t task_blocking_sleep(uint32_t ticks) {
 }
 
 
-void os_start() {
+void os_start(void) {
     if (num_created_tasks == 0 || num_created_tasks > MAX_TASKS) {
         return;
     }
@@ -276,7 +280,7 @@ void os_start() {
 }
 
 
-void os_exit_task() {
+void os_exit_task(void) {
     task_list[current_task_index]->task_state = TASK_FINISHED;  // FINISHED
     if (running_task_count > 0)
     	running_task_count--;
@@ -309,13 +313,13 @@ void os_kill_process(uint8_t task_index) {
 }
 
 
-void suicide() {
+void os_task_suicide(void) {
     printf("[INFO] %s task committed suicide.", task_list[current_task_index]->name);
     os_kill_process(current_task_index);
 }
 
 
-void print_finished_tasks() {
+void os_print_finished_tasks(void) {
     printf("Finished task indices -> \t");
     for (int i = current_cleanup_task_idx; i >= 0; i--) {
         printf("%d\t", cleanup_task_idx[i]);

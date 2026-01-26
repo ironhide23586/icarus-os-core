@@ -67,8 +67,8 @@
             <location file="../Core/Src/bsp/display.c" line="0" column="0"/>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" verbose="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" cwe="571" file0="../Core/Src/kernel/task.c">
-            <location file="../Core/Src/kernel/task.c" line="296" column="38" info="Condition &apos;task_index&lt;num_created_tasks&apos; is always true"/>
-            <location file="../Core/Src/kernel/task.c" line="291" column="20" info="Assuming that condition &apos;task_index&gt;=num_created_tasks&apos; is not redundant"/>
+            <location file="../Core/Src/kernel/task.c" line="300" column="38" info="Condition &apos;task_index&lt;num_created_tasks&apos; is always true"/>
+            <location file="../Core/Src/kernel/task.c" line="295" column="20" info="Assuming that condition &apos;task_index&gt;=num_created_tasks&apos; is not redundant"/>
         </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>
     </errors>

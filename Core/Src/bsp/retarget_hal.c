@@ -107,7 +107,7 @@ void platform_delay(uint32_t ms) {
 
 
 
-void hal_init() {
+void hal_init(void) {
   /* USER CODE BEGIN 1 */
   #ifdef W25Qxx
     SCB->VTOR = QSPI_BASE;

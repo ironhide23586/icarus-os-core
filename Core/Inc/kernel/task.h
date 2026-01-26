@@ -91,7 +91,7 @@ void os_register_task(void (*function)(void), const char *name);
 void os_start(void);
 void os_exit_task(void);
 void os_kill_process(uint8_t task_index);
-void suicide(void);
+void os_task_suicide(void);
 void os_yield(void);
 
 uint32_t task_active_sleep(uint32_t ticks);
@@ -104,7 +104,7 @@ uint8_t os_get_running_task_count(void);
 const char* os_get_current_task_name(void);
 
 bool enqueue_print_buffer(uint8_t c);
-void print_finished_tasks(void);
+void os_print_finished_tasks(void);
 
 
 //void enter_critical();
