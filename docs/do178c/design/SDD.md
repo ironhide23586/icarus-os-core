@@ -895,12 +895,14 @@ This matrix traces each requirement to its design element(s).
 
 ### 6.3 Traceability Summary
 
-| Category | Total | Designed | Implemented | Coverage |
-|----------|-------|----------|-------------|----------|
-| Kernel | 32 | 32 | 18 | 56% |
-| BSP | 14 | 14 | 10 | 71% |
-| AI Runtime | 22 | 22 | 0 | 0% |
-| **Total** | **68** | **68** | **28** | **41%** |
+This matrix covers High-Level Requirements (HLR) only. Performance (PRF) and Safety (SAF) requirements are traced separately in the SRS.
+
+| Category | Total HLR | Designed | Implemented | Coverage |
+|----------|-----------|----------|-------------|----------|
+| Kernel | 35 | 35 | 19 | 54% |
+| BSP | 15 | 15 | 11 | 73% |
+| AI Runtime | 24 | 24 | 0 | 0% |
+| **Total** | **74** | **74** | **30** | **41%** |
 
 ---
 

@@ -4,6 +4,7 @@
 **Version:** 0.1  
 **Date:** 2026-01-26  
 **Status:** Draft  
+**Classification:** Public (Open Source)  
 
 ## 1. Purpose
 

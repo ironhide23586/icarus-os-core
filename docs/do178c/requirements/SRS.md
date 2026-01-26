@@ -375,12 +375,12 @@ See `ICARUS-VER-003 Test Traceability Matrix` for complete mapping.
 
 | Category | Total | Implemented | Planned |
 |----------|-------|-------------|---------|
-| Kernel | 32 | 18 | 14 |
-| BSP | 14 | 10 | 4 |
-| AI Runtime | 22 | 0 | 22 |
-| Performance | 15 | 8 | 7 |
-| Safety | 8 | 1 | 7 |
-| **Total** | **91** | **37** | **54** |
+| Kernel | 35 | 19 | 16 |
+| BSP | 15 | 11 | 4 |
+| AI Runtime | 24 | 0 | 24 |
+| Performance | 18 | 10 | 8 |
+| Safety | 9 | 1 | 8 |
+| **Total** | **101** | **41** | **60** |
 
 ---
 
