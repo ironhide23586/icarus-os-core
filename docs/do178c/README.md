@@ -16,7 +16,7 @@ docs/do178c/
 ├── requirements/                       # Software Requirements
 │   └── SRS.md                          # Software Requirements Specification
 ├── design/                             # Software Design Documents
-│   └── (future: architecture, ICD)
+│   └── SDD.md                          # Software Design Description
 ├── verification/                       # Verification Documents
 │   ├── coverage_analysis.md            # Structural Coverage Analysis
 │   ├── deactivated_code.md             # Deactivated Code Analysis
@@ -37,6 +37,7 @@ docs/do178c/
 | A-1: Software Planning | `plans/SCMP.md` | ✅ Draft |
 | A-1: Software Planning | `plans/SQAP.md` | ✅ Draft |
 | A-3: Requirements | `requirements/SRS.md` | ✅ Draft |
+| A-4: Design | `design/SDD.md` | ✅ Draft |
 | A-7: Structural Coverage Analysis | `verification/coverage_analysis.md` | ✅ Initial |
 | A-7: Deactivated Code Analysis | `verification/deactivated_code.md` | ✅ Initial |
 | A-5: Test Traceability | `verification/test_traceability.md` | ✅ Initial |

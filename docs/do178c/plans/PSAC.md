@@ -394,7 +394,7 @@ The following data items are produced per DO-178C:
 | Software Configuration Management Plan | ICARUS-SCMP-001 | Draft |
 | Software Quality Assurance Plan | ICARUS-SQAP-001 | Draft |
 | Software Requirements Specification | ICARUS-SRS-001 | Draft |
-| Software Design Description | ICARUS-SDD-001 | Planned |
+| Software Design Description | ICARUS-SDD-001 | Draft |
 | Source Code | Repository | In Progress |
 | Executable Object Code | Build artifacts | In Progress |
 | Software Verification Cases and Procedures | ICARUS-SVCP-001 | In Progress |
