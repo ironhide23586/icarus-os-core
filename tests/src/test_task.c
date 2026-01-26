@@ -424,16 +424,16 @@ void test_os_kill_process_index_zero(void) {
 	TEST_ASSERT_EQUAL(2, running_task_count);
 }
 
-// Test: suicide
-void test_suicide(void) {
+// Test: os_task_suicide
+void test_os_task_suicide(void) {
 	test_init_task_list();
 	os_register_task(test_task_1, "task1");
 	os_register_task(test_task_2, "task2");
 	current_task_index = 1; // Set current task to index 1 (not 0, since os_kill_process requires task_index > 0)
 	running_task_count = 2;
 	
-	// Call suicide (should kill current task)
-	suicide();
+	// Call os_task_suicide (should kill current task)
+	os_task_suicide();
 	
 	// Current task should be killed
 	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
@@ -441,13 +441,13 @@ void test_suicide(void) {
 	TEST_ASSERT_EQUAL(1, running_task_count);
 }
 
-// Test: print_finished_tasks
-void test_print_finished_tasks(void) {
+// Test: os_print_finished_tasks
+void test_os_print_finished_tasks(void) {
 	// Set up some finished tasks
 	current_cleanup_task_idx = 2;
 	// Note: cleanup_task_idx is static, so we can't directly set it
 	// But we can test the function doesn't crash
-	print_finished_tasks();
+	os_print_finished_tasks();
 	
 	TEST_PASS(); // If we get here, no crash
 }
@@ -785,10 +785,10 @@ void test_os_create_task_max_running_tasks(void) {
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
 }
 
-// Test: print_finished_tasks - current_cleanup_task_idx == -1 (loop doesn't execute)
-void test_print_finished_tasks_empty(void) {
+// Test: os_print_finished_tasks - current_cleanup_task_idx == -1 (loop doesn't execute)
+void test_os_print_finished_tasks_empty(void) {
 	current_cleanup_task_idx = -1;
-	print_finished_tasks();
+	os_print_finished_tasks();
 	TEST_PASS();
 }
 
@@ -1154,8 +1154,8 @@ int main(void) {
 	RUN_TEST(test_os_kill_process_already_killed);
 	RUN_TEST(test_os_kill_process_suicide);
 	RUN_TEST(test_os_kill_process_cleanup_idx_max);
-	RUN_TEST(test_suicide);
-	RUN_TEST(test_print_finished_tasks);
+	RUN_TEST(test_os_task_suicide);
+	RUN_TEST(test_os_print_finished_tasks);
 	
 	// Sleep tests
 	RUN_TEST(test_os_yield);
@@ -1179,7 +1179,7 @@ int main(void) {
 	RUN_TEST(test_os_kill_process_index_equal);
 	RUN_TEST(test_os_create_task_boundary_max_minus_one);
 	RUN_TEST(test_os_create_task_max_running_tasks);
-	RUN_TEST(test_print_finished_tasks_empty);
+	RUN_TEST(test_os_print_finished_tasks_empty);
 	
 	// DO-178C Coverage Tests - Display Functions
 	RUN_TEST(test_display_render_bar_zero_period);
