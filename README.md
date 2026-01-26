@@ -1,18 +1,42 @@
 # ICARUS OS Core
 
-A minimal, deterministic real-time kernel for Cortex-M. No flight logic. No AI. No magic. Just rock-solid foundations.
+**Intelligent Certifiable Autonomous Real-time Unified System**
+
+A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C certification. Built from the ground up with safety-critical aerospace and defense applications in mind.
 
 > **⚠️ WARNING: This is work in progress and NOT production ready.**
 > 
 > This kernel is under active development. It may contain bugs, incomplete features, and is not suitable for use in production systems. Use at your own risk.
 
+---
+
+## Highlights
+
+| Metric | Status |
+|--------|--------|
+| **Test Coverage** | 79.3% line, 77.6% function |
+| **Unit Tests** | 76 tests, 0 failures |
+| **Static Analysis** | cppcheck clean |
+| **Certification Target** | DO-178C DAL C |
+| **Coding Standard** | MISRA C:2012 subset |
+
+---
+
 ## Overview
 
 ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750). The kernel provides deterministic task scheduling, context switching, and a clean API for embedded real-time applications.
 
+### Vision
+
+ICARUS is designed to be the first open-source RTOS with:
+- **Native AI integration** with certifiable determinism (planned)
+- **DO-178C compliance by design** (not retrofitted)
+- **Hardware-agnostic portability** across safety-critical platforms
+- **Formal verification readiness** for DAL A applications (future)
+
 ### Key Features
 
-- **Preemptive Round-Robin Scheduling**: Time-sliced task execution with configurable time quantum
+- **Preemptive Round-Robin Scheduling**: Time-sliced task execution with configurable time quantum (50ms default)
 - **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
@@ -20,6 +44,89 @@ ICARUS OS is a lightweight, preemptive real-time operating system kernel designe
 - **Visual Debugging**: Terminal-based display system with progress bars and task visualization
 - **USB CDC Support**: Serial communication via USB Virtual COM Port
 - **MPU Configuration**: Memory Protection Unit setup for QSPI flash access
+- **MISRA C Compliant**: Follows MISRA C:2012 coding standards
+
+---
+
+## DO-178C Certification
+
+ICARUS OS is being developed with DO-178C DAL C certification as a primary goal. Complete certification documentation is available in `docs/do178c/`.
+
+### Documentation Suite
+
+| Category | Documents |
+|----------|-----------|
+| **Plans** | PSAC, SDP, SVP, SCMP, SQAP |
+| **Requirements** | SRS (101 requirements: 41 implemented, 60 planned) |
+| **Design** | SDD with full traceability matrix |
+| **Verification** | Coverage analysis, deactivated code analysis, test traceability |
+
+### Compliance Status
+
+| Objective | Status |
+|-----------|--------|
+| Static analysis (cppcheck) | ✅ Complete |
+| MISRA C:2012 subset | ✅ Complete |
+| Unit testing (Unity) | ✅ 76 tests |
+| Line coverage | ✅ 79.3% |
+| Function coverage | ✅ 77.6% |
+| Requirements traceability | ✅ SRS complete |
+| Design traceability | ✅ SDD complete |
+| MC/DC coverage | 🔄 In progress |
+| PC-lint Plus (full MISRA) | 📋 Planned |
+| Formal verification | 📋 Planned (DAL B) |
+
+### Running Verification
+
+```bash
+# Run all tests
+cd tests && make clean test
+
+# Generate coverage report
+cd tests && make coverage
+
+# Run static analysis
+cd build && make cppcheck
+```
+
+---
+
+## Development Roadmap
+
+```
+Phase 1: Foundation (Current) ✅
+├── Preemptive scheduler
+├── Task management
+├── Basic BSP
+├── Host-based testing (79.3% coverage)
+└── DO-178C documentation suite
+
+Phase 2: Hardening (Q2 2026)
+├── Memory protection (MPU)
+├── Stack overflow detection
+├── Watchdog integration
+└── Fault recovery
+
+Phase 3: Communication (Q3 2026)
+├── Inter-process communication (IPC)
+├── Message queues
+├── Semaphores/Mutexes
+└── Event flags
+
+Phase 4: AI Runtime (Q4 2026)
+├── Deterministic inference engine
+├── Fixed-point neural network support (int8/int16)
+├── Model verification framework
+└── WCET-bounded execution
+
+Phase 5: Advanced Features (2027)
+├── Multi-core support (AMP/SMP)
+├── Hypervisor mode
+├── Time/Space partitioning (ARINC 653)
+└── Formal verification integration
+```
+
+---
 
 ## Architecture
 
@@ -48,6 +155,17 @@ ICARUS OS is a lightweight, preemptive real-time operating system kernel designe
 └─────────────────────────────────────────────────────────┘
 ```
 
+### Target Platforms
+
+| Platform | Status | DAL Target | Use Case |
+|----------|--------|------------|----------|
+| **STM32H7** (Cortex-M7) | ✅ Primary | DAL C | UAV flight controllers, sensors |
+| **STM32F4** (Cortex-M4) | Planned | DAL D | Cost-sensitive applications |
+| **RISC-V** (RV32IMAC) | Planned | DAL C | Open hardware initiatives |
+| **Xilinx Zynq** (Cortex-A9 + FPGA) | Planned | DAL B | AI acceleration, radar |
+| **x86-64** (Host) | ✅ Testing | N/A | Development and CI testing |
+
+---
 
 ## Kernel Components
 
@@ -71,42 +189,28 @@ typedef struct {
 
 ### Task States
 
-- **TASK_COLD (0)**: Newly created, never executed
-- **TASK_RUNNING (1)**: Currently executing
-- **TASK_READY (2)**: Ready to run, waiting for scheduler
-- **TASK_BLOCKED (3)**: Sleeping or waiting for event
-- **TASK_KILLED (4)**: Terminated by another task
-- **TASK_FINISHED (5)**: Completed execution normally
+| State | Value | Description |
+|-------|-------|-------------|
+| TASK_COLD | 0 | Newly created, never executed |
+| TASK_RUNNING | 1 | Currently executing |
+| TASK_READY | 2 | Ready to run, waiting for scheduler |
+| TASK_BLOCKED | 3 | Sleeping or waiting for event |
+| TASK_KILLED | 4 | Terminated by another task |
+| TASK_FINISHED | 5 | Completed execution normally |
 
 ### Scheduler
 
-The kernel implements a **preemptive round-robin scheduler** with the following characteristics:
+The kernel implements a **preemptive round-robin scheduler**:
 
-- **Time Quantum**: Configurable via `TICKS_PER_TASK` (default: 50 ticks)
+- **Time Quantum**: Configurable via `TICKS_PER_TASK` (default: 50 ticks = 50ms)
 - **Scheduling Trigger**: SysTick interrupt decrements `current_task_ticks_remaining`
 - **Context Switch**: PendSV exception performs actual task switch
 - **Task Selection**: Circular search for next READY or COLD task
 - **Blocked Task Wake**: Automatically wakes tasks when sleep period expires
 
-#### Scheduling Algorithm
-
-1. SysTick fires every 1ms
-2. Decrement `current_task_ticks_remaining`
-3. When counter reaches 0:
-   - Set PendSV pending bit
-   - Reset counter to `TICKS_PER_TASK`
-4. PendSV handler:
-   - Save current task context (R4-R11, PSP)
-   - Find next runnable task (circular search)
-   - Check blocked tasks for wake-up
-   - Restore next task context
-   - Switch to next task
-
 ### Context Switching
 
-Context switching is implemented in ARM assembly (`context_switch.s`) for optimal performance:
-
-#### `os_yield_pendsv` - Main Context Switch Handler
+Context switching is implemented in ARM assembly (`context_switch.s`) for optimal performance and determinism:
 
 - **Saves**: R4-R11 (callee-saved registers) to current task's stack
 - **Stores**: Updated PSP to TCB
@@ -115,197 +219,68 @@ Context switching is implemented in ARM assembly (`context_switch.s`) for optima
 - **Restores**: R4-R11 from next task's stack
 - **Switches**: PSP to next task's stack pointer
 
-#### `start_cold_task` - Cold Task Startup
-
-- Initializes PSP with pre-stacked frame
-- Sets CONTROL register to use PSP (not MSP)
-- Enables interrupts
-- Branches to task function
-
-#### Stack Frame Layout
-
-When a task is created, the stack is initialized with:
-
-```
-High Address
-    ┌─────────────┐
-    │   PSR       │  ← Status register
-    │   PC        │  ← Task function address
-    │   LR        │  ← os_exit_task (return address)
-    │   R12       │
-    │   R3        │
-    │   R2        │
-    │   R1        │
-    │   R0        │  ← SP points here initially
-Low Address
-```
-
-## Board Support Package (BSP)
-
-### Display System (`bsp/display.c`)
-
-Terminal-based visualization system using ANSI escape codes:
-
-- **Progress Bars**: Visual representation of task execution periods
-- **Banner Display**: Heartbeat indicator with on/off states
-- **Fixed-Position Rendering**: Tasks render to dedicated terminal rows
-- **Non-Intrusive**: Cursor hidden, screen cleared on init
-
-#### Display Layout
-
-```
-Row 1-8:   ICARUS OS ASCII logo and header
-Row 9:     Separator line
-Row 10:    Heartbeat banner (if enabled)
-Row 11-13: Task progress bars (task_a, task_b, task_c)
-```
-
-#### Functions
-
-- `display_init()`: Clears screen, prints header, initializes task rows
-- `display_render_bar()`: Updates progress bar for a task
-- `display_render_banner()`: Updates heartbeat indicator
-
-### Hardware Abstraction (`bsp/retarget_hal.c`)
-
-Initializes all hardware peripherals:
-
-- **MPU Configuration**: Memory protection for QSPI flash
-- **Cache Enable**: Instruction and data cache
-- **Clock Configuration**: System clock setup (480 MHz)
-- **Peripheral Init**: GPIO, RTC, SPI4, TIM1, I2C2, USB Device
-
-### System Tick (`stm32h7xx_it.c`)
-
-SysTick interrupt handler (1ms period):
-
-```c
-void SysTick_Handler(void) {
-    os_tick_count++;  // Global tick counter
-    
-    // Preemptive scheduling
-    if (os_running && --current_task_ticks_remaining == 0 && scheduler_enabled) {
-        current_task_ticks_remaining = TICKS_PER_TASK;
-        SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;  // Trigger context switch
-    }
-    
-    HAL_IncTick();  // HAL tick counter
-}
-```
+---
 
 ## API Reference
 
 ### Kernel Initialization
 
 ```c
-void os_init(void);
+void os_init(void);      // Initialize kernel, create system tasks
+void os_start(void);     // Start scheduler (never returns)
 ```
-Initializes the kernel, creates system tasks (idle, heartbeat), and sets up task pools.
-
-```c
-void os_start(void);
-```
-Starts the kernel scheduler. This function never returns - it begins executing the first task.
 
 ### Task Management
 
 ```c
 void os_register_task(void (*function)(void), const char *name);
+void os_yield(void);                        // Yield CPU to next task
+uint32_t task_active_sleep(uint32_t ticks); // Sleep, allow other tasks
+uint32_t task_blocking_sleep(uint32_t ticks); // Busy-wait sleep
+void os_exit_task(void);                    // Terminate current task
+void os_kill_process(uint8_t task_index);   // Kill task by index
+void os_task_suicide(void);                 // Kill current task
 ```
-Registers a new task with the kernel. The task will be created in COLD state.
-
-**Parameters:**
-- `function`: Task entry point (must be `void function(void)`)
-- `name`: Task name for debugging (max 32 characters)
-
-**Example:**
-```c
-os_register_task(my_task, "my_task");
-```
-
-### Task Control
-
-```c
-void os_yield(void);
-```
-Voluntarily yields the CPU to the next task. Resets the time quantum.
-
-```c
-uint32_t task_active_sleep(uint32_t ticks);
-```
-Puts the current task to sleep for the specified number of ticks. Other tasks can run during this time. Returns actual sleep duration.
-
-```c
-uint32_t task_blocking_sleep(uint32_t ticks);
-```
-Busy-waits for the specified number of ticks. CPU is not yielded. Use sparingly.
-
-```c
-void os_exit_task(void);
-```
-Terminates the current task. Task state changes to FINISHED.
-
-```c
-void os_kill_process(uint8_t task_index);
-```
-Kills another task by index. Task state changes to KILLED.
-
-```c
-void suicide(void);
-```
-Kills the current task (convenience wrapper).
 
 ### System Information
 
 ```c
-uint32_t os_get_tick_count(void);
-```
-Returns the global system tick count (milliseconds since boot).
-
-```c
-const char* os_get_current_task_name(void);
-```
-Returns the name of the currently running task.
-
-```c
-uint32_t os_get_task_ticks_remaining(void);
-```
-Returns remaining ticks in the current time quantum.
-
-```c
-uint8_t os_get_running_task_count(void);
-```
-Returns the number of tasks in RUNNING or READY state.
-
-## Configuration
-
-### Kernel Configuration (`Core/Inc/main.h`)
-
-```c
-#define TICKS_PER_TASK 50  // Time quantum per task (in SysTick periods = 50ms)
+uint32_t os_get_tick_count(void);           // System tick count (ms)
+const char* os_get_current_task_name(void); // Current task name
+uint32_t os_get_task_ticks_remaining(void); // Remaining time quantum
+uint8_t os_get_running_task_count(void);    // Active task count
 ```
 
-### Task Limits (`Core/Inc/kernel/task.h`)
+---
 
-```c
-#define MAX_TASKS 10              // Maximum number of tasks
-#define STACK_WORDS 512           // Stack size per task (512 * 4 = 2048 bytes)
-#define MAX_TASK_NAME_LENGTH 32   // Maximum task name length
+## Quick Start
+
+### Building
+
+```bash
+# Build with Makefile (recommended)
+cd build
+make clean all
+
+# Or with STM32CubeIDE
+# Open project and Build All
 ```
 
-### Display Configuration (`Core/Inc/bsp/display.h`)
+### Running Tests
 
-```c
-#define ENABLE_HEARTBEAT_VISUALIZATION 1  // Enable/disable heartbeat display
-
-// Task period durations (in ticks)
-#define TASK_A_PERIOD_TICKS  2000  // 2 seconds
-#define TASK_B_PERIOD_TICKS  4000  // 4 seconds
-#define TASK_C_PERIOD_TICKS  3000  // 3 seconds
-
-#define RENDER_INTERVAL_TICKS  20  // Display update frequency
-#define CYCLE_PAUSE_TICKS      100 // Pause between task cycles
+```bash
+cd tests
+make clean test          # Run 76 unit tests
+make coverage            # Generate coverage report (79.3%)
 ```
+
+### Flashing
+
+1. Connect STM32H750 via ST-Link
+2. Flash using STM32CubeIDE or `st-flash`
+3. Connect USB for serial terminal output
+
+---
 
 ## Code Structure
 
@@ -313,207 +288,80 @@ Returns the number of tasks in RUNNING or READY state.
 icarus-os-core/
 ├── Core/
 │   ├── Inc/
-│   │   ├── main.h                    # Main header, kernel config
-│   │   ├── kernel/
-│   │   │   └── task.h                # Task API and TCB definition
-│   │   └── bsp/
-│   │       ├── display.h             # Display system API
-│   │       ├── retarget_hal.h        # HAL initialization
-│   │       ├── gpio.h                # GPIO configuration
-│   │       ├── i2c.h                 # I2C configuration
-│   │       ├── spi.h                 # SPI configuration
-│   │       ├── rtc.h                 # RTC configuration
-│   │       ├── tim.h                 # Timer configuration
-│   │       └── stm32h7xx_it.h        # Interrupt handlers
+│   │   ├── kernel/task.h          # Task API and TCB
+│   │   └── bsp/                   # BSP headers
 │   └── Src/
-│       ├── main.c                    # Application entry, user tasks
+│       ├── main.c                 # Application entry
 │       ├── kernel/
-│       │   ├── task.c                # Task management, scheduler logic
-│       │   └── context_switch.s      # Assembly context switching
-│       └── bsp/
-│           ├── display.c              # Terminal display system
-│           ├── retarget_hal.c         # Hardware initialization
-│           ├── gpio.c                 # GPIO setup
-│           ├── i2c.c                  # I2C setup
-│           ├── spi.c                  # SPI setup
-│           ├── rtc.c                  # RTC setup
-│           ├── tim.c                  # Timer setup
-│           └── stm32h7xx_it.c         # Interrupt service routines
-├── Drivers/                           # STM32 HAL drivers
-├── Middlewares/                       # USB Device Library
-├── USB_DEVICE/                        # USB CDC configuration
-├── STM32H750VBTX_FLASH.ld             # Flash linker script
-└── STM32H750VBTX_RAM.ld               # RAM linker script
+│       │   ├── task.c             # Task management
+│       │   └── context_switch.s   # Assembly context switch
+│       └── bsp/                   # Board support
+├── docs/
+│   └── do178c/                    # DO-178C documentation
+│       ├── plans/                 # PSAC, SDP, SVP, SCMP, SQAP
+│       ├── requirements/          # SRS
+│       ├── design/                # SDD
+│       └── verification/          # Coverage, traceability
+├── tests/
+│   ├── src/test_task.c            # 76 unit tests
+│   ├── mocks/                     # Hardware mocks
+│   └── unity/                     # Unity test framework
+├── build/
+│   └── reports/                   # Static analysis, coverage
+├── Drivers/                       # STM32 HAL
+└── Middlewares/                   # USB Device Library
 ```
 
-## System Tasks
+---
 
-The kernel automatically creates two system tasks:
+## Configuration
 
-1. **ICARUS_KEEPALIVE_TASK** (`os_idle_task`): Idle task that initializes display and yields CPU
-2. **ICARUS_HEARTBEART_TASK** (`os_heartbeart_task`): Heartbeat LED and display indicator
-
-These tasks are registered first (indices 0 and 1), so user tasks start at index 2.
-
-## Example Application
-
-The main application demonstrates three concurrent tasks with different execution periods:
+### Kernel (`Core/Inc/main.h`)
 
 ```c
-void test_task_a(void) {
-    const char* task_name = os_get_current_task_name();
-    
-    while (1) {
-        uint32_t period_start = os_get_tick_count();
-        
-        // Render progress bar continuously
-        do {
-            uint32_t elapsed = os_get_tick_count() - period_start;
-            display_render_bar(ROW_TASK_A, task_name, elapsed, TASK_A_PERIOD_TICKS);
-            
-            uint32_t remaining = (elapsed < TASK_A_PERIOD_TICKS) ? 
-                                 (TASK_A_PERIOD_TICKS - elapsed) : 0;
-            
-            if (remaining > 0) {
-                uint32_t sleep = (remaining < RENDER_INTERVAL_TICKS) ? 
-                                remaining : RENDER_INTERVAL_TICKS;
-                task_active_sleep(sleep);
-            }
-        } while (elapsed < TASK_A_PERIOD_TICKS);
-        
-        task_active_sleep(CYCLE_PAUSE_TICKS);
-    }
-}
+#define TICKS_PER_TASK 50  // Time quantum (50ms)
 ```
+
+### Task Limits (`Core/Inc/kernel/task.h`)
+
+```c
+#define MAX_TASKS 10              // Maximum tasks
+#define STACK_WORDS 512           // Stack per task (2KB)
+#define MAX_TASK_NAME_LENGTH 32   // Task name length
+```
+
+---
 
 ## Hardware Requirements
 
 - **MCU**: STM32H750VBTx (Cortex-M7, 480 MHz)
-- **Flash**: Internal or external QSPI flash
-- **RAM**: Internal SRAM
-- **Display**: Terminal via USB CDC (Virtual COM Port)
-- **LED**: GPIO pin E3 for heartbeat indicator
-- **Peripherals**: 
-  - SPI4: Display controller (ST7735)
-  - I2C2: IMU sensor (LSM9DS1)
-  - TIM1: Timer
-  - RTC: Real-time clock
-  - USB OTG FS: USB communication
+- **Flash**: Internal or external QSPI
+- **RAM**: Internal SRAM (DTCM, AXI SRAM)
+- **Display**: Terminal via USB CDC
+- **LED**: GPIO E3 for heartbeat
 
-## Build System
-
-The project includes both STM32CubeIDE and standalone Makefile build systems. The standalone Makefile provides enhanced features for DO-178C compliance.
-
-### Building with Makefile (Recommended for DO-178C)
-
-See `build/README.md` for detailed build instructions.
-
-**Quick start:**
-```bash
-cd build
-make                    # Build project
-make check-build        # Run static analysis + build
-make COVERAGE=yes all   # Build with code coverage
-make coverage-html      # Generate HTML coverage report
-```
-
-**Features:**
-- Enhanced compiler warnings (DO-178C preparation)
-- Static analysis with cppcheck
-- Code coverage with gcov/lcov
-- Clean build system without IDE dependencies
-
-### Building with STM32CubeIDE
-
-1. Open project in STM32CubeIDE
-2. Build project (Project → Build All)
-3. Flash to target (Run → Debug)
-
-### Debugging
-
-- USB CDC provides serial terminal output
-- Connect via serial terminal (115200 baud, 8N1)
-- Terminal should support ANSI escape codes for proper display
-
-## Memory Layout
-
-- **Stack per Task**: 512 words (2048 bytes)
-- **Task Pool**: Static allocation for MAX_TASKS tasks
-- **Stack Pool**: Static allocation for MAX_TASKS stacks
-- **Print Buffer**: 64 bytes circular buffer for printf
-
-## Interrupt Priority
-
-- **SysTick**: Highest priority (tick counter and scheduler)
-- **PendSV**: Lowest priority (context switching)
-- **USB OTG FS**: Medium priority (USB communication)
-
-## Critical Sections
-
-The kernel uses a critical section mechanism to protect shared resources:
-
-```c
-static inline void enter_critical() {
-    scheduler_enabled = false;
-    critical_stack_depth++;
-}
-
-static inline void exit_critical() {
-    if (--critical_stack_depth == 0)
-        scheduler_enabled = true;
-}
-```
-
-Critical sections disable preemption but do not disable interrupts. Use for short operations only.
-
-## DO-178C Compliance Status
-
-This project is being developed with DO-178C standards in mind. Current compliance features:
-
-✅ **Completed:**
-- Static analysis with cppcheck (0 errors, 0 warnings)
-- Enhanced compiler warnings (-Wall -Wextra -Wpedantic, etc.)
-- Code coverage support (gcov/lcov)
-- Unit testing framework (Unity)
-- Host-based unit tests with mocks
-- Test build system integrated with coverage
-
-🔄 **In Progress:**
-- Expanding test coverage (currently 5 tests, targeting 100% statement coverage)
-- Code coverage collection and reporting
-- Requirements traceability
-
-📋 **Planned:**
-- MISRA-C compliance checking
-- MC/DC coverage analysis
-- Integration tests
-- Formal verification documentation
-
-### Running Tests
-
-```bash
-cd tests
-make test              # Run tests
-make COVERAGE=yes test # Run tests with coverage
-make coverage-html     # Generate HTML coverage report
-```
-
-See `tests/README.md` for detailed testing documentation.
+---
 
 ## Limitations
 
-**Note**: This kernel is work in progress and not production ready. The following limitations are current as of this version:
+Current limitations (work in progress):
 
-- **No Priority Preemption**: All tasks have equal priority (round-robin only)
-- **No Mutex/Semaphore**: No synchronization primitives (yet)
-- **No Dynamic Allocation**: All memory is statically allocated
-- **Fixed Stack Size**: All tasks use the same stack size
-- **No Interrupt Nesting Control**: Critical sections don't disable interrupts
+- **No Priority Preemption**: Round-robin only (priority support planned)
+- **No Mutex/Semaphore**: Synchronization primitives planned for Phase 3
+- **No Dynamic Allocation**: All memory statically allocated (by design for certification)
+- **Fixed Stack Size**: All tasks use same stack size
+- **Single Core**: Multi-core support planned for Phase 5
+
+---
 
 ## License
 
 Apache License 2.0 - See LICENSE file for details.
 
+---
+
 ## Author
 
 Created by Souham Biswas for deterministic real-time embedded systems.
+
+GitHub: https://github.com/ironhide23586/icarus-os-core
