@@ -432,3 +432,17 @@ bool semaphore_consume(uint8_t semaphore_idx) {
 }
 
 
+uint32_t semaphore_get_count(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return 0;
+    return semaphore_list[semaphore_idx]->count;
+}
+
+
+uint32_t semaphore_get_init_count(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return 0;
+    return semaphore_list[semaphore_idx]->init_count;
+}
+
+
