@@ -104,8 +104,8 @@ const char* os_get_current_task_name(void);
 
 
 bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
-int32_t semaphore_feed(uint8_t semaphore_idx);
-int32_t semaphore_consume(uint8_t semaphore_idx);
+bool semaphore_feed(uint8_t semaphore_idx);
+bool semaphore_consume(uint8_t semaphore_idx);
 
 
 #endif /* __ICARUS_TASK_H__ */

@@ -695,7 +695,33 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">405</span>
 <span class="normal">406</span>
 <span class="normal">407</span>
-<span class="normal">408</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/*</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/*</span>
 <a id="line-2" name="line-2"></a><span class="cm"> * task.c</span>
 <a id="line-3" name="line-3"></a><span class="cm"> *</span>
 <a id="line-4" name="line-4"></a><span class="cm"> *  Created on: May 14, 2025</span>
@@ -1103,6 +1129,32 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-406" name="line-406"></a><span class="p">}</span>
 <a id="line-407" name="line-407"></a>
 <a id="line-408" name="line-408"></a>
+<a id="line-409" name="line-409"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_feed</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-410" name="line-410"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MAX_SEMAPHORES</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="p">)</span>
+<a id="line-411" name="line-411"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="line-412" name="line-412"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">init_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-413" name="line-413"></a><span class="w">        </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<a id="line-414" name="line-414"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-415" name="line-415"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-416" name="line-416"></a><span class="w">    </span><span class="o">++</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">;</span>
+<a id="line-417" name="line-417"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-418" name="line-418"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="line-419" name="line-419"></a><span class="p">}</span>
+<a id="line-420" name="line-420"></a>
+<a id="line-421" name="line-421"></a>
+<a id="line-422" name="line-422"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_consume</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-423" name="line-423"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MAX_SEMAPHORES</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="p">)</span>
+<a id="line-424" name="line-424"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="line-425" name="line-425"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-426" name="line-426"></a><span class="w">        </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<a id="line-427" name="line-427"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-428" name="line-428"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-429" name="line-429"></a><span class="w">    </span><span class="o">--</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">;</span>
+<a id="line-430" name="line-430"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-431" name="line-431"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="line-432" name="line-432"></a><span class="p">}</span>
+<a id="line-433" name="line-433"></a>
+<a id="line-434" name="line-434"></a>
 </pre></div></td></tr></table></div>
 
     </div>
