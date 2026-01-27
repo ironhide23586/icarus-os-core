@@ -15,7 +15,7 @@ A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C cert
 │   Preemptive Kernel • ARMv7E-M • STM32H750                   │
 └──────────────────────────────────────────────────────────────┘
                                                            SEM
-[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★                 ┌───┐
+[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]                 ┌───┐
 [producer]  ████████████████────────────────  160/200     │   │
 [consumer]  ██████████──────────────────────  100/300     │   │
 [reference] ████████████████████────────────  1200/3000   │   │
