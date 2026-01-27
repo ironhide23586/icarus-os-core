@@ -406,3 +406,29 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
 }
 
 
+int32_t semaphore_feed(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return -1;
+    while (semaphore_list[semaphore_idx]->count >= semaphore_list[semaphore_idx]->init_count) {
+        task_active_sleep(1);
+    }
+    enter_critical();
+    ++semaphore_list[semaphore_idx]->count;
+    exit_critical();
+    return semaphore_list[semaphore_idx]->count;
+}
+
+
+int32_t semaphore_consume(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return -1;
+    while (semaphore_list[semaphore_idx]->count == 0) {
+        task_active_sleep(1);
+    }
+    enter_critical();
+    --semaphore_list[semaphore_idx]->count;
+    exit_critical();
+    return semaphore_list[semaphore_idx]->count;
+}
+
+
