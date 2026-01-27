@@ -23,6 +23,7 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #include "gpio.h"
 
 #define MAX_TASKS 10
+#define MAX_SEMAPHORES 20
 #define STACK_WORDS 512  // 512 - 4 byte words per stack
 #define CPU_VREGISTERS_SIZE 16
 #define PRINT_BUFFER_BYTES 64  // DO NOT CROSS 64
@@ -40,23 +41,6 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #if (PRINT_BUFFER_BYTES > 64)
 #error "PRINT_BUFFER_BYTES must be <= 64 for USB FS CDC packet sizing."
 #endif
-
-
-
-//typedef enum {
-//    TASK_COLD     = 0,
-//    TASK_RUNNING  = 1,
-//    TASK_READY    = 2,
-//    TASK_BLOCKED  = 3,
-//    TASK_KILLED   = 4,
-//    TASK_FINISHED = 5
-//} task_state_t;
-//
-//typedef enum {
-//    PRI_LOW  = 0,
-//    PRI_MED  = 1,
-//    PRI_HIGH = 2
-//} task_pri_t;
 
 
 typedef uint8_t task_state_t;
@@ -83,6 +67,18 @@ typedef struct {
 } task_t;
 
 
+typedef struct {
+    uint32_t count;
+    uint32_t init_count;
+    uint8_t consumer_task_idx_list[MAX_TASKS];
+    uint8_t feeder_task_idx_list[MAX_TASKS];
+    uint8_t num_consumers_queued;
+    uint8_t num_feeders_queued;
+    uint32_t tick_updated_at;
+    bool engaged;
+} semaphore_t;
+
+
 void os_init(void);
 uint32_t os_get_tick_count(void);
 void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, 
@@ -103,11 +99,13 @@ uint32_t os_get_task_ticks_remaining(void);
 uint8_t os_get_running_task_count(void);
 const char* os_get_current_task_name(void);
 
-bool enqueue_print_buffer(uint8_t c);
-void os_print_finished_tasks(void);
+// bool enqueue_print_buffer(uint8_t c);
+// void os_print_finished_tasks(void);
 
 
-//void enter_critical();
-//void exit_critical();
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
+int32_t semaphore_feed(uint8_t semaphore_idx);
+int32_t semaphore_consume(uint8_t semaphore_idx);
+
 
 #endif /* __ICARUS_TASK_H__ */

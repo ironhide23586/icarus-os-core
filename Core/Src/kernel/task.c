@@ -19,7 +19,12 @@ _Static_assert(offsetof(task_t, ticks_to_pause) == 24, "task_t.ticks_to_pause of
 
 
 task_t* task_list[MAX_TASKS];
+semaphore_t* semaphore_list[MAX_SEMAPHORES];
+
 static task_t task_pool[MAX_TASKS];
+static semaphore_t semaphore_pool[MAX_SEMAPHORES];
+
+
 static uint32_t stack_pool[MAX_TASKS][STACK_WORDS];
 static int8_t cleanup_task_idx[MAX_TASKS]; // when a task needs to be cleanup, its idx is stored here
 static uint8_t print_buffer[PRINT_BUFFER_BYTES];
@@ -64,32 +69,32 @@ static inline void exit_critical(void) {
 }
 
 
-static bool dequeue_print_buffer(uint8_t *out_c) {
-	enter_critical();
-	if (print_buffer_enqueue_idx == print_buffer_dequeue_idx) {
-		exit_critical();
-		return false;
-	}
-	*out_c = print_buffer[print_buffer_dequeue_idx++];
-	if (print_buffer_dequeue_idx >= PRINT_BUFFER_BYTES)
-		print_buffer_dequeue_idx = 0;
-	exit_critical();
-	return true;
-}
+// static bool dequeue_print_buffer(uint8_t *out_c) {
+// 	enter_critical();
+// 	if (print_buffer_enqueue_idx == print_buffer_dequeue_idx) {
+// 		exit_critical();
+// 		return false;
+// 	}
+// 	*out_c = print_buffer[print_buffer_dequeue_idx++];
+// 	if (print_buffer_dequeue_idx >= PRINT_BUFFER_BYTES)
+// 		print_buffer_dequeue_idx = 0;
+// 	exit_critical();
+// 	return true;
+// }
 
 
-bool enqueue_print_buffer(uint8_t c) {
-	enter_critical();
-	uint8_t next_enqueue_idx = (uint8_t)((print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES);
-	if (next_enqueue_idx != print_buffer_dequeue_idx) {
-		print_buffer[print_buffer_enqueue_idx] = c;
-		print_buffer_enqueue_idx = next_enqueue_idx;
-		exit_critical();
-		return true;
-	}
-	exit_critical();
-	return false;
-}
+// bool enqueue_print_buffer(uint8_t c) {
+// 	enter_critical();
+// 	uint8_t next_enqueue_idx = (uint8_t)((print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES);
+// 	if (next_enqueue_idx != print_buffer_dequeue_idx) {
+// 		print_buffer[print_buffer_enqueue_idx] = c;
+// 		print_buffer_enqueue_idx = next_enqueue_idx;
+// 		exit_critical();
+// 		return true;
+// 	}
+// 	exit_critical();
+// 	return false;
+// }
 
 
 uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical section
@@ -114,33 +119,33 @@ uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical sectio
 
 
 
-void os_transmit_printf_task(void) {
-	uint8_t retry_count;
-	static uint8_t send_buffer[PRINT_BUFFER_BYTES];
-	while (1) {
-		uint8_t num_chars_to_print = 0;
-		while (num_chars_to_print < sizeof(send_buffer)) {
-			if(!dequeue_print_buffer(&send_buffer[num_chars_to_print]))
-				break;
-			num_chars_to_print++;
-			if (send_buffer[num_chars_to_print - 1] == '\n')
-				break;
-		}
-		if (num_chars_to_print > 0) {
-			enter_critical();
-			retry_count = 0;
-			while (retry_count++ < MAX_PRINT_RETRIES) {
-				if (CDC_Transmit_FS(send_buffer, num_chars_to_print) == USBD_OK)
-					break;
-				task_busy_wait(1);
-			}
-			task_busy_wait(10);
-			exit_critical();
-		} else {
-			task_active_sleep(10);
-		}
-	}
-}
+// void os_transmit_printf_task(void) {
+// 	uint8_t retry_count;
+// 	static uint8_t send_buffer[PRINT_BUFFER_BYTES];
+// 	while (1) {
+// 		uint8_t num_chars_to_print = 0;
+// 		while (num_chars_to_print < sizeof(send_buffer)) {
+// 			if(!dequeue_print_buffer(&send_buffer[num_chars_to_print]))
+// 				break;
+// 			num_chars_to_print++;
+// 			if (send_buffer[num_chars_to_print - 1] == '\n')
+// 				break;
+// 		}
+// 		if (num_chars_to_print > 0) {
+// 			enter_critical();
+// 			retry_count = 0;
+// 			while (retry_count++ < MAX_PRINT_RETRIES) {
+// 				if (CDC_Transmit_FS(send_buffer, num_chars_to_print) == USBD_OK)
+// 					break;
+// 				task_busy_wait(1);
+// 			}
+// 			task_busy_wait(10);
+// 			exit_critical();
+// 		} else {
+// 			task_active_sleep(10);
+// 		}
+// 	}
+// }
 
 
 static void os_idle_task(void) {
@@ -193,6 +198,20 @@ static void os_heartbeart_task(void) {
 }
 
 
+static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count, bool should_engage) {
+    semaphore_list[semaphore_idx]->count = semaphore_count;
+    semaphore_list[semaphore_idx]->init_count = semaphore_count;
+    for (uint8_t i = 0; i < MAX_TASKS; i++) {
+        semaphore_list[semaphore_idx]->consumer_task_idx_list[i] = 0;
+        semaphore_list[semaphore_idx]->feeder_task_idx_list[i] = 0;
+    }
+    semaphore_list[semaphore_idx]->num_consumers_queued = 0;
+    semaphore_list[semaphore_idx]->num_feeders_queued = 0;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
+    semaphore_list[semaphore_idx]->engaged = should_engage;
+}
+
+
 void os_init(void) {
     os_running = 0;
     ticks_per_task = TICKS_PER_TASK;
@@ -202,11 +221,15 @@ void os_init(void) {
     print_buffer_dequeue_idx = 0;
     print_buffer_enqueue_idx = 0;
 
-    int i;
+    uint8_t i;
     current_task_ticks_remaining = ticks_per_task;
     for (i = 0; i < MAX_TASKS; i++) {
         task_list[i] = &task_pool[i];
         cleanup_task_idx[i] = -1;
+    }
+    for (i = 0; i < MAX_SEMAPHORES; i++) {
+        semaphore_list[i] = &semaphore_pool[i];
+        __init_sem(i, 0, false);
     }
     for (i = 0; i < CPU_VREGISTERS_SIZE; i++) {
         cpu_vregisters[i] = 0;
@@ -319,13 +342,13 @@ void os_task_suicide(void) {
 }
 
 
-void os_print_finished_tasks(void) {
-    printf("Finished task indices -> \t");
-    for (int i = current_cleanup_task_idx; i >= 0; i--) {
-        printf("%d\t", cleanup_task_idx[i]);
-    }
-    printf("\r\n");
-}
+// void os_print_finished_tasks(void) {
+//     printf("Finished task indices -> \t");
+//     for (int i = current_cleanup_task_idx; i >= 0; i--) {
+//         printf("%d\t", cleanup_task_idx[i]);
+//     }
+//     printf("\r\n");
+// }
 
 
 void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint32_t stack_size, const char *name) {
@@ -365,3 +388,21 @@ void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint3
 void os_register_task(void (*function)(void), const char *name) {
     os_create_task(task_list[num_created_tasks], function, stack_pool[num_created_tasks], STACK_WORDS, name);
 }
+
+
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
+    enter_critical();
+    if (semaphore_idx < MAX_SEMAPHORES && semaphore_count > 0) {
+        if (!semaphore_list[semaphore_idx]->engaged) {
+            __init_sem(semaphore_idx, semaphore_count, true);
+            exit_critical();
+            return true;
+        }
+        exit_critical();
+        return false;
+    }
+    exit_critical();
+    return false;
+}
+
+
