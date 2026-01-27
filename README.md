@@ -15,7 +15,7 @@ A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C cert
 | Metric | Status |
 |--------|--------|
 | **Test Coverage** | 79.3% line, 77.6% function |
-| **Unit Tests** | 76 tests, 0 failures |
+| **Unit Tests** | 83 tests, 0 failures |
 | **Static Analysis** | cppcheck clean |
 | **Certification Target** | DO-178C DAL C |
 | **Coding Standard** | MISRA C:2012 subset |
@@ -39,9 +39,10 @@ ICARUS is designed to be the first open-source RTOS with:
 - **Preemptive Round-Robin Scheduling**: Time-sliced task execution with configurable time quantum (50ms default)
 - **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
+- **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
 - **Blocking Sleep**: Busy-wait sleep for critical timing
-- **Visual Debugging**: Terminal-based display system with progress bars and task visualization
+- **Visual Debugging**: Terminal-based display system with progress bars, task visualization, and semaphore state
 - **USB CDC Support**: Serial communication via USB Virtual COM Port
 - **MPU Configuration**: Memory Protection Unit setup for QSPI flash access
 - **MISRA C Compliant**: Follows MISRA C:2012 coding standards
@@ -67,7 +68,7 @@ ICARUS OS is being developed with DO-178C DAL C certification as a primary goal.
 |-----------|--------|
 | Static analysis (cppcheck) | ✅ Complete |
 | MISRA C:2012 subset | ✅ Complete |
-| Unit testing (Unity) | ✅ 76 tests |
+| Unit testing (Unity) | ✅ 83 tests |
 | Line coverage | ✅ 79.3% |
 | Function coverage | ✅ 77.6% |
 | Requirements traceability | ✅ SRS complete |
@@ -107,10 +108,10 @@ Phase 2: Hardening (Q2 2026)
 ├── Watchdog integration
 └── Fault recovery
 
-Phase 3: Communication (Q3 2026)
+Phase 3: Communication (Q3 2026) 🔄 In Progress
 ├── Inter-process communication (IPC)
 ├── Message queues
-├── Semaphores/Mutexes
+├── Semaphores/Mutexes ✅ Bounded semaphores implemented
 └── Event flags
 
 Phase 4: AI Runtime (Q4 2026)
@@ -251,6 +252,16 @@ uint32_t os_get_task_ticks_remaining(void); // Remaining time quantum
 uint8_t os_get_running_task_count(void);    // Active task count
 ```
 
+### Semaphores
+
+```c
+bool semaphore_init(uint8_t idx, uint32_t count);  // Initialize bounded semaphore
+bool semaphore_feed(uint8_t idx);                   // Increment (blocks if full)
+bool semaphore_consume(uint8_t idx);                // Decrement (blocks if empty)
+uint32_t semaphore_get_count(uint8_t idx);          // Get current count
+uint32_t semaphore_get_init_count(uint8_t idx);     // Get max capacity
+```
+
 ---
 
 ## Quick Start
@@ -347,7 +358,8 @@ icarus-os-core/
 Current limitations (work in progress):
 
 - **No Priority Preemption**: Round-robin only (priority support planned)
-- **No Mutex/Semaphore**: Synchronization primitives planned for Phase 3
+- **No Mutex**: Mutex with priority inheritance planned
+- **No Message Queues**: Message queue IPC planned
 - **No Dynamic Allocation**: All memory statically allocated (by design for certification)
 - **Fixed Stack Size**: All tasks use same stack size
 - **Single Core**: Multi-core support planned for Phase 5
