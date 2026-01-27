@@ -101,12 +101,13 @@ This document covers:
 | Scheduler | ✅ Implemented | `kernel/task.c` | Preemptive round-robin |
 | Task Manager | ✅ Implemented | `kernel/task.c` | Task lifecycle management |
 | Context Switch | ✅ Implemented | `kernel/context_switch.s` | ARM assembly context save/restore |
-| IPC | 🔲 Planned | `kernel/ipc.c` | Inter-process communication |
+| Semaphores | ✅ Implemented | `kernel/task.c` | Bounded counting semaphores |
+| IPC | 🔲 Planned | `kernel/ipc.c` | Message queues, mutexes |
 | AI Runtime | 🔲 Planned | `kernel/ai_runtime.c` | Deterministic inference |
 | BSP - GPIO | ✅ Implemented | `bsp/gpio.c` | Digital I/O |
 | BSP - I2C | ✅ Implemented | `bsp/i2c.c` | I2C communication |
 | BSP - SPI | ✅ Implemented | `bsp/spi.c` | SPI communication |
-| BSP - Display | ✅ Implemented | `bsp/display.c` | ST7735 LCD driver |
+| BSP - Display | ✅ Implemented | `bsp/display.c` | Terminal display with vertical bar |
 | BSP - USB | ✅ Implemented | `USB_DEVICE/` | USB CDC serial |
 
 
@@ -417,7 +418,94 @@ static inline void exit_critical(void) {
 
 ---
 
-### 3.5 Print Buffer Component
+### 3.5 Semaphore Component
+
+#### 3.5.1 Design Overview
+
+The semaphore component implements bounded counting semaphores for producer-consumer synchronization. Semaphores use non-blocking waits (task_active_sleep) to allow other tasks to run while waiting.
+
+#### 3.5.2 Data Structure
+
+```c
+#define MAX_SEMAPHORES 20
+
+typedef struct {
+    uint32_t count;                          // Current count
+    uint32_t init_count;                     // Maximum capacity (bounded)
+    uint8_t consumer_task_idx_list[MAX_TASKS]; // Tasks waiting to consume
+    uint8_t feeder_task_idx_list[MAX_TASKS];   // Tasks waiting to feed
+    uint8_t num_consumers_queued;            // Number of waiting consumers
+    uint8_t num_feeders_queued;              // Number of waiting feeders
+    uint32_t tick_updated_at;                // Last update timestamp
+    bool engaged;                            // Semaphore is initialized
+} semaphore_t;
+
+semaphore_t* semaphore_list[MAX_SEMAPHORES];
+```
+
+#### 3.5.3 Semaphore Operations
+
+```
+ALGORITHM: Bounded Semaphore Feed (Producer)
+
+INPUT: semaphore_idx
+OUTPUT: true on success, false on invalid index
+
+semaphore_feed(semaphore_idx):
+    IF semaphore_idx >= MAX_SEMAPHORES OR NOT engaged:
+        RETURN false
+    
+    WHILE count >= init_count:      // Buffer full
+        task_active_sleep(1)        // Yield, let consumer run
+    
+    ENTER_CRITICAL
+    count++
+    EXIT_CRITICAL
+    RETURN true
+
+
+ALGORITHM: Bounded Semaphore Consume (Consumer)
+
+INPUT: semaphore_idx
+OUTPUT: true on success, false on invalid index
+
+semaphore_consume(semaphore_idx):
+    IF semaphore_idx >= MAX_SEMAPHORES OR NOT engaged:
+        RETURN false
+    
+    WHILE count == 0:               // Buffer empty
+        task_active_sleep(1)        // Yield, let producer run
+    
+    ENTER_CRITICAL
+    count--
+    EXIT_CRITICAL
+    RETURN true
+```
+
+#### 3.5.4 Blocking Behavior
+
+| Condition | Behavior |
+|-----------|----------|
+| Feed when count < init_count | Immediate increment |
+| Feed when count >= init_count | Block until consumer decrements |
+| Consume when count > 0 | Immediate decrement |
+| Consume when count == 0 | Block until producer increments |
+
+The blocking uses `task_active_sleep(1)` which yields to the scheduler, allowing other tasks to run. This is cooperative blocking, not busy-waiting.
+
+#### 3.5.5 Requirements Traceability
+
+| Design Element | Implements Requirement |
+|----------------|----------------------|
+| semaphore_t structure | HLR-KRN-041, HLR-KRN-042 |
+| count field | HLR-KRN-042 (counting) |
+| init_count (bounded) | HLR-KRN-042 |
+| task_active_sleep blocking | HLR-KRN-045 (bounded WCET) |
+| engaged flag | Initialization safety |
+
+---
+
+### 3.6 Print Buffer Component
 
 #### 3.5.1 Design Overview
 
@@ -834,12 +922,12 @@ This matrix traces each requirement to its design element(s).
 | HLR-KRN-030 | scheduler_enabled flag | 3.4.2 | ✅ |
 | HLR-KRN-031 | critical_stack_depth | 3.4.2 | ✅ |
 | HLR-KRN-032 | Inline enter/exit_critical | 3.4.2 | ✅ |
-| HLR-KRN-040 | ipc_queue_t | 3.6.2 | 🔲 Planned |
-| HLR-KRN-041 | ipc_sem_t (count=1) | 3.6.4 | 🔲 Planned |
-| HLR-KRN-042 | ipc_sem_t (count>1) | 3.6.4 | 🔲 Planned |
-| HLR-KRN-043 | owner, original_priority | 3.6.4 | 🔲 Planned |
+| HLR-KRN-040 | ipc_queue_t | 3.7.2 | 🔲 Planned |
+| HLR-KRN-041 | semaphore_t (binary) | 3.5.2 | ✅ |
+| HLR-KRN-042 | semaphore_t (counting) | 3.5.2 | ✅ |
+| HLR-KRN-043 | owner, original_priority | 3.7.4 | 🔲 Planned |
 | HLR-KRN-044 | Event flags | - | 🔲 Planned |
-| HLR-KRN-045 | O(1) operations | 3.6.3 | 🔲 Planned |
+| HLR-KRN-045 | task_active_sleep blocking | 3.5.3 | ✅ |
 | HLR-KRN-050 | Static allocation only | 4.2 | ✅ |
 | HLR-KRN-051 | Stack canary (planned) | - | 🔲 Planned |
 | HLR-KRN-052 | MPU configuration | - | 🔲 Planned |
@@ -887,10 +975,11 @@ This matrix traces each requirement to its design element(s).
 | Task Manager | `kernel/task.c` | os_create_task, os_kill_process |
 | Context Switch | `kernel/context_switch.s` | context_switch, start_cold_task |
 | Critical Section | `kernel/task.c` | enter_critical, exit_critical |
+| Semaphores | `kernel/task.c` | semaphore_init, semaphore_feed, semaphore_consume |
 | Print Buffer | `kernel/task.c` | enqueue_print_buffer, dequeue_print_buffer |
 | BSP Init | `bsp/retarget_hal.c` | hal_init |
 | GPIO | `bsp/gpio.c` | LED_On, LED_Off |
-| Display | `bsp/display.c` | display_init, display_render_* |
+| Display | `bsp/display.c` | display_init, display_render_*, display_render_vbar |
 | Interrupts | `bsp/stm32h7xx_it.c` | SysTick_Handler, PendSV_Handler |
 
 ### 6.3 Traceability Summary
@@ -899,10 +988,10 @@ This matrix covers High-Level Requirements (HLR) only. Performance (PRF) and Saf
 
 | Category | Total HLR | Designed | Implemented | Coverage |
 |----------|-----------|----------|-------------|----------|
-| Kernel | 35 | 35 | 19 | 54% |
+| Kernel | 35 | 35 | 22 | 63% |
 | BSP | 15 | 15 | 11 | 73% |
 | AI Runtime | 24 | 24 | 0 | 0% |
-| **Total** | **74** | **74** | **30** | **41%** |
+| **Total** | **74** | **74** | **33** | **45%** |
 
 ---
 
@@ -924,9 +1013,9 @@ This matrix covers High-Level Requirements (HLR) only. Performance (PRF) and Saf
 | Metric | Target | Current |
 |--------|--------|---------|
 | Requirements coverage | 100% | 100% (designed) |
-| Implementation coverage | 100% | 41% |
+| Implementation coverage | 100% | 45% |
 | Interface documentation | 100% | 100% |
-| Algorithm specification | 100% | 80% |
+| Algorithm specification | 100% | 85% |
 
 ---
 

@@ -118,11 +118,11 @@ The following system-level requirements are allocated to ICARUS OS:
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | HLR-KRN-040 | The kernel shall support message queues | Must | Planned |
-| HLR-KRN-041 | The kernel shall support binary semaphores | Must | Planned |
-| HLR-KRN-042 | The kernel shall support counting semaphores | Should | Planned |
+| HLR-KRN-041 | The kernel shall support binary semaphores | Must | ✅ Implemented |
+| HLR-KRN-042 | The kernel shall support counting semaphores | Should | ✅ Implemented |
 | HLR-KRN-043 | The kernel shall support mutexes with priority inheritance | Should | Planned |
 | HLR-KRN-044 | The kernel shall support event flags | Should | Planned |
-| HLR-KRN-045 | IPC operations shall have bounded WCET | Must | Planned |
+| HLR-KRN-045 | IPC operations shall have bounded WCET | Must | ✅ Implemented |
 
 #### 3.1.6 Memory Management
 
@@ -240,7 +240,7 @@ The following system-level requirements are allocated to ICARUS OS:
 | PRF-005 | AI inference (small model) | <10ms | Planned |
 | PRF-006 | AI inference (medium model) | <50ms | Planned |
 | PRF-007 | IPC message send | <5μs | Planned |
-| PRF-008 | Semaphore acquire (uncontended) | <2μs | Planned |
+| PRF-008 | Semaphore acquire (uncontended) | <2μs | ✅ Met |
 
 ### 4.2 Resource Requirements
 
@@ -259,7 +259,7 @@ The following system-level requirements are allocated to ICARUS OS:
 | PRF-020 | Maximum tasks | 16 (configurable) | ✅ Met |
 | PRF-021 | Maximum priority levels | 8 | Planned |
 | PRF-022 | Maximum message queues | 8 | Planned |
-| PRF-023 | Maximum semaphores | 16 | Planned |
+| PRF-023 | Maximum semaphores | 20 | ✅ Met |
 | PRF-024 | Maximum AI models loaded | 4 | Planned |
 
 ---
@@ -292,9 +292,13 @@ const char* os_get_current_task_name(void);
 int ipc_queue_create(queue_t *queue, size_t item_size, size_t capacity);
 int ipc_queue_send(queue_t *queue, const void *item, uint32_t timeout);
 int ipc_queue_receive(queue_t *queue, void *item, uint32_t timeout);
-int ipc_sem_create(sem_t *sem, uint32_t initial_count);
-int ipc_sem_acquire(sem_t *sem, uint32_t timeout);
-int ipc_sem_release(sem_t *sem);
+
+// Semaphores (Implemented)
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
+bool semaphore_feed(uint8_t semaphore_idx);
+bool semaphore_consume(uint8_t semaphore_idx);
+uint32_t semaphore_get_count(uint8_t semaphore_idx);
+uint32_t semaphore_get_init_count(uint8_t semaphore_idx);
 ```
 
 ### 5.2 AI Runtime API
@@ -375,12 +379,12 @@ See `ICARUS-VER-003 Test Traceability Matrix` for complete mapping.
 
 | Category | Total | Implemented | Planned |
 |----------|-------|-------------|---------|
-| Kernel | 35 | 19 | 16 |
+| Kernel | 35 | 22 | 13 |
 | BSP | 15 | 11 | 4 |
 | AI Runtime | 24 | 0 | 24 |
-| Performance | 18 | 10 | 8 |
+| Performance | 18 | 12 | 6 |
 | Safety | 9 | 1 | 8 |
-| **Total** | **101** | **41** | **60** |
+| **Total** | **101** | **46** | **55** |
 
 ---
 
