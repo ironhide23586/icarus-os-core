@@ -92,6 +92,55 @@ void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
 }
 
 /**
+ * @brief Render a vertical bar showing semaphore fill level
+ * @param start_row: top row of the vertical bar (1-indexed)
+ * @param col: column position for the bar
+ * @param count: current semaphore count
+ * @param max_count: maximum semaphore capacity (init_count)
+ */
+void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count) {
+    // Guard against division by zero
+    if (max_count == 0) {
+        max_count = 1;
+    }
+    
+    // Clamp count to max
+    if (count > max_count) {
+        count = max_count;
+    }
+    
+    // Calculate filled rows (bottom-up fill)
+    uint32_t filled_rows = (count * VBAR_HEIGHT) / max_count;
+    if (filled_rows > VBAR_HEIGHT) {
+        filled_rows = VBAR_HEIGHT;
+    }
+    
+    // Draw top border
+    ANSI_GOTO(start_row, col);
+    printf("┌───┐");
+    
+    // Draw bar rows (top to bottom, fill from bottom)
+    for (uint8_t i = 0; i < VBAR_HEIGHT; i++) {
+        ANSI_GOTO(start_row + 1 + i, col);
+        // Row is filled if it's in the bottom 'filled_rows' portion
+        uint8_t row_from_bottom = VBAR_HEIGHT - 1 - i;
+        if (row_from_bottom < filled_rows) {
+            printf("│ █ │");
+        } else {
+            printf("│   │");
+        }
+    }
+    
+    // Draw bottom border
+    ANSI_GOTO(start_row + VBAR_HEIGHT + 1, col);
+    printf("└───┘");
+    
+    // Draw count label below
+    ANSI_GOTO(start_row + VBAR_HEIGHT + 2, col);
+    printf(" %2" PRIu32 "/%2" PRIu32, count, max_count);
+}
+
+/**
  * @brief Initialize terminal display - clear screen and print header
  */
 void display_init(void) {

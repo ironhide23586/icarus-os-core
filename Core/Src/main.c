@@ -16,84 +16,95 @@
 // ANSI escape code helper: show cursor (used in error path)
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
 
-static void test_task_a(void) {
-    uint32_t elapsed;
-    uint32_t remaining;
+// Semaphore demo configuration
+#define SEM_IDX           0      // Semaphore index to use
+#define SEM_CAPACITY      10     // Semaphore capacity (init_count)
+#define PRODUCER_DELAY    200    // Ticks between produce operations
+#define CONSUMER_DELAY    300    // Ticks between consume operations (slower = buffer fills up)
+
+// Producer task - feeds the semaphore
+static void producer_task(void) {
     const char* task_name = os_get_current_task_name();
+    uint32_t items_produced = 0;
     
     while (1) {
-        // Start a new period
-        uint32_t period_start_tick = os_get_tick_count();
+        // Show progress bar for this produce cycle
+        uint32_t period_start = os_get_tick_count();
+        uint32_t elapsed;
         
-        // Render progress bar continuously during sleep period
-        // This loop allows preemption - other tasks can run between renders
+        // Animate progress bar while waiting
         do {
-            elapsed = os_get_tick_count() - period_start_tick;
-            display_render_bar(ROW_TASK_A, task_name, elapsed, TASK_A_PERIOD_TICKS);
+            elapsed = os_get_tick_count() - period_start;
+            display_render_bar(ROW_TASK_A, task_name, elapsed, PRODUCER_DELAY);
             
-            // Calculate remaining time in period
-            remaining = (elapsed < TASK_A_PERIOD_TICKS) ? (TASK_A_PERIOD_TICKS - elapsed) : 0;
+            // Update vertical bar with current semaphore state
+            display_render_vbar(ROW_HEARTBEAT, VBAR_COL, 
+                               semaphore_get_count(SEM_IDX), 
+                               semaphore_get_init_count(SEM_IDX));
             
-            // Sleep for render interval, but not longer than remaining period
-            if (remaining > 0) {
-                uint32_t sleep_ticks = (remaining < RENDER_INTERVAL_TICKS) ? remaining : RENDER_INTERVAL_TICKS;
-                task_active_sleep(sleep_ticks);
+            if (elapsed < PRODUCER_DELAY) {
+                task_active_sleep(RENDER_INTERVAL_TICKS);
             }
-            
-            // Recalculate elapsed after sleep
-            elapsed = os_get_tick_count() - period_start_tick;
-        } while (elapsed < TASK_A_PERIOD_TICKS);
+            elapsed = os_get_tick_count() - period_start;
+        } while (elapsed < PRODUCER_DELAY);
         
-        // Final render to show completed bar
-        display_render_bar(ROW_TASK_A, task_name, TASK_A_PERIOD_TICKS, TASK_A_PERIOD_TICKS);
+        // Feed the semaphore (may block if full)
+        semaphore_feed(SEM_IDX);
+        items_produced++;
         
-        // Brief pause before next cycle
-        task_active_sleep(CYCLE_PAUSE_TICKS);
+        // Update display after feed
+        display_render_vbar(ROW_HEARTBEAT, VBAR_COL,
+                           semaphore_get_count(SEM_IDX),
+                           semaphore_get_init_count(SEM_IDX));
     }
 }
 
-static void test_task_b(void) {
-    uint32_t elapsed;
-    uint32_t remaining;
+// Consumer task - consumes from the semaphore
+static void consumer_task(void) {
     const char* task_name = os_get_current_task_name();
+    uint32_t items_consumed = 0;
     
     while (1) {
-        // Start a new period
-        uint32_t period_start_tick = os_get_tick_count();
+        // Show progress bar for this consume cycle
+        uint32_t period_start = os_get_tick_count();
+        uint32_t elapsed;
         
-        // Render progress bar continuously during sleep period
+        // Animate progress bar while waiting
         do {
-            elapsed = os_get_tick_count() - period_start_tick;
-            display_render_bar(ROW_TASK_B, task_name, elapsed, TASK_B_PERIOD_TICKS);
+            elapsed = os_get_tick_count() - period_start;
+            display_render_bar(ROW_TASK_B, task_name, elapsed, CONSUMER_DELAY);
             
-            remaining = (elapsed < TASK_B_PERIOD_TICKS) ? (TASK_B_PERIOD_TICKS - elapsed) : 0;
+            // Update vertical bar with current semaphore state
+            display_render_vbar(ROW_HEARTBEAT, VBAR_COL,
+                               semaphore_get_count(SEM_IDX),
+                               semaphore_get_init_count(SEM_IDX));
             
-            if (remaining > 0) {
-                uint32_t sleep_ticks = (remaining < RENDER_INTERVAL_TICKS) ? remaining : RENDER_INTERVAL_TICKS;
-                task_active_sleep(sleep_ticks);
+            if (elapsed < CONSUMER_DELAY) {
+                task_active_sleep(RENDER_INTERVAL_TICKS);
             }
-            
-            elapsed = os_get_tick_count() - period_start_tick;
-        } while (elapsed < TASK_B_PERIOD_TICKS);
+            elapsed = os_get_tick_count() - period_start;
+        } while (elapsed < CONSUMER_DELAY);
         
-        // Final render to show completed bar
-        display_render_bar(ROW_TASK_B, task_name, TASK_B_PERIOD_TICKS, TASK_B_PERIOD_TICKS);
+        // Consume from the semaphore (may block if empty)
+        semaphore_consume(SEM_IDX);
+        items_consumed++;
         
-        // Brief pause before next cycle
-        task_active_sleep(CYCLE_PAUSE_TICKS);
+        // Update display after consume
+        display_render_vbar(ROW_HEARTBEAT, VBAR_COL,
+                           semaphore_get_count(SEM_IDX),
+                           semaphore_get_init_count(SEM_IDX));
     }
 }
 
-static void test_task_c(void) {
+// Reference task - just shows time passing (unchanged behavior)
+static void reference_task(void) {
     uint32_t elapsed;
     uint32_t remaining;
     const char* task_name = os_get_current_task_name();
     
     while (1) {
-        // Start a new period
         uint32_t period_start_tick = os_get_tick_count();
         
-        // Render progress bar continuously during sleep period
         do {
             elapsed = os_get_tick_count() - period_start_tick;
             display_render_bar(ROW_TASK_C, task_name, elapsed, TASK_C_PERIOD_TICKS);
@@ -108,10 +119,7 @@ static void test_task_c(void) {
             elapsed = os_get_tick_count() - period_start_tick;
         } while (elapsed < TASK_C_PERIOD_TICKS);
         
-        // Final render to show completed bar
         display_render_bar(ROW_TASK_C, task_name, TASK_C_PERIOD_TICKS, TASK_C_PERIOD_TICKS);
-        
-        // Brief pause before next cycle
         task_active_sleep(CYCLE_PAUSE_TICKS);
     }
 }
@@ -124,9 +132,12 @@ int main(void)
   hal_init();
   os_init();
 
-  os_register_task(test_task_a, "task_a");
-  os_register_task(test_task_b, "task_b");
-  os_register_task(test_task_c, "task_c");
+  // Initialize semaphore for producer-consumer demo
+  semaphore_init(SEM_IDX, SEM_CAPACITY);
+
+  os_register_task(producer_task, "producer");
+  os_register_task(consumer_task, "consumer");
+  os_register_task(reference_task, "reference");
 
   os_start();
 

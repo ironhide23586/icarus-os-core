@@ -39,6 +39,10 @@ extern "C" {
 #define BAR_WIDTH     40
 #define BAR_COL_START 6  // Column where bar starts (after "[A] ")
 
+// Vertical bar configuration (for semaphore visualization)
+#define VBAR_HEIGHT   10  // Height of vertical bar in rows
+#define VBAR_COL      70  // Column position for vertical bar
+
 // Task period durations (in ticks) - longer = slower, more visible animation
 #define HEARTBEAT_ON_TICKS   437   // Heartbeat LED on duration (437ms)
 #define HEARTBEAT_OFF_TICKS  479   // Heartbeat LED off duration (479ms)
@@ -73,6 +77,15 @@ void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_tic
  * @param is_on: true to show banner (LED on), false to clear (LED off)
  */
 void display_render_banner(uint8_t row, const char* task_name, bool is_on);
+
+/**
+ * @brief Render a vertical bar showing semaphore fill level
+ * @param start_row: top row of the vertical bar (1-indexed)
+ * @param col: column position for the bar
+ * @param count: current semaphore count
+ * @param max_count: maximum semaphore capacity (init_count)
+ */
+void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count);
 
 #ifdef __cplusplus
 }
