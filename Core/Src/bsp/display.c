@@ -115,6 +115,10 @@ void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_
         filled_rows = VBAR_HEIGHT;
     }
     
+    // Draw label above bar
+    ANSI_GOTO(start_row - 1, col);
+    printf(" SEM ");
+    
     // Draw top border
     ANSI_GOTO(start_row, col);
     printf("┌───┐");

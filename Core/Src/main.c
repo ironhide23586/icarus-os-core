@@ -19,8 +19,8 @@
 // Semaphore demo configuration
 #define SEM_IDX           0      // Semaphore index to use
 #define SEM_CAPACITY      10     // Semaphore capacity (init_count)
-#define PRODUCER_DELAY    200    // Ticks between produce operations
-#define CONSUMER_DELAY    300    // Ticks between consume operations (slower = buffer fills up)
+#define PRODUCER_DELAY    500    // Ticks between produce operations
+#define CONSUMER_DELAY    300   // Ticks between consume operations (slower = buffer fills up)
 
 // Producer task - feeds the semaphore
 static void producer_task(void) {
