@@ -44,7 +44,7 @@ This plan covers development of:
 
 ICARUS (Intelligent Certifiable Autonomous Real-time Unified System) is designed to be the first open-source RTOS with:
 - **Native AI integration** with certifiable determinism
-- **DO-178C compliance by design** (not retrofitted)
+- **DO-178C alignment by design** (not retrofitted)
 - **Hardware-agnostic portability** across safety-critical platforms
 - **Formal verification readiness** for DAL A applications
 

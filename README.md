@@ -2,7 +2,7 @@
 
 **Intelligent Certifiable Autonomous Real-time Unified System**
 
-A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C certification. Built from the ground up with safety-critical aerospace and defense applications in mind.
+A minimal, deterministic real-time kernel for Cortex-M designed to support DO-178C DAL C certification objectives. Built from the ground up with safety-critical aerospace and defense applications in mind.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -55,7 +55,7 @@ ICARUS OS is a lightweight, preemptive real-time operating system kernel designe
 
 ICARUS is designed to be the first open-source RTOS with:
 - **Native AI integration** with certifiable determinism (planned)
-- **DO-178C compliance by design** (not retrofitted)
+- **DO-178C alignment by design** (not retrofitted)
 - **Hardware-agnostic portability** across safety-critical platforms
 - **Formal verification readiness** for DAL A applications (future)
 
@@ -74,9 +74,9 @@ ICARUS is designed to be the first open-source RTOS with:
 
 ---
 
-## DO-178C Certification
+## DO-178C Alignment
 
-ICARUS OS is being developed with DO-178C DAL C certification as a primary goal. Complete certification documentation is available in `docs/do178c/`.
+ICARUS OS is being developed to support DO-178C DAL C certification objectives. Complete certification-aligned documentation is available in `docs/do178c/`.
 
 ### Documentation Suite
 
