@@ -18,7 +18,7 @@
 
 // Semaphore demo configuration
 #define SEM_IDX           0      // Semaphore index to use
-#define SEM_CAPACITY      10     // Semaphore capacity (init_count)
+#define SEM_CAPACITY      10     // Semaphore capacity (max_count)
 #define PRODUCER_DELAY    500    // Ticks between produce operations
 #define CONSUMER_DELAY    300   // Ticks between consume operations (slower = buffer fills up)
 
@@ -40,7 +40,7 @@ static void producer_task(void) {
             // Update vertical bar with current semaphore state
             display_render_vbar(ROW_HEARTBEAT, VBAR_COL, 
                                semaphore_get_count(SEM_IDX), 
-                               semaphore_get_init_count(SEM_IDX));
+                               semaphore_get_max_count(SEM_IDX));
             
             if (elapsed < PRODUCER_DELAY) {
                 task_active_sleep(RENDER_INTERVAL_TICKS);
@@ -55,7 +55,7 @@ static void producer_task(void) {
         // Update display after feed
         display_render_vbar(ROW_HEARTBEAT, VBAR_COL,
                            semaphore_get_count(SEM_IDX),
-                           semaphore_get_init_count(SEM_IDX));
+                           semaphore_get_max_count(SEM_IDX));
     }
 }
 
@@ -77,7 +77,7 @@ static void consumer_task(void) {
             // Update vertical bar with current semaphore state
             display_render_vbar(ROW_HEARTBEAT, VBAR_COL,
                                semaphore_get_count(SEM_IDX),
-                               semaphore_get_init_count(SEM_IDX));
+                               semaphore_get_max_count(SEM_IDX));
             
             if (elapsed < CONSUMER_DELAY) {
                 task_active_sleep(RENDER_INTERVAL_TICKS);
@@ -92,7 +92,7 @@ static void consumer_task(void) {
         // Update display after consume
         display_render_vbar(ROW_HEARTBEAT, VBAR_COL,
                            semaphore_get_count(SEM_IDX),
-                           semaphore_get_init_count(SEM_IDX));
+                           semaphore_get_max_count(SEM_IDX));
     }
 }
 
