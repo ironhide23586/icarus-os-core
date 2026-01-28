@@ -25,7 +25,7 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #define MAX_TASKS 32
 #define MAX_SEMAPHORES 32
 #define MAX_MESSAGE_QUEUES 32
-#define MAX_MESSAGE_BUFFER_BYTES 512
+#define MAX_MESSAGE_BUFFER_BYTES 128
 
 #define STACK_WORDS 512  // 512 - 4 byte words per stack
 #define CPU_VREGISTERS_SIZE 16
@@ -74,11 +74,7 @@ typedef struct {
     bool engaged;
     uint32_t count;
     uint32_t max_count;
-    uint8_t num_consumers_queued;
-    uint8_t num_feeders_queued;
     uint32_t tick_updated_at;
-    uint8_t consumer_task_idx_list[MAX_TASKS];
-    uint8_t feeder_task_idx_list[MAX_TASKS];
 } semaphore_t;
 
 

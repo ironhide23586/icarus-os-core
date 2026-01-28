@@ -202,12 +202,6 @@ static void os_heartbeart_task(void) {
 static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count, bool should_engage) {
     semaphore_list[semaphore_idx]->count = semaphore_count;
     semaphore_list[semaphore_idx]->max_count = semaphore_count;
-    for (uint8_t i = 0; i < MAX_TASKS; i++) {
-        semaphore_list[semaphore_idx]->consumer_task_idx_list[i] = 0;
-        semaphore_list[semaphore_idx]->feeder_task_idx_list[i] = 0;
-    }
-    semaphore_list[semaphore_idx]->num_consumers_queued = 0;
-    semaphore_list[semaphore_idx]->num_feeders_queued = 0;
     semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
     semaphore_list[semaphore_idx]->engaged = should_engage;
 }
@@ -436,7 +430,7 @@ bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
     enter_critical();
     for (uint8_t i = 0; i < message_bytes; i++) {
         message_pipe_list[pipe_idx]->buffer[message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
-        message_pipe_list[pipe_idx]->enqueue_idx = (message_pipe_list[pipe_idx]->enqueue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->enqueue_idx = (uint8_t) (message_pipe_list[pipe_idx]->enqueue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
         message_pipe_list[pipe_idx]->count++;
     }
     message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
@@ -456,7 +450,7 @@ bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
     enter_critical();
     for (uint8_t i = 0; i < message_bytes; i++) {
         message[i] = message_pipe_list[pipe_idx]->buffer[message_pipe_list[pipe_idx]->dequeue_idx];
-        message_pipe_list[pipe_idx]->dequeue_idx = (message_pipe_list[pipe_idx]->dequeue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->dequeue_idx = (uint8_t) (message_pipe_list[pipe_idx]->dequeue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
         message_pipe_list[pipe_idx]->count--;
     }
     message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
