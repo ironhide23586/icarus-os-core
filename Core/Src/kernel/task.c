@@ -210,10 +210,10 @@ static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count, b
 static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages, bool should_engage) {
     message_pipe_list[message_pipe_idx]->count = 0;
     message_pipe_list[message_pipe_idx]->max_count = max_messages;
-    for (uint8_t i = 0; i < MAX_MESSAGE_BUFFER_BYTES; i++) {
+    for (uint16_t i = 0; i < MAX_MESSAGE_BUFFER_BYTES; i++) {
         message_pipe_list[message_pipe_idx]->buffer[i] = 0;
     }
-    message_pipe_list[message_pipe_idx]->enqueue_idx= 0;
+    message_pipe_list[message_pipe_idx]->enqueue_idx = 0;
     message_pipe_list[message_pipe_idx]->dequeue_idx = 0;
     message_pipe_list[message_pipe_idx]->tick_updated_at = os_tick_count;
     message_pipe_list[message_pipe_idx]->engaged = should_engage;

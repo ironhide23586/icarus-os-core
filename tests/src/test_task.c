@@ -35,6 +35,7 @@ extern volatile uint32_t current_task_ticks_remaining;
 extern task_t* task_list[];
 extern uint32_t cpu_vregisters[];
 extern semaphore_t* semaphore_list[];
+extern message_pipe_t* message_pipe_list[];
 
 // Test task functions
 static void test_task_1(void) {
@@ -1135,9 +1136,7 @@ void test_semaphore_init_basic(void) {
 	TEST_ASSERT_TRUE(result);
 	TEST_ASSERT_TRUE(semaphore_list[0]->engaged);
 	TEST_ASSERT_EQUAL(5, semaphore_list[0]->count);
-	TEST_ASSERT_EQUAL(5, semaphore_list[0]->init_count);
-	TEST_ASSERT_EQUAL(0, semaphore_list[0]->num_consumers_queued);
-	TEST_ASSERT_EQUAL(0, semaphore_list[0]->num_feeders_queued);
+	TEST_ASSERT_EQUAL(5, semaphore_list[0]->max_count);
 }
 
 // Test: semaphore_init - invalid index (>= MAX_SEMAPHORES)
@@ -1173,7 +1172,7 @@ void test_semaphore_init_already_engaged(void) {
 	
 	// Original values should be preserved
 	TEST_ASSERT_EQUAL(5, semaphore_list[0]->count);
-	TEST_ASSERT_EQUAL(5, semaphore_list[0]->init_count);
+	TEST_ASSERT_EQUAL(5, semaphore_list[0]->max_count);
 }
 
 // Test: semaphore_init - multiple semaphores
@@ -1184,9 +1183,9 @@ void test_semaphore_init_multiple(void) {
 	TEST_ASSERT_TRUE(semaphore_init(1, 5));
 	TEST_ASSERT_TRUE(semaphore_init(2, 10));
 	
-	TEST_ASSERT_EQUAL(1, semaphore_list[0]->init_count);
-	TEST_ASSERT_EQUAL(5, semaphore_list[1]->init_count);
-	TEST_ASSERT_EQUAL(10, semaphore_list[2]->init_count);
+	TEST_ASSERT_EQUAL(1, semaphore_list[0]->max_count);
+	TEST_ASSERT_EQUAL(5, semaphore_list[1]->max_count);
+	TEST_ASSERT_EQUAL(10, semaphore_list[2]->max_count);
 }
 
 // Test: semaphore_init - boundary: MAX_SEMAPHORES - 1
@@ -1218,15 +1217,15 @@ void test_semaphore_feed_not_engaged(void) {
 	TEST_ASSERT_FALSE(result);
 }
 
-// Test: semaphore_feed - basic feed (count < init_count)
+// Test: semaphore_feed - basic feed (count < max_count)
 void test_semaphore_feed_basic(void) {
 	test_init_task_list();
 	os_register_task(test_task_1, "feed_test");
 	current_task_index = 0;
 	
-	// Initialize semaphore with count 5, init_count 10
+	// Initialize semaphore with count 10, max_count 10
 	semaphore_init(0, 10);
-	semaphore_list[0]->count = 5;  // Set count below init_count
+	semaphore_list[0]->count = 5;  // Set count below max_count
 	
 	bool result = semaphore_feed(0);
 	
@@ -1330,7 +1329,7 @@ void test_semaphore_consume_to_zero(void) {
 	TEST_ASSERT_EQUAL(0, semaphore_list[0]->count);
 }
 
-// Test: semaphore_feed - feed to init_count
+// Test: semaphore_feed - feed to max_count
 void test_semaphore_feed_to_max(void) {
 	test_init_task_list();
 	os_register_task(test_task_1, "feed_max");
@@ -1341,6 +1340,309 @@ void test_semaphore_feed_to_max(void) {
 	
 	TEST_ASSERT_TRUE(semaphore_feed(0));
 	TEST_ASSERT_EQUAL(3, semaphore_list[0]->count);  // Now at max
+}
+
+// ============================================================================
+// Message Pipe Tests
+// ============================================================================
+
+// Test: pipe_init - basic initialization
+void test_pipe_init_basic(void) {
+	test_init_task_list();
+	
+	bool result = pipe_init(0, 64);
+	
+	TEST_ASSERT_TRUE(result);
+	TEST_ASSERT_TRUE(message_pipe_list[0]->engaged);
+	TEST_ASSERT_EQUAL(0, message_pipe_list[0]->count);
+	TEST_ASSERT_EQUAL(64, message_pipe_list[0]->max_count);
+	TEST_ASSERT_EQUAL(0, message_pipe_list[0]->enqueue_idx);
+	TEST_ASSERT_EQUAL(0, message_pipe_list[0]->dequeue_idx);
+}
+
+// Test: pipe_init - invalid index (>= MAX_MESSAGE_QUEUES)
+void test_pipe_init_invalid_index(void) {
+	test_init_task_list();
+	
+	bool result = pipe_init(MAX_MESSAGE_QUEUES, 64);
+	TEST_ASSERT_FALSE(result);
+	
+	result = pipe_init(MAX_MESSAGE_QUEUES + 10, 64);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_init - zero capacity (should fail)
+void test_pipe_init_zero_capacity(void) {
+	test_init_task_list();
+	
+	bool result = pipe_init(0, 0);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_init - capacity at max allowed value
+void test_pipe_init_capacity_max(void) {
+	test_init_task_list();
+	
+	// MAX_MESSAGE_BUFFER_BYTES is 128, so max capacity is 128
+	// Use pipe index 10 to avoid conflicts with other tests
+	bool result = pipe_init(10, 128);
+	TEST_ASSERT_TRUE(result);
+	TEST_ASSERT_EQUAL(128, message_pipe_list[10]->max_count);
+}
+
+// Test: pipe_init - capacity exceeds MAX_MESSAGE_BUFFER_BYTES (should fail)
+void test_pipe_init_capacity_too_large(void) {
+	test_init_task_list();
+	
+	// MAX_MESSAGE_BUFFER_BYTES is 128, so 129 should fail
+	// Use pipe index 11 to avoid conflicts
+	bool result = pipe_init(11, 129);
+	TEST_ASSERT_FALSE(result);
+	TEST_ASSERT_FALSE(message_pipe_list[11]->engaged);
+}
+
+// Test: pipe_init - already engaged (should fail)
+void test_pipe_init_already_engaged(void) {
+	test_init_task_list();
+	
+	// First init should succeed
+	bool result = pipe_init(0, 64);
+	TEST_ASSERT_TRUE(result);
+	
+	// Second init on same pipe should fail
+	result = pipe_init(0, 128);
+	TEST_ASSERT_FALSE(result);
+	
+	// Original values should be preserved
+	TEST_ASSERT_EQUAL(64, message_pipe_list[0]->max_count);
+}
+
+// Test: pipe_init - multiple pipes
+void test_pipe_init_multiple(void) {
+	test_init_task_list();
+	
+	TEST_ASSERT_TRUE(pipe_init(0, 32));
+	TEST_ASSERT_TRUE(pipe_init(1, 64));
+	TEST_ASSERT_TRUE(pipe_init(2, 128));
+	
+	TEST_ASSERT_EQUAL(32, message_pipe_list[0]->max_count);
+	TEST_ASSERT_EQUAL(64, message_pipe_list[1]->max_count);
+	TEST_ASSERT_EQUAL(128, message_pipe_list[2]->max_count);
+}
+
+// Test: pipe_init - boundary: MAX_MESSAGE_QUEUES - 1
+void test_pipe_init_boundary(void) {
+	test_init_task_list();
+	
+	bool result = pipe_init(MAX_MESSAGE_QUEUES - 1, 32);
+	TEST_ASSERT_TRUE(result);
+	TEST_ASSERT_TRUE(message_pipe_list[MAX_MESSAGE_QUEUES - 1]->engaged);
+}
+
+// Test: pipe_enqueue - invalid index
+void test_pipe_enqueue_invalid_index(void) {
+	test_init_task_list();
+	
+	uint8_t data[] = {1, 2, 3};
+	bool result = pipe_enqueue(MAX_MESSAGE_QUEUES, data, 3);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_enqueue - not engaged
+void test_pipe_enqueue_not_engaged(void) {
+	test_init_task_list();
+	
+	uint8_t data[] = {1, 2, 3};
+	bool result = pipe_enqueue(0, data, 3);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_enqueue - message too large
+void test_pipe_enqueue_message_too_large(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "enqueue_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 10);  // Capacity of 10 bytes
+	
+	uint8_t data[20] = {0};  // 20 bytes > 10 capacity
+	bool result = pipe_enqueue(0, data, 20);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_enqueue - basic enqueue
+void test_pipe_enqueue_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "enqueue_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 64);
+	
+	uint8_t data[] = {0xAA, 0xBB, 0xCC};
+	bool result = pipe_enqueue(0, data, 3);
+	
+	TEST_ASSERT_TRUE(result);
+	TEST_ASSERT_EQUAL(3, message_pipe_list[0]->count);
+	TEST_ASSERT_EQUAL(3, message_pipe_list[0]->enqueue_idx);
+	
+	// Verify data in buffer
+	TEST_ASSERT_EQUAL(0xAA, message_pipe_list[0]->buffer[0]);
+	TEST_ASSERT_EQUAL(0xBB, message_pipe_list[0]->buffer[1]);
+	TEST_ASSERT_EQUAL(0xCC, message_pipe_list[0]->buffer[2]);
+}
+
+// Test: pipe_enqueue - multiple enqueues
+void test_pipe_enqueue_multiple(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "enqueue_multi");
+	current_task_index = 0;
+	
+	pipe_init(0, 64);
+	
+	uint8_t data1[] = {0x01, 0x02};
+	uint8_t data2[] = {0x03, 0x04, 0x05};
+	
+	TEST_ASSERT_TRUE(pipe_enqueue(0, data1, 2));
+	TEST_ASSERT_EQUAL(2, message_pipe_list[0]->count);
+	
+	TEST_ASSERT_TRUE(pipe_enqueue(0, data2, 3));
+	TEST_ASSERT_EQUAL(5, message_pipe_list[0]->count);
+	
+	// Verify all data
+	TEST_ASSERT_EQUAL(0x01, message_pipe_list[0]->buffer[0]);
+	TEST_ASSERT_EQUAL(0x02, message_pipe_list[0]->buffer[1]);
+	TEST_ASSERT_EQUAL(0x03, message_pipe_list[0]->buffer[2]);
+	TEST_ASSERT_EQUAL(0x04, message_pipe_list[0]->buffer[3]);
+	TEST_ASSERT_EQUAL(0x05, message_pipe_list[0]->buffer[4]);
+}
+
+// Test: pipe_dequeue - invalid index
+void test_pipe_dequeue_invalid_index(void) {
+	test_init_task_list();
+	
+	uint8_t data[10];
+	bool result = pipe_dequeue(MAX_MESSAGE_QUEUES, data, 3);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_dequeue - not engaged
+void test_pipe_dequeue_not_engaged(void) {
+	test_init_task_list();
+	
+	uint8_t data[10];
+	bool result = pipe_dequeue(0, data, 3);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_dequeue - message too large
+void test_pipe_dequeue_message_too_large(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "dequeue_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 10);  // Capacity of 10 bytes
+	
+	uint8_t data[20];
+	bool result = pipe_dequeue(0, data, 20);  // Request more than capacity
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: pipe_dequeue - basic dequeue
+void test_pipe_dequeue_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "dequeue_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 64);
+	
+	// Enqueue some data first
+	uint8_t send_data[] = {0xDE, 0xAD, 0xBE, 0xEF};
+	pipe_enqueue(0, send_data, 4);
+	
+	// Dequeue it
+	uint8_t recv_data[4] = {0};
+	bool result = pipe_dequeue(0, recv_data, 4);
+	
+	TEST_ASSERT_TRUE(result);
+	TEST_ASSERT_EQUAL(0, message_pipe_list[0]->count);
+	TEST_ASSERT_EQUAL(4, message_pipe_list[0]->dequeue_idx);
+	
+	// Verify received data
+	TEST_ASSERT_EQUAL(0xDE, recv_data[0]);
+	TEST_ASSERT_EQUAL(0xAD, recv_data[1]);
+	TEST_ASSERT_EQUAL(0xBE, recv_data[2]);
+	TEST_ASSERT_EQUAL(0xEF, recv_data[3]);
+}
+
+// Test: pipe enqueue and dequeue together
+void test_pipe_enqueue_dequeue_together(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "pipe_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 64);
+	
+	// Enqueue
+	uint8_t send1[] = {0x11, 0x22, 0x33};
+	TEST_ASSERT_TRUE(pipe_enqueue(0, send1, 3));
+	TEST_ASSERT_EQUAL(3, message_pipe_list[0]->count);
+	
+	// Partial dequeue
+	uint8_t recv1[2] = {0};
+	TEST_ASSERT_TRUE(pipe_dequeue(0, recv1, 2));
+	TEST_ASSERT_EQUAL(1, message_pipe_list[0]->count);
+	TEST_ASSERT_EQUAL(0x11, recv1[0]);
+	TEST_ASSERT_EQUAL(0x22, recv1[1]);
+	
+	// Enqueue more
+	uint8_t send2[] = {0x44, 0x55};
+	TEST_ASSERT_TRUE(pipe_enqueue(0, send2, 2));
+	TEST_ASSERT_EQUAL(3, message_pipe_list[0]->count);
+	
+	// Dequeue remaining
+	uint8_t recv2[3] = {0};
+	TEST_ASSERT_TRUE(pipe_dequeue(0, recv2, 3));
+	TEST_ASSERT_EQUAL(0, message_pipe_list[0]->count);
+	TEST_ASSERT_EQUAL(0x33, recv2[0]);
+	TEST_ASSERT_EQUAL(0x44, recv2[1]);
+	TEST_ASSERT_EQUAL(0x55, recv2[2]);
+}
+
+// Test: pipe circular buffer wrap-around
+void test_pipe_circular_wrap(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "wrap_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 8);  // Small buffer to test wrap
+	
+	// Fill most of buffer
+	uint8_t data1[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+	TEST_ASSERT_TRUE(pipe_enqueue(0, data1, 6));
+	TEST_ASSERT_EQUAL(6, message_pipe_list[0]->enqueue_idx);
+	
+	// Dequeue some to make room
+	uint8_t recv1[4] = {0};
+	TEST_ASSERT_TRUE(pipe_dequeue(0, recv1, 4));
+	TEST_ASSERT_EQUAL(4, message_pipe_list[0]->dequeue_idx);
+	TEST_ASSERT_EQUAL(2, message_pipe_list[0]->count);
+	
+	// Enqueue more - should wrap around
+	uint8_t data2[] = {0x07, 0x08, 0x09, 0x0A};
+	TEST_ASSERT_TRUE(pipe_enqueue(0, data2, 4));
+	TEST_ASSERT_EQUAL(6, message_pipe_list[0]->count);
+	// enqueue_idx should have wrapped: (6 + 4) % 8 = 2
+	TEST_ASSERT_EQUAL(2, message_pipe_list[0]->enqueue_idx);
+	
+	// Dequeue all and verify order
+	uint8_t recv2[6] = {0};
+	TEST_ASSERT_TRUE(pipe_dequeue(0, recv2, 6));
+	TEST_ASSERT_EQUAL(0x05, recv2[0]);
+	TEST_ASSERT_EQUAL(0x06, recv2[1]);
+	TEST_ASSERT_EQUAL(0x07, recv2[2]);
+	TEST_ASSERT_EQUAL(0x08, recv2[3]);
+	TEST_ASSERT_EQUAL(0x09, recv2[4]);
+	TEST_ASSERT_EQUAL(0x0A, recv2[5]);
 }
 
 // Test runner
@@ -1467,6 +1769,27 @@ int main(void) {
 	RUN_TEST(test_semaphore_feed_consume_together);
 	RUN_TEST(test_semaphore_consume_to_zero);
 	RUN_TEST(test_semaphore_feed_to_max);
+	
+	// Message Pipe Tests
+	RUN_TEST(test_pipe_init_basic);
+	RUN_TEST(test_pipe_init_invalid_index);
+	RUN_TEST(test_pipe_init_zero_capacity);
+	RUN_TEST(test_pipe_init_capacity_max);
+	RUN_TEST(test_pipe_init_capacity_too_large);
+	RUN_TEST(test_pipe_init_already_engaged);
+	RUN_TEST(test_pipe_init_multiple);
+	RUN_TEST(test_pipe_init_boundary);
+	RUN_TEST(test_pipe_enqueue_invalid_index);
+	RUN_TEST(test_pipe_enqueue_not_engaged);
+	RUN_TEST(test_pipe_enqueue_message_too_large);
+	RUN_TEST(test_pipe_enqueue_basic);
+	RUN_TEST(test_pipe_enqueue_multiple);
+	RUN_TEST(test_pipe_dequeue_invalid_index);
+	RUN_TEST(test_pipe_dequeue_not_engaged);
+	RUN_TEST(test_pipe_dequeue_message_too_large);
+	RUN_TEST(test_pipe_dequeue_basic);
+	RUN_TEST(test_pipe_enqueue_dequeue_together);
+	RUN_TEST(test_pipe_circular_wrap);
 	
 	return UNITY_END();
 }
