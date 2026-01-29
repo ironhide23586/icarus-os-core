@@ -7,6 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Track yield calls for testing
+static uint32_t yield_call_count = 0;
+
+// External reference to os_tick_count for tick simulation
+extern volatile uint32_t os_tick_count;
+
 // Mock: start_cold_task
 // In real system, this sets up PSP and branches to task function
 // For testing, we just mark the task as running
@@ -28,6 +34,24 @@ void os_yield_trampoline(void) {
 
 // Mock: os_yield_pendsv
 // In real system, this performs the actual context switch
+// For testing, we track calls and can simulate task state changes
 void os_yield_pendsv(void) {
-	// Mock: do nothing (context switching not needed for unit tests)
+	yield_call_count++;
+	// Mock: In a real context switch, blocked tasks would be checked
+	// For testing, we just track that yield was called
+}
+
+// Test helper: simulate tick advancement
+void test_advance_ticks(uint32_t ticks) {
+	os_tick_count += ticks;
+}
+
+// Test helper: get number of times os_yield_pendsv was called
+uint32_t test_get_yield_count(void) {
+	return yield_call_count;
+}
+
+// Test helper: reset yield count
+void test_reset_yield_count(void) {
+	yield_call_count = 0;
 }

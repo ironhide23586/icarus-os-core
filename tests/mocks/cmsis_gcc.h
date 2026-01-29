@@ -30,9 +30,15 @@ typedef struct {
 
 #define SCB_ICSR_PENDSVSET_Msk (1UL << 28U)
 
-// SCB base address (mock - use static memory instead of fixed address)
-// This prevents segfaults when writing to SCB->ICSR in host tests
-static SCB_Type scb_mock = {0};
+// SCB base address (mock - use extern to share across translation units)
+// Defined in mock_hal.c
+extern SCB_Type scb_mock;
 #define SCB (&scb_mock)
+
+// Test helper: check if PendSV was triggered
+#define TEST_PENDSV_IS_SET() ((scb_mock.ICSR & SCB_ICSR_PENDSVSET_Msk) != 0)
+
+// Test helper: clear PendSV flag
+#define TEST_CLEAR_PENDSV() (scb_mock.ICSR = 0)
 
 #endif /* CMSIS_GCC_H */

@@ -5,7 +5,11 @@
  */
 
 #include "mock_hal.h"
+#include "cmsis_gcc.h"
 #include <stdint.h>
+
+// SCB mock instance (shared across all translation units)
+SCB_Type scb_mock = {0};
 
 void HAL_Delay(uint32_t delay) {
 	(void)delay;

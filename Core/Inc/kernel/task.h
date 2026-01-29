@@ -22,11 +22,15 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #include <stddef.h>
 #include "gpio.h"
 
-#define MAX_TASKS 10
+#define MAX_TASKS 64
+#define MAX_SEMAPHORES 32
+#define MAX_MESSAGE_QUEUES 32
+#define MAX_MESSAGE_BUFFER_BYTES 128
+
 #define STACK_WORDS 512  // 512 - 4 byte words per stack
 #define CPU_VREGISTERS_SIZE 16
 #define PRINT_BUFFER_BYTES 64  // DO NOT CROSS 64
-#define MAX_PRINT_RETRIES 10
+#define MAX_PRINT_RETRIES 4
 #define MAX_TASK_NAME_LENGTH 32
 
 #include "main.h"
@@ -40,23 +44,6 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #if (PRINT_BUFFER_BYTES > 64)
 #error "PRINT_BUFFER_BYTES must be <= 64 for USB FS CDC packet sizing."
 #endif
-
-
-
-//typedef enum {
-//    TASK_COLD     = 0,
-//    TASK_RUNNING  = 1,
-//    TASK_READY    = 2,
-//    TASK_BLOCKED  = 3,
-//    TASK_KILLED   = 4,
-//    TASK_FINISHED = 5
-//} task_state_t;
-//
-//typedef enum {
-//    PRI_LOW  = 0,
-//    PRI_MED  = 1,
-//    PRI_HIGH = 2
-//} task_pri_t;
 
 
 typedef uint8_t task_state_t;
@@ -83,6 +70,25 @@ typedef struct {
 } task_t;
 
 
+typedef struct {
+    bool engaged;
+    uint32_t count;
+    uint32_t max_count;
+    uint32_t tick_updated_at;
+} semaphore_t;
+
+
+typedef struct {
+    bool engaged;
+    uint8_t count;
+    uint8_t max_count;
+    uint8_t enqueue_idx;
+    uint8_t dequeue_idx;
+    uint32_t tick_updated_at;
+    uint8_t buffer[MAX_MESSAGE_BUFFER_BYTES];
+} message_pipe_t;
+
+
 void os_init(void);
 uint32_t os_get_tick_count(void);
 void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, 
@@ -91,7 +97,7 @@ void os_register_task(void (*function)(void), const char *name);
 void os_start(void);
 void os_exit_task(void);
 void os_kill_process(uint8_t task_index);
-void suicide(void);
+void os_task_suicide(void);
 void os_yield(void);
 
 uint32_t task_active_sleep(uint32_t ticks);
@@ -103,11 +109,23 @@ uint32_t os_get_task_ticks_remaining(void);
 uint8_t os_get_running_task_count(void);
 const char* os_get_current_task_name(void);
 
-bool enqueue_print_buffer(uint8_t c);
-void print_finished_tasks(void);
+// bool enqueue_print_buffer(uint8_t c);
+// void os_print_finished_tasks(void);
 
 
-//void enter_critical();
-//void exit_critical();
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+uint8_t pipe_get_count(uint8_t pipe_idx);
+uint8_t pipe_get_max_count(uint8_t pipe_idx);
+
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
+bool semaphore_feed(uint8_t semaphore_idx);
+bool semaphore_consume(uint8_t semaphore_idx);
+uint32_t semaphore_get_count(uint8_t semaphore_idx);
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
+
+
+
 
 #endif /* __ICARUS_TASK_H__ */

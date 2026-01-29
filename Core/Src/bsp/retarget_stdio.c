@@ -41,7 +41,7 @@ int __io_putchar(int ch) {
       retry_count++;
     }
     i = 0;
-    task_blocking_sleep(10);
+    // task_blocking_sleep(10);
   }
   return ch;
 }

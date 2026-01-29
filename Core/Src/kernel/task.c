@@ -19,7 +19,14 @@ _Static_assert(offsetof(task_t, ticks_to_pause) == 24, "task_t.ticks_to_pause of
 
 
 task_t* task_list[MAX_TASKS];
+semaphore_t* semaphore_list[MAX_SEMAPHORES];
+message_pipe_t* message_pipe_list[MAX_MESSAGE_QUEUES];
+
 static task_t task_pool[MAX_TASKS];
+static semaphore_t semaphore_pool[MAX_SEMAPHORES];
+static message_pipe_t message_pipe_pool[MAX_MESSAGE_QUEUES];
+
+
 static uint32_t stack_pool[MAX_TASKS][STACK_WORDS];
 static int8_t cleanup_task_idx[MAX_TASKS]; // when a task needs to be cleanup, its idx is stored here
 static uint8_t print_buffer[PRINT_BUFFER_BYTES];
@@ -60,42 +67,45 @@ static inline void enter_critical(void) {
 static inline void exit_critical(void) {
 	if (--critical_stack_depth == 0)
 		scheduler_enabled = true;
-//	task_active_sleep(3);
 }
 
 
-static bool dequeue_print_buffer(uint8_t *out_c) {
-	enter_critical();
-	if (print_buffer_enqueue_idx == print_buffer_dequeue_idx) {
-		exit_critical();
-		return false;
-	}
-	*out_c = print_buffer[print_buffer_dequeue_idx++];
-	if (print_buffer_dequeue_idx >= PRINT_BUFFER_BYTES)
-		print_buffer_dequeue_idx = 0;
-	exit_critical();
-	return true;
-}
+// static bool dequeue_print_buffer(uint8_t *out_c) {
+// 	enter_critical();
+// 	if (print_buffer_enqueue_idx == print_buffer_dequeue_idx) {
+// 		exit_critical();
+// 		return false;
+// 	}
+// 	*out_c = print_buffer[print_buffer_dequeue_idx++];
+// 	if (print_buffer_dequeue_idx >= PRINT_BUFFER_BYTES)
+// 		print_buffer_dequeue_idx = 0;
+// 	exit_critical();
+// 	return true;
+// }
 
 
-bool enqueue_print_buffer(uint8_t c) {
-	enter_critical();
-	uint8_t next_enqueue_idx = (uint8_t)((print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES);
-	if (next_enqueue_idx != print_buffer_dequeue_idx) {
-		print_buffer[print_buffer_enqueue_idx] = c;
-		print_buffer_enqueue_idx = next_enqueue_idx;
-		exit_critical();
-		return true;
-	}
-	exit_critical();
-	return false;
-}
+// bool enqueue_print_buffer(uint8_t c) {
+// 	enter_critical();
+// 	uint8_t next_enqueue_idx = (uint8_t)((print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES);
+// 	if (next_enqueue_idx != print_buffer_dequeue_idx) {
+// 		print_buffer[print_buffer_enqueue_idx] = c;
+// 		print_buffer_enqueue_idx = next_enqueue_idx;
+// 		exit_critical();
+// 		return true;
+// 	}
+// 	exit_critical();
+// 	return false;
+// }
 
 
 uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical section
 	uint32_t st = os_tick_count;
 	uint32_t delta;
 	while (1) {
+#ifdef HOST_TEST
+		// In test mode, auto-advance ticks to prevent infinite loop
+		os_tick_count++;
+#endif
 		// cppcheck-suppress duplicateExpression
 		// Initial delta may be 0, but will increase on subsequent iterations
 		delta = os_tick_count - st;
@@ -110,33 +120,33 @@ uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical sectio
 
 
 
-void os_transmit_printf_task(void) {
-	uint8_t retry_count;
-	static uint8_t send_buffer[PRINT_BUFFER_BYTES];
-	while (1) {
-		uint8_t num_chars_to_print = 0;
-		while (num_chars_to_print < sizeof(send_buffer)) {
-			if(!dequeue_print_buffer(&send_buffer[num_chars_to_print]))
-				break;
-			num_chars_to_print++;
-			if (send_buffer[num_chars_to_print - 1] == '\n')
-				break;
-		}
-		if (num_chars_to_print > 0) {
-			enter_critical();
-			retry_count = 0;
-			while (retry_count++ < MAX_PRINT_RETRIES) {
-				if (CDC_Transmit_FS(send_buffer, num_chars_to_print) == USBD_OK)
-					break;
-				task_busy_wait(1);
-			}
-			task_busy_wait(10);
-			exit_critical();
-		} else {
-			task_active_sleep(10);
-		}
-	}
-}
+// void os_transmit_printf_task(void) {
+// 	uint8_t retry_count;
+// 	static uint8_t send_buffer[PRINT_BUFFER_BYTES];
+// 	while (1) {
+// 		uint8_t num_chars_to_print = 0;
+// 		while (num_chars_to_print < sizeof(send_buffer)) {
+// 			if(!dequeue_print_buffer(&send_buffer[num_chars_to_print]))
+// 				break;
+// 			num_chars_to_print++;
+// 			if (send_buffer[num_chars_to_print - 1] == '\n')
+// 				break;
+// 		}
+// 		if (num_chars_to_print > 0) {
+// 			enter_critical();
+// 			retry_count = 0;
+// 			while (retry_count++ < MAX_PRINT_RETRIES) {
+// 				if (CDC_Transmit_FS(send_buffer, num_chars_to_print) == USBD_OK)
+// 					break;
+// 				task_busy_wait(1);
+// 			}
+// 			task_busy_wait(10);
+// 			exit_critical();
+// 		} else {
+// 			task_active_sleep(10);
+// 		}
+// 	}
+// }
 
 
 static void os_idle_task(void) {
@@ -189,7 +199,29 @@ static void os_heartbeart_task(void) {
 }
 
 
-void os_init() {
+static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count, bool should_engage) {
+    semaphore_list[semaphore_idx]->count = semaphore_count;
+    semaphore_list[semaphore_idx]->max_count = semaphore_count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
+    semaphore_list[semaphore_idx]->engaged = should_engage;
+}
+
+
+static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages, bool should_engage) {
+    message_pipe_list[message_pipe_idx]->count = 0;
+    message_pipe_list[message_pipe_idx]->max_count = max_messages;
+    for (uint16_t i = 0; i < MAX_MESSAGE_BUFFER_BYTES; i++) {
+        message_pipe_list[message_pipe_idx]->buffer[i] = 0;
+    }
+    message_pipe_list[message_pipe_idx]->enqueue_idx = 0;
+    message_pipe_list[message_pipe_idx]->dequeue_idx = 0;
+    message_pipe_list[message_pipe_idx]->tick_updated_at = os_tick_count;
+    message_pipe_list[message_pipe_idx]->engaged = should_engage;
+}
+
+
+
+void os_init(void) {
     os_running = 0;
     ticks_per_task = TICKS_PER_TASK;
     running_task_count = 0;
@@ -198,11 +230,19 @@ void os_init() {
     print_buffer_dequeue_idx = 0;
     print_buffer_enqueue_idx = 0;
 
-    int i;
+    uint8_t i;
     current_task_ticks_remaining = ticks_per_task;
     for (i = 0; i < MAX_TASKS; i++) {
         task_list[i] = &task_pool[i];
         cleanup_task_idx[i] = -1;
+    }
+    for (i = 0; i < MAX_SEMAPHORES; i++) {
+        semaphore_list[i] = &semaphore_pool[i];
+        __init_sem(i, 0, false);
+    }
+    for (i = 0; i < MAX_MESSAGE_QUEUES; i++) {
+        message_pipe_list[i] = &message_pipe_pool[i];
+        __init_pipe(i, 0, false);
     }
     for (i = 0; i < CPU_VREGISTERS_SIZE; i++) {
         cpu_vregisters[i] = 0;
@@ -217,17 +257,17 @@ void os_init() {
 }
 
 
-uint32_t os_get_tick_count() {
+uint32_t os_get_tick_count(void) {
     return os_tick_count;
 }
 
 
-uint8_t os_get_running_task_count() {
+uint8_t os_get_running_task_count(void) {
     return running_task_count;
 }
 
 
-const char* os_get_current_task_name() {
+const char* os_get_current_task_name(void) {
     if (current_task_index < num_created_tasks && task_list[current_task_index] != NULL) {
         return task_list[current_task_index]->name;
     }
@@ -235,7 +275,7 @@ const char* os_get_current_task_name() {
 }
 
 
-uint32_t os_get_task_ticks_remaining() {
+uint32_t os_get_task_ticks_remaining(void) {
     return current_task_ticks_remaining;
 }
 
@@ -245,7 +285,7 @@ void task_start(task_t *task) {
 }
 
 
-void os_yield() {
+void os_yield(void) {
     current_task_ticks_remaining = ticks_per_task;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
@@ -268,7 +308,7 @@ uint32_t task_blocking_sleep(uint32_t ticks) {
 }
 
 
-void os_start() {
+void os_start(void) {
     if (num_created_tasks == 0 || num_created_tasks > MAX_TASKS) {
         return;
     }
@@ -276,7 +316,7 @@ void os_start() {
 }
 
 
-void os_exit_task() {
+void os_exit_task(void) {
     task_list[current_task_index]->task_state = TASK_FINISHED;  // FINISHED
     if (running_task_count > 0)
     	running_task_count--;
@@ -309,19 +349,19 @@ void os_kill_process(uint8_t task_index) {
 }
 
 
-void suicide() {
+void os_task_suicide(void) {
     printf("[INFO] %s task committed suicide.", task_list[current_task_index]->name);
     os_kill_process(current_task_index);
 }
 
 
-void print_finished_tasks() {
-    printf("Finished task indices -> \t");
-    for (int i = current_cleanup_task_idx; i >= 0; i--) {
-        printf("%d\t", cleanup_task_idx[i]);
-    }
-    printf("\r\n");
-}
+// void os_print_finished_tasks(void) {
+//     printf("Finished task indices -> \t");
+//     for (int i = current_cleanup_task_idx; i >= 0; i--) {
+//         printf("%d\t", cleanup_task_idx[i]);
+//     }
+//     printf("\r\n");
+// }
 
 
 void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint32_t stack_size, const char *name) {
@@ -341,11 +381,12 @@ void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint3
     uint32_t *stack_top = stack + stack_size - 1;
     
     // Push in reverse order (high to low address)
+    // Cast through uintptr_t to avoid warnings on 64-bit hosts during testing
 
-    *(stack_top--) = 0x01000000;         // PSR
-    *(stack_top--) = (uint32_t)function; // PC
+    *(stack_top--) = 0x01000000;                      // PSR
+    *(stack_top--) = (uint32_t)(uintptr_t)function;   // PC
 
-    *(stack_top--) = (uint32_t)os_exit_task;         // LR
+    *(stack_top--) = (uint32_t)(uintptr_t)os_exit_task;  // LR
     *(stack_top--) = 0;                  // R12
     *(stack_top--) = 0;                  // R3
     *(stack_top--) = 0;                  // R2
@@ -361,3 +402,133 @@ void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint3
 void os_register_task(void (*function)(void), const char *name) {
     os_create_task(task_list[num_created_tasks], function, stack_pool[num_created_tasks], STACK_WORDS, name);
 }
+
+
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
+    enter_critical();
+    if (pipe_idx < MAX_MESSAGE_QUEUES && pipe_capacity_bytes > 0 && pipe_capacity_bytes <= MAX_MESSAGE_BUFFER_BYTES) {
+        if (!message_pipe_list[pipe_idx]->engaged) {
+            __init_pipe(pipe_idx, pipe_capacity_bytes, true);
+            exit_critical();
+            return true;
+        }
+        exit_critical();
+        return false;
+    }
+    exit_critical();
+    return false;
+}
+
+
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged || message_bytes > message_pipe_list[pipe_idx]->max_count)
+        return false;
+    while ((message_pipe_list[pipe_idx]->max_count - message_pipe_list[pipe_idx]->count) < message_bytes) {
+        task_active_sleep(1);
+        if ((message_pipe_list[pipe_idx]->max_count - message_pipe_list[pipe_idx]->count) >= message_bytes)
+            scheduler_enabled = false;
+    }
+    enter_critical();
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message_pipe_list[pipe_idx]->buffer[message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
+        message_pipe_list[pipe_idx]->enqueue_idx = (uint8_t) (message_pipe_list[pipe_idx]->enqueue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count++;
+    }
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+    return true;
+}
+
+
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged || message_bytes > message_pipe_list[pipe_idx]->max_count)
+        return false;
+    while (message_pipe_list[pipe_idx]->count < message_bytes) {
+        task_active_sleep(1);
+        if (message_pipe_list[pipe_idx]->count >= message_bytes)
+            scheduler_enabled = false;
+    }
+    enter_critical();
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message[i] = message_pipe_list[pipe_idx]->buffer[message_pipe_list[pipe_idx]->dequeue_idx];
+        message_pipe_list[pipe_idx]->dequeue_idx = (uint8_t) (message_pipe_list[pipe_idx]->dequeue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count--;
+    }
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+    return true;
+}
+
+
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
+    enter_critical();
+    if (semaphore_idx < MAX_SEMAPHORES && semaphore_count > 0) {
+        if (!semaphore_list[semaphore_idx]->engaged) {
+            __init_sem(semaphore_idx, semaphore_count, true);
+            exit_critical();
+            return true;
+        }
+        exit_critical();
+        return false;
+    }
+    exit_critical();
+    return false;
+}
+
+
+bool semaphore_feed(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return false;
+    while (semaphore_list[semaphore_idx]->count >= semaphore_list[semaphore_idx]->max_count) {
+        task_active_sleep(1);
+    }
+    enter_critical();
+    ++semaphore_list[semaphore_idx]->count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+    return true;
+}
+
+
+bool semaphore_consume(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return false;
+    while (semaphore_list[semaphore_idx]->count == 0) {
+        task_active_sleep(1);
+    }
+    enter_critical();
+    --semaphore_list[semaphore_idx]->count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+    return true;
+}
+
+
+uint32_t semaphore_get_count(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return 0;
+    return semaphore_list[semaphore_idx]->count;
+}
+
+
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx) {
+    if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
+        return 0;
+    return semaphore_list[semaphore_idx]->max_count;
+}
+
+
+uint8_t pipe_get_count(uint8_t pipe_idx) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged)
+        return 0;
+    return message_pipe_list[pipe_idx]->count;
+}
+
+
+uint8_t pipe_get_max_count(uint8_t pipe_idx) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged)
+        return 0;
+    return message_pipe_list[pipe_idx]->max_count;
+}
+
+

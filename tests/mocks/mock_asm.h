@@ -16,4 +16,14 @@ void start_cold_task(task_t *task);
 void os_yield_trampoline(void);
 void os_yield_pendsv(void);
 
+// Test helper: simulate tick advancement
+// Call this to advance os_tick_count, allowing sleep functions to complete
+void test_advance_ticks(uint32_t ticks);
+
+// Test helper: get number of times os_yield_pendsv was called
+uint32_t test_get_yield_count(void);
+
+// Test helper: reset yield count
+void test_reset_yield_count(void);
+
 #endif /* MOCK_ASM_H */

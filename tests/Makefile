@@ -23,8 +23,8 @@ BSP_SRC = \
 	$(PROJECT_ROOT)/Core/Src/bsp/error.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_stdio.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_hal.c \
-	$(PROJECT_ROOT)/Core/Src/bsp/stm32h7xx_it.c
-# Note: display.c is excluded because we use mocks for it
+	$(PROJECT_ROOT)/Core/Src/bsp/stm32h7xx_it.c \
+	$(PROJECT_ROOT)/Core/Src/bsp/display.c
 # Note: gpio.c, tim.c, i2c.c, spi.c, rtc.c are STM32CubeMX-generated initialization code
 # Note: context_switch.s is assembly and cannot be tested on host (requires ARM hardware)
 
@@ -35,9 +35,8 @@ KERNEL_INC = $(PROJECT_ROOT)/Core/Inc/kernel
 
 # Test sources (all test_*.c files)
 TEST_SOURCES = $(wildcard $(SRC_DIR)/test_*.c)
-# Mock sources - exclude mocks for files we're testing (main, retarget_hal)
-# Note: mock_display.c is needed because we don't compile display.c (use mock instead)
-MOCK_SOURCES = $(filter-out $(MOCKS_DIR)/mock_main.c $(MOCKS_DIR)/mock_retarget_hal.c, $(wildcard $(MOCKS_DIR)/*.c))
+# Mock sources - exclude mocks for files we're testing (main, retarget_hal, display)
+MOCK_SOURCES = $(filter-out $(MOCKS_DIR)/mock_main.c $(MOCKS_DIR)/mock_retarget_hal.c $(MOCKS_DIR)/mock_display.c, $(wildcard $(MOCKS_DIR)/*.c))
 
 # Include directories
 # MOCKS_DIR must come FIRST to override real headers with mocks
