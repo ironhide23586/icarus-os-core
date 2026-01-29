@@ -20,9 +20,11 @@ _Static_assert(offsetof(task_t, ticks_to_pause) == 24, "task_t.ticks_to_pause of
 
 task_t* task_list[MAX_TASKS];
 semaphore_t* semaphore_list[MAX_SEMAPHORES];
+message_pipe_t* message_pipe_list[MAX_MESSAGE_QUEUES];
 
 static task_t task_pool[MAX_TASKS];
 static semaphore_t semaphore_pool[MAX_SEMAPHORES];
+static message_pipe_t message_pipe_pool[MAX_MESSAGE_QUEUES];
 
 
 static uint32_t stack_pool[MAX_TASKS][STACK_WORDS];
@@ -65,7 +67,6 @@ static inline void enter_critical(void) {
 static inline void exit_critical(void) {
 	if (--critical_stack_depth == 0)
 		scheduler_enabled = true;
-//	task_active_sleep(3);
 }
 
 
@@ -200,16 +201,24 @@ static void os_heartbeart_task(void) {
 
 static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count, bool should_engage) {
     semaphore_list[semaphore_idx]->count = semaphore_count;
-    semaphore_list[semaphore_idx]->init_count = semaphore_count;
-    for (uint8_t i = 0; i < MAX_TASKS; i++) {
-        semaphore_list[semaphore_idx]->consumer_task_idx_list[i] = 0;
-        semaphore_list[semaphore_idx]->feeder_task_idx_list[i] = 0;
-    }
-    semaphore_list[semaphore_idx]->num_consumers_queued = 0;
-    semaphore_list[semaphore_idx]->num_feeders_queued = 0;
+    semaphore_list[semaphore_idx]->max_count = semaphore_count;
     semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
     semaphore_list[semaphore_idx]->engaged = should_engage;
 }
+
+
+static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages, bool should_engage) {
+    message_pipe_list[message_pipe_idx]->count = 0;
+    message_pipe_list[message_pipe_idx]->max_count = max_messages;
+    for (uint16_t i = 0; i < MAX_MESSAGE_BUFFER_BYTES; i++) {
+        message_pipe_list[message_pipe_idx]->buffer[i] = 0;
+    }
+    message_pipe_list[message_pipe_idx]->enqueue_idx = 0;
+    message_pipe_list[message_pipe_idx]->dequeue_idx = 0;
+    message_pipe_list[message_pipe_idx]->tick_updated_at = os_tick_count;
+    message_pipe_list[message_pipe_idx]->engaged = should_engage;
+}
+
 
 
 void os_init(void) {
@@ -230,6 +239,10 @@ void os_init(void) {
     for (i = 0; i < MAX_SEMAPHORES; i++) {
         semaphore_list[i] = &semaphore_pool[i];
         __init_sem(i, 0, false);
+    }
+    for (i = 0; i < MAX_MESSAGE_QUEUES; i++) {
+        message_pipe_list[i] = &message_pipe_pool[i];
+        __init_pipe(i, 0, false);
     }
     for (i = 0; i < CPU_VREGISTERS_SIZE; i++) {
         cpu_vregisters[i] = 0;
@@ -368,11 +381,12 @@ void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint3
     uint32_t *stack_top = stack + stack_size - 1;
     
     // Push in reverse order (high to low address)
+    // Cast through uintptr_t to avoid warnings on 64-bit hosts during testing
 
-    *(stack_top--) = 0x01000000;         // PSR
-    *(stack_top--) = (uint32_t)function; // PC
+    *(stack_top--) = 0x01000000;                      // PSR
+    *(stack_top--) = (uint32_t)(uintptr_t)function;   // PC
 
-    *(stack_top--) = (uint32_t)os_exit_task;         // LR
+    *(stack_top--) = (uint32_t)(uintptr_t)os_exit_task;  // LR
     *(stack_top--) = 0;                  // R12
     *(stack_top--) = 0;                  // R3
     *(stack_top--) = 0;                  // R2
@@ -387,6 +401,62 @@ void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint3
 
 void os_register_task(void (*function)(void), const char *name) {
     os_create_task(task_list[num_created_tasks], function, stack_pool[num_created_tasks], STACK_WORDS, name);
+}
+
+
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
+    enter_critical();
+    if (pipe_idx < MAX_MESSAGE_QUEUES && pipe_capacity_bytes > 0 && pipe_capacity_bytes <= MAX_MESSAGE_BUFFER_BYTES) {
+        if (!message_pipe_list[pipe_idx]->engaged) {
+            __init_pipe(pipe_idx, pipe_capacity_bytes, true);
+            exit_critical();
+            return true;
+        }
+        exit_critical();
+        return false;
+    }
+    exit_critical();
+    return false;
+}
+
+
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged || message_bytes > message_pipe_list[pipe_idx]->max_count)
+        return false;
+    while ((message_pipe_list[pipe_idx]->max_count - message_pipe_list[pipe_idx]->count) < message_bytes) {
+        task_active_sleep(1);
+        if ((message_pipe_list[pipe_idx]->max_count - message_pipe_list[pipe_idx]->count) >= message_bytes)
+            scheduler_enabled = false;
+    }
+    enter_critical();
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message_pipe_list[pipe_idx]->buffer[message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
+        message_pipe_list[pipe_idx]->enqueue_idx = (uint8_t) (message_pipe_list[pipe_idx]->enqueue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count++;
+    }
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+    return true;
+}
+
+
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged || message_bytes > message_pipe_list[pipe_idx]->max_count)
+        return false;
+    while (message_pipe_list[pipe_idx]->count < message_bytes) {
+        task_active_sleep(1);
+        if (message_pipe_list[pipe_idx]->count >= message_bytes)
+            scheduler_enabled = false;
+    }
+    enter_critical();
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message[i] = message_pipe_list[pipe_idx]->buffer[message_pipe_list[pipe_idx]->dequeue_idx];
+        message_pipe_list[pipe_idx]->dequeue_idx = (uint8_t) (message_pipe_list[pipe_idx]->dequeue_idx + 1) % message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count--;
+    }
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+    return true;
 }
 
 
@@ -409,11 +479,12 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
 bool semaphore_feed(uint8_t semaphore_idx) {
     if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
         return false;
-    while (semaphore_list[semaphore_idx]->count >= semaphore_list[semaphore_idx]->init_count) {
+    while (semaphore_list[semaphore_idx]->count >= semaphore_list[semaphore_idx]->max_count) {
         task_active_sleep(1);
     }
     enter_critical();
     ++semaphore_list[semaphore_idx]->count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
     exit_critical();
     return true;
 }
@@ -427,6 +498,7 @@ bool semaphore_consume(uint8_t semaphore_idx) {
     }
     enter_critical();
     --semaphore_list[semaphore_idx]->count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
     exit_critical();
     return true;
 }
@@ -439,10 +511,24 @@ uint32_t semaphore_get_count(uint8_t semaphore_idx) {
 }
 
 
-uint32_t semaphore_get_init_count(uint8_t semaphore_idx) {
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx) {
     if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
         return 0;
-    return semaphore_list[semaphore_idx]->init_count;
+    return semaphore_list[semaphore_idx]->max_count;
+}
+
+
+uint8_t pipe_get_count(uint8_t pipe_idx) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged)
+        return 0;
+    return message_pipe_list[pipe_idx]->count;
+}
+
+
+uint8_t pipe_get_max_count(uint8_t pipe_idx) {
+    if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged)
+        return 0;
+    return message_pipe_list[pipe_idx]->max_count;
 }
 
 

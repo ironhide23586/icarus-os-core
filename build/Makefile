@@ -426,7 +426,7 @@ test-reports:
 	if [ -d "$$TEST_DIR" ] && [ -f "$$TEST_DIR/Makefile" ]; then \
 		echo "  Test directory: $$TEST_DIR"; \
 		cd $$TEST_DIR && \
-		$(MAKE) COVERAGE=yes COVERAGE_OUTPUT_DIR=$(abspath $(COVERAGE_HTML_DIR)) clean test coverage-html 2>&1 | tail -10; \
+		$(MAKE) COVERAGE=yes COVERAGE_OUTPUT_DIR=$(abspath $(COVERAGE_HTML_DIR)) clean test coverage-html; \
 		echo ""; \
 		if [ -f "$(COVERAGE_HTML_DIR)/index.html" ]; then \
 			echo "✅ Test coverage report: $(COVERAGE_HTML_DIR)/index.html"; \

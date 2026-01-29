@@ -17,6 +17,103 @@
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
 #define ANSI_HIDE_CURSOR()  printf("\033[?25l")
 
+// ANSI color codes
+#define ANSI_RESET      "\033[0m"
+#define ANSI_BOLD       "\033[1m"
+#define ANSI_DIM        "\033[2m"
+#define ANSI_GREEN      "\033[32m"
+#define ANSI_YELLOW     "\033[33m"
+#define ANSI_MAGENTA    "\033[35m"
+#define ANSI_CYAN       "\033[36m"
+#define ANSI_WHITE      "\033[37m"
+#define ANSI_BG_GREEN   "\033[42m"
+#define ANSI_BG_MAGENTA "\033[45m"
+
+/**
+ * @brief Initialize a message history buffer
+ */
+void msg_history_init(msg_history_t* hist) {
+    if (hist == NULL) return;
+    memset(hist, 0, sizeof(msg_history_t));
+}
+
+/**
+ * @brief Add a message to history
+ */
+void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len, 
+                     uint8_t source_id, bool is_send) {
+    if (hist == NULL || data == NULL || len == 0) return;
+    
+    // Clamp length to max
+    if (len > MSG_HISTORY_MAX_BYTES) {
+        len = MSG_HISTORY_MAX_BYTES;
+    }
+    
+    // Add entry at head position
+    msg_history_entry_t* entry = &hist->entries[hist->head];
+    memcpy(entry->data, data, len);
+    entry->len = len;
+    entry->source_id = source_id;
+    entry->is_send = is_send;
+    
+    // Advance head (circular)
+    hist->head = (uint8_t)(hist->head + 1) % MSG_HISTORY_LEN;
+    if (hist->count < MSG_HISTORY_LEN) {
+        hist->count++;
+    }
+}
+
+/**
+ * @brief Render message history as a rolling window
+ * Uses ASCII box drawing for better terminal compatibility
+ */
+void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, const char* label) {
+    if (hist == NULL) return;
+    
+    // Header - use ASCII for compatibility
+    ANSI_GOTO(row, col);
+    printf(ANSI_CYAN ANSI_BOLD "+---%s---+" ANSI_RESET, label);
+    
+    // Calculate starting index (oldest entry)
+    uint8_t start_idx;
+    if (hist->count < MSG_HISTORY_LEN) {
+        start_idx = 0;
+    } else {
+        start_idx = hist->head;
+    }
+    
+    // Render each history entry
+    for (uint8_t i = 0; i < MSG_HISTORY_LEN; i++) {
+        ANSI_GOTO(row + 1 + i, col);
+        
+        if (i < hist->count) {
+            uint8_t idx = (start_idx + i) % MSG_HISTORY_LEN;
+            msg_history_entry_t* entry = &hist->entries[idx];
+            
+            if (entry->is_send) {
+                printf(ANSI_GREEN "|>P%d:", entry->source_id);
+            } else {
+                printf(ANSI_MAGENTA "|<C%d:", entry->source_id);
+            }
+            
+            if (entry->len == 1) {
+                printf("%3d" ANSI_RESET "|", entry->data[0]);
+            } else {
+                for (uint8_t j = 0; j < entry->len && j < 3; j++) {
+                    printf("%02X", entry->data[j]);
+                }
+                printf(ANSI_RESET "|");
+            }
+        } else {
+            printf("|        |");
+        }
+    }
+    
+    // Footer
+    ANSI_GOTO(row + MSG_HISTORY_LEN + 1, col);
+    printf(ANSI_CYAN "+---------+" ANSI_RESET);
+}
+
 /**
  * @brief Render a progress bar on a fixed row
  * @param row: terminal row (1-indexed)
@@ -93,55 +190,197 @@ void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
 
 /**
  * @brief Render a vertical bar showing semaphore fill level
- * @param start_row: top row of the vertical bar (1-indexed)
- * @param col: column position for the bar
- * @param count: current semaphore count
- * @param max_count: maximum semaphore capacity (init_count)
+ * Uses ASCII box drawing for better terminal compatibility
  */
 void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count) {
-    // Guard against division by zero
     if (max_count == 0) {
         max_count = 1;
     }
-    
-    // Clamp count to max
     if (count > max_count) {
         count = max_count;
     }
     
-    // Calculate filled rows (bottom-up fill)
     uint32_t filled_rows = (count * VBAR_HEIGHT) / max_count;
     if (filled_rows > VBAR_HEIGHT) {
         filled_rows = VBAR_HEIGHT;
     }
     
-    // Draw label above bar
+    // Label
     ANSI_GOTO(start_row - 1, col);
-    printf(" SEM ");
+    printf(ANSI_CYAN "SEM" ANSI_RESET);
     
-    // Draw top border
+    // Top border
     ANSI_GOTO(start_row, col);
-    printf("┌───┐");
+    printf("+---+");
     
-    // Draw bar rows (top to bottom, fill from bottom)
+    // Bar rows (fill from bottom)
     for (uint8_t i = 0; i < VBAR_HEIGHT; i++) {
         ANSI_GOTO(start_row + 1 + i, col);
-        // Row is filled if it's in the bottom 'filled_rows' portion
         uint8_t row_from_bottom = VBAR_HEIGHT - 1 - i;
         if (row_from_bottom < filled_rows) {
-            printf("│ █ │");
+            printf(ANSI_GREEN "|###|" ANSI_RESET);
         } else {
-            printf("│   │");
+            printf("|   |");
         }
     }
     
-    // Draw bottom border
+    // Bottom border
     ANSI_GOTO(start_row + VBAR_HEIGHT + 1, col);
-    printf("└───┘");
+    printf("+---+");
     
-    // Draw count label below
+    // Count label
     ANSI_GOTO(start_row + VBAR_HEIGHT + 2, col);
-    printf(" %2" PRIu32 "/%2" PRIu32, count, max_count);
+    printf("%2" PRIu32 "/%2" PRIu32, count, max_count);
+}
+
+/**
+ * @brief Render a message queue visualization panel
+ */
+void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
+                         uint8_t count, uint8_t max_count,
+                         uint8_t last_sent, uint8_t last_recv,
+                         bool show_sent, bool show_recv) {
+    // Guard against division by zero
+    if (max_count == 0) {
+        max_count = 1;
+    }
+    if (count > max_count) {
+        count = max_count;
+    }
+    
+    // Calculate fill percentage for horizontal bar
+    uint8_t bar_width = 8;
+    uint8_t filled = (uint8_t) (count * bar_width) / max_count;
+    
+    // Draw label
+    ANSI_GOTO(start_row, col);
+    printf("\033[36m%s\033[0m", label);  // Cyan label
+    
+    // Draw queue visualization: [████────] 
+    ANSI_GOTO(start_row + 1, col);
+    printf("[");
+    for (uint8_t i = 0; i < bar_width; i++) {
+        if (i < filled) {
+            printf("\033[33m█\033[0m");  // Yellow filled
+        } else {
+            printf("─");
+        }
+    }
+    printf("]");
+    
+    // Draw count
+    ANSI_GOTO(start_row + 2, col);
+    printf("%2d/%2d", count, max_count);
+    
+    // Draw sent indicator with arrow animation
+    ANSI_GOTO(start_row + 3, col);
+    if (show_sent) {
+        printf("\033[32m→%3d\033[0m", last_sent);  // Green arrow + value
+    } else {
+        printf("     ");
+    }
+    
+    // Draw received indicator
+    ANSI_GOTO(start_row + 4, col);
+    if (show_recv) {
+        printf("\033[35m←%3d\033[0m", last_recv);  // Magenta arrow + value
+    } else {
+        printf("     ");
+    }
+}
+
+/**
+ * @brief Render a producer task bar with sent message indicator
+ */
+void display_render_producer(uint8_t row, const char* task_name, 
+                             uint32_t elapsed_ticks, uint32_t period_ticks,
+                             uint8_t msg_value, bool show_msg) {
+    // Guard against division by zero
+    if (period_ticks == 0) {
+        period_ticks = 1;
+    }
+    if (elapsed_ticks > period_ticks) {
+        elapsed_ticks = period_ticks;
+    }
+    
+    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
+    if (filled > BAR_WIDTH) {
+        filled = BAR_WIDTH;
+    }
+    
+    ANSI_GOTO(row, 1);
+    
+    // Task name with producer color (green)
+    printf("\033[32m[%s]\033[0m ", task_name ? task_name : "unknown");
+    
+    // Progress bar
+    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+        if (i < filled) {
+            printf("\033[32m█\033[0m");  // Green filled
+        } else {
+            printf("─");
+        }
+    }
+    
+    // Timing info
+    printf(" %4" PRIu32 "/%4" PRIu32, elapsed_ticks, period_ticks);
+    
+    // Message indicator with animation
+    if (show_msg) {
+        // Flash effect: show arrow and value
+        printf(" \033[32;1m→[%3d]\033[0m", msg_value);
+    } else {
+        printf("        ");
+    }
+    
+    printf("\033[K");
+}
+
+/**
+ * @brief Render a consumer task bar with received message indicator
+ */
+void display_render_consumer(uint8_t row, const char* task_name,
+                             uint32_t elapsed_ticks, uint32_t period_ticks,
+                             uint8_t msg_value, bool show_msg) {
+    // Guard against division by zero
+    if (period_ticks == 0) {
+        period_ticks = 1;
+    }
+    if (elapsed_ticks > period_ticks) {
+        elapsed_ticks = period_ticks;
+    }
+    
+    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
+    if (filled > BAR_WIDTH) {
+        filled = BAR_WIDTH;
+    }
+    
+    ANSI_GOTO(row, 1);
+    
+    // Task name with consumer color (magenta)
+    printf("\033[35m[%s]\033[0m ", task_name ? task_name : "unknown");
+    
+    // Progress bar
+    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+        if (i < filled) {
+            printf("\033[35m█\033[0m");  // Magenta filled
+        } else {
+            printf("─");
+        }
+    }
+    
+    // Timing info
+    printf(" %4" PRIu32 "/%4" PRIu32, elapsed_ticks, period_ticks);
+    
+    // Message indicator with animation
+    if (show_msg) {
+        // Flash effect: show arrow and value
+        printf(" \033[35;1m←[%3d]\033[0m", msg_value);
+    } else {
+        printf("        ");
+    }
+    
+    printf("\033[K");
 }
 
 /**

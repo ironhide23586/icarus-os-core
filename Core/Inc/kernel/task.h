@@ -22,12 +22,15 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #include <stddef.h>
 #include "gpio.h"
 
-#define MAX_TASKS 10
-#define MAX_SEMAPHORES 20
+#define MAX_TASKS 64
+#define MAX_SEMAPHORES 32
+#define MAX_MESSAGE_QUEUES 32
+#define MAX_MESSAGE_BUFFER_BYTES 128
+
 #define STACK_WORDS 512  // 512 - 4 byte words per stack
 #define CPU_VREGISTERS_SIZE 16
 #define PRINT_BUFFER_BYTES 64  // DO NOT CROSS 64
-#define MAX_PRINT_RETRIES 10
+#define MAX_PRINT_RETRIES 4
 #define MAX_TASK_NAME_LENGTH 32
 
 #include "main.h"
@@ -68,15 +71,22 @@ typedef struct {
 
 
 typedef struct {
-    uint32_t count;
-    uint32_t init_count;
-    uint8_t consumer_task_idx_list[MAX_TASKS];
-    uint8_t feeder_task_idx_list[MAX_TASKS];
-    uint8_t num_consumers_queued;
-    uint8_t num_feeders_queued;
-    uint32_t tick_updated_at;
     bool engaged;
+    uint32_t count;
+    uint32_t max_count;
+    uint32_t tick_updated_at;
 } semaphore_t;
+
+
+typedef struct {
+    bool engaged;
+    uint8_t count;
+    uint8_t max_count;
+    uint8_t enqueue_idx;
+    uint8_t dequeue_idx;
+    uint32_t tick_updated_at;
+    uint8_t buffer[MAX_MESSAGE_BUFFER_BYTES];
+} message_pipe_t;
 
 
 void os_init(void);
@@ -103,10 +113,19 @@ const char* os_get_current_task_name(void);
 // void os_print_finished_tasks(void);
 
 
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+uint8_t pipe_get_count(uint8_t pipe_idx);
+uint8_t pipe_get_max_count(uint8_t pipe_idx);
+
 bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
 bool semaphore_feed(uint8_t semaphore_idx);
 bool semaphore_consume(uint8_t semaphore_idx);
 uint32_t semaphore_get_count(uint8_t semaphore_idx);
-uint32_t semaphore_get_init_count(uint8_t semaphore_idx);
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
+
+
+
 
 #endif /* __ICARUS_TASK_H__ */

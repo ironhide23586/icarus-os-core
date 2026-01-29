@@ -2,7 +2,7 @@
 
 **Intelligent Certifiable Autonomous Real-time Unified System**
 
-A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C certification. Built from the ground up with safety-critical aerospace and defense applications in mind.
+A minimal, deterministic real-time kernel for Cortex-M designed to support DO-178C DAL C certification objectives. Built from the ground up with safety-critical aerospace and defense applications in mind.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -13,20 +13,7 @@ A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C cert
 │   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
 │   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
 │   Preemptive Kernel • ARMv7E-M • STM32H750                   │
-└──────────────────────────────────────────────────────────────┘  SEM
-                                                                 ┌───┐
-[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]   │   │
-[producer]  ████████████████────────────────  160/200 ticks      │   │
-[consumer]  ██████████──────────────────────  100/300 ticks      │   │
-[reference] ████████████████████────────────  1200/3000 ticks    │   │
-                                                                 │   │
-                                                                 │   │
-                                                                 │   │
-                                                                 │ █ │
-                                                                 │ █ │
-                                                                 │ █ │
-                                                                 └───┘
-                                                                  3/10
+└──────────────────────────────────────────────────────────────┘
 ```
 
 > **⚠️ WARNING: This is work in progress and NOT production ready.**
@@ -39,11 +26,166 @@ A minimal, deterministic real-time kernel for Cortex-M designed for DO-178C cert
 
 | Metric | Status |
 |--------|--------|
-| **Test Coverage** | 79.3% line, 77.6% function |
-| **Unit Tests** | 83 tests, 0 failures |
+| **Test Coverage** | 88.5% line, 85.9% function |
+| **Unit Tests** | 131 tests, 0 failures |
 | **Static Analysis** | cppcheck clean |
 | **Certification Target** | DO-178C DAL C |
 | **Coding Standard** | MISRA C:2012 subset |
+
+---
+
+## Terminal GUI
+
+ICARUS OS features a real-time terminal-based GUI that visualizes kernel activity, IPC operations, and stress test metrics. The display uses ANSI escape codes for cursor positioning and colors.
+
+### GUI Layout Overview
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                              HEADER                                                       │
+│  ICARUS ASCII art logo + version info                                                                    │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                         DEMO TASKS SECTION                                                │
+│                                                                                                           │
+│  [heartbeat]  ★★★★★★★★★★★★★★★★★★★★ [heartbeat]          SEM     +---SS---+  +---SM---+                   │
+│  [producer]   ████████████────────  160/200 ticks       +---+   |>P0: 42|  |>P0:0042|                    │
+│  [consumer]   ██████████──────────  100/190 ticks       |###|   |<C0: 42|  |<C0:0042|                    │
+│  [reference]  ████████████████────  1200/3000 ticks     |###|   |>P0: 43|  |<C1:0043|                    │
+│  [ss_prod]    ██████████████──────  220/400  →[106]     |###|   |<C0: 43|  |>P0:0044|                    │
+│  [ss_cons]    ████████████────────  200/350  ←[105]     |   |   +--------+  +--------+                   │
+│  [sm_prod]    ████████────────────   90/150  →[ 68]     |   |                                            │
+│  [sm_con1]    ██████████████──────  225/350  ←[ 66]     +---+   +---MS---+  +---MM---+                   │
+│  [sm_con2]    ████████████████────  300/450  ←[ 67]      3/10   |>P0: 42|  |>P0:006B|                    │
+│  [ms_prd1]    ████████████████────  200/400  →[ 42]             |>P1:115|  |<C0:006B|                    │
+│  [ms_prd2]    ██████████████████──  390/550  →[115]             |<C0: 42|  |>P1:0048|                    │
+│  [ms_cons]    ████████────────────  150/350  ←[114]             |<C0:115|  |<C1:0048|                    │
+│  [mm_prd1]    ██████████────────    175/400  →[ 23]             +--------+  +--------+                   │
+│  [mm_prd2]    ████████████████████  480/600  →[ 11]                                                      │
+│  [mm_con1]    ████████████████────  250/350  ←[ 22]                                                      │
+│  [mm_con2]    ██████████████──────  280/400  ←[ 10]                                                      │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                       STRESS TEST SECTION                                                 │
+│                                                                                                           │
+│  ═══════════════════════════════════════════════════════════════════════════════                         │
+│    ⚡ STRESS TEST ACTIVE ⚡  Semaphores: 4  Pipes: 4  Tasks: 19                                           │
+│  ═══════════════════════════════════════════════════════════════════════════════                         │
+│                                                                                                           │
+│  [sem_ham0]   ████████████████████   20/20  →[ 75]      SEM    SEM    SEM    SEM                         │
+│  [sem_ham1]   ██████████████──────   14/20  ←[ 74]     +---+  +---+  +---+  +---+                        │
+│  [sem_med0]   ████████████────────   60/100            |###|  |###|  |   |  |###|                        │
+│  [sem_med1]   ██████████──────────   50/107            |###|  |###|  |   |  +---+                        │
+│  [sem_slow]   ████████████████────   80/100            |###|  |   |  |   |   1/1                         │
+│  [sem_mtx0]   ████████────────────   40/50  →[ 49]     |   |  |   |  |   |                               │
+│  [sem_mtx1]   ██████████████──────   70/50  ←[ 48]     +---+  +---+  +---+                               │
+│  [pf_send]    ████████████████████   10/10  →[255]      5/5    3/5    2/5                                │
+│  [pf_recv]    ██████████████──────   14/20  ←[254]                                                       │
+│  [pm_prd0]    ████████████────────   30/50  →[ 42]                                                       │
+│  [pm_prd1]    ██████████████──────   35/61  →[ 41]                                                       │
+│  [pm_prd2]    ████████████████────   40/73  →[ 40]                                                       │
+│  [pm_cons]    ████████────────────   20/16  ←[ 39]                                                       │
+│  [pv_send]    ██████████████████──   45/50  →[ 12]                                                       │
+│  [pv_recv]    ████████████████────   40/55  ←[ 11]                                                       │
+│  [yielder]    ████████████────────   12/20                                                               │
+│  [sleeper]    ██████████──────────   25/50                                                               │
+│  [cpu_hog]    ████████████████────   35/50                                                               │
+│                                                                                                           │
+│  STRESS: sem_f=1542 sem_c=1538 pipe_s=892 pipe_r=887 yields=4521 sleeps=3892                             │
+│  WAITS: sem_max=45 pipe_max=12 full=234 empty=156                                                        │
+│  VERIFY: seq=0 data=0 overflow=0 underflow=0  [PASS]                                                     │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### GUI Components Explained
+
+#### 1. Header Section
+The ICARUS ASCII art logo with platform information (ARMv7E-M, STM32H750).
+
+#### 2. Heartbeat Banner
+```
+[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]
+```
+Flashes on/off synchronized with the onboard LED. Indicates the kernel is alive and scheduling tasks.
+
+#### 3. Task Progress Bars
+```
+[task_name] ████████████────────────────  elapsed/period ticks
+```
+- **Green bars** (`████`): Producers sending messages
+- **Magenta bars** (`████`): Consumers receiving messages
+- **White bars**: Reference/utility tasks
+- **Elapsed/Period**: Current tick count vs total period duration
+- **Arrow indicators**: `→[value]` for sent messages, `←[value]` for received
+
+#### 4. Semaphore Vertical Bars
+```
+  SEM
++---+
+|###|  ← Filled portion (current count)
+|###|
+|   |  ← Empty portion
+|   |
++---+
+ 3/10  ← current/max count
+```
+Visual representation of semaphore fill level. Fills from bottom to top as count increases.
+
+#### 5. Message History Panels
+```
++---SS---+
+|>P0: 42|  ← Producer 0 sent value 42
+|<C0: 42|  ← Consumer 0 received value 42
+|>P0: 43|
+|<C0: 43|
++--------+
+```
+Rolling history of the last 8 messages for each pipe configuration:
+- **SS**: Single Producer → Single Consumer
+- **SM**: Single Producer → Multiple Consumers
+- **MS**: Multiple Producers → Single Consumer
+- **MM**: Multiple Producers → Multiple Consumers
+
+Format: `>Pn:` = Producer n sent, `<Cn:` = Consumer n received
+
+#### 6. Stress Test Statistics
+
+**STRESS line** - Operation counts:
+| Metric | Description |
+|--------|-------------|
+| `sem_f` | Total semaphore feed (signal) operations |
+| `sem_c` | Total semaphore consume (wait) operations |
+| `pipe_s` | Total messages sent to pipes |
+| `pipe_r` | Total messages received from pipes |
+| `yields` | Times tasks voluntarily yielded CPU |
+| `sleeps` | Times tasks called active sleep |
+
+**WAITS line** - Contention metrics:
+| Metric | Description |
+|--------|-------------|
+| `sem_max` | Longest wait time (ticks) for any semaphore operation |
+| `pipe_max` | Longest wait time (ticks) for any pipe operation |
+| `full` | Count of times sender blocked on full pipe |
+| `empty` | Count of times receiver blocked on empty pipe |
+
+**VERIFY line** - Data integrity verification:
+| Metric | Description |
+|--------|-------------|
+| `seq` | Out-of-order message errors (FIFO violation) |
+| `data` | Data corruption detected (wrong content) |
+| `overflow` | Semaphore/pipe overflow errors |
+| `underflow` | Semaphore/pipe underflow errors |
+| `[PASS]` | Green if all zeros - no errors detected |
+| `[FAIL]` | Red if any errors - bugs detected |
+
+### Color Coding
+
+| Color | Meaning |
+|-------|---------|
+| **Green** | Producers, successful operations, PASS status |
+| **Magenta** | Consumers, receive operations |
+| **Cyan** | Headers, labels, informational |
+| **Yellow** | Warnings, stress test header |
+| **Red** | Errors, FAIL status |
+| **White** | Normal text, reference tasks |
 
 ---
 
@@ -55,7 +197,7 @@ ICARUS OS is a lightweight, preemptive real-time operating system kernel designe
 
 ICARUS is designed to be the first open-source RTOS with:
 - **Native AI integration** with certifiable determinism (planned)
-- **DO-178C compliance by design** (not retrofitted)
+- **DO-178C alignment by design** (not retrofitted)
 - **Hardware-agnostic portability** across safety-critical platforms
 - **Formal verification readiness** for DAL A applications (future)
 
@@ -65,18 +207,20 @@ ICARUS is designed to be the first open-source RTOS with:
 - **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
+- **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
 - **Blocking Sleep**: Busy-wait sleep for critical timing
-- **Visual Debugging**: Terminal-based display system with progress bars, task visualization, and semaphore state
+- **Visual Debugging**: Terminal-based display with progress bars, message history, semaphore/pipe visualization
+- **Stress Testing**: Built-in stress test suite with real-time verification
 - **USB CDC Support**: Serial communication via USB Virtual COM Port
 - **MPU Configuration**: Memory Protection Unit setup for QSPI flash access
 - **MISRA C Compliant**: Follows MISRA C:2012 coding standards
 
 ---
 
-## DO-178C Certification
+## DO-178C Alignment
 
-ICARUS OS is being developed with DO-178C DAL C certification as a primary goal. Complete certification documentation is available in `docs/do178c/`.
+ICARUS OS is being developed to support DO-178C DAL C certification objectives. Complete certification-aligned documentation is available in `docs/do178c/`.
 
 ### Documentation Suite
 
@@ -93,9 +237,9 @@ ICARUS OS is being developed with DO-178C DAL C certification as a primary goal.
 |-----------|--------|
 | Static analysis (cppcheck) | ✅ Complete |
 | MISRA C:2012 subset | ✅ Complete |
-| Unit testing (Unity) | ✅ 83 tests |
-| Line coverage | ✅ 79.3% |
-| Function coverage | ✅ 77.6% |
+| Unit testing (Unity) | ✅ 131 tests |
+| Line coverage | ✅ 88.5% |
+| Function coverage | ✅ 85.9% |
 | Requirements traceability | ✅ SRS complete |
 | Design traceability | ✅ SDD complete |
 | MC/DC coverage | 🔄 In progress |
@@ -109,296 +253,10 @@ ICARUS OS is being developed with DO-178C DAL C certification as a primary goal.
 cd tests && make clean test
 
 # Generate coverage report
-cd tests && make coverage
+cd tests && make COVERAGE=yes clean test coverage-html
 
 # Run static analysis
 cd build && make cppcheck
 ```
 
 ---
-
-## Development Roadmap
-
-```
-Phase 1: Foundation (Current) ✅
-├── Preemptive scheduler
-├── Task management
-├── Basic BSP
-├── Host-based testing (79.3% coverage)
-└── DO-178C documentation suite
-
-Phase 2: Hardening (Q2 2026)
-├── Memory protection (MPU)
-├── Stack overflow detection
-├── Watchdog integration
-└── Fault recovery
-
-Phase 3: Communication (Q3 2026) 🔄 In Progress
-├── Inter-process communication (IPC)
-├── Message queues
-├── Semaphores/Mutexes ✅ Bounded semaphores implemented
-└── Event flags
-
-Phase 4: AI Runtime (Q4 2026)
-├── Deterministic inference engine
-├── Fixed-point neural network support (int8/int16)
-├── Model verification framework
-└── WCET-bounded execution
-
-Phase 5: Advanced Features (2027)
-├── Multi-core support (AMP/SMP)
-├── Hypervisor mode
-├── Time/Space partitioning (ARINC 653)
-└── Formal verification integration
-```
-
----
-
-## Architecture
-
-### System Components
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Application Layer                     │
-│  (User Tasks: test_task_a, test_task_b, test_task_c)     │
-└─────────────────────────────────────────────────────────┘
-                            │
-┌─────────────────────────────────────────────────────────┐
-│                      Kernel Layer                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ Task Manager │  │  Scheduler   │  │ Context Sw.  │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                            │
-┌─────────────────────────────────────────────────────────┐
-│                    BSP Layer (HAL)                        │
-│  Display │ GPIO │ I2C │ SPI │ RTC │ TIM │ USB │ SysTick│
-└─────────────────────────────────────────────────────────┘
-                            │
-┌─────────────────────────────────────────────────────────┐
-│                    Hardware (STM32H750)                 │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Target Platforms
-
-| Platform | Status | DAL Target | Use Case |
-|----------|--------|------------|----------|
-| **STM32H7** (Cortex-M7) | ✅ Primary | DAL C | UAV flight controllers, sensors |
-| **STM32F4** (Cortex-M4) | Planned | DAL D | Cost-sensitive applications |
-| **RISC-V** (RV32IMAC) | Planned | DAL C | Open hardware initiatives |
-| **Xilinx Zynq** (Cortex-A9 + FPGA) | Planned | DAL B | AI acceleration, radar |
-| **x86-64** (Host) | ✅ Testing | N/A | Development and CI testing |
-
----
-
-## Kernel Components
-
-### Task Control Block (TCB)
-
-Each task is represented by a `task_t` structure:
-
-```c
-typedef struct {
-    void (*function)(void);           // Task entry point
-    uint32_t *stack_base;             // Stack base address
-    uint32_t stack_size;              // Stack size in words
-    uint32_t *stack_pointer;          // Current stack pointer
-    task_state_t task_state;          // Current state
-    uint32_t global_tick_paused;      // Tick when task was paused
-    uint32_t ticks_to_pause;          // Remaining pause duration
-    task_pri_t task_priority;         // Task priority (LOW/MED/HIGH)
-    char name[MAX_TASK_NAME_LENGTH];  // Task name for debugging
-} task_t;
-```
-
-### Task States
-
-| State | Value | Description |
-|-------|-------|-------------|
-| TASK_COLD | 0 | Newly created, never executed |
-| TASK_RUNNING | 1 | Currently executing |
-| TASK_READY | 2 | Ready to run, waiting for scheduler |
-| TASK_BLOCKED | 3 | Sleeping or waiting for event |
-| TASK_KILLED | 4 | Terminated by another task |
-| TASK_FINISHED | 5 | Completed execution normally |
-
-### Scheduler
-
-The kernel implements a **preemptive round-robin scheduler**:
-
-- **Time Quantum**: Configurable via `TICKS_PER_TASK` (default: 50 ticks = 50ms)
-- **Scheduling Trigger**: SysTick interrupt decrements `current_task_ticks_remaining`
-- **Context Switch**: PendSV exception performs actual task switch
-- **Task Selection**: Circular search for next READY or COLD task
-- **Blocked Task Wake**: Automatically wakes tasks when sleep period expires
-
-### Context Switching
-
-Context switching is implemented in ARM assembly (`context_switch.s`) for optimal performance and determinism:
-
-- **Saves**: R4-R11 (callee-saved registers) to current task's stack
-- **Stores**: Updated PSP to TCB
-- **Finds**: Next runnable task (READY or COLD state)
-- **Checks**: Blocked tasks for wake-up conditions
-- **Restores**: R4-R11 from next task's stack
-- **Switches**: PSP to next task's stack pointer
-
----
-
-## API Reference
-
-### Kernel Initialization
-
-```c
-void os_init(void);      // Initialize kernel, create system tasks
-void os_start(void);     // Start scheduler (never returns)
-```
-
-### Task Management
-
-```c
-void os_register_task(void (*function)(void), const char *name);
-void os_yield(void);                        // Yield CPU to next task
-uint32_t task_active_sleep(uint32_t ticks); // Sleep, allow other tasks
-uint32_t task_blocking_sleep(uint32_t ticks); // Busy-wait sleep
-void os_exit_task(void);                    // Terminate current task
-void os_kill_process(uint8_t task_index);   // Kill task by index
-void os_task_suicide(void);                 // Kill current task
-```
-
-### System Information
-
-```c
-uint32_t os_get_tick_count(void);           // System tick count (ms)
-const char* os_get_current_task_name(void); // Current task name
-uint32_t os_get_task_ticks_remaining(void); // Remaining time quantum
-uint8_t os_get_running_task_count(void);    // Active task count
-```
-
-### Semaphores
-
-```c
-bool semaphore_init(uint8_t idx, uint32_t count);  // Initialize bounded semaphore
-bool semaphore_feed(uint8_t idx);                   // Increment (blocks if full)
-bool semaphore_consume(uint8_t idx);                // Decrement (blocks if empty)
-uint32_t semaphore_get_count(uint8_t idx);          // Get current count
-uint32_t semaphore_get_init_count(uint8_t idx);     // Get max capacity
-```
-
----
-
-## Quick Start
-
-### Building
-
-```bash
-# Build with Makefile (recommended)
-cd build
-make clean all
-
-# Or with STM32CubeIDE
-# Open project and Build All
-```
-
-### Running Tests
-
-```bash
-cd tests
-make clean test          # Run 76 unit tests
-make coverage            # Generate coverage report (79.3%)
-```
-
-### Flashing
-
-1. Connect STM32H750 via ST-Link
-2. Flash using STM32CubeIDE or `st-flash`
-3. Connect USB for serial terminal output
-
----
-
-## Code Structure
-
-```
-icarus-os-core/
-├── Core/
-│   ├── Inc/
-│   │   ├── kernel/task.h          # Task API and TCB
-│   │   └── bsp/                   # BSP headers
-│   └── Src/
-│       ├── main.c                 # Application entry
-│       ├── kernel/
-│       │   ├── task.c             # Task management
-│       │   └── context_switch.s   # Assembly context switch
-│       └── bsp/                   # Board support
-├── docs/
-│   └── do178c/                    # DO-178C documentation
-│       ├── plans/                 # PSAC, SDP, SVP, SCMP, SQAP
-│       ├── requirements/          # SRS
-│       ├── design/                # SDD
-│       └── verification/          # Coverage, traceability
-├── tests/
-│   ├── src/test_task.c            # 76 unit tests
-│   ├── mocks/                     # Hardware mocks
-│   └── unity/                     # Unity test framework
-├── build/
-│   └── reports/                   # Static analysis, coverage
-├── Drivers/                       # STM32 HAL
-└── Middlewares/                   # USB Device Library
-```
-
----
-
-## Configuration
-
-### Kernel (`Core/Inc/main.h`)
-
-```c
-#define TICKS_PER_TASK 50  // Time quantum (50ms)
-```
-
-### Task Limits (`Core/Inc/kernel/task.h`)
-
-```c
-#define MAX_TASKS 10              // Maximum tasks
-#define STACK_WORDS 512           // Stack per task (2KB)
-#define MAX_TASK_NAME_LENGTH 32   // Task name length
-```
-
----
-
-## Hardware Requirements
-
-- **MCU**: STM32H750VBTx (Cortex-M7, 480 MHz)
-- **Flash**: Internal or external QSPI
-- **RAM**: Internal SRAM (DTCM, AXI SRAM)
-- **Display**: Terminal via USB CDC
-- **LED**: GPIO E3 for heartbeat
-
----
-
-## Limitations
-
-Current limitations (work in progress):
-
-- **No Priority Preemption**: Round-robin only (priority support planned)
-- **No Mutex**: Mutex with priority inheritance planned
-- **No Message Queues**: Message queue IPC planned
-- **No Dynamic Allocation**: All memory statically allocated (by design for certification)
-- **Fixed Stack Size**: All tasks use same stack size
-- **Single Core**: Multi-core support planned for Phase 5
-
----
-
-## License
-
-Apache License 2.0 - See LICENSE file for details.
-
----
-
-## Author
-
-Created by Souham Biswas for deterministic real-time embedded systems.
-
-GitHub: https://github.com/ironhide23586/icarus-os-core
