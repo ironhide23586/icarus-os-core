@@ -1645,6 +1645,275 @@ void test_pipe_circular_wrap(void) {
 	TEST_ASSERT_EQUAL(0x0A, recv2[5]);
 }
 
+// ============================================================================
+// SEMAPHORE GETTER TESTS
+// ============================================================================
+
+// Test: semaphore_get_count basic
+void test_semaphore_get_count_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "get_count_test");
+	current_task_index = 0;
+	
+	semaphore_init(0, 5);
+	TEST_ASSERT_EQUAL(5, semaphore_get_count(0));
+	
+	semaphore_consume(0);
+	TEST_ASSERT_EQUAL(4, semaphore_get_count(0));
+	
+	semaphore_feed(0);
+	TEST_ASSERT_EQUAL(5, semaphore_get_count(0));
+}
+
+// Test: semaphore_get_count invalid index
+void test_semaphore_get_count_invalid(void) {
+	TEST_ASSERT_EQUAL(0, semaphore_get_count(MAX_SEMAPHORES));
+	TEST_ASSERT_EQUAL(0, semaphore_get_count(MAX_SEMAPHORES + 1));
+}
+
+// Test: semaphore_get_count not engaged
+void test_semaphore_get_count_not_engaged(void) {
+	test_init_task_list();
+	// Semaphore 5 not initialized
+	TEST_ASSERT_EQUAL(0, semaphore_get_count(5));
+}
+
+// Test: semaphore_get_max_count basic
+void test_semaphore_get_max_count_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "max_count_test");
+	current_task_index = 0;
+	
+	semaphore_init(0, 10);
+	TEST_ASSERT_EQUAL(10, semaphore_get_max_count(0));
+	
+	// Max count shouldn't change after consume/feed
+	semaphore_consume(0);
+	TEST_ASSERT_EQUAL(10, semaphore_get_max_count(0));
+}
+
+// Test: semaphore_get_max_count invalid index
+void test_semaphore_get_max_count_invalid(void) {
+	TEST_ASSERT_EQUAL(0, semaphore_get_max_count(MAX_SEMAPHORES));
+}
+
+// Test: semaphore_get_max_count not engaged
+void test_semaphore_get_max_count_not_engaged(void) {
+	test_init_task_list();
+	TEST_ASSERT_EQUAL(0, semaphore_get_max_count(7));
+}
+
+// ============================================================================
+// PIPE GETTER TESTS
+// ============================================================================
+
+// Test: pipe_get_count basic
+void test_pipe_get_count_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "pipe_count_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 16);
+	TEST_ASSERT_EQUAL(0, pipe_get_count(0));
+	
+	uint8_t data[] = {0x01, 0x02, 0x03};
+	pipe_enqueue(0, data, 3);
+	TEST_ASSERT_EQUAL(3, pipe_get_count(0));
+	
+	uint8_t recv[2];
+	pipe_dequeue(0, recv, 2);
+	TEST_ASSERT_EQUAL(1, pipe_get_count(0));
+}
+
+// Test: pipe_get_count invalid index
+void test_pipe_get_count_invalid(void) {
+	TEST_ASSERT_EQUAL(0, pipe_get_count(MAX_MESSAGE_QUEUES));
+}
+
+// Test: pipe_get_count not engaged
+void test_pipe_get_count_not_engaged(void) {
+	test_init_task_list();
+	TEST_ASSERT_EQUAL(0, pipe_get_count(3));
+}
+
+// Test: pipe_get_max_count basic
+void test_pipe_get_max_count_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "pipe_max_test");
+	current_task_index = 0;
+	
+	pipe_init(0, 32);
+	TEST_ASSERT_EQUAL(32, pipe_get_max_count(0));
+}
+
+// Test: pipe_get_max_count invalid index
+void test_pipe_get_max_count_invalid(void) {
+	TEST_ASSERT_EQUAL(0, pipe_get_max_count(MAX_MESSAGE_QUEUES));
+}
+
+// Test: pipe_get_max_count not engaged
+void test_pipe_get_max_count_not_engaged(void) {
+	test_init_task_list();
+	TEST_ASSERT_EQUAL(0, pipe_get_max_count(5));
+}
+
+// ============================================================================
+// DISPLAY FUNCTION TESTS
+// ============================================================================
+
+// Test: display_render_vbar basic
+void test_display_render_vbar_basic(void) {
+	// Just verify it doesn't crash with various inputs
+	display_render_vbar(10, 50, 5, 10);
+	display_render_vbar(10, 50, 0, 10);
+	display_render_vbar(10, 50, 10, 10);
+	TEST_PASS();
+}
+
+// Test: display_render_vbar zero max_count (edge case)
+void test_display_render_vbar_zero_max(void) {
+	// Should handle gracefully (guard against div by zero)
+	display_render_vbar(10, 50, 5, 0);
+	TEST_PASS();
+}
+
+// Test: display_render_vbar count exceeds max
+void test_display_render_vbar_overflow(void) {
+	display_render_vbar(10, 50, 15, 10);  // count > max
+	TEST_PASS();
+}
+
+// Test: display_render_pipe basic
+void test_display_render_pipe_basic(void) {
+	display_render_pipe(10, 50, "TEST", 5, 10, 42, 37, true, true);
+	display_render_pipe(10, 50, "TEST", 0, 10, 0, 0, false, false);
+	TEST_PASS();
+}
+
+// Test: display_render_pipe zero max_count
+void test_display_render_pipe_zero_max(void) {
+	display_render_pipe(10, 50, "TEST", 5, 0, 42, 37, true, true);
+	TEST_PASS();
+}
+
+// Test: display_render_producer basic
+void test_display_render_producer_basic(void) {
+	display_render_producer(10, "producer", 50, 100, 42, true);
+	display_render_producer(10, "producer", 100, 100, 42, false);
+	display_render_producer(10, NULL, 50, 100, 42, true);  // null name
+	TEST_PASS();
+}
+
+// Test: display_render_producer zero period
+void test_display_render_producer_zero_period(void) {
+	display_render_producer(10, "producer", 50, 0, 42, true);
+	TEST_PASS();
+}
+
+// Test: display_render_consumer basic
+void test_display_render_consumer_basic(void) {
+	display_render_consumer(10, "consumer", 50, 100, 42, true);
+	display_render_consumer(10, "consumer", 100, 100, 42, false);
+	display_render_consumer(10, NULL, 50, 100, 42, true);  // null name
+	TEST_PASS();
+}
+
+// Test: display_render_consumer zero period
+void test_display_render_consumer_zero_period(void) {
+	display_render_consumer(10, "consumer", 50, 0, 42, true);
+	TEST_PASS();
+}
+
+// Test: msg_history_init
+void test_msg_history_init_basic(void) {
+	msg_history_t hist;
+	hist.head = 99;
+	hist.count = 99;
+	
+	msg_history_init(&hist);
+	TEST_ASSERT_EQUAL(0, hist.head);
+	TEST_ASSERT_EQUAL(0, hist.count);
+}
+
+// Test: msg_history_init null
+void test_msg_history_init_null(void) {
+	msg_history_init(NULL);  // Should not crash
+	TEST_PASS();
+}
+
+// Test: msg_history_add basic
+void test_msg_history_add_basic(void) {
+	msg_history_t hist;
+	msg_history_init(&hist);
+	
+	uint8_t data[] = {0x01, 0x02, 0x03};
+	msg_history_add(&hist, data, 3, 0, true);
+	
+	TEST_ASSERT_EQUAL(1, hist.count);
+	TEST_ASSERT_EQUAL(1, hist.head);
+	TEST_ASSERT_EQUAL(0x01, hist.entries[0].data[0]);
+	TEST_ASSERT_EQUAL(3, hist.entries[0].len);
+	TEST_ASSERT_EQUAL(0, hist.entries[0].source_id);
+	TEST_ASSERT_TRUE(hist.entries[0].is_send);
+}
+
+// Test: msg_history_add null
+void test_msg_history_add_null(void) {
+	msg_history_t hist;
+	msg_history_init(&hist);
+	
+	msg_history_add(NULL, (uint8_t[]){1}, 1, 0, true);  // null hist
+	msg_history_add(&hist, NULL, 1, 0, true);           // null data
+	msg_history_add(&hist, (uint8_t[]){1}, 0, 0, true); // zero len
+	
+	TEST_ASSERT_EQUAL(0, hist.count);  // Nothing should be added
+}
+
+// Test: msg_history_add wrap around
+void test_msg_history_add_wrap(void) {
+	msg_history_t hist;
+	msg_history_init(&hist);
+	
+	// Fill history beyond capacity
+	for (int i = 0; i < MSG_HISTORY_LEN + 2; i++) {
+		uint8_t data = (uint8_t)i;
+		msg_history_add(&hist, &data, 1, 0, true);
+	}
+	
+	TEST_ASSERT_EQUAL(MSG_HISTORY_LEN, hist.count);  // Should cap at max
+	TEST_ASSERT_EQUAL(2, hist.head);  // Should wrap: (MSG_HISTORY_LEN + 2) % MSG_HISTORY_LEN
+}
+
+// Test: msg_history_add clamp length
+void test_msg_history_add_clamp_len(void) {
+	msg_history_t hist;
+	msg_history_init(&hist);
+	
+	uint8_t data[10] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
+	msg_history_add(&hist, data, 10, 0, true);  // len > MSG_HISTORY_MAX_BYTES
+	
+	TEST_ASSERT_EQUAL(MSG_HISTORY_MAX_BYTES, hist.entries[0].len);
+}
+
+// Test: display_render_msg_history null
+void test_display_render_msg_history_null(void) {
+	display_render_msg_history(10, 50, NULL, "TEST");  // Should not crash
+	TEST_PASS();
+}
+
+// Test: display_render_msg_history basic
+void test_display_render_msg_history_basic(void) {
+	msg_history_t hist;
+	msg_history_init(&hist);
+	
+	uint8_t data[] = {0x42};
+	msg_history_add(&hist, data, 1, 0, true);
+	msg_history_add(&hist, data, 1, 1, false);
+	
+	display_render_msg_history(10, 50, &hist, "SS");
+	TEST_PASS();
+}
+
 // Test runner
 int main(void) {
 	UNITY_BEGIN();
@@ -1790,6 +2059,43 @@ int main(void) {
 	RUN_TEST(test_pipe_dequeue_basic);
 	RUN_TEST(test_pipe_enqueue_dequeue_together);
 	RUN_TEST(test_pipe_circular_wrap);
+	
+	// Semaphore Getter Tests
+	RUN_TEST(test_semaphore_get_count_basic);
+	RUN_TEST(test_semaphore_get_count_invalid);
+	RUN_TEST(test_semaphore_get_count_not_engaged);
+	RUN_TEST(test_semaphore_get_max_count_basic);
+	RUN_TEST(test_semaphore_get_max_count_invalid);
+	RUN_TEST(test_semaphore_get_max_count_not_engaged);
+	
+	// Pipe Getter Tests
+	RUN_TEST(test_pipe_get_count_basic);
+	RUN_TEST(test_pipe_get_count_invalid);
+	RUN_TEST(test_pipe_get_count_not_engaged);
+	RUN_TEST(test_pipe_get_max_count_basic);
+	RUN_TEST(test_pipe_get_max_count_invalid);
+	RUN_TEST(test_pipe_get_max_count_not_engaged);
+	
+	// Display Function Tests (vbar, pipe, producer, consumer)
+	RUN_TEST(test_display_render_vbar_basic);
+	RUN_TEST(test_display_render_vbar_zero_max);
+	RUN_TEST(test_display_render_vbar_overflow);
+	RUN_TEST(test_display_render_pipe_basic);
+	RUN_TEST(test_display_render_pipe_zero_max);
+	RUN_TEST(test_display_render_producer_basic);
+	RUN_TEST(test_display_render_producer_zero_period);
+	RUN_TEST(test_display_render_consumer_basic);
+	RUN_TEST(test_display_render_consumer_zero_period);
+	
+	// Message History Tests
+	RUN_TEST(test_msg_history_init_basic);
+	RUN_TEST(test_msg_history_init_null);
+	RUN_TEST(test_msg_history_add_basic);
+	RUN_TEST(test_msg_history_add_null);
+	RUN_TEST(test_msg_history_add_wrap);
+	RUN_TEST(test_msg_history_add_clamp_len);
+	RUN_TEST(test_display_render_msg_history_null);
+	RUN_TEST(test_display_render_msg_history_basic);
 	
 	return UNITY_END();
 }
