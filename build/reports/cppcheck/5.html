@@ -806,7 +806,21 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">516</span>
 <span class="normal">517</span>
 <span class="normal">518</span>
-<span class="normal">519</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/*</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/*</span>
 <a id="line-2" name="line-2"></a><span class="cm"> * task.c</span>
 <a id="line-3" name="line-3"></a><span class="cm"> *</span>
 <a id="line-4" name="line-4"></a><span class="cm"> *  Created on: May 14, 2025</span>
@@ -978,14 +992,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-170" name="line-170"></a><span class="w">            </span><span class="c1">// ON phase: match LED_Blink timing exactly (Hdelay - 1)</span>
 <a id="line-171" name="line-171"></a><span class="w">            </span><span class="c1">// Update display first, then LED to minimize delay</span>
 <a id="line-172" name="line-172"></a><span class="w">            </span><span class="n">display_render_banner</span><span class="p">(</span><span class="n">ROW_HEARTBEAT</span><span class="p">,</span><span class="w"> </span><span class="n">task_name</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
-<a id="line-173" name="line-173"></a><span class="w">            </span><span class="c1">// task_active_sleep(8);</span>
+<a id="line-173" name="line-173"></a><span class="w">            </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
 <a id="line-174" name="line-174"></a><span class="w">            </span><span class="n">LED_On</span><span class="p">();</span>
 <a id="line-175" name="line-175"></a><span class="w">            </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="n">HEARTBEAT_ON_TICKS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Match LED_Blink: Hdelay - 1</span>
 <a id="line-176" name="line-176"></a><span class="w">            </span>
 <a id="line-177" name="line-177"></a><span class="w">            </span><span class="c1">// OFF phase: match LED_Blink timing exactly (Ldelay - 1)</span>
 <a id="line-178" name="line-178"></a><span class="w">            </span><span class="c1">// Update display first, then LED to minimize delay</span>
 <a id="line-179" name="line-179"></a><span class="w">            </span><span class="n">display_render_banner</span><span class="p">(</span><span class="n">ROW_HEARTBEAT</span><span class="p">,</span><span class="w"> </span><span class="n">task_name</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-<a id="line-180" name="line-180"></a><span class="w">            </span><span class="c1">// task_active_sleep(8);</span>
+<a id="line-180" name="line-180"></a><span class="w">            </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
 <a id="line-181" name="line-181"></a><span class="w">            </span><span class="n">LED_Off</span><span class="p">();</span>
 <a id="line-182" name="line-182"></a><span class="w">            </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="n">HEARTBEAT_OFF_TICKS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Match LED_Blink: Ldelay - 1</span>
 <a id="line-183" name="line-183"></a><span class="cp">#else</span>
@@ -1325,6 +1339,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-517" name="line-517"></a><span class="p">}</span>
 <a id="line-518" name="line-518"></a>
 <a id="line-519" name="line-519"></a>
+<a id="line-520" name="line-520"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">pipe_get_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-521" name="line-521"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pipe_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MAX_MESSAGE_QUEUES</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="p">)</span>
+<a id="line-522" name="line-522"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="line-523" name="line-523"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">;</span>
+<a id="line-524" name="line-524"></a><span class="p">}</span>
+<a id="line-525" name="line-525"></a>
+<a id="line-526" name="line-526"></a>
+<a id="line-527" name="line-527"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">pipe_get_max_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-528" name="line-528"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pipe_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MAX_MESSAGE_QUEUES</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="p">)</span>
+<a id="line-529" name="line-529"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="line-530" name="line-530"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="p">;</span>
+<a id="line-531" name="line-531"></a><span class="p">}</span>
+<a id="line-532" name="line-532"></a>
+<a id="line-533" name="line-533"></a>
 </pre></div></td></tr></table></div>
 
     </div>

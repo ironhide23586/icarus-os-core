@@ -145,6 +145,156 @@ void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_
 }
 
 /**
+ * @brief Render a message queue visualization panel
+ */
+void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
+                         uint8_t count, uint8_t max_count,
+                         uint8_t last_sent, uint8_t last_recv,
+                         bool show_sent, bool show_recv) {
+    // Guard against division by zero
+    if (max_count == 0) {
+        max_count = 1;
+    }
+    if (count > max_count) {
+        count = max_count;
+    }
+    
+    // Calculate fill percentage for horizontal bar
+    uint8_t bar_width = 8;
+    uint8_t filled = (uint8_t) (count * bar_width) / max_count;
+    
+    // Draw label
+    ANSI_GOTO(start_row, col);
+    printf("\033[36m%s\033[0m", label);  // Cyan label
+    
+    // Draw queue visualization: [████────] 
+    ANSI_GOTO(start_row + 1, col);
+    printf("[");
+    for (uint8_t i = 0; i < bar_width; i++) {
+        if (i < filled) {
+            printf("\033[33m█\033[0m");  // Yellow filled
+        } else {
+            printf("─");
+        }
+    }
+    printf("]");
+    
+    // Draw count
+    ANSI_GOTO(start_row + 2, col);
+    printf("%2d/%2d", count, max_count);
+    
+    // Draw sent indicator with arrow animation
+    ANSI_GOTO(start_row + 3, col);
+    if (show_sent) {
+        printf("\033[32m→%3d\033[0m", last_sent);  // Green arrow + value
+    } else {
+        printf("     ");
+    }
+    
+    // Draw received indicator
+    ANSI_GOTO(start_row + 4, col);
+    if (show_recv) {
+        printf("\033[35m←%3d\033[0m", last_recv);  // Magenta arrow + value
+    } else {
+        printf("     ");
+    }
+}
+
+/**
+ * @brief Render a producer task bar with sent message indicator
+ */
+void display_render_producer(uint8_t row, const char* task_name, 
+                             uint32_t elapsed_ticks, uint32_t period_ticks,
+                             uint8_t msg_value, bool show_msg) {
+    // Guard against division by zero
+    if (period_ticks == 0) {
+        period_ticks = 1;
+    }
+    if (elapsed_ticks > period_ticks) {
+        elapsed_ticks = period_ticks;
+    }
+    
+    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
+    if (filled > BAR_WIDTH) {
+        filled = BAR_WIDTH;
+    }
+    
+    ANSI_GOTO(row, 1);
+    
+    // Task name with producer color (green)
+    printf("\033[32m[%s]\033[0m ", task_name ? task_name : "unknown");
+    
+    // Progress bar
+    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+        if (i < filled) {
+            printf("\033[32m█\033[0m");  // Green filled
+        } else {
+            printf("─");
+        }
+    }
+    
+    // Timing info
+    printf(" %4" PRIu32 "/%4" PRIu32, elapsed_ticks, period_ticks);
+    
+    // Message indicator with animation
+    if (show_msg) {
+        // Flash effect: show arrow and value
+        printf(" \033[32;1m→[%3d]\033[0m", msg_value);
+    } else {
+        printf("        ");
+    }
+    
+    printf("\033[K");
+}
+
+/**
+ * @brief Render a consumer task bar with received message indicator
+ */
+void display_render_consumer(uint8_t row, const char* task_name,
+                             uint32_t elapsed_ticks, uint32_t period_ticks,
+                             uint8_t msg_value, bool show_msg) {
+    // Guard against division by zero
+    if (period_ticks == 0) {
+        period_ticks = 1;
+    }
+    if (elapsed_ticks > period_ticks) {
+        elapsed_ticks = period_ticks;
+    }
+    
+    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
+    if (filled > BAR_WIDTH) {
+        filled = BAR_WIDTH;
+    }
+    
+    ANSI_GOTO(row, 1);
+    
+    // Task name with consumer color (magenta)
+    printf("\033[35m[%s]\033[0m ", task_name ? task_name : "unknown");
+    
+    // Progress bar
+    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+        if (i < filled) {
+            printf("\033[35m█\033[0m");  // Magenta filled
+        } else {
+            printf("─");
+        }
+    }
+    
+    // Timing info
+    printf(" %4" PRIu32 "/%4" PRIu32, elapsed_ticks, period_ticks);
+    
+    // Message indicator with animation
+    if (show_msg) {
+        // Flash effect: show arrow and value
+        printf(" \033[35;1m←[%3d]\033[0m", msg_value);
+    } else {
+        printf("        ");
+    }
+    
+    printf("\033[K");
+}
+
+/**
  * @brief Initialize terminal display - clear screen and print header
  */
 void display_init(void) {

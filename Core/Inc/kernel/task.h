@@ -116,6 +116,8 @@ const char* os_get_current_task_name(void);
 bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
 bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
 bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+uint8_t pipe_get_count(uint8_t pipe_idx);
+uint8_t pipe_get_max_count(uint8_t pipe_idx);
 
 bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
 bool semaphore_feed(uint8_t semaphore_idx);

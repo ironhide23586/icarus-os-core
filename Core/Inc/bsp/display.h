@@ -87,6 +87,49 @@ void display_render_banner(uint8_t row, const char* task_name, bool is_on);
  */
 void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count);
 
+/**
+ * @brief Render a message queue visualization panel
+ * @param start_row: top row of the panel (1-indexed)
+ * @param col: column position for the panel
+ * @param label: short label for the queue (e.g., "SS", "SM")
+ * @param count: current message count in queue
+ * @param max_count: maximum queue capacity
+ * @param last_sent: last message value sent (0-255)
+ * @param last_recv: last message value received (0-255)
+ * @param show_sent: true if last_sent is valid
+ * @param show_recv: true if last_recv is valid
+ */
+void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
+                         uint8_t count, uint8_t max_count,
+                         uint8_t last_sent, uint8_t last_recv,
+                         bool show_sent, bool show_recv);
+
+/**
+ * @brief Render a producer task bar with sent message indicator
+ * @param row: terminal row (1-indexed)
+ * @param task_name: task name string
+ * @param elapsed_ticks: ticks elapsed in current period
+ * @param period_ticks: total ticks for this period
+ * @param msg_value: last message value sent
+ * @param show_msg: true to show message value with animation
+ */
+void display_render_producer(uint8_t row, const char* task_name, 
+                             uint32_t elapsed_ticks, uint32_t period_ticks,
+                             uint8_t msg_value, bool show_msg);
+
+/**
+ * @brief Render a consumer task bar with received message indicator
+ * @param row: terminal row (1-indexed)
+ * @param task_name: task name string
+ * @param elapsed_ticks: ticks elapsed in current period
+ * @param period_ticks: total ticks for this period
+ * @param msg_value: last message value received
+ * @param show_msg: true to show message value with animation
+ */
+void display_render_consumer(uint8_t row, const char* task_name,
+                             uint32_t elapsed_ticks, uint32_t period_ticks,
+                             uint8_t msg_value, bool show_msg);
+
 #ifdef __cplusplus
 }
 #endif
