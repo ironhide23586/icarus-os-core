@@ -170,14 +170,14 @@ static void os_heartbeart_task(void) {
             // ON phase: match LED_Blink timing exactly (Hdelay - 1)
             // Update display first, then LED to minimize delay
             display_render_banner(ROW_HEARTBEAT, task_name, true);
-            task_active_sleep(8);
+            // task_active_sleep(8);
             LED_On();
             task_active_sleep(HEARTBEAT_ON_TICKS - 1);  // Match LED_Blink: Hdelay - 1
             
             // OFF phase: match LED_Blink timing exactly (Ldelay - 1)
             // Update display first, then LED to minimize delay
             display_render_banner(ROW_HEARTBEAT, task_name, false);
-            task_active_sleep(8);
+            // task_active_sleep(8);
             LED_Off();
             task_active_sleep(HEARTBEAT_OFF_TICKS - 1);  // Match LED_Blink: Ldelay - 1
 #else
