@@ -381,11 +381,12 @@ void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint3
     uint32_t *stack_top = stack + stack_size - 1;
     
     // Push in reverse order (high to low address)
+    // Cast through uintptr_t to avoid warnings on 64-bit hosts during testing
 
-    *(stack_top--) = 0x01000000;         // PSR
-    *(stack_top--) = (uint32_t)function; // PC
+    *(stack_top--) = 0x01000000;                      // PSR
+    *(stack_top--) = (uint32_t)(uintptr_t)function;   // PC
 
-    *(stack_top--) = (uint32_t)os_exit_task;         // LR
+    *(stack_top--) = (uint32_t)(uintptr_t)os_exit_task;  // LR
     *(stack_top--) = 0;                  // R12
     *(stack_top--) = 0;                  // R3
     *(stack_top--) = 0;                  // R2

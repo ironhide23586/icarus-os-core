@@ -65,23 +65,24 @@ void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len,
 
 /**
  * @brief Render message history as a rolling window
+ * Uses ASCII box drawing for better terminal compatibility
  */
 void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, const char* label) {
     if (hist == NULL) return;
     
-    // Header
+    // Header - use ASCII for compatibility
     ANSI_GOTO(row, col);
-    printf(ANSI_CYAN ANSI_BOLD "┌─%s─History─┐" ANSI_RESET, label);
+    printf(ANSI_CYAN ANSI_BOLD "+---%s---+" ANSI_RESET, label);
     
     // Calculate starting index (oldest entry)
     uint8_t start_idx;
     if (hist->count < MSG_HISTORY_LEN) {
         start_idx = 0;
     } else {
-        start_idx = hist->head;  // head points to oldest when full
+        start_idx = hist->head;
     }
     
-    // Render each history entry (oldest to newest, top to bottom)
+    // Render each history entry
     for (uint8_t i = 0; i < MSG_HISTORY_LEN; i++) {
         ANSI_GOTO(row + 1 + i, col);
         
@@ -89,34 +90,28 @@ void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, c
             uint8_t idx = (start_idx + i) % MSG_HISTORY_LEN;
             msg_history_entry_t* entry = &hist->entries[idx];
             
-            // Direction arrow, ID prefix, and color
             if (entry->is_send) {
-                printf(ANSI_GREEN "│→P%d:", entry->source_id);
+                printf(ANSI_GREEN "|>P%d:", entry->source_id);
             } else {
-                printf(ANSI_MAGENTA "│←C%d:", entry->source_id);
+                printf(ANSI_MAGENTA "|<C%d:", entry->source_id);
             }
             
-            // Message data (hex for multi-byte, decimal for single)
             if (entry->len == 1) {
-                printf("%3d", entry->data[0]);
+                printf("%3d" ANSI_RESET "|", entry->data[0]);
             } else {
-                // Multi-byte: show as hex
                 for (uint8_t j = 0; j < entry->len && j < 3; j++) {
                     printf("%02X", entry->data[j]);
                 }
+                printf(ANSI_RESET "|");
             }
-            
-            // Pad and close
-            printf(ANSI_RESET "│");
         } else {
-            // Empty slot
-            printf("│          │");
+            printf("|        |");
         }
     }
     
     // Footer
     ANSI_GOTO(row + MSG_HISTORY_LEN + 1, col);
-    printf(ANSI_CYAN "└──────────┘" ANSI_RESET);
+    printf(ANSI_CYAN "+---------+" ANSI_RESET);
 }
 
 /**
@@ -195,55 +190,47 @@ void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
 
 /**
  * @brief Render a vertical bar showing semaphore fill level
- * @param start_row: top row of the vertical bar (1-indexed)
- * @param col: column position for the bar
- * @param count: current semaphore count
- * @param max_count: maximum semaphore capacity (init_count)
+ * Uses ASCII box drawing for better terminal compatibility
  */
 void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count) {
-    // Guard against division by zero
     if (max_count == 0) {
         max_count = 1;
     }
-    
-    // Clamp count to max
     if (count > max_count) {
         count = max_count;
     }
     
-    // Calculate filled rows (bottom-up fill)
     uint32_t filled_rows = (count * VBAR_HEIGHT) / max_count;
     if (filled_rows > VBAR_HEIGHT) {
         filled_rows = VBAR_HEIGHT;
     }
     
-    // Draw label above bar
+    // Label
     ANSI_GOTO(start_row - 1, col);
-    printf(" SEM ");
+    printf(ANSI_CYAN "SEM" ANSI_RESET);
     
-    // Draw top border
+    // Top border
     ANSI_GOTO(start_row, col);
-    printf("┌───┐");
+    printf("+---+");
     
-    // Draw bar rows (top to bottom, fill from bottom)
+    // Bar rows (fill from bottom)
     for (uint8_t i = 0; i < VBAR_HEIGHT; i++) {
         ANSI_GOTO(start_row + 1 + i, col);
-        // Row is filled if it's in the bottom 'filled_rows' portion
         uint8_t row_from_bottom = VBAR_HEIGHT - 1 - i;
         if (row_from_bottom < filled_rows) {
-            printf("│ █ │");
+            printf(ANSI_GREEN "|###|" ANSI_RESET);
         } else {
-            printf("│   │");
+            printf("|   |");
         }
     }
     
-    // Draw bottom border
+    // Bottom border
     ANSI_GOTO(start_row + VBAR_HEIGHT + 1, col);
-    printf("└───┘");
+    printf("+---+");
     
-    // Draw count label below
+    // Count label
     ANSI_GOTO(start_row + VBAR_HEIGHT + 2, col);
-    printf(" %2" PRIu32 "/%2" PRIu32, count, max_count);
+    printf("%2" PRIu32 "/%2" PRIu32, count, max_count);
 }
 
 /**

@@ -22,7 +22,7 @@ This file contains the structs and definitions supporting a task on ICARUS OS.
 #include <stddef.h>
 #include "gpio.h"
 
-#define MAX_TASKS 32
+#define MAX_TASKS 64
 #define MAX_SEMAPHORES 32
 #define MAX_MESSAGE_QUEUES 32
 #define MAX_MESSAGE_BUFFER_BYTES 128
