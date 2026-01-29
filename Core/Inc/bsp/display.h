@@ -130,6 +130,55 @@ void display_render_consumer(uint8_t row, const char* task_name,
                              uint32_t elapsed_ticks, uint32_t period_ticks,
                              uint8_t msg_value, bool show_msg);
 
+// Message history configuration
+#define MSG_HISTORY_LEN     8    // Number of messages to show in history
+#define MSG_HISTORY_MAX_BYTES 4  // Max bytes per message to display
+
+/**
+ * @brief Message history entry for rolling window display
+ */
+typedef struct {
+    uint8_t data[MSG_HISTORY_MAX_BYTES];  // Message data
+    uint8_t len;                           // Actual message length
+    uint8_t source_id;                     // Producer ID (0, 1, etc.) or 0xFF for unknown
+    bool is_send;                          // true = sent, false = received
+} msg_history_entry_t;
+
+/**
+ * @brief Message history buffer for a pipe
+ */
+typedef struct {
+    msg_history_entry_t entries[MSG_HISTORY_LEN];
+    uint8_t head;       // Next write position
+    uint8_t count;      // Number of valid entries
+} msg_history_t;
+
+/**
+ * @brief Initialize a message history buffer
+ * @param hist: pointer to history buffer
+ */
+void msg_history_init(msg_history_t* hist);
+
+/**
+ * @brief Add a message to history
+ * @param hist: pointer to history buffer
+ * @param data: message data
+ * @param len: message length in bytes
+ * @param source_id: producer ID (use 0xFF if unknown)
+ * @param is_send: true if this is a send event, false for receive
+ */
+void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len, 
+                     uint8_t source_id, bool is_send);
+
+/**
+ * @brief Render message history as a rolling window
+ * @param row: starting row for display
+ * @param col: column position
+ * @param hist: pointer to history buffer
+ * @param label: label for the history (e.g., "SS", "SM")
+ */
+void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, const char* label);
+
 #ifdef __cplusplus
 }
 #endif

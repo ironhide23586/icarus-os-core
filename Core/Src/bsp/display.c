@@ -17,6 +17,108 @@
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
 #define ANSI_HIDE_CURSOR()  printf("\033[?25l")
 
+// ANSI color codes
+#define ANSI_RESET      "\033[0m"
+#define ANSI_BOLD       "\033[1m"
+#define ANSI_DIM        "\033[2m"
+#define ANSI_GREEN      "\033[32m"
+#define ANSI_YELLOW     "\033[33m"
+#define ANSI_MAGENTA    "\033[35m"
+#define ANSI_CYAN       "\033[36m"
+#define ANSI_WHITE      "\033[37m"
+#define ANSI_BG_GREEN   "\033[42m"
+#define ANSI_BG_MAGENTA "\033[45m"
+
+/**
+ * @brief Initialize a message history buffer
+ */
+void msg_history_init(msg_history_t* hist) {
+    if (hist == NULL) return;
+    memset(hist, 0, sizeof(msg_history_t));
+}
+
+/**
+ * @brief Add a message to history
+ */
+void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len, 
+                     uint8_t source_id, bool is_send) {
+    if (hist == NULL || data == NULL || len == 0) return;
+    
+    // Clamp length to max
+    if (len > MSG_HISTORY_MAX_BYTES) {
+        len = MSG_HISTORY_MAX_BYTES;
+    }
+    
+    // Add entry at head position
+    msg_history_entry_t* entry = &hist->entries[hist->head];
+    memcpy(entry->data, data, len);
+    entry->len = len;
+    entry->source_id = source_id;
+    entry->is_send = is_send;
+    
+    // Advance head (circular)
+    hist->head = (uint8_t)(hist->head + 1) % MSG_HISTORY_LEN;
+    if (hist->count < MSG_HISTORY_LEN) {
+        hist->count++;
+    }
+}
+
+/**
+ * @brief Render message history as a rolling window
+ */
+void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, const char* label) {
+    if (hist == NULL) return;
+    
+    // Header
+    ANSI_GOTO(row, col);
+    printf(ANSI_CYAN ANSI_BOLD "┌─%s─History─┐" ANSI_RESET, label);
+    
+    // Calculate starting index (oldest entry)
+    uint8_t start_idx;
+    if (hist->count < MSG_HISTORY_LEN) {
+        start_idx = 0;
+    } else {
+        start_idx = hist->head;  // head points to oldest when full
+    }
+    
+    // Render each history entry (oldest to newest, top to bottom)
+    for (uint8_t i = 0; i < MSG_HISTORY_LEN; i++) {
+        ANSI_GOTO(row + 1 + i, col);
+        
+        if (i < hist->count) {
+            uint8_t idx = (start_idx + i) % MSG_HISTORY_LEN;
+            msg_history_entry_t* entry = &hist->entries[idx];
+            
+            // Direction arrow, ID prefix, and color
+            if (entry->is_send) {
+                printf(ANSI_GREEN "│→P%d:", entry->source_id);
+            } else {
+                printf(ANSI_MAGENTA "│←C%d:", entry->source_id);
+            }
+            
+            // Message data (hex for multi-byte, decimal for single)
+            if (entry->len == 1) {
+                printf("%3d", entry->data[0]);
+            } else {
+                // Multi-byte: show as hex
+                for (uint8_t j = 0; j < entry->len && j < 3; j++) {
+                    printf("%02X", entry->data[j]);
+                }
+            }
+            
+            // Pad and close
+            printf(ANSI_RESET "│");
+        } else {
+            // Empty slot
+            printf("│          │");
+        }
+    }
+    
+    // Footer
+    ANSI_GOTO(row + MSG_HISTORY_LEN + 1, col);
+    printf(ANSI_CYAN "└──────────┘" ANSI_RESET);
+}
+
 /**
  * @brief Render a progress bar on a fixed row
  * @param row: terminal row (1-indexed)

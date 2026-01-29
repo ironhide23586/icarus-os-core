@@ -13,20 +13,27 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 │   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
 │   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
 │   Preemptive Kernel • ARMv7E-M • STM32H750                   │
-└──────────────────────────────────────────────────────────────┘  SEM
-                                                                 ┌───┐
-[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]   │   │
-[producer]  ████████████████────────────────  160/200 ticks      │   │
-[consumer]  ██████████──────────────────────  100/300 ticks      │   │
-[reference] ████████████████████────────────  1200/3000 ticks    │   │
-                                                                 │   │
-                                                                 │   │
-                                                                 │   │
-                                                                 │ █ │
-                                                                 │ █ │
-                                                                 │ █ │
-                                                                 └───┘
-                                                                  3/10
+└──────────────────────────────────────────────────────────────┘  SEM    ┌─SS─History─┐ ┌─SM─History─┐
+                                                                 ┌───┐   │→P0:105     │ │→P0:0042    │
+[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]   │   │   │←C0:105     │ │←C0:0042    │
+[producer]  ████████████████────────────────  160/200 ticks      │   │   │→P0:106     │ │←C1:0043    │
+[consumer]  ██████████──────────────────────  100/190 ticks      │   │   │←C0:106     │ │→P0:0044    │
+[reference] ████████████████████────────────  1200/3000 ticks    │   │   │→P0:107     │ │←C0:0044    │
+[ss_prod]   ██████████████████████──────────  220/400  →[106]    │   │   │←C0:107     │ │→P0:0045    │
+[ss_cons]   ████████████████────────────────  200/350  ←[105]    │ █ │   │→P0:108     │ │←C1:0045    │
+[sm_prod]   ████████████────────────────────   90/150  →[ 68]    │ █ │   │←C0:108     │ │→P0:0046    │
+[sm_con1]   ██████████████████──────────────  225/350  ←[ 66]    │ █ │   └────────────┘ └────────────┘
+[sm_con2]   ████████████████████████────────  300/450  ←[ 67]    └───┘
+[ms_prd1]   ████████████████████────────────  200/400  →[ 42]     3/10   ┌─MS─History─┐ ┌─MM─History─┐
+[ms_prd2]   ██████████████████████████──────  390/550  →[115]            │→P0: 42     │ │→P0:00006B  │
+[ms_cons]   ████████████────────────────────  150/350  ←[114]            │→P1:115     │ │←C0:00006B  │
+[mm_prd1]   ██████████████──────────────────  175/400  →[ 23]            │←C0: 42     │ │→P1:010048  │
+[mm_prd2]   ████████████████████████████────  480/600  →[ 11]            │←C0:115     │ │←C1:010048  │
+[mm_con1]   ████████████████████────────────  250/350  ←[ 22]            │→P0: 43     │ │→P0:00006C  │
+[mm_con2]   ██████████████████████──────────  280/400  ←[ 10]            │→P1:116     │ │←C0:00006C  │
+                                                                         │←C0: 43     │ │→P1:010049  │
+                                                                         │←C0:116     │ │←C1:010049  │
+                                                                         └────────────┘ └────────────┘
 ```
 
 > **⚠️ WARNING: This is work in progress and NOT production ready.**
@@ -65,9 +72,10 @@ ICARUS is designed to be the first open-source RTOS with:
 - **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
+- **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
 - **Blocking Sleep**: Busy-wait sleep for critical timing
-- **Visual Debugging**: Terminal-based display system with progress bars, task visualization, and semaphore state
+- **Visual Debugging**: Terminal-based display with progress bars, message history, semaphore/pipe visualization
 - **USB CDC Support**: Serial communication via USB Virtual COM Port
 - **MPU Configuration**: Memory Protection Unit setup for QSPI flash access
 - **MISRA C Compliant**: Follows MISRA C:2012 coding standards
@@ -133,11 +141,11 @@ Phase 2: Hardening (Q2 2026)
 ├── Watchdog integration
 └── Fault recovery
 
-Phase 3: Communication (Q3 2026) 🔄 In Progress
+Phase 3: Communication (Q3 2026) ✅ Complete
 ├── Inter-process communication (IPC)
-├── Message queues
+├── Message queues ✅ Pipes with blocking enqueue/dequeue
 ├── Semaphores/Mutexes ✅ Bounded semaphores implemented
-└── Event flags
+└── Event flags (planned)
 
 Phase 4: AI Runtime (Q4 2026)
 ├── Deterministic inference engine
@@ -284,7 +292,17 @@ bool semaphore_init(uint8_t idx, uint32_t count);  // Initialize bounded semapho
 bool semaphore_feed(uint8_t idx);                   // Increment (blocks if full)
 bool semaphore_consume(uint8_t idx);                // Decrement (blocks if empty)
 uint32_t semaphore_get_count(uint8_t idx);          // Get current count
-uint32_t semaphore_get_init_count(uint8_t idx);     // Get max capacity
+uint32_t semaphore_get_max_count(uint8_t idx);      // Get max capacity
+```
+
+### Message Queues (Pipes)
+
+```c
+bool pipe_init(uint8_t idx, uint8_t capacity);                    // Initialize pipe
+bool pipe_enqueue(uint8_t idx, uint8_t* msg, uint8_t len);        // Send (blocks if full)
+bool pipe_dequeue(uint8_t idx, uint8_t* msg, uint8_t len);        // Receive (blocks if empty)
+uint8_t pipe_get_count(uint8_t idx);                              // Get current byte count
+uint8_t pipe_get_max_count(uint8_t idx);                          // Get capacity
 ```
 
 ---
@@ -384,7 +402,7 @@ Current limitations (work in progress):
 
 - **No Priority Preemption**: Round-robin only (priority support planned)
 - **No Mutex**: Mutex with priority inheritance planned
-- **No Message Queues**: Message queue IPC planned
+- **No Event Flags**: Event flag IPC planned
 - **No Dynamic Allocation**: All memory statically allocated (by design for certification)
 - **Fixed Stack Size**: All tasks use same stack size
 - **Single Core**: Multi-core support planned for Phase 5
