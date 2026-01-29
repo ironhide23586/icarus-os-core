@@ -34,7 +34,7 @@ This analysis covers host-based unit testing of the following software component
 
 | Metric | Achieved | Required (DAL C) | Required (DAL B) | Required (DAL A) |
 |--------|----------|------------------|------------------|------------------|
-| Statement Coverage | 79.3% | 100%* | 100% | 100% |
+| Statement Coverage | 88.5% | 100%* | 100% | 100% |
 | Decision Coverage | TBD | - | 100% | 100% |
 | MC/DC Coverage | TBD | - | - | 100% |
 
@@ -44,13 +44,13 @@ This analysis covers host-based unit testing of the following software component
 
 | File | Lines | Covered | Coverage | Functions | Covered | Coverage |
 |------|-------|---------|----------|-----------|---------|----------|
-| `kernel/task.c` | 195 | 144 | 73.8% | 24 | 20 | 83.3% |
+| `kernel/task.c` | 348 | 308 | 88.5% | 41 | 38 | 92.7% |
 | `bsp/display.c` | 85 | 71 | 83.5% | 3 | 3 | 100% |
 | `bsp/retarget_hal.c` | 105 | 101 | 96.2% | 10 | 10 | 100% |
 | `bsp/retarget_stdio.c` | 13 | 10 | 76.9% | 1 | 1 | 100% |
 | `bsp/stm32h7xx_it.c` | 28 | 15 | 53.6% | 10 | 4 | 40% |
 | `bsp/error.c` | 4 | 0 | 0% | 1 | 0 | 0% |
-| **Total** | **430** | **341** | **79.3%** | **49** | **38** | **77.6%** |
+| **Total** | **583** | **505** | **88.5%** | **66** | **56** | **85.9%** |
 
 ### 3.3 Uncovered Functions
 
@@ -91,8 +91,8 @@ make coverage-html       # Generate HTML report
 
 ### 4.3 Test Results
 
-- **Total Tests:** 76
-- **Passed:** 76
+- **Total Tests:** 131
+- **Passed:** 131
 - **Failed:** 0
 - **Ignored:** 0
 
@@ -116,8 +116,8 @@ Excluding justified deactivated code:
 
 | Metric | Raw | Adjusted |
 |--------|-----|----------|
-| Functions Covered | 38/49 (77.6%) | 38/38 (100%) |
-| Lines Covered | 341/430 (79.3%) | 341/~341 (~100%) |
+| Functions Covered | 56/66 (85.9%) | 56/56 (100%) |
+| Lines Covered | 505/583 (88.5%) | 505/~505 (~100%) |
 
 ## 6. Recommendations
 

@@ -117,30 +117,38 @@ The following system-level requirements are allocated to ICARUS OS:
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| HLR-KRN-040 | The kernel shall support message queues | Must | Planned |
+| HLR-KRN-040 | The kernel shall support message queues (pipes) | Must | ✅ Implemented |
 | HLR-KRN-041 | The kernel shall support binary semaphores | Must | ✅ Implemented |
 | HLR-KRN-042 | The kernel shall support counting semaphores | Should | ✅ Implemented |
-| HLR-KRN-043 | The kernel shall support mutexes with priority inheritance | Should | Planned |
-| HLR-KRN-044 | The kernel shall support event flags | Should | Planned |
-| HLR-KRN-045 | IPC operations shall have bounded WCET | Must | ✅ Implemented |
+| HLR-KRN-043 | The kernel shall support bounded semaphores with max capacity | Must | ✅ Implemented |
+| HLR-KRN-044 | The kernel shall support mutexes with priority inheritance | Should | Planned |
+| HLR-KRN-045 | The kernel shall support event flags | Should | Planned |
+| HLR-KRN-046 | IPC operations shall have bounded WCET | Must | ✅ Implemented |
+| HLR-KRN-047 | Message queues shall support FIFO ordering | Must | ✅ Implemented |
+| HLR-KRN-048 | Message queues shall support variable-length messages | Must | ✅ Implemented |
+| HLR-KRN-049 | Semaphore operations shall block when resource unavailable | Must | ✅ Implemented |
+| HLR-KRN-050 | Pipe operations shall block when full/empty | Must | ✅ Implemented |
+| HLR-KRN-051 | The kernel shall support up to MAX_SEMAPHORES (32) semaphores | Must | ✅ Implemented |
+| HLR-KRN-052 | The kernel shall support up to MAX_MESSAGE_QUEUES (32) pipes | Must | ✅ Implemented |
+| HLR-KRN-053 | Each pipe shall support up to 128 bytes capacity | Must | ✅ Implemented |
 
 #### 3.1.6 Memory Management
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| HLR-KRN-050 | The kernel shall use static memory allocation only | Must | ✅ Implemented |
-| HLR-KRN-051 | The kernel shall detect stack overflow | Should | Planned |
-| HLR-KRN-052 | The kernel shall support MPU-based memory protection | Should | Planned |
-| HLR-KRN-053 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
+| HLR-KRN-060 | The kernel shall use static memory allocation only | Must | ✅ Implemented |
+| HLR-KRN-061 | The kernel shall detect stack overflow | Should | Planned |
+| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Should | Planned |
+| HLR-KRN-063 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
 
 #### 3.1.7 Fault Handling
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| HLR-KRN-060 | The kernel shall handle processor faults gracefully | Must | ✅ Implemented |
-| HLR-KRN-061 | The kernel shall support watchdog integration | Should | Planned |
-| HLR-KRN-062 | The kernel shall log fault information for diagnostics | Should | Planned |
-| HLR-KRN-063 | The kernel shall support fault recovery (task restart) | Could | Planned |
+| HLR-KRN-070 | The kernel shall handle processor faults gracefully | Must | ✅ Implemented |
+| HLR-KRN-071 | The kernel shall support watchdog integration | Should | Planned |
+| HLR-KRN-072 | The kernel shall log fault information for diagnostics | Should | Planned |
+| HLR-KRN-073 | The kernel shall support fault recovery (task restart) | Could | Planned |
 
 ---
 
@@ -239,8 +247,10 @@ The following system-level requirements are allocated to ICARUS OS:
 | PRF-004 | Boot to first task | <100ms | ✅ Met |
 | PRF-005 | AI inference (small model) | <10ms | Planned |
 | PRF-006 | AI inference (medium model) | <50ms | Planned |
-| PRF-007 | IPC message send | <5μs | Planned |
+| PRF-007 | Pipe enqueue (uncontended) | <5μs | ✅ Met |
 | PRF-008 | Semaphore acquire (uncontended) | <2μs | ✅ Met |
+| PRF-009 | Pipe dequeue (uncontended) | <5μs | ✅ Met |
+| PRF-010 | Semaphore release (uncontended) | <2μs | ✅ Met |
 
 ### 4.2 Resource Requirements
 
@@ -298,7 +308,14 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
 bool semaphore_feed(uint8_t semaphore_idx);
 bool semaphore_consume(uint8_t semaphore_idx);
 uint32_t semaphore_get_count(uint8_t semaphore_idx);
-uint32_t semaphore_get_init_count(uint8_t semaphore_idx);
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
+
+// Message Pipes (Implemented)
+bool pipe_init(uint8_t pipe_idx, uint8_t capacity);
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t data);
+int16_t pipe_dequeue(uint8_t pipe_idx);
+uint8_t pipe_get_count(uint8_t pipe_idx);
+uint8_t pipe_get_max_count(uint8_t pipe_idx);
 ```
 
 ### 5.2 AI Runtime API

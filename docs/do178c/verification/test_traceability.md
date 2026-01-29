@@ -54,15 +54,38 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | KRN-030 | System shall support nested critical sections | `test_critical_sections`, `test_exit_critical_depth_nonzero` | `enter_critical()`, `exit_critical()` |
 | KRN-031 | System shall re-enable scheduler on critical exit | `test_exit_critical_depth_zero` | `exit_critical()` |
 
-### 3.4 Kernel - Print Buffer
+### 3.4 Kernel - Semaphores
 
 | Req ID | Requirement | Test Case(s) | Source Function |
 |--------|-------------|--------------|-----------------|
-| KRN-040 | System shall enqueue characters to print buffer | `test_enqueue_print_buffer_basic` | `enqueue_print_buffer()` |
-| KRN-041 | System shall detect buffer full condition | `test_enqueue_print_buffer_full` | `enqueue_print_buffer()` |
-| KRN-042 | System shall wrap buffer index | `test_enqueue_print_buffer_wrap_around` | `enqueue_print_buffer()` |
+| KRN-040 | System shall initialize semaphores | `test_semaphore_init_valid`, `test_semaphore_init_invalid_idx` | `semaphore_init()` |
+| KRN-041 | System shall support semaphore feed | `test_semaphore_feed_valid`, `test_semaphore_feed_invalid_idx` | `semaphore_feed()` |
+| KRN-042 | System shall support semaphore consume | `test_semaphore_consume_valid`, `test_semaphore_consume_invalid_idx` | `semaphore_consume()` |
+| KRN-043 | System shall enforce bounded semaphore capacity | `test_semaphore_feed_valid` | `semaphore_feed()` |
+| KRN-044 | System shall provide semaphore count query | `test_semaphore_get_count_valid`, `test_semaphore_get_count_invalid` | `semaphore_get_count()` |
+| KRN-045 | System shall provide semaphore max count query | `test_semaphore_get_max_count_valid`, `test_semaphore_get_max_count_invalid` | `semaphore_get_max_count()` |
 
-### 3.5 BSP - Display
+### 3.5 Kernel - Message Pipes
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| KRN-050 | System shall initialize message pipes | `test_pipe_init_valid`, `test_pipe_init_invalid_idx`, `test_pipe_init_zero_capacity` | `pipe_init()` |
+| KRN-051 | System shall support pipe enqueue | `test_pipe_enqueue_valid`, `test_pipe_enqueue_invalid_idx` | `pipe_enqueue()` |
+| KRN-052 | System shall support pipe dequeue | `test_pipe_dequeue_valid`, `test_pipe_dequeue_invalid_idx`, `test_pipe_dequeue_empty` | `pipe_dequeue()` |
+| KRN-053 | System shall maintain FIFO ordering | `test_pipe_enqueue_valid`, `test_pipe_dequeue_valid` | `pipe_enqueue()`, `pipe_dequeue()` |
+| KRN-054 | System shall enforce pipe capacity | `test_pipe_enqueue_valid` | `pipe_enqueue()` |
+| KRN-055 | System shall provide pipe count query | `test_pipe_get_count_valid`, `test_pipe_get_count_invalid` | `pipe_get_count()` |
+| KRN-056 | System shall provide pipe max count query | `test_pipe_get_max_count_valid`, `test_pipe_get_max_count_invalid` | `pipe_get_max_count()` |
+
+### 3.6 Kernel - Print Buffer
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| KRN-060 | System shall enqueue characters to print buffer | `test_enqueue_print_buffer_basic` | `enqueue_print_buffer()` |
+| KRN-061 | System shall detect buffer full condition | `test_enqueue_print_buffer_full` | `enqueue_print_buffer()` |
+| KRN-062 | System shall wrap buffer index | `test_enqueue_print_buffer_wrap_around` | `enqueue_print_buffer()` |
+
+### 3.7 BSP - Display
 
 | Req ID | Requirement | Test Case(s) | Source Function |
 |--------|-------------|--------------|-----------------|
@@ -71,8 +94,15 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | BSP-003 | System shall clamp progress bar values | `test_display_render_bar_elapsed_exceeds_period`, `test_display_render_bar_filled_exceeds_width` | `display_render_bar()` |
 | BSP-004 | System shall handle null task name | `test_display_render_bar_null_name` | `display_render_bar()` |
 | BSP-005 | System shall render banner | `test_display_render_banner_on`, `test_display_render_banner_off` | `display_render_banner()` |
+| BSP-006 | System shall render vertical bar | `test_display_render_vbar_normal`, `test_display_render_vbar_zero_max`, `test_display_render_vbar_value_exceeds_max` | `display_render_vbar()` |
+| BSP-007 | System shall render pipe visualization | `test_display_render_pipe_normal`, `test_display_render_pipe_zero_capacity` | `display_render_pipe()` |
+| BSP-008 | System shall render producer visualization | `test_display_render_producer_normal` | `display_render_producer()` |
+| BSP-009 | System shall render consumer visualization | `test_display_render_consumer_normal` | `display_render_consumer()` |
+| BSP-010 | System shall initialize message history | `test_msg_history_init` | `msg_history_init()` |
+| BSP-011 | System shall add messages to history | `test_msg_history_add_normal`, `test_msg_history_add_wrap`, `test_msg_history_add_null_msg` | `msg_history_add()` |
+| BSP-012 | System shall render message history | `test_display_render_msg_history_empty`, `test_display_render_msg_history_partial`, `test_display_render_msg_history_full`, `test_display_render_msg_history_wrapped` | `display_render_msg_history()` |
 
-### 3.6 BSP - LED Control
+### 3.8 BSP - LED Control
 
 | Req ID | Requirement | Test Case(s) | Source Function |
 |--------|-------------|--------------|-----------------|
@@ -80,7 +110,7 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | BSP-011 | System shall turn LED off | `test_LED_Off` | `LED_Off()` |
 | BSP-012 | System shall blink LED with timing | `test_LED_Blink`, `test_LED_Blink_zero_delays` | `LED_Blink()` |
 
-### 3.7 BSP - Platform I/O
+### 3.9 BSP - Platform I/O
 
 | Req ID | Requirement | Test Case(s) | Source Function |
 |--------|-------------|--------------|-----------------|
@@ -89,7 +119,7 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | BSP-022 | System shall provide platform delay | `test_platform_delay`, `test_platform_delay_zero` | `platform_delay()` |
 | BSP-023 | System shall initialize hardware | `test_hal_init` | `hal_init()` |
 
-### 3.8 BSP - Standard I/O
+### 3.10 BSP - Standard I/O
 
 | Req ID | Requirement | Test Case(s) | Source Function |
 |--------|-------------|--------------|-----------------|
@@ -97,7 +127,7 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | BSP-031 | System shall flush on newline | `test_io_putchar_newline` | `__io_putchar()` |
 | BSP-032 | System shall flush on buffer full | `test_io_putchar_buffer_full` | `__io_putchar()` |
 
-### 3.9 BSP - Interrupt Handlers
+### 3.11 BSP - Interrupt Handlers
 
 | Req ID | Requirement | Test Case(s) | Source Function |
 |--------|-------------|--------------|-----------------|
@@ -116,13 +146,15 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | Kernel - Task Management | 18 | 18 | 0 | 0 |
 | Kernel - Scheduling | 7 | 7 | 0 | 0 |
 | Kernel - Critical Sections | 3 | 3 | 0 | 0 |
+| Kernel - Semaphores | 6 | 6 | 0 | 0 |
+| Kernel - Message Pipes | 13 | 13 | 0 | 0 |
 | Kernel - Print Buffer | 5 | 5 | 0 | 0 |
-| BSP - Display | 9 | 9 | 0 | 0 |
+| BSP - Display | 21 | 21 | 0 | 0 |
 | BSP - LED | 4 | 4 | 0 | 0 |
 | BSP - Platform I/O | 7 | 7 | 0 | 0 |
 | BSP - Standard I/O | 3 | 3 | 0 | 0 |
 | BSP - Interrupts | 8 | 8 | 0 | 0 |
-| **Total** | **76** | **76** | **0** | **0** |
+| **Total** | **131** | **131** | **0** | **0** |
 
 ## 5. Untested Requirements
 

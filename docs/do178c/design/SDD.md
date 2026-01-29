@@ -427,7 +427,7 @@ The semaphore component implements bounded counting semaphores for producer-cons
 #### 3.5.2 Data Structure
 
 ```c
-#define MAX_SEMAPHORES 20
+#define MAX_SEMAPHORES 32
 
 typedef struct {
     uint32_t count;                          // Current count
@@ -497,21 +497,136 @@ The blocking uses `task_active_sleep(1)` which yields to the scheduler, allowing
 
 | Design Element | Implements Requirement |
 |----------------|----------------------|
-| semaphore_t structure | HLR-KRN-041, HLR-KRN-042 |
+| semaphore_t structure | HLR-KRN-041, HLR-KRN-042, HLR-KRN-043 |
 | count field | HLR-KRN-042 (counting) |
-| init_count (bounded) | HLR-KRN-042 |
-| task_active_sleep blocking | HLR-KRN-045 (bounded WCET) |
+| init_count (bounded) | HLR-KRN-043 |
+| task_active_sleep blocking | HLR-KRN-049 (bounded WCET) |
 | engaged flag | Initialization safety |
+| MAX_SEMAPHORES=32 | HLR-KRN-051 |
 
 ---
 
-### 3.6 Print Buffer Component
+### 3.6 Message Pipe Component
 
-#### 3.5.1 Design Overview
+#### 3.6.1 Design Overview
+
+The message pipe component implements FIFO byte-stream communication channels between tasks. Pipes support variable-length messages with bounded capacity and blocking semantics.
+
+#### 3.6.2 Data Structure
+
+```c
+#define MAX_MESSAGE_QUEUES 32
+#define MAX_PIPE_CAPACITY 128
+
+typedef struct {
+    uint8_t buffer[MAX_PIPE_CAPACITY];  // Circular buffer storage
+    uint8_t head;                       // Read index
+    uint8_t tail;                       // Write index
+    uint8_t count;                      // Current bytes in pipe
+    uint8_t capacity;                   // Maximum bytes (≤128)
+    bool engaged;                       // Pipe is initialized
+} message_pipe_t;
+
+message_pipe_t* message_pipe_list[MAX_MESSAGE_QUEUES];
+```
+
+#### 3.6.3 Pipe Operations
+
+```
+ALGORITHM: Pipe Enqueue (Producer)
+
+INPUT: pipe_idx, data (byte)
+OUTPUT: true on success, false on full/invalid
+
+pipe_enqueue(pipe_idx, data):
+    IF pipe_idx >= MAX_MESSAGE_QUEUES OR NOT engaged:
+        RETURN false
+    
+    WHILE count >= capacity:        // Pipe full
+        task_active_sleep(1)        // Yield, let consumer run
+    
+    ENTER_CRITICAL
+    buffer[tail] = data
+    tail = (tail + 1) % capacity
+    count++
+    EXIT_CRITICAL
+    RETURN true
+
+
+ALGORITHM: Pipe Dequeue (Consumer)
+
+INPUT: pipe_idx
+OUTPUT: byte value, or -1 on empty/invalid
+
+pipe_dequeue(pipe_idx):
+    IF pipe_idx >= MAX_MESSAGE_QUEUES OR NOT engaged:
+        RETURN -1
+    
+    WHILE count == 0:               // Pipe empty
+        task_active_sleep(1)        // Yield, let producer run
+    
+    ENTER_CRITICAL
+    data = buffer[head]
+    head = (head + 1) % capacity
+    count--
+    EXIT_CRITICAL
+    RETURN data
+```
+
+#### 3.6.4 Circular Buffer Layout
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CIRCULAR PIPE BUFFER                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Index:  0   1   2   3   4   5   6   7   ...  126  127      │
+│        ┌───┬───┬───┬───┬───┬───┬───┬───┬─────┬───┬───┐     │
+│  Data: │ A │ B │ C │ D │   │   │   │   │ ... │   │   │     │
+│        └───┴───┴───┴───┴───┴───┴───┴───┴─────┴───┴───┘     │
+│          ▲               ▲                                   │
+│          │               │                                   │
+│       head=0          tail=4                                │
+│                                                              │
+│  Empty: count == 0                                          │
+│  Full:  count == capacity                                   │
+│  FIFO:  head follows tail, wraps at capacity                │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 3.6.5 Pipe Characteristics
+
+| Property | Value | Rationale |
+|----------|-------|-----------|
+| Ordering | FIFO | HLR-KRN-047 |
+| Capacity | 1-128 bytes | HLR-KRN-053 |
+| Message size | Variable (1-N bytes) | HLR-KRN-048 |
+| Blocking | Cooperative (task_active_sleep) | HLR-KRN-050 |
+| Atomicity | Critical sections | Data integrity |
+| Max pipes | 32 | HLR-KRN-052 |
+
+#### 3.6.6 Requirements Traceability
+
+| Design Element | Implements Requirement |
+|----------------|----------------------|
+| message_pipe_t structure | HLR-KRN-040 |
+| Circular buffer | HLR-KRN-047 (FIFO) |
+| Variable count | HLR-KRN-048 (variable-length) |
+| task_active_sleep blocking | HLR-KRN-050 (blocking) |
+| MAX_MESSAGE_QUEUES=32 | HLR-KRN-052 |
+| MAX_PIPE_CAPACITY=128 | HLR-KRN-053 |
+| Bounded operations | HLR-KRN-046 (bounded WCET) |
+
+---
+
+### 3.7 Print Buffer Component
+
+#### 3.7.1 Design Overview
 
 Circular buffer for asynchronous printf output via USB CDC.
 
-#### 3.5.2 Data Structure
+#### 3.7.2 Data Structure
 
 ```c
 #define PRINT_BUFFER_BYTES 256
@@ -521,7 +636,7 @@ volatile uint8_t print_buffer_dequeue_idx = 0;
 volatile uint8_t print_buffer_enqueue_idx = 0;
 ```
 
-#### 3.5.3 Buffer Operations
+#### 3.7.3 Buffer Operations
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -545,13 +660,13 @@ volatile uint8_t print_buffer_enqueue_idx = 0;
 
 ---
 
-### 3.6 IPC Component (Planned)
+### 3.8 Mutex Component (Planned)
 
-#### 3.6.1 Design Overview
+#### 3.8.1 Design Overview
 
 Inter-Process Communication provides synchronization and data exchange between tasks.
 
-#### 3.6.2 Message Queue Design
+#### 3.8.2 Message Queue Design
 
 ```c
 typedef struct {
@@ -566,7 +681,7 @@ typedef struct {
 } ipc_queue_t;
 ```
 
-#### 3.6.3 Queue Operations
+#### 3.8.3 Queue Operations
 
 | Operation | Blocking | Timeout | WCET |
 |-----------|----------|---------|------|
@@ -575,7 +690,7 @@ typedef struct {
 | `ipc_queue_peek()` | No | N/A | O(1) |
 | `ipc_queue_count()` | No | N/A | O(1) |
 
-#### 3.6.4 Semaphore Design
+#### 3.8.4 Mutex Design
 
 ```c
 typedef struct {
@@ -587,25 +702,25 @@ typedef struct {
 } ipc_sem_t;
 ```
 
-#### 3.6.5 Requirements Traceability
+#### 3.8.5 Requirements Traceability
 
 | Design Element | Implements Requirement |
 |----------------|----------------------|
-| ipc_queue_t | HLR-KRN-040 |
-| ipc_sem_t (count=1) | HLR-KRN-041 |
-| ipc_sem_t (count>1) | HLR-KRN-042 |
-| owner + priority fields | HLR-KRN-043 |
-| Bounded operations | HLR-KRN-045 |
+| ipc_queue_t | HLR-KRN-044 (planned) |
+| ipc_sem_t (count=1) | HLR-KRN-044 (planned) |
+| ipc_sem_t (count>1) | HLR-KRN-044 (planned) |
+| owner + priority fields | HLR-KRN-044 (planned) |
+| Bounded operations | HLR-KRN-046 (planned) |
 
 ---
 
-### 3.7 AI Runtime Component (Planned)
+### 3.9 AI Runtime Component (Planned)
 
-#### 3.7.1 Design Overview
+#### 3.9.1 Design Overview
 
 The AI Runtime provides deterministic neural network inference with certifiable properties.
 
-#### 3.7.2 Architecture
+#### 3.9.2 Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -644,7 +759,7 @@ The AI Runtime provides deterministic neural network inference with certifiable 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-#### 3.7.3 Model Structure
+#### 3.9.3 Model Structure
 
 ```c
 typedef struct {
@@ -671,7 +786,7 @@ typedef struct {
 } ai_layer_t;
 ```
 
-#### 3.7.4 Operator Specifications
+#### 3.9.4 Operator Specifications
 
 | Operator | Input Type | Output Type | WCET Formula |
 |----------|------------|-------------|--------------|
@@ -683,7 +798,7 @@ typedef struct {
 | Add | int8 | int8 | O(N) |
 | Concat | int8 | int8 | O(N) |
 
-#### 3.7.5 Determinism Guarantees
+#### 3.9.5 Determinism Guarantees
 
 | Property | Mechanism |
 |----------|-----------|
@@ -693,7 +808,7 @@ typedef struct {
 | Verifiable structure | Operator whitelist |
 | Integrity | CRC32 on model load |
 
-#### 3.7.6 Requirements Traceability
+#### 3.9.6 Requirements Traceability
 
 | Design Element | Implements Requirement |
 |----------------|----------------------|
@@ -922,13 +1037,21 @@ This matrix traces each requirement to its design element(s).
 | HLR-KRN-030 | scheduler_enabled flag | 3.4.2 | ✅ |
 | HLR-KRN-031 | critical_stack_depth | 3.4.2 | ✅ |
 | HLR-KRN-032 | Inline enter/exit_critical | 3.4.2 | ✅ |
-| HLR-KRN-040 | ipc_queue_t | 3.7.2 | 🔲 Planned |
+| HLR-KRN-040 | ipc_queue_t | 3.8.2 | 🔲 Planned |
 | HLR-KRN-041 | semaphore_t (binary) | 3.5.2 | ✅ |
 | HLR-KRN-042 | semaphore_t (counting) | 3.5.2 | ✅ |
-| HLR-KRN-043 | owner, original_priority | 3.7.4 | 🔲 Planned |
-| HLR-KRN-044 | Event flags | - | 🔲 Planned |
-| HLR-KRN-045 | task_active_sleep blocking | 3.5.3 | ✅ |
-| HLR-KRN-050 | Static allocation only | 4.2 | ✅ |
+| HLR-KRN-043 | semaphore_t (bounded) | 3.5.2 | ✅ |
+| HLR-KRN-044 | owner, original_priority | 3.8.4 | 🔲 Planned |
+| HLR-KRN-045 | Event flags | - | 🔲 Planned |
+| HLR-KRN-046 | Bounded operations | 3.5.3, 3.6.3 | ✅ |
+| HLR-KRN-047 | FIFO ordering | 3.6.4 | ✅ |
+| HLR-KRN-048 | Variable-length messages | 3.6.5 | ✅ |
+| HLR-KRN-049 | Semaphore blocking | 3.5.4 | ✅ |
+| HLR-KRN-050 | Pipe blocking | 3.6.3 | ✅ |
+| HLR-KRN-051 | MAX_SEMAPHORES=32 | 3.5.2 | ✅ |
+| HLR-KRN-052 | MAX_MESSAGE_QUEUES=32 | 3.6.2 | ✅ |
+| HLR-KRN-053 | Pipe capacity 128 bytes | 3.6.2 | ✅ |
+| HLR-KRN-060 | Static allocation only | 4.2 | ✅ |
 | HLR-KRN-051 | Stack canary (planned) | - | 🔲 Planned |
 | HLR-KRN-052 | MPU configuration | - | 🔲 Planned |
 | HLR-KRN-060 | Fault handlers | 3.3 | ✅ |
@@ -976,6 +1099,7 @@ This matrix traces each requirement to its design element(s).
 | Context Switch | `kernel/context_switch.s` | context_switch, start_cold_task |
 | Critical Section | `kernel/task.c` | enter_critical, exit_critical |
 | Semaphores | `kernel/task.c` | semaphore_init, semaphore_feed, semaphore_consume |
+| Message Pipes | `kernel/task.c` | pipe_init, pipe_enqueue, pipe_dequeue |
 | Print Buffer | `kernel/task.c` | enqueue_print_buffer, dequeue_print_buffer |
 | BSP Init | `bsp/retarget_hal.c` | hal_init |
 | GPIO | `bsp/gpio.c` | LED_On, LED_Off |
@@ -988,10 +1112,10 @@ This matrix covers High-Level Requirements (HLR) only. Performance (PRF) and Saf
 
 | Category | Total HLR | Designed | Implemented | Coverage |
 |----------|-----------|----------|-------------|----------|
-| Kernel | 35 | 35 | 22 | 63% |
+| Kernel | 35 | 35 | 30 | 86% |
 | BSP | 15 | 15 | 11 | 73% |
 | AI Runtime | 24 | 24 | 0 | 0% |
-| **Total** | **74** | **74** | **33** | **45%** |
+| **Total** | **74** | **74** | **41** | **55%** |
 
 ---
 
