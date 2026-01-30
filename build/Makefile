@@ -446,8 +446,8 @@ clean-cppcheck:
 	@rm -rf $(CPPCHECK_HTML_DIR)
 	@echo "cppcheck reports cleaned"
 
-# Clean everything including cppcheck
-clean-all: clean clean-cppcheck clean-coverage
+# Clean everything including cppcheck, coverage, and doxygen
+clean-all: clean clean-cppcheck clean-coverage clean-doxygen
 
 # Code Coverage (DO-178C)
 # Generate coverage data from .gcda files (requires running tests first)
@@ -500,7 +500,30 @@ clean-coverage:
 	@rm -rf $(COVERAGE_HTML_DIR) $(COVERAGE_DIR)
 	@echo "Coverage files cleaned"
 
+# Doxygen documentation
+DOXYGEN_DIR = $(PROJECT_ROOT)/docs/doxygen
+DOXYFILE = $(PROJECT_ROOT)/Doxyfile
+
+# Generate Doxygen documentation
+doxygen:
+	@echo "Generating Doxygen documentation..."
+	@if ! command -v doxygen >/dev/null 2>&1; then \
+		echo "ERROR: doxygen not found. Install it with:"; \
+		echo "  macOS:   brew install doxygen"; \
+		echo "  Ubuntu:  sudo apt-get install doxygen"; \
+		exit 1; \
+	fi
+	@cd $(PROJECT_ROOT) && doxygen $(DOXYFILE)
+	@echo ""
+	@echo "✅ Doxygen documentation: $(DOXYGEN_DIR)/html/index.html"
+
+# Clean Doxygen documentation
+clean-doxygen:
+	@echo "Cleaning Doxygen documentation..."
+	@rm -rf $(DOXYGEN_DIR)/html
+	@echo "Doxygen documentation cleaned"
+
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean rebuild rebuild-script size flash build-and-flash rebuild-and-flash cppcheck cppcheck-html test-reports check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage
+.PHONY: all clean rebuild rebuild-script size flash build-and-flash rebuild-and-flash cppcheck cppcheck-html test-reports check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage doxygen clean-doxygen
