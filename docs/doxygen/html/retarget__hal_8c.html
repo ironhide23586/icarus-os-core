@@ -115,7 +115,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a70af21c671abfcc773614a9a4f63d920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure system clocks for 480MHz operation.  <br /></td></tr>
 <tr class="separator:a70af21c671abfcc773614a9a4f63d920"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3bac781800873509713328e27b5ada4" id="r_ac3bac781800873509713328e27b5ada4"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3bac781800873509713328e27b5ada4">task_active_sleep</a> (uint32_t ticks)</td></tr>
-<tr class="memdesc:ac3bac781800873509713328e27b5ada4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for specified number of ticks (non-blocking)  <br /></td></tr>
+<tr class="memdesc:ac3bac781800873509713328e27b5ada4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for specified ticks while allowing other tasks to run.  <br /></td></tr>
 <tr class="separator:ac3bac781800873509713328e27b5ada4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d06812ba5c631eb19fe9eacf8111013" id="r_a9d06812ba5c631eb19fe9eacf8111013"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d06812ba5c631eb19fe9eacf8111013">platform_write</a> (void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len)</td></tr>
 <tr class="memdesc:a9d06812ba5c631eb19fe9eacf8111013"><td class="mdescLeft">&#160;</td><td class="mdescRight">Platform write function for LSM9DS1 IMU driver.  <br /></td></tr>
@@ -291,9 +291,9 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00153">153</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>, and <a class="el" href="icarus__task_8c_source.html#l00402">task_active_sleep()</a>.</p>
+<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>, and <a class="el" href="icarus__task_8c_source.html#l00707">task_active_sleep()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>, and <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>, and <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -320,7 +320,7 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 
 <p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, and <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -348,7 +348,7 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 
 <p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, and <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -602,24 +602,45 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Sleep for specified number of ticks (non-blocking) </p>
-<p>Blocks the current task for the specified duration while allowing other tasks to run. This is the preferred sleep method.</p>
+<p>Sleep for specified ticks while allowing other tasks to run. </p>
+<p>Sleep for specified number of ticks (non-blocking)</p>
+<p>Puts the current task into BLOCKED state for the specified number of ticks. The scheduler will skip this task until the sleep period expires, allowing other tasks to execute.</p>
+<p>This is the preferred sleep method for cooperative multitasking as it does not waste CPU cycles. The task is automatically returned to READY state by the scheduler when ticks expire.</p>
+<p>Placed in ITCM for zero wait-state execution.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">ticks</td><td>Number of SysTick intervals to sleep</td></tr>
+    <tr><td class="paramname">ticks</td><td>Number of ticks to sleep (1 tick = 1ms at 1kHz)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Actual number of ticks elapsed (may be &gt;= requested due to scheduling)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is placed in ITCM for zero wait-state execution.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><span class="comment">// Sleep for approximately 100ms (at 1ms tick rate)</span></div>
-<div class="line">uint32_t actual = <a class="code hl_function" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(100);</div>
-<div class="ttc" id="aicarus__task_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified number of ticks (non-blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00402">icarus_task.c:402</a></div></div>
+<dl class="section return"><dt>Returns</dt><dd>uint32_t Actual ticks elapsed (may be &gt;= requested due to scheduling latency)</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>Scheduler must be running </dd>
+<dd>
+Called from task context (not ISR)</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>Task state temporarily set to TASK_STATE_BLOCKED </dd>
+<dd>
+Task resumes after at least 'ticks' have elapsed</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Minimum sleep is 1 tick; 0 is treated as immediate yield </dd>
+<dd>
+Actual sleep may be longer due to higher-priority tasks</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with interrupts disabled (blocking)">task_blocking_sleep()</a> for non-preemptible sleep </dd>
+<dd>
+<a class="el" href="icarus__task_8h.html#abf480b084de52354a2fd785135c1fbed" title="Busy-wait for specified ticks (must be in critical section)">task_busy_wait()</a> for spin-wait delay</dd></dl>
+<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><span class="comment">// Blink LED at 1Hz</span></div>
+<div class="line"><span class="keywordflow">while</span> (1) {</div>
+<div class="line">    <a class="code hl_function" href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a>();</div>
+<div class="line">    <a class="code hl_function" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(500);  <span class="comment">// 500ms on</span></div>
+<div class="line">    <a class="code hl_function" href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a>();</div>
+<div class="line">    <a class="code hl_function" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(500);  <span class="comment">// 500ms off</span></div>
+<div class="line">}</div>
+<div class="ttc" id="absp__led_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00167">retarget_hal.c:167</a></div></div>
+<div class="ttc" id="absp__led_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00178">retarget_hal.c:178</a></div></div>
+<div class="ttc" id="aicarus__task_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified number of ticks (non-blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00707">icarus_task.c:707</a></div></div>
 </div><!-- fragment --> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00402">402</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00707">707</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00697">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l00660">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l00599">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l00578">semaphore_feed()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l01626">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l01541">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l01336">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l01274">semaphore_feed()</a>.</p>
 
 </div>
 </div>
@@ -629,7 +650,7 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="retarget__hal_8c.html">retarget_hal.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:56:11 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

@@ -1,9 +1,31 @@
-/*
- * demo_tasks.c
+/**
+ * @file    demo_tasks.c
+ * @brief   ICARUS OS Demonstration Tasks
+ * @version 0.1.0
  *
- *  Created on: Jan 29, 2026
- *      Author: Souham Biswas
- *      GitHub: https://github.com/ironhide23586/icarus-os-core
+ * @details This module provides demonstration tasks showcasing ICARUS OS
+ *          kernel primitives including:
+ *          - Counting semaphore producer-consumer patterns
+ *          - Message pipe communication patterns:
+ *            - Single Producer → Single Consumer (SS)
+ *            - Single Producer → Multiple Consumers (SM)
+ *            - Multiple Producers → Single Consumer (MS)
+ *            - Multiple Producers → Multiple Consumers (MM)
+ *
+ * @par Visual Output:
+ *      All demo tasks render progress bars and message history to the
+ *      terminal display, providing real-time visualization of IPC
+ *      operations and task scheduling.
+ *
+ * @see     icarus_task.h for kernel API documentation
+ * @see     display.h for rendering functions
+ *
+ * @author  Souham Biswas
+ * @date    2026
+ *
+ * @copyright Copyright (c) 2026 ICARUS Project
+ *            https://github.com/ironhide23586/icarus-os-core
+ *            Licensed under MIT License
  */
 
 #include "demo_tasks.h"
@@ -67,6 +89,15 @@ static msg_history_t hist_mm;
 // SEMAPHORE DEMO TASKS
 // ============================================================================
 
+/**
+ * @brief   Producer task for semaphore demonstration
+ *
+ * @details Periodically feeds the semaphore at SEM_IDX, demonstrating
+ *          the producer side of producer-consumer synchronization.
+ *          Renders a progress bar and vertical semaphore level indicator.
+ *
+ * @note    Runs indefinitely with PRODUCER_DELAY tick period
+ */
 static void producer_task(void) {
     const char* task_name = os_get_current_task_name();
     uint32_t items_produced = 0;
@@ -97,6 +128,16 @@ static void producer_task(void) {
     }
 }
 
+/**
+ * @brief   Consumer task for semaphore demonstration
+ *
+ * @details Periodically consumes from the semaphore at SEM_IDX, demonstrating
+ *          the consumer side of producer-consumer synchronization.
+ *          Renders a progress bar and vertical semaphore level indicator.
+ *
+ * @note    Runs indefinitely with CONSUMER_DELAY tick period
+ * @note    Slightly faster than producer to demonstrate blocking behavior
+ */
 static void consumer_task(void) {
     const char* task_name = os_get_current_task_name();
     uint32_t items_consumed = 0;
@@ -127,6 +168,15 @@ static void consumer_task(void) {
     }
 }
 
+/**
+ * @brief   Reference task for timing visualization
+ *
+ * @details Provides a consistent timing reference by running at a fixed
+ *          period (TASK_C_PERIOD_TICKS). Useful for visually comparing
+ *          task execution timing against producer/consumer tasks.
+ *
+ * @note    Runs indefinitely with TASK_C_PERIOD_TICKS period
+ */
 static void reference_task(void) {
     uint32_t elapsed;
     uint32_t remaining;
@@ -161,6 +211,15 @@ static void reference_task(void) {
 // Demonstrates: FIFO ordering preserved
 // ============================================================================
 
+/**
+ * @brief   Single-Single pipe producer task
+ *
+ * @details Sends sequential 1-byte messages to PIPE_SS_IDX, demonstrating
+ *          basic FIFO message ordering. Each message is a counter value
+ *          that increments with each send.
+ *
+ * @note    Demonstrates: FIFO ordering preserved in single-producer scenario
+ */
 static void pipe_ss_producer(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg = 0;
@@ -190,6 +249,14 @@ static void pipe_ss_producer(void) {
     }
 }
 
+/**
+ * @brief   Single-Single pipe consumer task
+ *
+ * @details Receives sequential 1-byte messages from PIPE_SS_IDX,
+ *          verifying FIFO ordering is preserved.
+ *
+ * @note    Demonstrates: Messages received in same order as sent
+ */
 static void pipe_ss_consumer(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg = 0;
@@ -228,6 +295,15 @@ static void pipe_ss_consumer(void) {
 
 #define PIPE_SM_SEND_DELAY  150  // Faster producer to feed two consumers
 
+/**
+ * @brief   Single-Multi pipe producer task
+ *
+ * @details Sends 2-byte messages (16-bit counter) to PIPE_SM_IDX at a
+ *          faster rate to feed multiple consumers. Demonstrates message
+ *          distribution among competing consumers.
+ *
+ * @note    Demonstrates: Messages distributed to whichever consumer dequeues first
+ */
 static void pipe_sm_producer(void) {
     const char* task_name = os_get_current_task_name();
     uint16_t seq = 0;
@@ -260,6 +336,12 @@ static void pipe_sm_producer(void) {
     }
 }
 
+/**
+ * @brief   Single-Multi pipe consumer 1
+ *
+ * @details First consumer for PIPE_SM_IDX, competing with consumer 2
+ *          for messages from the single producer.
+ */
 static void pipe_sm_consumer1(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg[2];
@@ -289,6 +371,12 @@ static void pipe_sm_consumer1(void) {
     }
 }
 
+/**
+ * @brief   Single-Multi pipe consumer 2
+ *
+ * @details Second consumer for PIPE_SM_IDX, competing with consumer 1
+ *          for messages. Runs slightly slower to show distribution.
+ */
 static void pipe_sm_consumer2(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg[2];
@@ -325,6 +413,14 @@ static void pipe_sm_consumer2(void) {
 // Demonstrates: Messages from different producers interleaved, order per-producer preserved
 // ============================================================================
 
+/**
+ * @brief   Multi-Single pipe producer 1
+ *
+ * @details First producer for PIPE_MS_IDX, sending values 0-99.
+ *          Demonstrates interleaved messages from multiple producers.
+ *
+ * @note    Producer ID encoded in value range (0-99)
+ */
 static void pipe_ms_producer1(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg = 0;  // Start at 0 (range 0-99)
@@ -355,6 +451,14 @@ static void pipe_ms_producer1(void) {
     }
 }
 
+/**
+ * @brief   Multi-Single pipe producer 2
+ *
+ * @details Second producer for PIPE_MS_IDX, sending values 100-199.
+ *          Runs at different rate to show interleaving.
+ *
+ * @note    Producer ID encoded in value range (100-199)
+ */
 static void pipe_ms_producer2(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg = 100;  // Start at 100 (range 100-199)
@@ -384,6 +488,14 @@ static void pipe_ms_producer2(void) {
     }
 }
 
+/**
+ * @brief   Multi-Single pipe consumer
+ *
+ * @details Single consumer for PIPE_MS_IDX, receiving interleaved
+ *          messages from both producers.
+ *
+ * @note    Demonstrates: Per-producer ordering preserved despite interleaving
+ */
 static void pipe_ms_consumer(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg = 0;
@@ -420,6 +532,12 @@ static void pipe_ms_consumer(void) {
 // Demonstrates: Full concurrent access with producer identification
 // ============================================================================
 
+/**
+ * @brief   Multi-Multi pipe producer 1
+ *
+ * @details First producer for PIPE_MM_IDX, sending 3-byte messages
+ *          with explicit producer ID (0) and 16-bit sequence number.
+ */
 static void pipe_mm_producer1(void) {
     const char* task_name = os_get_current_task_name();
     uint16_t seq = 0;
@@ -453,6 +571,12 @@ static void pipe_mm_producer1(void) {
     }
 }
 
+/**
+ * @brief   Multi-Multi pipe producer 2
+ *
+ * @details Second producer for PIPE_MM_IDX, sending 3-byte messages
+ *          with explicit producer ID (1) and 16-bit sequence number.
+ */
 static void pipe_mm_producer2(void) {
     const char* task_name = os_get_current_task_name();
     uint16_t seq = 0;
@@ -485,6 +609,12 @@ static void pipe_mm_producer2(void) {
     }
 }
 
+/**
+ * @brief   Multi-Multi pipe consumer 1
+ *
+ * @details First consumer for PIPE_MM_IDX, competing with consumer 2
+ *          for messages from both producers.
+ */
 static void pipe_mm_consumer1(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg[3];
@@ -514,6 +644,12 @@ static void pipe_mm_consumer1(void) {
     }
 }
 
+/**
+ * @brief   Multi-Multi pipe consumer 2
+ *
+ * @details Second consumer for PIPE_MM_IDX, competing with consumer 1
+ *          for messages from both producers.
+ */
 static void pipe_mm_consumer2(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t msg[3];
@@ -548,6 +684,40 @@ static void pipe_mm_consumer2(void) {
 // INITIALIZATION
 // ============================================================================
 
+/**
+ * @brief   Initialize and register all demonstration tasks
+ *
+ * @details Initializes the IPC primitives (semaphores, pipes) and registers
+ *          all demo tasks with the kernel. Call this after os_init() and
+ *          before os_start().
+ *
+ * @par Registered Tasks:
+ *      | Task Name  | Type     | Description                    |
+ *      |------------|----------|--------------------------------|
+ *      | producer   | Sem Demo | Semaphore producer             |
+ *      | consumer   | Sem Demo | Semaphore consumer             |
+ *      | reference  | Timing   | Fixed-period reference         |
+ *      | ss_prod    | Pipe SS  | Single→Single producer         |
+ *      | ss_cons    | Pipe SS  | Single→Single consumer         |
+ *      | sm_prod    | Pipe SM  | Single→Multi producer          |
+ *      | sm_con1    | Pipe SM  | Single→Multi consumer 1        |
+ *      | sm_con2    | Pipe SM  | Single→Multi consumer 2        |
+ *      | ms_prd1    | Pipe MS  | Multi→Single producer 1        |
+ *      | ms_prd2    | Pipe MS  | Multi→Single producer 2        |
+ *      | ms_cons    | Pipe MS  | Multi→Single consumer          |
+ *      | mm_prd1    | Pipe MM  | Multi→Multi producer 1         |
+ *      | mm_prd2    | Pipe MM  | Multi→Multi producer 2         |
+ *      | mm_con1    | Pipe MM  | Multi→Multi consumer 1         |
+ *      | mm_con2    | Pipe MM  | Multi→Multi consumer 2         |
+ *
+ * @pre     os_init() must have been called
+ *
+ * @post    All demo semaphores and pipes initialized
+ * @post    All demo tasks registered with kernel
+ *
+ * @see     os_init()
+ * @see     os_start()
+ */
 void demo_tasks_init(void) {
     // Initialize message history buffers
     msg_history_init(&hist_ss);
