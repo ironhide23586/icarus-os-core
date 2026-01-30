@@ -1,131 +1,95 @@
-/*
-
-This file contains the structs and definitions supporting a task on ICARUS OS.
-
-*/
-
-//#pragma once
+/**
+ * @file    task.h
+ * @brief   ICARUS OS Task Management - Legacy Compatibility Header
+ * @version 0.1.0
+ *
+ * @details This header provides backward compatibility with existing code.
+ *          New code should include "icarus/icarus_task.h" directly.
+ *
+ * @deprecated Use "icarus/icarus_task.h" for new development
+ *
+ * @author  Souham Biswas
+ * @date    2026
+ *
+ * @copyright Copyright (c) 2026 ICARUS Project
+ *            https://github.com/ironhide23586/icarus-os-core
+ *            Licensed under MIT License
+ */
 
 #ifndef __ICARUS_TASK_H__
 #define __ICARUS_TASK_H__
 
-#include <stdint.h>
-#include <stdbool.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <string.h>
+/* ============================================================================
+ * INCLUDE NEW MODULAR HEADERS
+ * ========================================================================= */
+
+#include "icarus/icarus_config.h"
+#include "icarus/icarus_types.h"
+#include "icarus/icarus_task.h"
+
+/* ============================================================================
+ * LEGACY INCLUDES (for existing code compatibility)
+ * ========================================================================= */
+
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include <stdio.h>
+#include <stddef.h>
+
+/* HAL and peripheral includes */
+#include "main.h"
+#include "bsp/bsp_led.h"
 #include "usbd_cdc_if.h"
 #include "usbd_def.h"
 #include "cmsis_gcc.h"
-#include <stddef.h>
-#include "gpio.h"
 
-#define MAX_TASKS 128
-#define MAX_SEMAPHORES 64
-#define MAX_MESSAGE_QUEUES 64
-#define MAX_MESSAGE_BUFFER_BYTES 128
+/* ============================================================================
+ * LEGACY DEFINES (mapped to new names)
+ * ========================================================================= */
 
-#define STACK_WORDS 512  // 512 - 4 byte words per stack
-#define CPU_VREGISTERS_SIZE 16
-#define PRINT_BUFFER_BYTES 64  // DO NOT CROSS 64
-#define MAX_PRINT_RETRIES 4
-#define MAX_TASK_NAME_LENGTH 32
+/* These are now defined in icarus_config.h and icarus_task.h */
+/* Kept here for reference - actual definitions come from includes above */
 
-#include "main.h"
-#include "retarget_hal.h"
+/*
+ * Configuration constants (from icarus_config.h):
+ *   ICARUS_MAX_TASKS           -> MAX_TASKS
+ *   ICARUS_MAX_SEMAPHORES      -> MAX_SEMAPHORES
+ *   ICARUS_MAX_MESSAGE_QUEUES  -> MAX_MESSAGE_QUEUES
+ *   ICARUS_MAX_MESSAGE_BYTES   -> MAX_MESSAGE_BUFFER_BYTES
+ *   ICARUS_STACK_WORDS         -> STACK_WORDS
+ *   ICARUS_MAX_TASK_NAME_LEN   -> MAX_TASK_NAME_LENGTH
+ *
+ * Type definitions (from icarus_types.h):
+ *   icarus_task_t              -> task_t
+ *   icarus_semaphore_t         -> semaphore_t
+ *   icarus_pipe_t              -> message_pipe_t
+ *   icarus_task_state_t        -> task_state_t
+ *   icarus_task_priority_t     -> task_pri_t
+ *
+ * State constants:
+ *   TASK_STATE_COLD            -> TASK_COLD
+ *   TASK_STATE_RUNNING         -> TASK_RUNNING
+ *   TASK_STATE_READY           -> TASK_READY
+ *   TASK_STATE_BLOCKED         -> TASK_BLOCKED
+ *   TASK_STATE_KILLED          -> TASK_KILLED
+ *   TASK_STATE_FINISHED        -> TASK_FINISHED
+ *
+ * Priority constants:
+ *   TASK_PRIORITY_LOW          -> PRI_LOW
+ *   TASK_PRIORITY_MED          -> PRI_MED
+ *   TASK_PRIORITY_HIGH         -> PRI_HIGH
+ */
 
+/* Additional legacy defines */
+#define CPU_VREGISTERS_SIZE     16
 
-#if (STACK_WORDS % 2) != 0
-#error "STACK_WORDS must keep stack 8-byte aligned (even number of 32-bit words)."
+#ifdef __cplusplus
+}
 #endif
-
-#if (PRINT_BUFFER_BYTES > 64)
-#error "PRINT_BUFFER_BYTES must be <= 64 for USB FS CDC packet sizing."
-#endif
-
-
-typedef uint8_t task_state_t;
-typedef uint8_t task_pri_t;
-
-enum {
-    TASK_COLD = 0, TASK_RUNNING, TASK_READY, TASK_BLOCKED, TASK_KILLED, TASK_FINISHED
-};
-enum {
-    PRI_LOW = 0, PRI_MED, PRI_HIGH
-};
-
-
-typedef struct {
-    void (*function)(void);
-    uint32_t *stack_base;
-    uint32_t stack_size;
-    uint32_t *stack_pointer;
-    task_state_t task_state; // 0 - COLD, 1 - RUNNING, 2 - READY, 3 - BLOCKED, 4 - KILLED, 5 - FINISHED
-    uint32_t global_tick_paused; // global tick at which task was paused
-    uint32_t ticks_to_pause; // number of ticks to remain paused
-    task_pri_t task_priority; // 0 - LOW, 1 - MEDIUM, 2 - HIGH
-    char name[MAX_TASK_NAME_LENGTH];
-} task_t;
-
-
-typedef struct {
-    bool engaged;
-    uint32_t count;
-    uint32_t max_count;
-    uint32_t tick_updated_at;
-} semaphore_t;
-
-
-typedef struct {
-    bool engaged;
-    uint8_t count;
-    uint8_t max_count;
-    uint8_t enqueue_idx;
-    uint8_t dequeue_idx;
-    uint32_t tick_updated_at;
-    uint8_t buffer[MAX_MESSAGE_BUFFER_BYTES];
-} message_pipe_t;
-
-
-void os_init(void);
-uint32_t os_get_tick_count(void);
-void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, 
-                    uint32_t stack_size, const char *name);
-void os_register_task(void (*function)(void), const char *name);
-void os_start(void);
-void os_exit_task(void);
-void os_kill_process(uint8_t task_index);
-void os_task_suicide(void);
-void os_yield(void);
-
-uint32_t task_active_sleep(uint32_t ticks);
-uint32_t task_blocking_sleep(uint32_t ticks);
-uint32_t task_busy_wait(uint32_t ticks);
-
-void task_start(task_t *task);
-uint32_t os_get_task_ticks_remaining(void);
-uint8_t os_get_running_task_count(void);
-const char* os_get_current_task_name(void);
-
-// bool enqueue_print_buffer(uint8_t c);
-// void os_print_finished_tasks(void);
-
-
-bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
-bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
-bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
-uint8_t pipe_get_count(uint8_t pipe_idx);
-uint8_t pipe_get_max_count(uint8_t pipe_idx);
-
-bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
-bool semaphore_feed(uint8_t semaphore_idx);
-bool semaphore_consume(uint8_t semaphore_idx);
-uint32_t semaphore_get_count(uint8_t semaphore_idx);
-uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
-
-
-
 
 #endif /* __ICARUS_TASK_H__ */
