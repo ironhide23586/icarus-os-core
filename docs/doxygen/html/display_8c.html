@@ -103,6 +103,9 @@ $(function(){initNavTree('display_8c.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">display.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>ICARUS OS Terminal Display Implementation.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="display_8h_source.html">bsp/display.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="icarus__task_8h_source.html">icarus/icarus_task.h</a>&quot;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
@@ -112,32 +115,45 @@ $(function(){initNavTree('display_8c.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ad113952704c7e95007de4953ec44d098" id="r_ad113952704c7e95007de4953ec44d098"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad113952704c7e95007de4953ec44d098">ANSI_GOTO</a>(row,  col)</td></tr>
-<tr class="separator:ad113952704c7e95007de4953ec44d098"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4319fbb8f21090c85438cb4daa3bc62a" id="r_a4319fbb8f21090c85438cb4daa3bc62a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4319fbb8f21090c85438cb4daa3bc62a">ANSI_SHOW_CURSOR</a>()</td></tr>
-<tr class="separator:a4319fbb8f21090c85438cb4daa3bc62a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d9372801a83aa79290a0388a6c3abc8" id="r_a3d9372801a83aa79290a0388a6c3abc8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d9372801a83aa79290a0388a6c3abc8">ANSI_HIDE_CURSOR</a>()</td></tr>
-<tr class="separator:a3d9372801a83aa79290a0388a6c3abc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af77a445894f2f750d43cf2182cd29e55" id="r_af77a445894f2f750d43cf2182cd29e55"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af77a445894f2f750d43cf2182cd29e55">ANSI_RESET</a>&#160;&#160;&#160;&quot;\033[0m&quot;</td></tr>
-<tr class="separator:af77a445894f2f750d43cf2182cd29e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46587b83544b8e9be045bb93f644ac82" id="r_a46587b83544b8e9be045bb93f644ac82"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46587b83544b8e9be045bb93f644ac82">ANSI_BOLD</a>&#160;&#160;&#160;&quot;\033[1m&quot;</td></tr>
-<tr class="separator:a46587b83544b8e9be045bb93f644ac82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51fea81bd0f75dcc2fc1b341d9cc7958" id="r_a51fea81bd0f75dcc2fc1b341d9cc7958"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51fea81bd0f75dcc2fc1b341d9cc7958">ANSI_DIM</a>&#160;&#160;&#160;&quot;\033[2m&quot;</td></tr>
-<tr class="separator:a51fea81bd0f75dcc2fc1b341d9cc7958"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad050fd71ced44460a0c723a1715c40e5" id="r_ad050fd71ced44460a0c723a1715c40e5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad050fd71ced44460a0c723a1715c40e5">ANSI_GREEN</a>&#160;&#160;&#160;&quot;\033[32m&quot;</td></tr>
-<tr class="separator:ad050fd71ced44460a0c723a1715c40e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6e8b5c7b35e8bff4c581efd8019c798" id="r_af6e8b5c7b35e8bff4c581efd8019c798"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6e8b5c7b35e8bff4c581efd8019c798">ANSI_YELLOW</a>&#160;&#160;&#160;&quot;\033[33m&quot;</td></tr>
-<tr class="separator:af6e8b5c7b35e8bff4c581efd8019c798"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a9c0853e05b02c03acdfaab90f534c8" id="r_a8a9c0853e05b02c03acdfaab90f534c8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a9c0853e05b02c03acdfaab90f534c8">ANSI_MAGENTA</a>&#160;&#160;&#160;&quot;\033[35m&quot;</td></tr>
-<tr class="separator:a8a9c0853e05b02c03acdfaab90f534c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e74e295b54795a32a16ea744f6aed5e" id="r_a8e74e295b54795a32a16ea744f6aed5e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e74e295b54795a32a16ea744f6aed5e">ANSI_CYAN</a>&#160;&#160;&#160;&quot;\033[36m&quot;</td></tr>
-<tr class="separator:a8e74e295b54795a32a16ea744f6aed5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a141dae929732a29e6654ebc4741d6c93" id="r_a141dae929732a29e6654ebc4741d6c93"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a141dae929732a29e6654ebc4741d6c93">ANSI_WHITE</a>&#160;&#160;&#160;&quot;\033[37m&quot;</td></tr>
-<tr class="separator:a141dae929732a29e6654ebc4741d6c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3f9f309f3ed73b3bf9e1750acd0fd97" id="r_aa3f9f309f3ed73b3bf9e1750acd0fd97"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3f9f309f3ed73b3bf9e1750acd0fd97">ANSI_BG_GREEN</a>&#160;&#160;&#160;&quot;\033[42m&quot;</td></tr>
-<tr class="separator:aa3f9f309f3ed73b3bf9e1750acd0fd97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c7bcc8d5ea6dda147782785578a53b3" id="r_a3c7bcc8d5ea6dda147782785578a53b3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c7bcc8d5ea6dda147782785578a53b3">ANSI_BG_MAGENTA</a>&#160;&#160;&#160;&quot;\033[45m&quot;</td></tr>
-<tr class="separator:a3c7bcc8d5ea6dda147782785578a53b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad113952704c7e95007de4953ec44d098" id="r_gad113952704c7e95007de4953ec44d098"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#gad113952704c7e95007de4953ec44d098">ANSI_GOTO</a>(row,  col)</td></tr>
+<tr class="memdesc:gad113952704c7e95007de4953ec44d098"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move cursor to specified row and column (1-indexed)  <br /></td></tr>
+<tr class="separator:gad113952704c7e95007de4953ec44d098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4319fbb8f21090c85438cb4daa3bc62a" id="r_ga4319fbb8f21090c85438cb4daa3bc62a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga4319fbb8f21090c85438cb4daa3bc62a">ANSI_SHOW_CURSOR</a>()</td></tr>
+<tr class="memdesc:ga4319fbb8f21090c85438cb4daa3bc62a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Show terminal cursor.  <br /></td></tr>
+<tr class="separator:ga4319fbb8f21090c85438cb4daa3bc62a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3d9372801a83aa79290a0388a6c3abc8" id="r_ga3d9372801a83aa79290a0388a6c3abc8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga3d9372801a83aa79290a0388a6c3abc8">ANSI_HIDE_CURSOR</a>()</td></tr>
+<tr class="memdesc:ga3d9372801a83aa79290a0388a6c3abc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hide terminal cursor.  <br /></td></tr>
+<tr class="separator:ga3d9372801a83aa79290a0388a6c3abc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf77a445894f2f750d43cf2182cd29e55" id="r_gaf77a445894f2f750d43cf2182cd29e55"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#gaf77a445894f2f750d43cf2182cd29e55">ANSI_RESET</a>&#160;&#160;&#160;&quot;\033[0m&quot;</td></tr>
+<tr class="memdesc:gaf77a445894f2f750d43cf2182cd29e55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset all text attributes.  <br /></td></tr>
+<tr class="separator:gaf77a445894f2f750d43cf2182cd29e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga46587b83544b8e9be045bb93f644ac82" id="r_ga46587b83544b8e9be045bb93f644ac82"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga46587b83544b8e9be045bb93f644ac82">ANSI_BOLD</a>&#160;&#160;&#160;&quot;\033[1m&quot;</td></tr>
+<tr class="memdesc:ga46587b83544b8e9be045bb93f644ac82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bold text attribute.  <br /></td></tr>
+<tr class="separator:ga46587b83544b8e9be045bb93f644ac82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga51fea81bd0f75dcc2fc1b341d9cc7958" id="r_ga51fea81bd0f75dcc2fc1b341d9cc7958"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga51fea81bd0f75dcc2fc1b341d9cc7958">ANSI_DIM</a>&#160;&#160;&#160;&quot;\033[2m&quot;</td></tr>
+<tr class="memdesc:ga51fea81bd0f75dcc2fc1b341d9cc7958"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dim text attribute.  <br /></td></tr>
+<tr class="separator:ga51fea81bd0f75dcc2fc1b341d9cc7958"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad050fd71ced44460a0c723a1715c40e5" id="r_gad050fd71ced44460a0c723a1715c40e5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#gad050fd71ced44460a0c723a1715c40e5">ANSI_GREEN</a>&#160;&#160;&#160;&quot;\033[32m&quot;</td></tr>
+<tr class="memdesc:gad050fd71ced44460a0c723a1715c40e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Green foreground color.  <br /></td></tr>
+<tr class="separator:gad050fd71ced44460a0c723a1715c40e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6e8b5c7b35e8bff4c581efd8019c798" id="r_gaf6e8b5c7b35e8bff4c581efd8019c798"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#gaf6e8b5c7b35e8bff4c581efd8019c798">ANSI_YELLOW</a>&#160;&#160;&#160;&quot;\033[33m&quot;</td></tr>
+<tr class="memdesc:gaf6e8b5c7b35e8bff4c581efd8019c798"><td class="mdescLeft">&#160;</td><td class="mdescRight">Yellow foreground color.  <br /></td></tr>
+<tr class="separator:gaf6e8b5c7b35e8bff4c581efd8019c798"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8a9c0853e05b02c03acdfaab90f534c8" id="r_ga8a9c0853e05b02c03acdfaab90f534c8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga8a9c0853e05b02c03acdfaab90f534c8">ANSI_MAGENTA</a>&#160;&#160;&#160;&quot;\033[35m&quot;</td></tr>
+<tr class="memdesc:ga8a9c0853e05b02c03acdfaab90f534c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Magenta foreground color.  <br /></td></tr>
+<tr class="separator:ga8a9c0853e05b02c03acdfaab90f534c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8e74e295b54795a32a16ea744f6aed5e" id="r_ga8e74e295b54795a32a16ea744f6aed5e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga8e74e295b54795a32a16ea744f6aed5e">ANSI_CYAN</a>&#160;&#160;&#160;&quot;\033[36m&quot;</td></tr>
+<tr class="memdesc:ga8e74e295b54795a32a16ea744f6aed5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cyan foreground color.  <br /></td></tr>
+<tr class="separator:ga8e74e295b54795a32a16ea744f6aed5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga141dae929732a29e6654ebc4741d6c93" id="r_ga141dae929732a29e6654ebc4741d6c93"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga141dae929732a29e6654ebc4741d6c93">ANSI_WHITE</a>&#160;&#160;&#160;&quot;\033[37m&quot;</td></tr>
+<tr class="memdesc:ga141dae929732a29e6654ebc4741d6c93"><td class="mdescLeft">&#160;</td><td class="mdescRight">White foreground color.  <br /></td></tr>
+<tr class="separator:ga141dae929732a29e6654ebc4741d6c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa3f9f309f3ed73b3bf9e1750acd0fd97" id="r_gaa3f9f309f3ed73b3bf9e1750acd0fd97"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#gaa3f9f309f3ed73b3bf9e1750acd0fd97">ANSI_BG_GREEN</a>&#160;&#160;&#160;&quot;\033[42m&quot;</td></tr>
+<tr class="memdesc:gaa3f9f309f3ed73b3bf9e1750acd0fd97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Green background color.  <br /></td></tr>
+<tr class="separator:gaa3f9f309f3ed73b3bf9e1750acd0fd97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c7bcc8d5ea6dda147782785578a53b3" id="r_ga3c7bcc8d5ea6dda147782785578a53b3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ANSI__CODES.html#ga3c7bcc8d5ea6dda147782785578a53b3">ANSI_BG_MAGENTA</a>&#160;&#160;&#160;&quot;\033[45m&quot;</td></tr>
+<tr class="memdesc:ga3c7bcc8d5ea6dda147782785578a53b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Magenta background color.  <br /></td></tr>
+<tr class="separator:ga3c7bcc8d5ea6dda147782785578a53b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -145,273 +161,58 @@ Functions</h2></td></tr>
 <tr class="memdesc:a6c3781539153538a74dd53ab3233f7b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a message history buffer.  <br /></td></tr>
 <tr class="separator:a6c3781539153538a74dd53ab3233f7b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a265707d0ecea8ba5bc116e7349f66af1" id="r_a265707d0ecea8ba5bc116e7349f66af1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a265707d0ecea8ba5bc116e7349f66af1">msg_history_add</a> (<a class="el" href="structmsg__history__t.html">msg_history_t</a> *hist, const uint8_t *data, uint8_t len, uint8_t source_id, bool is_send)</td></tr>
-<tr class="memdesc:a265707d0ecea8ba5bc116e7349f66af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a message to history.  <br /></td></tr>
+<tr class="memdesc:a265707d0ecea8ba5bc116e7349f66af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a message to the history buffer.  <br /></td></tr>
 <tr class="separator:a265707d0ecea8ba5bc116e7349f66af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1157ea2c970e78ff6261f35c1801b078" id="r_a1157ea2c970e78ff6261f35c1801b078"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1157ea2c970e78ff6261f35c1801b078">display_render_msg_history</a> (uint8_t row, uint8_t col, <a class="el" href="structmsg__history__t.html">msg_history_t</a> *hist, const char *label)</td></tr>
-<tr class="memdesc:a1157ea2c970e78ff6261f35c1801b078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render message history as a rolling window Uses ASCII box drawing for better terminal compatibility.  <br /></td></tr>
+<tr class="memdesc:a1157ea2c970e78ff6261f35c1801b078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render message history as a rolling window display.  <br /></td></tr>
 <tr class="separator:a1157ea2c970e78ff6261f35c1801b078"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7520bc2f8594614588d9d31f3415d0fb" id="r_a7520bc2f8594614588d9d31f3415d0fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7520bc2f8594614588d9d31f3415d0fb">display_render_bar</a> (uint8_t row, const char *task_name, uint32_t elapsed_ticks, uint32_t period_ticks)</td></tr>
-<tr class="memdesc:a7520bc2f8594614588d9d31f3415d0fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a progress bar on a fixed row.  <br /></td></tr>
+<tr class="memdesc:a7520bc2f8594614588d9d31f3415d0fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a horizontal progress bar for task visualization.  <br /></td></tr>
 <tr class="separator:a7520bc2f8594614588d9d31f3415d0fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40122382f60e1f27a4483c193578628e" id="r_a40122382f60e1f27a4483c193578628e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40122382f60e1f27a4483c193578628e">display_render_banner</a> (uint8_t row, const char *task_name, bool is_on)</td></tr>
-<tr class="memdesc:a40122382f60e1f27a4483c193578628e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a simple flashing banner (on/off indicator)  <br /></td></tr>
+<tr class="memdesc:a40122382f60e1f27a4483c193578628e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a flashing banner indicator (heartbeat display)  <br /></td></tr>
 <tr class="separator:a40122382f60e1f27a4483c193578628e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa23e6d0b5d3afdbda5c81cba51a5d6f9" id="r_aa23e6d0b5d3afdbda5c81cba51a5d6f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa23e6d0b5d3afdbda5c81cba51a5d6f9">display_render_vbar</a> (uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count)</td></tr>
-<tr class="memdesc:aa23e6d0b5d3afdbda5c81cba51a5d6f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a vertical bar showing semaphore fill level Uses ASCII box drawing for better terminal compatibility.  <br /></td></tr>
+<tr class="memdesc:aa23e6d0b5d3afdbda5c81cba51a5d6f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a vertical bar showing semaphore fill level.  <br /></td></tr>
 <tr class="separator:aa23e6d0b5d3afdbda5c81cba51a5d6f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09198df6430376e95efd208b1c158f97" id="r_a09198df6430376e95efd208b1c158f97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09198df6430376e95efd208b1c158f97">display_render_pipe</a> (uint8_t start_row, uint8_t col, const char *label, uint8_t count, uint8_t max_count, uint8_t last_sent, uint8_t last_recv, bool show_sent, bool show_recv)</td></tr>
-<tr class="memdesc:a09198df6430376e95efd208b1c158f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a message queue visualization panel.  <br /></td></tr>
+<tr class="memdesc:a09198df6430376e95efd208b1c158f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a message queue (pipe) visualization panel.  <br /></td></tr>
 <tr class="separator:a09198df6430376e95efd208b1c158f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6dc27a9942fa96fd5368031c8155a58" id="r_ab6dc27a9942fa96fd5368031c8155a58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6dc27a9942fa96fd5368031c8155a58">display_render_producer</a> (uint8_t row, const char *task_name, uint32_t elapsed_ticks, uint32_t period_ticks, uint8_t msg_value, bool show_msg)</td></tr>
-<tr class="memdesc:ab6dc27a9942fa96fd5368031c8155a58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a producer task bar with sent message indicator.  <br /></td></tr>
+<tr class="memdesc:ab6dc27a9942fa96fd5368031c8155a58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a producer task progress bar with message indicator.  <br /></td></tr>
 <tr class="separator:ab6dc27a9942fa96fd5368031c8155a58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad127e7f8ce900ae5e9bec5d1a4c10f83" id="r_ad127e7f8ce900ae5e9bec5d1a4c10f83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad127e7f8ce900ae5e9bec5d1a4c10f83">display_render_consumer</a> (uint8_t row, const char *task_name, uint32_t elapsed_ticks, uint32_t period_ticks, uint8_t msg_value, bool show_msg)</td></tr>
-<tr class="memdesc:ad127e7f8ce900ae5e9bec5d1a4c10f83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a consumer task bar with received message indicator.  <br /></td></tr>
+<tr class="memdesc:ad127e7f8ce900ae5e9bec5d1a4c10f83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Render a consumer task progress bar with message indicator.  <br /></td></tr>
 <tr class="separator:ad127e7f8ce900ae5e9bec5d1a4c10f83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a407d5033a6f0198221c8a9081d7e807e" id="r_a407d5033a6f0198221c8a9081d7e807e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a407d5033a6f0198221c8a9081d7e807e">display_init</a> (void)</td></tr>
-<tr class="memdesc:a407d5033a6f0198221c8a9081d7e807e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize terminal display - clear screen and print header.  <br /></td></tr>
+<tr class="memdesc:a407d5033a6f0198221c8a9081d7e807e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize terminal display subsystem.  <br /></td></tr>
 <tr class="separator:a407d5033a6f0198221c8a9081d7e807e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="aa3f9f309f3ed73b3bf9e1750acd0fd97" name="aa3f9f309f3ed73b3bf9e1750acd0fd97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3f9f309f3ed73b3bf9e1750acd0fd97">&#9670;&#160;</a></span>ANSI_BG_GREEN</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>ICARUS OS Terminal Display Implementation. </p>
+<dl class="section version"><dt>Version</dt><dd>0.1.0</dd></dl>
+<p>Implements ANSI terminal-based visualization for real-time kernel monitoring. Provides progress bars, semaphore indicators, message queue visualizations, and rolling message history displays.</p>
+<dl class="section user"><dt>Terminal Requirements:</dt><dd><ul>
+<li>ANSI escape code support (VT100 compatible)</li>
+<li>UTF-8 encoding for box drawing characters</li>
+<li>Minimum 80x24 terminal size (100x40 recommended)</li>
+<li>115200 baud USB CDC connection</li>
+</ul>
+</dd></dl>
+<dl class="section user"><dt>Color Coding:</dt><dd><ul>
+<li>Green: Producers, successful operations</li>
+<li>Magenta: Consumers, receive operations</li>
+<li>Cyan: Headers, labels, informational</li>
+<li>Yellow: Warnings, queue fill indicators</li>
+</ul>
+</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>docs/do178c/design/SDD.md Section 6 - Display Subsystem</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Souham Biswas </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2026</dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026 ICARUS Project <a href="https://github.com/ironhide23586/icarus-os-core">https://github.com/ironhide23586/icarus-os-core</a> Licensed under MIT License </dd></dl>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_BG_GREEN&#160;&#160;&#160;&quot;\033[42m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00029">29</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-</div>
-</div>
-<a id="a3c7bcc8d5ea6dda147782785578a53b3" name="a3c7bcc8d5ea6dda147782785578a53b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c7bcc8d5ea6dda147782785578a53b3">&#9670;&#160;</a></span>ANSI_BG_MAGENTA</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_BG_MAGENTA&#160;&#160;&#160;&quot;\033[45m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00030">30</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-</div>
-</div>
-<a id="a46587b83544b8e9be045bb93f644ac82" name="a46587b83544b8e9be045bb93f644ac82"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46587b83544b8e9be045bb93f644ac82">&#9670;&#160;</a></span>ANSI_BOLD</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_BOLD&#160;&#160;&#160;&quot;\033[1m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00022">22</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>.</p>
-
-</div>
-</div>
-<a id="a8e74e295b54795a32a16ea744f6aed5e" name="a8e74e295b54795a32a16ea744f6aed5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e74e295b54795a32a16ea744f6aed5e">&#9670;&#160;</a></span>ANSI_CYAN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_CYAN&#160;&#160;&#160;&quot;\033[36m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00027">27</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00195">display_render_vbar()</a>.</p>
-
-</div>
-</div>
-<a id="a51fea81bd0f75dcc2fc1b341d9cc7958" name="a51fea81bd0f75dcc2fc1b341d9cc7958"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51fea81bd0f75dcc2fc1b341d9cc7958">&#9670;&#160;</a></span>ANSI_DIM</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_DIM&#160;&#160;&#160;&quot;\033[2m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00023">23</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-</div>
-</div>
-<a id="ad113952704c7e95007de4953ec44d098" name="ad113952704c7e95007de4953ec44d098"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad113952704c7e95007de4953ec44d098">&#9670;&#160;</a></span>ANSI_GOTO</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_GOTO</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>col</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">printf(<span class="stringliteral">&quot;\033[%d;%dH&quot;</span>, (row), (col))</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00015">15</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00389">display_init()</a>, <a class="el" href="display_8c_source.html#l00171">display_render_banner()</a>, <a class="el" href="display_8c_source.html#l00124">display_render_bar()</a>, <a class="el" href="display_8c_source.html#l00342">display_render_consumer()</a>, <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>, <a class="el" href="display_8c_source.html#l00239">display_render_pipe()</a>, <a class="el" href="display_8c_source.html#l00295">display_render_producer()</a>, and <a class="el" href="display_8c_source.html#l00195">display_render_vbar()</a>.</p>
-
-</div>
-</div>
-<a id="ad050fd71ced44460a0c723a1715c40e5" name="ad050fd71ced44460a0c723a1715c40e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad050fd71ced44460a0c723a1715c40e5">&#9670;&#160;</a></span>ANSI_GREEN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_GREEN&#160;&#160;&#160;&quot;\033[32m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00024">24</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00195">display_render_vbar()</a>.</p>
-
-</div>
-</div>
-<a id="a3d9372801a83aa79290a0388a6c3abc8" name="a3d9372801a83aa79290a0388a6c3abc8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d9372801a83aa79290a0388a6c3abc8">&#9670;&#160;</a></span>ANSI_HIDE_CURSOR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_HIDE_CURSOR</td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">printf(<span class="stringliteral">&quot;\033[?25l&quot;</span>)</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00018">18</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00389">display_init()</a>.</p>
-
-</div>
-</div>
-<a id="a8a9c0853e05b02c03acdfaab90f534c8" name="a8a9c0853e05b02c03acdfaab90f534c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a9c0853e05b02c03acdfaab90f534c8">&#9670;&#160;</a></span>ANSI_MAGENTA</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_MAGENTA&#160;&#160;&#160;&quot;\033[35m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00026">26</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>.</p>
-
-</div>
-</div>
-<a id="af77a445894f2f750d43cf2182cd29e55" name="af77a445894f2f750d43cf2182cd29e55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af77a445894f2f750d43cf2182cd29e55">&#9670;&#160;</a></span>ANSI_RESET</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_RESET&#160;&#160;&#160;&quot;\033[0m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00021">21</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00195">display_render_vbar()</a>.</p>
-
-</div>
-</div>
-<a id="a4319fbb8f21090c85438cb4daa3bc62a" name="a4319fbb8f21090c85438cb4daa3bc62a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4319fbb8f21090c85438cb4daa3bc62a">&#9670;&#160;</a></span>ANSI_SHOW_CURSOR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_SHOW_CURSOR</td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">printf(<span class="stringliteral">&quot;\033[?25h&quot;</span>)</div>
-</div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00017">17</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-</div>
-</div>
-<a id="a141dae929732a29e6654ebc4741d6c93" name="a141dae929732a29e6654ebc4741d6c93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a141dae929732a29e6654ebc4741d6c93">&#9670;&#160;</a></span>ANSI_WHITE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_WHITE&#160;&#160;&#160;&quot;\033[37m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00028">28</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-</div>
-</div>
-<a id="af6e8b5c7b35e8bff4c581efd8019c798" name="af6e8b5c7b35e8bff4c581efd8019c798"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af6e8b5c7b35e8bff4c581efd8019c798">&#9670;&#160;</a></span>ANSI_YELLOW</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ANSI_YELLOW&#160;&#160;&#160;&quot;\033[33m&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00025">25</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
+<p class="definition">Definition in file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a407d5033a6f0198221c8a9081d7e807e" name="a407d5033a6f0198221c8a9081d7e807e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a407d5033a6f0198221c8a9081d7e807e">&#9670;&#160;</a></span>display_init()</h2>
 
@@ -427,12 +228,34 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initialize terminal display - clear screen and print header. </p>
-<p>Initialize terminal display. </p>
+<p>Initialize terminal display subsystem. </p>
+<p>Initialize terminal display - clear screen and print header.</p>
+<p>Initialize terminal display.</p>
+<p>Performs one-time initialization of the terminal display:</p><ul>
+<li>Clears screen and hides cursor</li>
+<li>Renders ICARUS ASCII art logo header</li>
+<li>Initializes task progress bar rows</li>
+<li>Sets up heartbeat visualization (if enabled)</li>
+</ul>
+<dl class="section pre"><dt>Precondition</dt><dd>USB CDC must be initialized and connected </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>Terminal ready for real-time updates</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function is idempotent - subsequent calls are no-ops </dd>
+<dd>
+Called automatically by os_idle_task on first run</dd></dl>
+<dl class="section user"><dt>Logo Display:</dt><dd><pre class="fragment">*     ┌──────────────────────────────────────────────────────────────┐
+*     │   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │
+*     │   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │
+*     │   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │
+*     │   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │
+*     │   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
+*     │   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
+*     │   Preemptive Kernel • ARMv7E-M • STM32H750                   │
+*     └──────────────────────────────────────────────────────────────┘
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00389">389</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00610">610</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00018">ANSI_HIDE_CURSOR</a>, <a class="el" href="display_8c_source.html#l00171">display_render_banner()</a>, <a class="el" href="display_8c_source.html#l00124">display_render_bar()</a>, <a class="el" href="icarus__config_8h_source.html#l00054">ICARUS_MAX_TASKS</a>, <a class="el" href="icarus__types_8h_source.html#l00129">icarus_task_t::name</a>, <a class="el" href="icarus__task_8c_source.html#l00130">num_created_tasks</a>, <a class="el" href="bsp__display_8h_source.html#l00046">ROW_HEADER</a>, <a class="el" href="bsp__display_8h_source.html#l00050">ROW_HEARTBEAT</a>, <a class="el" href="bsp__display_8h_source.html#l00047">ROW_SEPARATOR</a>, <a class="el" href="bsp__display_8h_source.html#l00051">ROW_TASK_A</a>, <a class="el" href="bsp__display_8h_source.html#l00053">ROW_TASK_C</a>, <a class="el" href="bsp__display_8h_source.html#l00072">TASK_A_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00073">TASK_B_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00074">TASK_C_PERIOD_TICKS</a>, and <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00054">ANSI_HIDE_CURSOR</a>, <a class="el" href="display_8c_source.html#l00292">display_render_banner()</a>, <a class="el" href="display_8c_source.html#l00235">display_render_bar()</a>, <a class="el" href="icarus__config_8h_source.html#l00054">ICARUS_MAX_TASKS</a>, <a class="el" href="icarus__types_8h_source.html#l00129">icarus_task_t::name</a>, <a class="el" href="icarus__task_8c_source.html#l00130">num_created_tasks</a>, <a class="el" href="bsp__display_8h_source.html#l00046">ROW_HEADER</a>, <a class="el" href="bsp__display_8h_source.html#l00050">ROW_HEARTBEAT</a>, <a class="el" href="bsp__display_8h_source.html#l00047">ROW_SEPARATOR</a>, <a class="el" href="bsp__display_8h_source.html#l00051">ROW_TASK_A</a>, <a class="el" href="bsp__display_8h_source.html#l00053">ROW_TASK_C</a>, <a class="el" href="bsp__display_8h_source.html#l00072">TASK_A_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00073">TASK_B_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00074">TASK_C_PERIOD_TICKS</a>, and <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00261">os_idle_task()</a>.</p>
 
@@ -462,22 +285,26 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render a simple flashing banner (on/off indicator) </p>
+<p>Render a flashing banner indicator (heartbeat display) </p>
+<p>Render a simple flashing banner (on/off indicator)</p>
 <p>Render on/off banner (heartbeat indicator)</p>
+<p>Displays or clears a star-filled banner synchronized with the heartbeat LED. Used to provide visual confirmation that the kernel scheduler is running.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>terminal row (1-indexed) </td></tr>
-    <tr><td class="paramname">task_name</td><td>task name string </td></tr>
-    <tr><td class="paramname">is_on</td><td>true to show banner (LED on), false to clear (LED off) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name to display at banner edges </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_on</td><td>true = show banner (LED on), false = clear line (LED off)</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section user"><dt>Display Format (when on):</dt><dd><pre class="fragment">*     [&gt;ICARUS_HEARTBEAT&lt;] ★★★★★★★★★★★★★★★★★★★★ [&gt;ICARUS_HEARTBEAT&lt;]
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00171">171</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00292">292</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00389">display_init()</a>, and <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00610">display_init()</a>, and <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -510,23 +337,30 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render a progress bar on a fixed row. </p>
+<p>Render a horizontal progress bar for task visualization. </p>
+<p>Render a progress bar on a fixed row.</p>
 <p>Render horizontal progress bar.</p>
+<p>Displays a fixed-width progress bar showing task execution progress within its current period. Uses Unicode block characters for smooth fill animation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>terminal row (1-indexed) </td></tr>
-    <tr><td class="paramname">task_name</td><td>task name string (from TCB) </td></tr>
-    <tr><td class="paramname">elapsed_ticks</td><td>ticks elapsed in current period </td></tr>
-    <tr><td class="paramname">period_ticks</td><td>total ticks for this period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name string (from TCB, max 16 chars displayed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elapsed_ticks</td><td>Ticks elapsed in current period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period_ticks</td><td>Total ticks for this period (must be &gt; 0)</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     [task_name] ████████████────────────────  160 / 2000 ticks
+* </pre></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Clears to end of line to prevent display artifacts </dd>
+<dd>
+Division by zero is guarded (period_ticks forced to 1 if 0) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00124">124</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00235">235</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00389">display_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00610">display_init()</a>.</p>
 
 </div>
 </div>
@@ -569,12 +403,27 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render a consumer task bar with received message indicator. </p>
-<p>Render consumer task bar with message indicator. </p>
+<p>Render a consumer task progress bar with message indicator. </p>
+<p>Render a consumer task bar with received message indicator.</p>
+<p>Render consumer task bar with message indicator.</p>
+<p>Displays a magenta-colored progress bar for consumer tasks with an animated arrow indicator showing the last received message value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elapsed_ticks</td><td>Ticks elapsed in current period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period_ticks</td><td>Total ticks for this period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg_value</td><td>Last message value received (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_msg</td><td>true to show message indicator with flash effect</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     [consumer] ████████████────────  160/2000 ←[42]
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00342">342</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00538">538</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
 </div>
 </div>
@@ -607,13 +456,29 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render message history as a rolling window Uses ASCII box drawing for better terminal compatibility. </p>
+<p>Render message history as a rolling window display. </p>
 <p>Render message history as a rolling window.</p>
-<p>Render message history as rolling window. </p>
+<p>Render message history as rolling window.</p>
+<p>Displays the last MSG_HISTORY_LEN messages in a bordered panel. Uses ASCII box drawing characters for terminal compatibility. Color-codes entries: green for sends, magenta for receives.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Starting terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>Column position for left edge of panel </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hist</td><td>Pointer to history buffer to render </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Short label for panel header (e.g., "SS", "SM")</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     +---SS---+
+*     |&gt;P0: 42|   &lt;- Producer 0 sent 42
+*     |&lt;C0: 42|   &lt;- Consumer 0 received 42
+*     |&gt;P0: 43|
+*     +---------+
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00070">70</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00168">168</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00022">ANSI_BOLD</a>, <a class="el" href="display_8c_source.html#l00027">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00024">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00026">ANSI_MAGENTA</a>, <a class="el" href="display_8c_source.html#l00021">ANSI_RESET</a>, <a class="el" href="bsp__display_8h_source.html#l00108">msg_history_t::count</a>, <a class="el" href="bsp__display_8h_source.html#l00096">msg_history_entry_t::data</a>, <a class="el" href="bsp__display_8h_source.html#l00106">msg_history_t::entries</a>, <a class="el" href="bsp__display_8h_source.html#l00107">msg_history_t::head</a>, <a class="el" href="bsp__display_8h_source.html#l00099">msg_history_entry_t::is_send</a>, <a class="el" href="bsp__display_8h_source.html#l00097">msg_history_entry_t::len</a>, <a class="el" href="bsp__display_8h_source.html#l00087">MSG_HISTORY_LEN</a>, and <a class="el" href="bsp__display_8h_source.html#l00098">msg_history_entry_t::source_id</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00060">ANSI_BOLD</a>, <a class="el" href="display_8c_source.html#l00075">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00066">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00072">ANSI_MAGENTA</a>, <a class="el" href="display_8c_source.html#l00057">ANSI_RESET</a>, <a class="el" href="bsp__display_8h_source.html#l00108">msg_history_t::count</a>, <a class="el" href="bsp__display_8h_source.html#l00096">msg_history_entry_t::data</a>, <a class="el" href="bsp__display_8h_source.html#l00106">msg_history_t::entries</a>, <a class="el" href="bsp__display_8h_source.html#l00107">msg_history_t::head</a>, <a class="el" href="bsp__display_8h_source.html#l00099">msg_history_entry_t::is_send</a>, <a class="el" href="bsp__display_8h_source.html#l00097">msg_history_entry_t::len</a>, <a class="el" href="bsp__display_8h_source.html#l00087">MSG_HISTORY_LEN</a>, and <a class="el" href="bsp__display_8h_source.html#l00098">msg_history_entry_t::source_id</a>.</p>
 
 </div>
 </div>
@@ -671,12 +536,34 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render a message queue visualization panel. </p>
-<p>Render message pipe visualization. </p>
+<p>Render a message queue (pipe) visualization panel. </p>
+<p>Render a message queue visualization panel.</p>
+<p>Render message pipe visualization.</p>
+<p>Displays a compact panel showing pipe fill level and recent send/receive activity. Includes horizontal fill bar and directional arrows for message flow indication.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">start_row</td><td>Top row of the panel (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>Column position for left edge </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Short label for the queue (e.g., "Q1", "PIPE0") </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>Current byte count in pipe </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_count</td><td>Maximum pipe capacity in bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last_sent</td><td>Last message value sent (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last_recv</td><td>Last message value received (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_sent</td><td>true to display sent indicator with animation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_recv</td><td>true to display received indicator with animation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     PIPE0
+*     [████────]
+*      12/32
+*     →123      &lt;- Green arrow + sent value
+*     ← 45      &lt;- Magenta arrow + received value
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00239">239</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00405">405</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>.</p>
 
 </div>
 </div>
@@ -719,12 +606,27 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render a producer task bar with sent message indicator. </p>
-<p>Render producer task bar with message indicator. </p>
+<p>Render a producer task progress bar with message indicator. </p>
+<p>Render a producer task bar with sent message indicator.</p>
+<p>Render producer task bar with message indicator.</p>
+<p>Displays a green-colored progress bar for producer tasks with an animated arrow indicator showing the last sent message value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elapsed_ticks</td><td>Ticks elapsed in current period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period_ticks</td><td>Total ticks for this period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg_value</td><td>Last message value sent (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_msg</td><td>true to show message indicator with flash effect</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     [producer] ████████████────────  160/2000 →[42]
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00295">295</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00476">476</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
 </div>
 </div>
@@ -757,13 +659,32 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Render a vertical bar showing semaphore fill level Uses ASCII box drawing for better terminal compatibility. </p>
-<p>Render a vertical bar showing semaphore fill level.</p>
-<p>Render vertical bar (semaphore fill level) </p>
+<p>Render a vertical bar showing semaphore fill level. </p>
+<p>Render vertical bar (semaphore fill level)</p>
+<p>Displays a vertical bar chart representing semaphore count as a percentage of maximum capacity. Bar fills from bottom to top. Uses ASCII box drawing for terminal compatibility.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">start_row</td><td>Top row of the vertical bar (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>Column position for left edge </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>Current semaphore count </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_count</td><td>Maximum semaphore capacity</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*       SEM
+*     +---+
+*     |###|  &lt;- Filled portion (green)
+*     |###|
+*     |   |  &lt;- Empty portion
+*     |   |
+*     +---+
+*      3/10  &lt;- Current/max count
+* </pre></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Division by zero is guarded (max_count forced to 1 if 0) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00195">195</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00338">338</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00027">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00024">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00021">ANSI_RESET</a>, and <a class="el" href="bsp__display_8h_source.html#l00065">VBAR_HEIGHT</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00075">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00066">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00057">ANSI_RESET</a>, and <a class="el" href="bsp__display_8h_source.html#l00065">VBAR_HEIGHT</a>.</p>
 
 </div>
 </div>
@@ -801,10 +722,27 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Add a message to history. </p>
-<p>Add message to history. </p>
+<p>Add a message to the history buffer. </p>
+<p>Add a message to history.</p>
+<p>Add message to history.</p>
+<p>Adds a new entry at the head position using circular buffer semantics. Oldest entries are overwritten when buffer is full.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">hist</td><td>Pointer to history buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Message data bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Number of bytes in message (clamped to MSG_HISTORY_MAX_BYTES) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">source_id</td><td>Producer/consumer ID (0-254, 0xFF = unknown) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_send</td><td>true = send event, false = receive event</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>hist != NULL </dd>
+<dd>
+data != NULL </dd>
+<dd>
+len &gt; 0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00043">43</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00124">124</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bsp__display_8h_source.html#l00108">msg_history_t::count</a>, <a class="el" href="bsp__display_8h_source.html#l00096">msg_history_entry_t::data</a>, <a class="el" href="bsp__display_8h_source.html#l00106">msg_history_t::entries</a>, <a class="el" href="bsp__display_8h_source.html#l00107">msg_history_t::head</a>, <a class="el" href="bsp__display_8h_source.html#l00099">msg_history_entry_t::is_send</a>, <a class="el" href="bsp__display_8h_source.html#l00097">msg_history_entry_t::len</a>, <a class="el" href="bsp__display_8h_source.html#l00087">MSG_HISTORY_LEN</a>, <a class="el" href="bsp__display_8h_source.html#l00090">MSG_HISTORY_MAX_BYTES</a>, and <a class="el" href="bsp__display_8h_source.html#l00098">msg_history_entry_t::source_id</a>.</p>
 
@@ -826,9 +764,18 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Initialize a message history buffer. </p>
-<p>Initialize message history buffer. </p>
+<p>Initialize message history buffer.</p>
+<p>Clears all entries and resets head/count to zero. Must be called before using the history buffer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">hist</td><td>Pointer to history buffer to initialize</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>hist != NULL </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>hist-&gt;count == 0, hist-&gt;head == 0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00035">35</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00103">103</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
 </div>
 </div>
@@ -838,7 +785,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="display_8c.html">display.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:29:33 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

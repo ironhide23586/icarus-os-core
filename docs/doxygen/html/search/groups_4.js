@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['inactivity_5fdetection_0',['Activity/Inactivity_detection',['../group__LSM9DS1__.html',1,'']]],
-  ['interfaces_5ffunctions_1',['Interfaces_Functions',['../group__Interfaces__Functions.html',1,'']]]
+  ['gpio_20pin_20definitions_0',['GPIO Pin Definitions',['../group__GPIO__PINS.html',1,'']]]
 ];

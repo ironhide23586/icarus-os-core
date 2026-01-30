@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"icarus__task_8c.html#a656ba5cc462c6f126136d8737a831c96":[3,0,0,1,1,1,24],
 "icarus__task_8c.html#a6cc2e63d83267ff5059bf0a76b302a09":[3,0,0,1,1,1,14],
 "icarus__task_8c.html#a6dc3cbf6bed1d8ba3a811d08595581cc":[3,0,0,1,1,1,5],
 "icarus__task_8c.html#a8c37c79b24dbe7d362bde4110f7c150d":[3,0,0,1,1,1,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "stm32h7xx__it_8c_source.html":[3,0,0,1,0,10],
 "stm32h7xx__it_8h.html":[3,0,0,0,0,22],
 "stm32h7xx__it_8h.html#a1d98923de2ed6b7309b66f9ba2971647":[3,0,0,0,0,22,9],
-"stm32h7xx__it_8h.html#a2bffc10d5bd4106753b7c30e86903bea":[3,0,0,0,0,22,2],
-"stm32h7xx__it_8h.html#a3150f74512510287a942624aa9b44cc5":[3,0,0,0,0,22,3]
+"stm32h7xx__it_8h.html#a2bffc10d5bd4106753b7c30e86903bea":[3,0,0,0,0,22,2]
 };

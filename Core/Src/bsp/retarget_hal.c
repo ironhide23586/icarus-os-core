@@ -1,14 +1,44 @@
-/*
- * retarget_hal.c
+/**
+ * @file    retarget_hal.c
+ * @brief   ICARUS OS Hardware Abstraction Layer Implementation
+ * @version 0.1.0
  *
- *  Created on: Jan 23, 2026
- *      Author: Souham Biswas
- *      GitHub: https://github.com/ironhide23586/icarus-os-core
+ * @details Provides hardware initialization and low-level platform services
+ *          for the STM32H750VBT6 target. Includes:
+ *          - MPU configuration for QSPI flash access
+ *          - CPU cache enablement (I-Cache, D-Cache)
+ *          - System clock configuration (480MHz)
+ *          - Peripheral initialization
+ *          - LED control functions
+ *          - I2C platform read/write for IMU
+ *
+ * @par Clock Configuration:
+ *      - SYSCLK: 480 MHz (from PLL)
+ *      - HCLK: 240 MHz (AHB)
+ *      - APB1/APB2/APB3/APB4: 120 MHz
+ *      - HSE: 25 MHz external crystal
+ *      - LSE: 32.768 kHz for RTC
+ *
+ * @par Memory Protection:
+ *      - Region 0: QSPI 256MB - No access (background)
+ *      - Region 1: QSPI 8MB - Read-only, cacheable, executable
+ *
+ * @see     STM32H750 Reference Manual RM0433
+ * @see     docs/do178c/design/SDD.md Section 3 - Hardware Abstraction
+ *
+ * @author  Souham Biswas
+ * @date    2026
+ *
+ * @copyright Copyright (c) 2026 ICARUS Project
+ *            https://github.com/ironhide23586/icarus-os-core
+ *            Licensed under MIT License
  */
-
 
 #include "retarget_hal.h"
 
+/* ============================================================================
+ * FORWARD DECLARATIONS
+ * ========================================================================= */
 
 static void SystemClock_Config(void);
 extern uint32_t task_active_sleep(uint32_t ticks);
@@ -17,6 +47,29 @@ extern uint32_t task_active_sleep(uint32_t ticks);
 int32_t platform_write(void* handle, uint8_t reg, const uint8_t *bufp, uint16_t len);
 int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len);
 
+/* ============================================================================
+ * MPU CONFIGURATION
+ * ========================================================================= */
+
+/**
+ * @brief   Configure Memory Protection Unit for QSPI flash access
+ *
+ * @details Sets up two MPU regions for QSPI memory-mapped flash:
+ *          - Region 0: 256MB background region with no access (catches stray accesses)
+ *          - Region 1: 8MB overlay for actual flash with read-only, cacheable access
+ *
+ * @par Region Configuration:
+ *      | Region | Base       | Size  | Access    | Cache     | Execute |
+ *      |--------|------------|-------|-----------|-----------|---------|
+ *      | 0      | 0x90000000 | 256MB | No Access | None      | No      |
+ *      | 1      | 0x90000000 | 8MB   | Priv RO   | WT Cache  | Yes     |
+ *
+ * @note    Must be called before enabling caches
+ * @note    Uses privileged default memory map for non-configured regions
+ *
+ * @see     ARMv7-M Architecture Reference Manual, Section B3.5 (MPU)
+ * @see     STM32H750 Reference Manual RM0433, Section 2.3.4
+ */
 static void MPU_Config(void)
 {
   MPU_Region_InitTypeDef MPU_InitStruct = {0};
@@ -56,6 +109,20 @@ static void MPU_Config(void)
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
 
+/**
+ * @brief   Enable CPU instruction and data caches
+ *
+ * @details Enables both I-Cache and D-Cache for improved performance.
+ *          Must be called after MPU configuration to ensure proper
+ *          cacheability attributes are in effect.
+ *
+ * @pre     MPU_Config() must be called first
+ * @post    I-Cache and D-Cache enabled
+ *
+ * @note    Cache coherency must be managed for DMA operations
+ *
+ * @see     ARMv7-M Architecture Reference Manual, Section B2.2 (Caches)
+ */
 static void CPU_CACHE_Enable(void)
 {
   /* Enable I-Cache */
@@ -65,6 +132,24 @@ static void CPU_CACHE_Enable(void)
   SCB_EnableDCache();
 }
 
+/* ============================================================================
+ * LED CONTROL FUNCTIONS
+ * ========================================================================= */
+
+/**
+ * @brief   Blink LED with specified on/off timing
+ *
+ * @details Turns LED on for specified duration, then off for specified duration.
+ *          Uses task_active_sleep() for non-blocking delays.
+ *
+ * @param[in] Hdelay  LED on duration in OS ticks
+ * @param[in] Ldelay  LED off duration in OS ticks
+ *
+ * @pre     GPIO must be initialized (MX_GPIO_Init called)
+ * @pre     Must be called from task context (uses task_active_sleep)
+ *
+ * @note    Total blink period = Hdelay + Ldelay ticks
+ */
 void LED_Blink(uint32_t Hdelay, uint32_t Ldelay) {
 	HAL_GPIO_WritePin(E3_GPIO_Port,E3_Pin,GPIO_PIN_SET);
 	task_active_sleep(Hdelay - 1);
@@ -72,18 +157,50 @@ void LED_Blink(uint32_t Hdelay, uint32_t Ldelay) {
 	task_active_sleep(Ldelay-1);
 }
 
-
+/**
+ * @brief   Turn LED on (active high)
+ *
+ * @details Sets PE3 GPIO pin high to illuminate the onboard LED.
+ *
+ * @pre     GPIO must be initialized
+ */
 void LED_On(void) {
 	HAL_GPIO_WritePin(E3_GPIO_Port,E3_Pin,GPIO_PIN_SET);
 }
 
+/**
+ * @brief   Turn LED off
+ *
+ * @details Sets PE3 GPIO pin low to turn off the onboard LED.
+ *
+ * @pre     GPIO must be initialized
+ */
 void LED_Off(void) {
 	HAL_GPIO_WritePin(E3_GPIO_Port,E3_Pin,GPIO_PIN_RESET);
 }
 
+/* ============================================================================
+ * I2C PLATFORM FUNCTIONS (IMU DRIVER)
+ * ========================================================================= */
+
+/**
+ * @brief   Platform write function for LSM9DS1 IMU driver
+ *
+ * @details Writes data to IMU register via I2C. Used by the LSM9DS1
+ *          driver library for register configuration.
+ *
+ * @param[in] handle  I2C handle (cast to I2C_HandleTypeDef*)
+ * @param[in] reg     Register address to write
+ * @param[in] bufp    Pointer to data buffer
+ * @param[in] len     Number of bytes to write
+ *
+ * @return    0 on success (HAL status ignored for simplicity)
+ *
+ * @note    Uses blocking I2C transfer with HAL_MAX_DELAY timeout
+ */
 int32_t platform_write(void* handle, uint8_t reg, const uint8_t *bufp, uint16_t len) {
-	// HAL_I2C_Mem_Write requires non-const pointer, but we receive const
-	// This is safe as HAL will only read from the buffer
+	/* HAL_I2C_Mem_Write requires non-const pointer, but we receive const
+	 * This is safe as HAL will only read from the buffer */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 	HAL_I2C_Mem_Write((I2C_HandleTypeDef*) handle, IMU_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT,
@@ -92,15 +209,55 @@ int32_t platform_write(void* handle, uint8_t reg, const uint8_t *bufp, uint16_t 
 	return 0;
 }
 
-
+/**
+ * @brief   Platform read function for LSM9DS1 IMU driver
+ *
+ * @details Reads data from IMU register via I2C. Used by the LSM9DS1
+ *          driver library for sensor data acquisition.
+ *
+ * @param[in]  handle  I2C handle (cast to I2C_HandleTypeDef*)
+ * @param[in]  reg     Register address to read
+ * @param[out] bufp    Pointer to receive buffer
+ * @param[in]  len     Number of bytes to read
+ *
+ * @return    0 on success (HAL status ignored for simplicity)
+ *
+ * @note    Uses blocking I2C transfer with HAL_MAX_DELAY timeout
+ */
 int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len) {
 	HAL_I2C_Mem_Read((I2C_HandleTypeDef*) handle, IMU_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT,
 			bufp, len, HAL_MAX_DELAY);
 	return 0;
 }
 
+/* ============================================================================
+ * HAL INITIALIZATION
+ * ========================================================================= */
 
-
+/**
+ * @brief   Initialize all hardware abstraction layer components
+ *
+ * @details Master initialization function that configures all hardware:
+ *          1. Vector table relocation (if running from QSPI)
+ *          2. MPU configuration for memory protection
+ *          3. CPU cache enablement
+ *          4. HAL library initialization
+ *          5. System clock configuration (480MHz)
+ *          6. GPIO initialization
+ *          7. RTC initialization
+ *          8. SPI4 initialization (LCD)
+ *          9. TIM1 initialization (PWM)
+ *          10. I2C2 initialization (IMU)
+ *          11. USB CDC initialization
+ *
+ * @pre     None (called at system startup)
+ * @post    All hardware ready for kernel initialization
+ *
+ * @note    Must be called before os_init()
+ * @note    USB may take up to 1 second to enumerate on host
+ *
+ * @see     SystemClock_Config() for clock tree details
+ */
 void hal_init(void) {
   /* USER CODE BEGIN 1 */
   #ifdef W25Qxx
@@ -139,7 +296,39 @@ void hal_init(void) {
 //  printf("Starting ICARUS OS\r\n");
 }
 
+/* ============================================================================
+ * SYSTEM CLOCK CONFIGURATION
+ * ========================================================================= */
 
+/**
+ * @brief   Configure system clocks for 480MHz operation
+ *
+ * @details Configures the complete clock tree:
+ *          - HSE: 25MHz external crystal
+ *          - LSE: 32.768kHz for RTC
+ *          - HSI48: 48MHz for USB
+ *          - PLL: 480MHz SYSCLK from HSE
+ *
+ * @par PLL Configuration:
+ *      - Source: HSE (25MHz)
+ *      - PLLM: 5 (VCO input = 5MHz)
+ *      - PLLN: 96 (VCO output = 480MHz)
+ *      - PLLP: 2 (SYSCLK = 480MHz)
+ *
+ * @par Bus Clocks:
+ *      | Bus   | Divider | Frequency |
+ *      |-------|---------|-----------|
+ *      | SYSCLK| /1      | 480 MHz   |
+ *      | HCLK  | /2      | 240 MHz   |
+ *      | APB1  | /1      | 120 MHz   |
+ *      | APB2  | /1      | 120 MHz   |
+ *      | APB3  | /1      | 120 MHz   |
+ *      | APB4  | /1      | 120 MHz   |
+ *
+ * @note    Calls Error_Handler() on configuration failure
+ *
+ * @see     STM32H750 Reference Manual RM0433, Section 8 (RCC)
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};

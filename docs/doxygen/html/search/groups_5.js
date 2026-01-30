@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['kernel_20configuration_0',['Kernel Configuration',['../group__KERNEL__CONFIG.html',1,'']]],
-  ['kernel_20data_20structures_1',['Kernel Data Structures',['../group__KERNEL__DATA.html',1,'']]]
+  ['inactivity_5fdetection_0',['Activity/Inactivity_detection',['../group__LSM9DS1__.html',1,'']]],
+  ['interfaces_5ffunctions_1',['Interfaces_Functions',['../group__Interfaces__Functions.html',1,'']]]
 ];

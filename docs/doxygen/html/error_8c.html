@@ -103,6 +103,9 @@ $(function(){initNavTree('error_8c.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">error.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>ICARUS OS Error Handling Implementation.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="error_8h_source.html">error.h</a>&quot;</code><br />
 </div>
 <p><a href="error_8c_source.html">Go to the source code of this file.</a></p>
@@ -115,10 +118,26 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a1730ffe1e560465665eb47d9264826f9" id="r_a1730ffe1e560465665eb47d9264826f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1730ffe1e560465665eb47d9264826f9">Error_Handler</a> (void)</td></tr>
-<tr class="memdesc:a1730ffe1e560465665eb47d9264826f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">System error handler.  <br /></td></tr>
+<tr class="memdesc:a1730ffe1e560465665eb47d9264826f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">System error handler for unrecoverable faults.  <br /></td></tr>
 <tr class="separator:a1730ffe1e560465665eb47d9264826f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>ICARUS OS Error Handling Implementation. </p>
+<dl class="section version"><dt>Version</dt><dd>0.1.0</dd></dl>
+<p>Provides system-wide error handling for unrecoverable faults. The Error_Handler enters an infinite loop with interrupts disabled to prevent further system corruption.</p>
+<dl class="section user"><dt>Error Recovery:</dt><dd>The Error_Handler does not return. System recovery requires:<ul>
+<li>Hardware reset (NRST pin)</li>
+<li>Power cycle</li>
+<li>Watchdog timeout (if enabled)</li>
+</ul>
+</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>docs/do178c/design/SDD.md Section 7 - Error Handling</dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Souham Biswas </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2026</dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026 ICARUS Project <a href="https://github.com/ironhide23586/icarus-os-core">https://github.com/ironhide23586/icarus-os-core</a> Licensed under MIT License </dd></dl>
+
+<p class="definition">Definition in file <a class="el" href="error_8c_source.html">error.c</a>.</p>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a7e9796751aef13a4b5abe4fe49ca513c" name="a7e9796751aef13a4b5abe4fe49ca513c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7e9796751aef13a4b5abe4fe49ca513c">&#9670;&#160;</a></span>SRC_BSP_ERROR_C_</h2>
 
@@ -131,7 +150,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="error_8c_source.html#l00010">10</a> of file <a class="el" href="error_8c_source.html">error.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="error_8c_source.html#l00027">27</a> of file <a class="el" href="error_8c_source.html">error.c</a>.</p>
 
 </div>
 </div>
@@ -151,13 +170,26 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>System error handler. </p>
-<p>Called when an unrecoverable error occurs. Disables interrupts and enters infinite loop.</p>
-<dl class="section warning"><dt>Warning</dt><dd>This function never returns! </dd></dl>
+<p>System error handler for unrecoverable faults. </p>
+<p>System error handler.</p>
+<p>Called when a fatal error is detected that cannot be recovered. Disables all interrupts and enters an infinite loop to prevent further system corruption.</p>
+<dl class="section user"><dt>Typical Callers:</dt><dd><ul>
+<li>HAL initialization failures</li>
+<li>Clock configuration errors</li>
+<li>Peripheral initialization failures</li>
+<li>Stack overflow detection (if enabled)</li>
+</ul>
+</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function never returns! </dd>
+<dd>
+All interrupts are disabled - watchdog will not be serviced</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For debugging, set a breakpoint on this function to catch errors </dd>
+<dd>
+Consider adding LED blink pattern for field diagnosis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="error_8c_source.html#l00016">16</a> of file <a class="el" href="error_8c_source.html">error.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="error_8c_source.html#l00050">50</a> of file <a class="el" href="error_8c_source.html">error.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="i2c_8c_source.html#l00073">HAL_I2C_MspInit()</a>, <a class="el" href="rtc_8c_source.html#l00089">HAL_RTC_MspInit()</a>, <a class="el" href="spi_8c_source.html#l00072">HAL_SPI_MspInit()</a>, <a class="el" href="i2c_8c_source.html#l00030">MX_I2C2_Init()</a>, <a class="el" href="rtc_8c_source.html#l00030">MX_RTC_Init()</a>, <a class="el" href="spi_8c_source.html#l00030">MX_SPI4_Init()</a>, <a class="el" href="tim_8c_source.html#l00030">MX_TIM1_Init()</a>, and <a class="el" href="retarget__hal_8c_source.html#l00143">SystemClock_Config()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="i2c_8c_source.html#l00073">HAL_I2C_MspInit()</a>, <a class="el" href="rtc_8c_source.html#l00089">HAL_RTC_MspInit()</a>, <a class="el" href="spi_8c_source.html#l00072">HAL_SPI_MspInit()</a>, <a class="el" href="i2c_8c_source.html#l00030">MX_I2C2_Init()</a>, <a class="el" href="rtc_8c_source.html#l00030">MX_RTC_Init()</a>, <a class="el" href="spi_8c_source.html#l00030">MX_SPI4_Init()</a>, <a class="el" href="tim_8c_source.html#l00030">MX_TIM1_Init()</a>, and <a class="el" href="retarget__hal_8c_source.html#l00332">SystemClock_Config()</a>.</p>
 
 </div>
 </div>
@@ -167,7 +199,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="error_8c.html">error.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:29:33 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

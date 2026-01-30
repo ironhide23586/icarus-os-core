@@ -173,9 +173,9 @@ Variables</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="i2c_8c_source.html#l00030">30</a> of file <a class="el" href="i2c_8c_source.html">i2c.c</a>.</p>
 
-<p class="reference">References <a class="el" href="error_8c_source.html#l00016">Error_Handler()</a>, and <a class="el" href="i2c_8c_source.html#l00027">hi2c2</a>.</p>
+<p class="reference">References <a class="el" href="error_8c_source.html#l00050">Error_Handler()</a>, and <a class="el" href="i2c_8c_source.html#l00027">hi2c2</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00104">hal_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00261">hal_init()</a>.</p>
 
 </div>
 </div>
@@ -209,6 +209,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Platform read function for IMU driver. </p>
+<p>Platform read function for LSM9DS1 IMU driver.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">handle</td><td>I2C handle pointer </td></tr>
@@ -218,11 +219,36 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success</dd></dl>
+<p>Reads data from IMU register via I2C. Used by the LSM9DS1 driver library for sensor data acquisition.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">handle</td><td>I2C handle (cast to I2C_HandleTypeDef*) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">reg</td><td>Register address to read </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">bufp</td><td>Pointer to receive buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Number of bytes to read</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success (HAL status ignored for simplicity)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Uses blocking I2C transfer with HAL_MAX_DELAY timeout</dd></dl>
+<p>Platform read function for IMU driver.</p>
+<p>Reads data from IMU register via I2C. Used by the LSM9DS1 driver library for sensor data acquisition.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">handle</td><td>I2C handle (cast to I2C_HandleTypeDef*) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">reg</td><td>Register address to read </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">bufp</td><td>Pointer to receive buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Number of bytes to read</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success (HAL status ignored for simplicity)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Uses blocking I2C transfer with HAL_MAX_DELAY timeout </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00096">96</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00227">227</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00026">IMU_ADDRESS</a>.</p>
+<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00051">IMU_ADDRESS</a>.</p>
 
 </div>
 </div>
@@ -256,6 +282,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Platform write function for IMU driver. </p>
+<p>Platform write function for LSM9DS1 IMU driver.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">handle</td><td>I2C handle pointer </td></tr>
@@ -265,11 +292,36 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>0 on success </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success</dd></dl>
+<p>Writes data to IMU register via I2C. Used by the LSM9DS1 driver library for register configuration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">handle</td><td>I2C handle (cast to I2C_HandleTypeDef*) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">reg</td><td>Register address to write </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">bufp</td><td>Pointer to data buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Number of bytes to write</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success (HAL status ignored for simplicity)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Uses blocking I2C transfer with HAL_MAX_DELAY timeout</dd></dl>
+<p>Platform write function for IMU driver.</p>
+<p>Writes data to IMU register via I2C. Used by the LSM9DS1 driver library for register configuration.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">handle</td><td>I2C handle (cast to I2C_HandleTypeDef*) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">reg</td><td>Register address to write </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">bufp</td><td>Pointer to data buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Number of bytes to write</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success (HAL status ignored for simplicity)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Uses blocking I2C transfer with HAL_MAX_DELAY timeout </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00084">84</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00201">201</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00026">IMU_ADDRESS</a>.</p>
+<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00051">IMU_ADDRESS</a>.</p>
 
 </div>
 </div>
@@ -306,7 +358,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_e2489e887f17afa3cbc07a4ec152cdd2.html">Inc</a></li><li class="navelem"><a class="el" href="dir_f7835850016de063b8ae418a1221d9cd.html">bsp</a></li><li class="navelem"><a class="el" href="bsp__i2c_8h.html">bsp_i2c.h</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:29:33 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

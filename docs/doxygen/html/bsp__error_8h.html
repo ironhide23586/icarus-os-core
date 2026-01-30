@@ -228,11 +228,26 @@ Functions</h2></td></tr>
 
 <p>System error handler. </p>
 <p>Called when an unrecoverable error occurs. Disables interrupts and enters infinite loop.</p>
-<dl class="section warning"><dt>Warning</dt><dd>This function never returns! </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function never returns!</dd></dl>
+<p>System error handler.</p>
+<p>Called when a fatal error is detected that cannot be recovered. Disables all interrupts and enters an infinite loop to prevent further system corruption.</p>
+<dl class="section user"><dt>Typical Callers:</dt><dd><ul>
+<li>HAL initialization failures</li>
+<li>Clock configuration errors</li>
+<li>Peripheral initialization failures</li>
+<li>Stack overflow detection (if enabled)</li>
+</ul>
+</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function never returns! </dd>
+<dd>
+All interrupts are disabled - watchdog will not be serviced</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For debugging, set a breakpoint on this function to catch errors </dd>
+<dd>
+Consider adding LED blink pattern for field diagnosis </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="error_8c_source.html#l00016">16</a> of file <a class="el" href="error_8c_source.html">error.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="error_8c_source.html#l00050">50</a> of file <a class="el" href="error_8c_source.html">error.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="i2c_8c_source.html#l00073">HAL_I2C_MspInit()</a>, <a class="el" href="rtc_8c_source.html#l00089">HAL_RTC_MspInit()</a>, <a class="el" href="spi_8c_source.html#l00072">HAL_SPI_MspInit()</a>, <a class="el" href="i2c_8c_source.html#l00030">MX_I2C2_Init()</a>, <a class="el" href="rtc_8c_source.html#l00030">MX_RTC_Init()</a>, <a class="el" href="spi_8c_source.html#l00030">MX_SPI4_Init()</a>, <a class="el" href="tim_8c_source.html#l00030">MX_TIM1_Init()</a>, and <a class="el" href="retarget__hal_8c_source.html#l00143">SystemClock_Config()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="i2c_8c_source.html#l00073">HAL_I2C_MspInit()</a>, <a class="el" href="rtc_8c_source.html#l00089">HAL_RTC_MspInit()</a>, <a class="el" href="spi_8c_source.html#l00072">HAL_SPI_MspInit()</a>, <a class="el" href="i2c_8c_source.html#l00030">MX_I2C2_Init()</a>, <a class="el" href="rtc_8c_source.html#l00030">MX_RTC_Init()</a>, <a class="el" href="spi_8c_source.html#l00030">MX_SPI4_Init()</a>, <a class="el" href="tim_8c_source.html#l00030">MX_TIM1_Init()</a>, and <a class="el" href="retarget__hal_8c_source.html#l00332">SystemClock_Config()</a>.</p>
 
 </div>
 </div>
@@ -242,7 +257,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_e2489e887f17afa3cbc07a4ec152cdd2.html">Inc</a></li><li class="navelem"><a class="el" href="dir_f7835850016de063b8ae418a1221d9cd.html">bsp</a></li><li class="navelem"><a class="el" href="bsp__error_8h.html">bsp_error.h</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:29:33 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

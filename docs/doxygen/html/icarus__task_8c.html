@@ -741,7 +741,7 @@ Tick count wraps at UINT32_MAX (~49 days at 1ms tick) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00276">276</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00171">display_render_banner()</a>, <a class="el" href="icarus__config_8h_source.html#l00177">ICARUS_HEARTBEAT_OFF_TICKS</a>, <a class="el" href="icarus__config_8h_source.html#l00172">ICARUS_HEARTBEAT_ON_TICKS</a>, <a class="el" href="retarget__hal_8c_source.html#l00068">LED_Blink()</a>, <a class="el" href="retarget__hal_8c_source.html#l00080">LED_Off()</a>, <a class="el" href="retarget__hal_8c_source.html#l00076">LED_On()</a>, <a class="el" href="icarus__task_8c_source.html#l00369">os_get_current_task_name()</a>, <a class="el" href="icarus__task_8c_source.html#l00145">os_running</a>, <a class="el" href="bsp__display_8h_source.html#l00050">ROW_HEARTBEAT</a>, and <a class="el" href="icarus__task_8c_source.html#l00402">task_active_sleep()</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00292">display_render_banner()</a>, <a class="el" href="icarus__config_8h_source.html#l00177">ICARUS_HEARTBEAT_OFF_TICKS</a>, <a class="el" href="icarus__config_8h_source.html#l00172">ICARUS_HEARTBEAT_ON_TICKS</a>, <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="retarget__hal_8c_source.html#l00178">LED_Off()</a>, <a class="el" href="retarget__hal_8c_source.html#l00167">LED_On()</a>, <a class="el" href="icarus__task_8c_source.html#l00369">os_get_current_task_name()</a>, <a class="el" href="icarus__task_8c_source.html#l00145">os_running</a>, <a class="el" href="bsp__display_8h_source.html#l00050">ROW_HEARTBEAT</a>, and <a class="el" href="icarus__task_8c_source.html#l00402">task_active_sleep()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00313">os_init()</a>.</p>
 
@@ -775,7 +775,7 @@ Tick count wraps at UINT32_MAX (~49 days at 1ms tick) </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00261">261</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00389">display_init()</a>, and <a class="el" href="icarus__task_8c_source.html#l00396">os_yield()</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00610">display_init()</a>, and <a class="el" href="icarus__task_8c_source.html#l00396">os_yield()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00313">os_init()</a>.</p>
 
@@ -803,7 +803,7 @@ Tick count wraps at UINT32_MAX (~49 days at 1ms tick) </dd></dl>
 <li>Message pipe pool</li>
 <li>System tasks (idle, heartbeat)</li>
 </ul>
-<dl class="section pre"><dt>Precondition</dt><dd>HAL must be initialized (<a class="el" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init()</a> called) </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>HAL must be initialized (<a class="el" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183" title="Initialize all hardware abstraction layer components.">hal_init()</a> called) </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>Kernel is ready for task registration</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This function registers two system tasks:<ul>
 <li>ICARUS_KEEPALIVE_TASK (idle task)</li>
@@ -815,7 +815,7 @@ Tick count wraps at UINT32_MAX (~49 days at 1ms tick) </dd></dl>
 
 <p class="reference">References <a class="el" href="icarus__task_8c_source.html#l00237">__init_pipe()</a>, <a class="el" href="icarus__task_8c_source.html#l00222">__init_sem()</a>, <a class="el" href="icarus__task_8c_source.html#l00109">cleanup_task_idx</a>, <a class="el" href="icarus__task_8c_source.html#l00139">cpu_vregisters</a>, <a class="el" href="icarus__task_8c_source.html#l00154">current_cleanup_task_idx</a>, <a class="el" href="icarus__task_8c_source.html#l00124">current_task_index</a>, <a class="el" href="icarus__task_8c_source.html#l00133">current_task_ticks_remaining</a>, <a class="el" href="icarus__config_8h_source.html#l00068">ICARUS_MAX_MESSAGE_QUEUES</a>, <a class="el" href="icarus__config_8h_source.html#l00061">ICARUS_MAX_SEMAPHORES</a>, <a class="el" href="icarus__config_8h_source.html#l00054">ICARUS_MAX_TASKS</a>, <a class="el" href="icarus__config_8h_source.html#l00086">ICARUS_TICKS_PER_TASK</a>, <a class="el" href="icarus__task_8c_source.html#l00097">message_pipe_list</a>, <a class="el" href="icarus__task_8c_source.html#l00106">message_pipe_pool</a>, <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00261">os_idle_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00552">os_register_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00145">os_running</a>, <a class="el" href="icarus__task_8c_source.html#l00127">running_task_count</a>, <a class="el" href="icarus__task_8c_source.html#l00151">scheduler_enabled</a>, <a class="el" href="icarus__task_8c_source.html#l00094">semaphore_list</a>, <a class="el" href="icarus__task_8c_source.html#l00103">semaphore_pool</a>, <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>, <a class="el" href="icarus__task_8c_source.html#l00100">task_pool</a>, and <a class="el" href="icarus__task_8c_source.html#l00136">ticks_per_task</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00022">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>.</p>
 
 </div>
 </div>
@@ -931,7 +931,7 @@ At least one task must be registered</dd></dl>
 
 <p class="reference">References <a class="el" href="icarus__task_8c_source.html#l00124">current_task_index</a>, <a class="el" href="icarus__config_8h_source.html#l00054">ICARUS_MAX_TASKS</a>, <a class="el" href="icarus__task_8c_source.html#l00130">num_created_tasks</a>, <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>, and <a class="el" href="icarus__task_8c_source.html#l00391">task_start()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00022">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>.</p>
 
 </div>
 </div>
@@ -1461,7 +1461,7 @@ At least one task must be registered</dd></dl>
 
 <p class="reference">References <a class="el" href="icarus__task_8c_source.html#l00124">current_task_index</a>, <a class="el" href="icarus__types_8h_source.html#l00124">icarus_task_t::global_tick_paused</a>, <a class="el" href="icarus__task_8c_source.html#l00142">os_tick_count</a>, <a class="el" href="icarus__task_8c_source.html#l00396">os_yield()</a>, <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>, <a class="el" href="icarus__types_8h_source.html#l00123">icarus_task_t::task_state</a>, <a class="el" href="icarus__types_8h_source.html#l00079">TASK_STATE_BLOCKED</a>, and <a class="el" href="icarus__types_8h_source.html#l00125">icarus_task_t::ticks_to_pause</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00068">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00697">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l00660">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l00599">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l00578">semaphore_feed()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00697">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l00660">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l00599">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l00578">semaphore_feed()</a>.</p>
 
 </div>
 </div>
@@ -1608,7 +1608,7 @@ At least one task must be registered</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_e5611163c90db987717707da4d41a0e1.html">icarus</a></li><li class="navelem"><a class="el" href="icarus__task_8c.html">icarus_task.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:29:33 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

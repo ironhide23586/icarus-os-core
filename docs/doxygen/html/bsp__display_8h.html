@@ -246,7 +246,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00087">87</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00070">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00043">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
 
 </div>
 </div>
@@ -266,7 +266,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00090">90</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00043">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
 
 </div>
 </div>
@@ -288,11 +288,32 @@ Functions</h2></td></tr>
 
 <p>Initialize terminal display. </p>
 <p>Clears screen, hides cursor, renders header/logo. Called once during system startup.</p>
-<p>Initialize terminal display. </p>
+<p>Initialize terminal display.</p>
+<p>Performs one-time initialization of the terminal display:</p><ul>
+<li>Clears screen and hides cursor</li>
+<li>Renders ICARUS ASCII art logo header</li>
+<li>Initializes task progress bar rows</li>
+<li>Sets up heartbeat visualization (if enabled)</li>
+</ul>
+<dl class="section pre"><dt>Precondition</dt><dd>USB CDC must be initialized and connected </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>Terminal ready for real-time updates</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function is idempotent - subsequent calls are no-ops </dd>
+<dd>
+Called automatically by os_idle_task on first run</dd></dl>
+<dl class="section user"><dt>Logo Display:</dt><dd><pre class="fragment">*     ┌──────────────────────────────────────────────────────────────┐
+*     │   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │
+*     │   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │
+*     │   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │
+*     │   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │
+*     │   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
+*     │   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
+*     │   Preemptive Kernel • ARMv7E-M • STM32H750                   │
+*     └──────────────────────────────────────────────────────────────┘
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00389">389</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00610">610</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00018">ANSI_HIDE_CURSOR</a>, <a class="el" href="display_8c_source.html#l00171">display_render_banner()</a>, <a class="el" href="display_8c_source.html#l00124">display_render_bar()</a>, <a class="el" href="icarus__config_8h_source.html#l00054">ICARUS_MAX_TASKS</a>, <a class="el" href="icarus__types_8h_source.html#l00129">icarus_task_t::name</a>, <a class="el" href="icarus__task_8c_source.html#l00130">num_created_tasks</a>, <a class="el" href="bsp__display_8h_source.html#l00046">ROW_HEADER</a>, <a class="el" href="bsp__display_8h_source.html#l00050">ROW_HEARTBEAT</a>, <a class="el" href="bsp__display_8h_source.html#l00047">ROW_SEPARATOR</a>, <a class="el" href="bsp__display_8h_source.html#l00051">ROW_TASK_A</a>, <a class="el" href="bsp__display_8h_source.html#l00053">ROW_TASK_C</a>, <a class="el" href="bsp__display_8h_source.html#l00072">TASK_A_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00073">TASK_B_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00074">TASK_C_PERIOD_TICKS</a>, and <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00054">ANSI_HIDE_CURSOR</a>, <a class="el" href="display_8c_source.html#l00292">display_render_banner()</a>, <a class="el" href="display_8c_source.html#l00235">display_render_bar()</a>, <a class="el" href="icarus__config_8h_source.html#l00054">ICARUS_MAX_TASKS</a>, <a class="el" href="icarus__types_8h_source.html#l00129">icarus_task_t::name</a>, <a class="el" href="icarus__task_8c_source.html#l00130">num_created_tasks</a>, <a class="el" href="bsp__display_8h_source.html#l00046">ROW_HEADER</a>, <a class="el" href="bsp__display_8h_source.html#l00050">ROW_HEARTBEAT</a>, <a class="el" href="bsp__display_8h_source.html#l00047">ROW_SEPARATOR</a>, <a class="el" href="bsp__display_8h_source.html#l00051">ROW_TASK_A</a>, <a class="el" href="bsp__display_8h_source.html#l00053">ROW_TASK_C</a>, <a class="el" href="bsp__display_8h_source.html#l00072">TASK_A_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00073">TASK_B_PERIOD_TICKS</a>, <a class="el" href="bsp__display_8h_source.html#l00074">TASK_C_PERIOD_TICKS</a>, and <a class="el" href="icarus__task_8c_source.html#l00091">task_list</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00261">os_idle_task()</a>.</p>
 
@@ -332,18 +353,21 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Render on/off banner (heartbeat indicator)</p>
+<p>Displays or clears a star-filled banner synchronized with the heartbeat LED. Used to provide visual confirmation that the kernel scheduler is running.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>terminal row (1-indexed) </td></tr>
-    <tr><td class="paramname">task_name</td><td>task name string </td></tr>
-    <tr><td class="paramname">is_on</td><td>true to show banner (LED on), false to clear (LED off) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name to display at banner edges </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_on</td><td>true = show banner (LED on), false = clear line (LED off)</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section user"><dt>Display Format (when on):</dt><dd><pre class="fragment">*     [&gt;ICARUS_HEARTBEAT&lt;] ★★★★★★★★★★★★★★★★★★★★ [&gt;ICARUS_HEARTBEAT&lt;]
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00171">171</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00292">292</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00276">os_heartbeat_task()</a>.</p>
 
@@ -389,19 +413,25 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Render horizontal progress bar.</p>
+<p>Displays a fixed-width progress bar showing task execution progress within its current period. Uses Unicode block characters for smooth fill animation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>terminal row (1-indexed) </td></tr>
-    <tr><td class="paramname">task_name</td><td>task name string (from TCB) </td></tr>
-    <tr><td class="paramname">elapsed_ticks</td><td>ticks elapsed in current period </td></tr>
-    <tr><td class="paramname">period_ticks</td><td>total ticks for this period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name string (from TCB, max 16 chars displayed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elapsed_ticks</td><td>Ticks elapsed in current period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period_ticks</td><td>Total ticks for this period (must be &gt; 0)</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     [task_name] ████████████────────────────  160 / 2000 ticks
+* </pre></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Clears to end of line to prevent display artifacts </dd>
+<dd>
+Division by zero is guarded (period_ticks forced to 1 if 0) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00124">124</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00235">235</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
 </div>
 </div>
@@ -445,11 +475,25 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Render consumer task bar with message indicator. </p>
-<p>Render consumer task bar with message indicator. </p>
+<p>Render consumer task bar with message indicator.</p>
+<p>Displays a magenta-colored progress bar for consumer tasks with an animated arrow indicator showing the last received message value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elapsed_ticks</td><td>Ticks elapsed in current period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period_ticks</td><td>Total ticks for this period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg_value</td><td>Last message value received (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_msg</td><td>true to show message indicator with flash effect</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     [consumer] ████████████────────  160/2000 ←[42]
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00342">342</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00538">538</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
 </div>
 </div>
@@ -492,11 +536,27 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Render message history as rolling window. </p>
+<p>Render message history as rolling window.</p>
+<p>Displays the last MSG_HISTORY_LEN messages in a bordered panel. Uses ASCII box drawing characters for terminal compatibility. Color-codes entries: green for sends, magenta for receives.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Starting terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>Column position for left edge of panel </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hist</td><td>Pointer to history buffer to render </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Short label for panel header (e.g., "SS", "SM")</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     +---SS---+
+*     |&gt;P0: 42|   &lt;- Producer 0 sent 42
+*     |&lt;C0: 42|   &lt;- Consumer 0 received 42
+*     |&gt;P0: 43|
+*     +---------+
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00070">70</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00168">168</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00022">ANSI_BOLD</a>, <a class="el" href="display_8c_source.html#l00027">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00024">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00026">ANSI_MAGENTA</a>, <a class="el" href="display_8c_source.html#l00021">ANSI_RESET</a>, <a class="el" href="bsp__display_8h_source.html#l00108">msg_history_t::count</a>, <a class="el" href="bsp__display_8h_source.html#l00096">msg_history_entry_t::data</a>, <a class="el" href="bsp__display_8h_source.html#l00106">msg_history_t::entries</a>, <a class="el" href="bsp__display_8h_source.html#l00107">msg_history_t::head</a>, <a class="el" href="bsp__display_8h_source.html#l00099">msg_history_entry_t::is_send</a>, <a class="el" href="bsp__display_8h_source.html#l00097">msg_history_entry_t::len</a>, <a class="el" href="bsp__display_8h_source.html#l00087">MSG_HISTORY_LEN</a>, and <a class="el" href="bsp__display_8h_source.html#l00098">msg_history_entry_t::source_id</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00060">ANSI_BOLD</a>, <a class="el" href="display_8c_source.html#l00075">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00066">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00072">ANSI_MAGENTA</a>, <a class="el" href="display_8c_source.html#l00057">ANSI_RESET</a>, <a class="el" href="bsp__display_8h_source.html#l00108">msg_history_t::count</a>, <a class="el" href="bsp__display_8h_source.html#l00096">msg_history_entry_t::data</a>, <a class="el" href="bsp__display_8h_source.html#l00106">msg_history_t::entries</a>, <a class="el" href="bsp__display_8h_source.html#l00107">msg_history_t::head</a>, <a class="el" href="bsp__display_8h_source.html#l00099">msg_history_entry_t::is_send</a>, <a class="el" href="bsp__display_8h_source.html#l00097">msg_history_entry_t::len</a>, <a class="el" href="bsp__display_8h_source.html#l00087">MSG_HISTORY_LEN</a>, and <a class="el" href="bsp__display_8h_source.html#l00098">msg_history_entry_t::source_id</a>.</p>
 
 </div>
 </div>
@@ -569,11 +629,32 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Render message pipe visualization. </p>
+<p>Render message pipe visualization.</p>
+<p>Displays a compact panel showing pipe fill level and recent send/receive activity. Includes horizontal fill bar and directional arrows for message flow indication.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">start_row</td><td>Top row of the panel (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>Column position for left edge </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Short label for the queue (e.g., "Q1", "PIPE0") </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>Current byte count in pipe </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_count</td><td>Maximum pipe capacity in bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last_sent</td><td>Last message value sent (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last_recv</td><td>Last message value received (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_sent</td><td>true to display sent indicator with animation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_recv</td><td>true to display received indicator with animation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     PIPE0
+*     [████────]
+*      12/32
+*     →123      &lt;- Green arrow + sent value
+*     ← 45      &lt;- Magenta arrow + received value
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00239">239</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00405">405</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>.</p>
 
 </div>
 </div>
@@ -617,11 +698,25 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Render producer task bar with message indicator. </p>
-<p>Render producer task bar with message indicator. </p>
+<p>Render producer task bar with message indicator.</p>
+<p>Displays a green-colored progress bar for producer tasks with an animated arrow indicator showing the last sent message value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>Terminal row (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">task_name</td><td>Task name string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">elapsed_ticks</td><td>Ticks elapsed in current period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period_ticks</td><td>Total ticks for this period </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg_value</td><td>Last message value sent (0-255) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">show_msg</td><td>true to show message indicator with flash effect</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*     [producer] ████████████────────  160/2000 →[42]
+* </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00295">295</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00476">476</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, and <a class="el" href="bsp__display_8h_source.html#l00061">BAR_WIDTH</a>.</p>
 
 </div>
 </div>
@@ -664,11 +759,31 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Render vertical bar (semaphore fill level) </p>
+<p>Render vertical bar (semaphore fill level)</p>
+<p>Displays a vertical bar chart representing semaphore count as a percentage of maximum capacity. Bar fills from bottom to top. Uses ASCII box drawing for terminal compatibility.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">start_row</td><td>Top row of the vertical bar (1-indexed) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>Column position for left edge </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>Current semaphore count </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_count</td><td>Maximum semaphore capacity</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section user"><dt>Display Format:</dt><dd><pre class="fragment">*       SEM
+*     +---+
+*     |###|  &lt;- Filled portion (green)
+*     |###|
+*     |   |  &lt;- Empty portion
+*     |   |
+*     +---+
+*      3/10  &lt;- Current/max count
+* </pre></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Division by zero is guarded (max_count forced to 1 if 0) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00195">195</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00338">338</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
-<p class="reference">References <a class="el" href="display_8c_source.html#l00027">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00015">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00024">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00021">ANSI_RESET</a>, and <a class="el" href="bsp__display_8h_source.html#l00065">VBAR_HEIGHT</a>.</p>
+<p class="reference">References <a class="el" href="display_8c_source.html#l00075">ANSI_CYAN</a>, <a class="el" href="display_8c_source.html#l00048">ANSI_GOTO</a>, <a class="el" href="display_8c_source.html#l00066">ANSI_GREEN</a>, <a class="el" href="display_8c_source.html#l00057">ANSI_RESET</a>, and <a class="el" href="bsp__display_8h_source.html#l00065">VBAR_HEIGHT</a>.</p>
 
 </div>
 </div>
@@ -717,9 +832,25 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Add message to history. </p>
+<p>Add message to history.</p>
+<p>Adds a new entry at the head position using circular buffer semantics. Oldest entries are overwritten when buffer is full.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">hist</td><td>Pointer to history buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Message data bytes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>Number of bytes in message (clamped to MSG_HISTORY_MAX_BYTES) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">source_id</td><td>Producer/consumer ID (0-254, 0xFF = unknown) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_send</td><td>true = send event, false = receive event</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>hist != NULL </dd>
+<dd>
+data != NULL </dd>
+<dd>
+len &gt; 0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00043">43</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00124">124</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
 <p class="reference">References <a class="el" href="bsp__display_8h_source.html#l00108">msg_history_t::count</a>, <a class="el" href="bsp__display_8h_source.html#l00096">msg_history_entry_t::data</a>, <a class="el" href="bsp__display_8h_source.html#l00106">msg_history_t::entries</a>, <a class="el" href="bsp__display_8h_source.html#l00107">msg_history_t::head</a>, <a class="el" href="bsp__display_8h_source.html#l00099">msg_history_entry_t::is_send</a>, <a class="el" href="bsp__display_8h_source.html#l00097">msg_history_entry_t::len</a>, <a class="el" href="bsp__display_8h_source.html#l00087">MSG_HISTORY_LEN</a>, <a class="el" href="bsp__display_8h_source.html#l00090">MSG_HISTORY_MAX_BYTES</a>, and <a class="el" href="bsp__display_8h_source.html#l00098">msg_history_entry_t::source_id</a>.</p>
 
@@ -747,9 +878,18 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Initialize message history buffer. </p>
+<p>Initialize message history buffer.</p>
+<p>Clears all entries and resets head/count to zero. Must be called before using the history buffer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">hist</td><td>Pointer to history buffer to initialize</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>hist != NULL </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd>hist-&gt;count == 0, hist-&gt;head == 0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00035">35</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8c_source.html#l00103">103</a> of file <a class="el" href="display_8c_source.html">display.c</a>.</p>
 
 </div>
 </div>
@@ -759,7 +899,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_e2489e887f17afa3cbc07a4ec152cdd2.html">Inc</a></li><li class="navelem"><a class="el" href="dir_f7835850016de063b8ae418a1221d9cd.html">bsp</a></li><li class="navelem"><a class="el" href="bsp__display_8h.html">bsp_display.h</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:29:33 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 21:48:39 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>
