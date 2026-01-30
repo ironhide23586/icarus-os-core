@@ -2,7 +2,7 @@
 
 **Document ID:** ICARUS-SDP-001  
 **Version:** 0.1  
-**Date:** 2026-01-26  
+**Date:** 2025-01-26  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
 
@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
-| 0.1 | 2026-01-26 | Kiro | Initial draft |
+| 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
 
 ---
 

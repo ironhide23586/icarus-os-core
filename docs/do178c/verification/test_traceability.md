@@ -2,7 +2,7 @@
 
 **Document ID:** ICARUS-VER-003  
 **Version:** 0.1  
-**Date:** 2026-01-26  
+**Date:** 2025-01-26  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
 
@@ -179,4 +179,4 @@ The following requirements require target integration testing:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 0.1 | 2026-01-26 | Kiro | Initial draft |
+| 0.1 | 2025-01-26 | Souham Biswas | Initial draft |

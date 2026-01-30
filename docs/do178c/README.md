@@ -56,4 +56,4 @@ Current documentation supports:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 0.1 | 2026-01-26 | Kiro | Initial documentation structure |
+| 0.1 | 2025-01-26 | Souham Biswas | Initial documentation structure |
