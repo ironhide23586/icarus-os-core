@@ -169,6 +169,25 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                    void (*start_routine)(void), void *arg);
 
 /**
+ * @brief Create a new thread with custom name (ICARUS extension)
+ *
+ * @param[out] thread        Thread identifier
+ * @param[in]  attr          Thread attributes (NULL for defaults)
+ * @param[in]  start_routine Thread entry function
+ * @param[in]  arg           Argument passed to start_routine
+ * @param[in]  name          Thread name for debugging
+ *
+ * @retval 0       Success
+ * @retval EAGAIN  Insufficient resources
+ * @retval EINVAL  Invalid attributes
+ *
+ * @note ICARUS extension - not part of POSIX standard
+ */
+int pthread_create_named(pthread_t *thread, const pthread_attr_t *attr,
+                         void (*start_routine)(void), void *arg,
+                         const char *name);
+
+/**
  * @brief Terminate calling thread
  *
  * @param[in] retval  Return value (ignored in current implementation)

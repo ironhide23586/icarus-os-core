@@ -149,9 +149,59 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
         return EAGAIN;
     }
 
-    /* Register task with kernel */
+    /* Generate unique thread name: "pthread_XX" */
+    char name[ICARUS_MAX_TASK_NAME_LEN];
     uint8_t task_idx = num_created_tasks;
-    os_register_task(start_routine, "pthread");
+    
+    /* Simple integer to string for task index */
+    if (task_idx < 10) {
+        name[0] = 'p'; name[1] = 't'; name[2] = 'h'; name[3] = 'r';
+        name[4] = 'e'; name[5] = 'a'; name[6] = 'd'; name[7] = '_';
+        name[8] = '0' + task_idx;
+        name[9] = '\0';
+    } else if (task_idx < 100) {
+        name[0] = 'p'; name[1] = 't'; name[2] = 'h'; name[3] = 'r';
+        name[4] = 'e'; name[5] = 'a'; name[6] = 'd'; name[7] = '_';
+        name[8] = '0' + (task_idx / 10);
+        name[9] = '0' + (task_idx % 10);
+        name[10] = '\0';
+    } else {
+        name[0] = 'p'; name[1] = 't'; name[2] = 'h'; name[3] = 'r';
+        name[4] = 'e'; name[5] = 'a'; name[6] = 'd'; name[7] = '_';
+        name[8] = '0' + (task_idx / 100);
+        name[9] = '0' + ((task_idx / 10) % 10);
+        name[10] = '0' + (task_idx % 10);
+        name[11] = '\0';
+    }
+
+    os_register_task(start_routine, name);
+
+    *thread = (pthread_t)task_idx;
+    return 0;
+}
+
+int pthread_create_named(pthread_t *thread, const pthread_attr_t *attr,
+                         void (*start_routine)(void), void *arg,
+                         const char *name)
+{
+    (void)attr;  /* attr not fully supported */
+    (void)arg;   /* arg not supported in current implementation */
+
+    if (thread == NULL || start_routine == NULL) {
+        errno = EINVAL;
+        return EINVAL;
+    }
+
+    if (num_created_tasks >= ICARUS_MAX_TASKS) {
+        errno = EAGAIN;
+        return EAGAIN;
+    }
+
+    uint8_t task_idx = num_created_tasks;
+    
+    /* Use provided name or default */
+    const char *task_name = (name != NULL) ? name : "pthread";
+    os_register_task(start_routine, task_name);
 
     *thread = (pthread_t)task_idx;
     return 0;
