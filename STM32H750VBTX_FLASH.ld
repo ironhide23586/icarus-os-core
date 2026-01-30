@@ -166,6 +166,15 @@ SECTIONS
     . = ALIGN(8);
   } >RAM_D1
 
+  /* DTCM section for fast kernel data (zero wait states) */
+  .dtcm (NOLOAD) :
+  {
+    . = ALIGN(4);
+    *(.dtcm)
+    *(.dtcm*)
+    . = ALIGN(4);
+  } >DTCMRAM
+
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {

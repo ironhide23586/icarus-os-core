@@ -17,45 +17,105 @@ _Static_assert(offsetof(task_t, global_tick_paused) == 20, "task_t.global_tick_p
 _Static_assert(offsetof(task_t, ticks_to_pause) == 24, "task_t.ticks_to_pause offset mismatch");
 #endif
 
-
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 task_t* task_list[MAX_TASKS];
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 semaphore_t* semaphore_list[MAX_SEMAPHORES];
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 message_pipe_t* message_pipe_list[MAX_MESSAGE_QUEUES];
 
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 static task_t task_pool[MAX_TASKS];
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 static semaphore_t semaphore_pool[MAX_SEMAPHORES];
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 static message_pipe_t message_pipe_pool[MAX_MESSAGE_QUEUES];
 
-
+// Stack pool placed in RAM_D1 (same as other BSS data)
+// With MAX_TASKS=128: 128 × 512 × 4 = 256KB
 static uint32_t stack_pool[MAX_TASKS][STACK_WORDS];
-static int8_t cleanup_task_idx[MAX_TASKS]; // when a task needs to be cleanup, its idx is stored here
-static uint8_t print_buffer[PRINT_BUFFER_BYTES];
 
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
+static int8_t cleanup_task_idx[MAX_TASKS]; // when a task needs to be cleanup, its idx is stored here
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 uint8_t current_task_index = 0;
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 uint8_t running_task_count = 0;
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 uint8_t num_created_tasks = 0;
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 int8_t current_cleanup_task_idx = -1;
 
-volatile uint8_t print_buffer_dequeue_idx = 0;
-volatile uint8_t print_buffer_enqueue_idx = 0;
-
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 volatile uint32_t current_task_ticks_remaining;
+
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 volatile uint32_t ticks_per_task;
 
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))
+#endif
 uint32_t cpu_vregisters[CPU_VREGISTERS_SIZE];  // virtual registers for CPU to save and restore context
 
+
+
+// #ifndef HOST_TEST
+// __attribute__((section(".dtcm")))
+// #endif
 volatile uint32_t os_tick_count = 0;
+
+// #ifndef HOST_TEST
+// __attribute__((section(".dtcm")))
+// #endif
 volatile uint8_t os_running = 0;
+
+// #ifndef HOST_TEST
+// __attribute__((section(".dtcm")))
+// #endif
 volatile bool scheduler_enabled = true;
+
+// #ifndef HOST_TEST
+// __attribute__((section(".dtcm")))
+// #endif
+volatile uint8_t critical_stack_depth = 0;
 
 extern void start_cold_task(task_t *task);
 extern void os_yield_trampoline(void);
 extern void os_yield_pendsv(void);
-
-/* Function prototypes */
-void os_transmit_printf_task(void);
-
-volatile uint8_t critical_stack_depth = 0;
 
 
 static inline void enter_critical(void) {
@@ -68,34 +128,6 @@ static inline void exit_critical(void) {
 	if (--critical_stack_depth == 0)
 		scheduler_enabled = true;
 }
-
-
-// static bool dequeue_print_buffer(uint8_t *out_c) {
-// 	enter_critical();
-// 	if (print_buffer_enqueue_idx == print_buffer_dequeue_idx) {
-// 		exit_critical();
-// 		return false;
-// 	}
-// 	*out_c = print_buffer[print_buffer_dequeue_idx++];
-// 	if (print_buffer_dequeue_idx >= PRINT_BUFFER_BYTES)
-// 		print_buffer_dequeue_idx = 0;
-// 	exit_critical();
-// 	return true;
-// }
-
-
-// bool enqueue_print_buffer(uint8_t c) {
-// 	enter_critical();
-// 	uint8_t next_enqueue_idx = (uint8_t)((print_buffer_enqueue_idx + 1) % PRINT_BUFFER_BYTES);
-// 	if (next_enqueue_idx != print_buffer_dequeue_idx) {
-// 		print_buffer[print_buffer_enqueue_idx] = c;
-// 		print_buffer_enqueue_idx = next_enqueue_idx;
-// 		exit_critical();
-// 		return true;
-// 	}
-// 	exit_critical();
-// 	return false;
-// }
 
 
 uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical section
@@ -117,36 +149,6 @@ uint32_t task_busy_wait(uint32_t ticks) {  // must aleardy be in critical sectio
 	}
 	return delta;
 }
-
-
-
-// void os_transmit_printf_task(void) {
-// 	uint8_t retry_count;
-// 	static uint8_t send_buffer[PRINT_BUFFER_BYTES];
-// 	while (1) {
-// 		uint8_t num_chars_to_print = 0;
-// 		while (num_chars_to_print < sizeof(send_buffer)) {
-// 			if(!dequeue_print_buffer(&send_buffer[num_chars_to_print]))
-// 				break;
-// 			num_chars_to_print++;
-// 			if (send_buffer[num_chars_to_print - 1] == '\n')
-// 				break;
-// 		}
-// 		if (num_chars_to_print > 0) {
-// 			enter_critical();
-// 			retry_count = 0;
-// 			while (retry_count++ < MAX_PRINT_RETRIES) {
-// 				if (CDC_Transmit_FS(send_buffer, num_chars_to_print) == USBD_OK)
-// 					break;
-// 				task_busy_wait(1);
-// 			}
-// 			task_busy_wait(10);
-// 			exit_critical();
-// 		} else {
-// 			task_active_sleep(10);
-// 		}
-// 	}
-// }
 
 
 static void os_idle_task(void) {
@@ -227,9 +229,6 @@ void os_init(void) {
     running_task_count = 0;
     current_task_index = 0;
 
-    print_buffer_dequeue_idx = 0;
-    print_buffer_enqueue_idx = 0;
-
     uint8_t i;
     current_task_ticks_remaining = ticks_per_task;
     for (i = 0; i < MAX_TASKS; i++) {
@@ -247,13 +246,9 @@ void os_init(void) {
     for (i = 0; i < CPU_VREGISTERS_SIZE; i++) {
         cpu_vregisters[i] = 0;
     }
-    for (i = 0; i < PRINT_BUFFER_BYTES; i++) {
-    	print_buffer[i] = 0;
-    }
 
     os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
     os_register_task(os_heartbeart_task, ">ICARUS_HEARTBEART<");
-    // os_register_task(os_transmit_printf_task, "ICARUS_PRINT_LISTENER_TASK");
 }
 
 
@@ -353,15 +348,6 @@ void os_task_suicide(void) {
     printf("[INFO] %s task committed suicide.", task_list[current_task_index]->name);
     os_kill_process(current_task_index);
 }
-
-
-// void os_print_finished_tasks(void) {
-//     printf("Finished task indices -> \t");
-//     for (int i = current_cleanup_task_idx; i >= 0; i--) {
-//         printf("%d\t", cleanup_task_idx[i]);
-//     }
-//     printf("\r\n");
-// }
 
 
 void os_create_task(task_t *task, void (*function)(void), uint32_t *stack, uint32_t stack_size, const char *name) {
