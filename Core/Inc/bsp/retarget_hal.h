@@ -15,11 +15,11 @@
  * @see     STM32H750 Reference Manual RM0433
  *
  * @author  Souham Biswas
- * @date    2026
+ * @date    2025
  *
- * @copyright Copyright (c) 2026 ICARUS Project
+ * @copyright Copyright 2025 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
- *            Licensed under MIT License
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #ifndef INC_BSP_RETARGET_HAL_H_

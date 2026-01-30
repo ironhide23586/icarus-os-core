@@ -4,7 +4,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = "ICARUS OS"
+PROJECT_NAME           = "ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems)"
 PROJECT_NUMBER         = "0.1.0"
 PROJECT_BRIEF          = "Preemptive Real-Time Operating System for ARM Cortex-M7"
 PROJECT_LOGO           = 

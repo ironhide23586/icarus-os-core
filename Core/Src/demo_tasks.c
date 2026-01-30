@@ -1,6 +1,7 @@
 /**
  * @file    demo_tasks.c
- * @brief   ICARUS OS Demonstration Tasks
+ * @brief   ICARUS (Intelligent Cooperative Architecture for Real-time 
+ *          Unified Systems) OS Demonstration Tasks
  * @version 0.1.0
  *
  * @details This module provides demonstration tasks showcasing ICARUS OS
@@ -21,11 +22,11 @@
  * @see     display.h for rendering functions
  *
  * @author  Souham Biswas
- * @date    2026
+ * @date    2025
  *
- * @copyright Copyright (c) 2026 ICARUS Project
+ * @copyright Copyright 2025 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
- *            Licensed under MIT License
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #include "demo_tasks.h"

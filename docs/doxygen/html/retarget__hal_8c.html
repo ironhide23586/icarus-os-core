@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ICARUS OS: Core/Src/bsp/retarget_hal.c File Reference</title>
+<title>ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems): Core/Src/bsp/retarget_hal.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ICARUS OS<span id="projectnumber">&#160;0.1.0</span>
+   <div id="projectname">ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems)<span id="projectnumber">&#160;0.1.0</span>
    </div>
    <div id="projectbrief">Preemptive Real-Time Operating System for ARM Cortex-M7</div>
   </td>
@@ -170,8 +170,8 @@ Functions</h2></td></tr>
 <dd>
 docs/do178c/design/SDD.md Section 3 - Hardware Abstraction</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Souham Biswas </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2026</dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2026 ICARUS Project <a href="https://github.com/ironhide23586/icarus-os-core">https://github.com/ironhide23586/icarus-os-core</a> Licensed under MIT License </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2025</dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright 2025 Souham Biswas <a href="https://github.com/ironhide23586/icarus-os-core">https://github.com/ironhide23586/icarus-os-core</a> Licensed under the Apache License, Version 2.0 </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -291,9 +291,9 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00153">153</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>, and <a class="el" href="icarus__task_8c_source.html#l00707">task_active_sleep()</a>.</p>
+<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>, and <a class="el" href="icarus__task_8c_source.html#l00708">task_active_sleep()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>, and <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>, and <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -320,7 +320,7 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 
 <p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, and <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -348,7 +348,7 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 
 <p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, and <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -635,12 +635,12 @@ Actual sleep may be longer due to higher-priority tasks</dd></dl>
 <div class="line">}</div>
 <div class="ttc" id="absp__led_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00167">retarget_hal.c:167</a></div></div>
 <div class="ttc" id="absp__led_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00178">retarget_hal.c:178</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified number of ticks (non-blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00707">icarus_task.c:707</a></div></div>
+<div class="ttc" id="aicarus__task_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified number of ticks (non-blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00708">icarus_task.c:708</a></div></div>
 </div><!-- fragment --> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00707">707</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00708">708</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00360">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l01626">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l01541">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l01336">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l01274">semaphore_feed()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l01337">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l01275">semaphore_feed()</a>.</p>
 
 </div>
 </div>
@@ -650,7 +650,7 @@ Actual sleep may be longer due to higher-priority tasks</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="retarget__hal_8c.html">retarget_hal.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:56:11 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 22:02:39 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

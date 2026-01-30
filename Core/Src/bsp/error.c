@@ -16,11 +16,11 @@
  * @see     docs/do178c/design/SDD.md Section 7 - Error Handling
  *
  * @author  Souham Biswas
- * @date    2026
+ * @date    2025
  *
- * @copyright Copyright (c) 2026 ICARUS Project
+ * @copyright Copyright 2025 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
- *            Licensed under MIT License
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #ifndef SRC_BSP_ERROR_C_

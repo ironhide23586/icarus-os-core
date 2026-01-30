@@ -1,6 +1,7 @@
 /**
  * @file    stress_test.c
- * @brief   ICARUS OS Kernel Stress Test Suite
+ * @brief   ICARUS (Intelligent Cooperative Architecture for Real-time 
+ *          Unified Systems) OS Kernel Stress Test Suite
  * @version 0.1.0
  *
  * @details Comprehensive stress test suite for ICARUS OS kernel primitives.
@@ -33,11 +34,11 @@
  * @see     icarus_task.h for kernel API
  *
  * @author  Souham Biswas
- * @date    2026
+ * @date    2025
  *
- * @copyright Copyright (c) 2026 ICARUS Project
+ * @copyright Copyright 2025 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
- *            Licensed under MIT License
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #include "stress_test.h"

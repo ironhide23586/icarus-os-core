@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ICARUS OS: Core/Src/bsp/stm32h7xx_it.c Source File</title>
+<title>ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems): Core/Src/bsp/stm32h7xx_it.c Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">ICARUS OS<span id="projectnumber">&#160;0.1.0</span>
+   <div id="projectname">ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems)<span id="projectnumber">&#160;0.1.0</span>
    </div>
    <div id="projectbrief">Preemptive Real-Time Operating System for ARM Cortex-M7</div>
   </td>
@@ -331,10 +331,10 @@ $(function(){initNavTree('stm32h7xx__it_8c_source.html',''); initResizable(true)
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="comment">/* USER CODE END 1 */</span></div>
 <div class="ttc" id="agroup__KERNEL__CONFIG_html_ga2ec264b2e0bd0dde1841ef005f6871fc"><div class="ttname"><a href="group__KERNEL__CONFIG.html#ga2ec264b2e0bd0dde1841ef005f6871fc">ICARUS_TICKS_PER_TASK</a></div><div class="ttdeci">#define ICARUS_TICKS_PER_TASK</div><div class="ttdoc">Number of SysTick interrupts per task time slice.</div><div class="ttdef"><b>Definition</b> <a href="icarus__config_8h_source.html#l00086">icarus_config.h:86</a></div></div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_ga0d0a488ee168eb96e031931a33190afe"><div class="ttname"><a href="group__SCHEDULER__STATE.html#ga0d0a488ee168eb96e031931a33190afe">current_task_ticks_remaining</a></div><div class="ttdeci">volatile uint32_t current_task_ticks_remaining</div><div class="ttdoc">Ticks remaining in current task's time slice.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00133">icarus_task.c:133</a></div></div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_ga5dc98b12698a899fc74e578a10ac916a"><div class="ttname"><a href="group__SCHEDULER__STATE.html#ga5dc98b12698a899fc74e578a10ac916a">os_running</a></div><div class="ttdeci">volatile uint8_t os_running</div><div class="ttdoc">Flag indicating OS is running (tasks are executing)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00145">icarus_task.c:145</a></div></div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_gaba75124002c580196b86f4df1001320c"><div class="ttname"><a href="group__SCHEDULER__STATE.html#gaba75124002c580196b86f4df1001320c">os_tick_count</a></div><div class="ttdeci">volatile uint32_t os_tick_count</div><div class="ttdoc">System tick counter (incremented by SysTick_Handler)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00142">icarus_task.c:142</a></div></div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_gaf25078275f73d42cf062dbaee7ed1e88"><div class="ttname"><a href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a></div><div class="ttdeci">volatile bool scheduler_enabled</div><div class="ttdoc">Scheduler enable flag (false during critical sections)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00151">icarus_task.c:151</a></div></div>
+<div class="ttc" id="agroup__SCHEDULER__STATE_html_ga0d0a488ee168eb96e031931a33190afe"><div class="ttname"><a href="group__SCHEDULER__STATE.html#ga0d0a488ee168eb96e031931a33190afe">current_task_ticks_remaining</a></div><div class="ttdeci">volatile uint32_t current_task_ticks_remaining</div><div class="ttdoc">Ticks remaining in current task's time slice.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00134">icarus_task.c:134</a></div></div>
+<div class="ttc" id="agroup__SCHEDULER__STATE_html_ga5dc98b12698a899fc74e578a10ac916a"><div class="ttname"><a href="group__SCHEDULER__STATE.html#ga5dc98b12698a899fc74e578a10ac916a">os_running</a></div><div class="ttdeci">volatile uint8_t os_running</div><div class="ttdoc">Flag indicating OS is running (tasks are executing)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00146">icarus_task.c:146</a></div></div>
+<div class="ttc" id="agroup__SCHEDULER__STATE_html_gaba75124002c580196b86f4df1001320c"><div class="ttname"><a href="group__SCHEDULER__STATE.html#gaba75124002c580196b86f4df1001320c">os_tick_count</a></div><div class="ttdeci">volatile uint32_t os_tick_count</div><div class="ttdoc">System tick counter (incremented by SysTick_Handler)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00143">icarus_task.c:143</a></div></div>
+<div class="ttc" id="agroup__SCHEDULER__STATE_html_gaf25078275f73d42cf062dbaee7ed1e88"><div class="ttname"><a href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a></div><div class="ttdeci">volatile bool scheduler_enabled</div><div class="ttdoc">Scheduler enable flag (false during critical sections)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00152">icarus_task.c:152</a></div></div>
 <div class="ttc" id="aicarus__config_8h_html"><div class="ttname"><a href="icarus__config_8h.html">icarus_config.h</a></div><div class="ttdoc">ICARUS OS Configuration Header.</div></div>
 <div class="ttc" id="aicarus__task_8c_html_aaa87b904df470d610bad873ed4c88a97"><div class="ttname"><a href="icarus__task_8c.html#aaa87b904df470d610bad873ed4c88a97">os_yield_pendsv</a></div><div class="ttdeci">void os_yield_pendsv(void)</div><div class="ttdoc">Context switch handler (called from PendSV)</div></div>
 <div class="ttc" id="astm32h7xx__it_8c_html_a1d98923de2ed6b7309b66f9ba2971647"><div class="ttname"><a href="stm32h7xx__it_8c.html#a1d98923de2ed6b7309b66f9ba2971647">UsageFault_Handler</a></div><div class="ttdeci">void UsageFault_Handler(void)</div><div class="ttdoc">This function handles Undefined instruction or illegal state.</div><div class="ttdef"><b>Definition</b> <a href="#l00141">stm32h7xx_it.c:141</a></div></div>
@@ -356,7 +356,7 @@ $(function(){initNavTree('stm32h7xx__it_8c_source.html',''); initResizable(true)
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="stm32h7xx__it_8c.html">stm32h7xx_it.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 21:56:11 for ICARUS OS by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Fri Jan 30 2026 22:02:39 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

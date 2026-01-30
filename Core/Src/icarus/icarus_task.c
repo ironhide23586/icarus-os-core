@@ -1,6 +1,7 @@
 /**
  * @file    icarus_task.c
- * @brief   ICARUS OS Task Management Implementation
+ * @brief   ICARUS (Intelligent Cooperative Architecture for Real-time 
+ *          Unified Systems) OS Task Management Implementation
  * @version 0.1.0
  *
  * @details Core kernel implementation including:
@@ -18,11 +19,11 @@
  * @see STM32H750 Reference Manual RM0433 for memory architecture
  *
  * @author  Souham Biswas
- * @date    2026
+ * @date    2025
  *
- * @copyright Copyright (c) 2026 ICARUS Project
+ * @copyright Copyright 2025 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
- *            Licensed under MIT License
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #include "icarus/icarus_task.h"

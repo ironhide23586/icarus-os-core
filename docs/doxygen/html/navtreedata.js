@@ -24,7 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "ICARUS OS", "index.html", [
+  [ "ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems)", "index.html", [
     [ "ICARUS OS Core", "index.html", "index" ],
     [ "Topics", "topics.html", "topics" ],
     [ "Data Structures", "annotated.html", [
