@@ -27,8 +27,9 @@ extern uint8_t current_task_index;
 extern uint8_t running_task_count;
 extern uint8_t num_created_tasks;
 extern int8_t current_cleanup_task_idx;
-extern volatile uint8_t print_buffer_dequeue_idx;
-extern volatile uint8_t print_buffer_enqueue_idx;
+// print_buffer variables removed from kernel
+// extern volatile uint8_t print_buffer_dequeue_idx;
+// extern volatile uint8_t print_buffer_enqueue_idx;
 extern volatile bool scheduler_enabled;
 extern volatile uint8_t critical_stack_depth;
 extern volatile uint32_t current_task_ticks_remaining;
@@ -74,8 +75,8 @@ void setUp(void) {
 	running_task_count = 0;
 	num_created_tasks = 0;
 	current_cleanup_task_idx = -1;
-	print_buffer_dequeue_idx = 0;
-	print_buffer_enqueue_idx = 0;
+	// print_buffer_dequeue_idx = 0;
+	// print_buffer_enqueue_idx = 0;
 	scheduler_enabled = true;
 	critical_stack_depth = 0;
 	

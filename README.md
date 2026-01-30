@@ -189,6 +189,157 @@ Format: `>Pn:` = Producer n sent, `<Cn:` = Consumer n received
 
 ---
 
+## Quick Start
+
+### Prerequisites
+
+- **ARM GCC Toolchain**: arm-none-eabi-gcc 13.3+ or 14.3+
+- **Build Tools**: make, bash
+- **Hardware**: STM32H750VBT6 development board
+- **Debugger**: ST-Link or compatible
+- **Terminal**: Any serial terminal (screen, minicom, PuTTY) or USB CDC viewer
+
+### Building the Firmware
+
+The project uses a unified build script that handles both firmware compilation and test execution:
+
+```bash
+# Clean build (recommended)
+bash build/rebuild.sh
+
+# Incremental build
+bash build/build.sh
+
+# Build output location
+ls build/icarus_os.elf
+ls build/icarus_os.hex
+ls build/icarus_os.map
+```
+
+**Build artifacts:**
+- `icarus_os.elf` - Executable with debug symbols (2.2 MB)
+- `icarus_os.hex` - Flash programming file (147 KB)
+- `icarus_os.map` - Memory map and symbol table
+
+### Memory Layout
+
+ICARUS OS uses optimized memory placement for maximum performance:
+
+```
+┌─────────────────────────────────────────┐
+│ ITCM (0x00000000) - 64 KB               │
+│   Critical kernel code (zero wait)      │
+│   - Context switch (PendSV_Handler)     │
+│   - Scheduler (os_yield)                │
+│   - IPC (semaphores, pipes)             │
+│   Used: 2.5 KB (4%) | Free: 61.5 KB     │
+├─────────────────────────────────────────┤
+│ DTCM (0x20000000) - 128 KB              │
+│   Fast data access (zero wait)          │
+│   - Task stacks (64 KB)                 │
+│   - Kernel data structures              │
+│   Used: 64 KB (50%) | Free: 64 KB       │
+├─────────────────────────────────────────┤
+│ Flash (0x08000000) - 128 KB             │
+│   Program code and constants            │
+│   Used: ~50 KB                          │
+├─────────────────────────────────────────┤
+│ AXI SRAM (0x24000000) - 512 KB          │
+│   General purpose RAM                   │
+│   - Heap, BSS, other data               │
+└─────────────────────────────────────────┘
+```
+
+### Flashing the Firmware
+
+**Using ST-Link:**
+```bash
+# Flash the hex file
+st-flash --format ihex write build/icarus_os.hex
+
+# Or flash the binary
+st-flash write build/icarus_os.bin 0x08000000
+```
+
+**Using OpenOCD:**
+```bash
+openocd -f interface/stlink.cfg -f target/stm32h7x.cfg \
+  -c "program build/icarus_os.elf verify reset exit"
+```
+
+**Using STM32CubeProgrammer:**
+```bash
+STM32_Programmer_CLI -c port=SWD -w build/icarus_os.hex -v -rst
+```
+
+### Connecting to the Terminal
+
+ICARUS OS outputs to USB CDC (Virtual COM Port). Connect using any serial terminal:
+
+**Using screen (macOS/Linux):**
+```bash
+# Find the device
+ls /dev/tty.usbmodem*  # macOS
+ls /dev/ttyACM*        # Linux
+
+# Connect (115200 baud, 8N1)
+screen /dev/tty.usbmodem14203 115200
+
+# Exit: Ctrl+A, then K, then Y
+```
+
+**Using minicom (Linux):**
+```bash
+# Configure once
+sudo minicom -s
+# Set: Serial Device = /dev/ttyACM0, Baud = 115200
+
+# Connect
+sudo minicom
+```
+
+**Using PuTTY (Windows):**
+1. Open PuTTY
+2. Connection type: Serial
+3. Serial line: COM3 (check Device Manager)
+4. Speed: 115200
+5. Click "Open"
+
+**Using the provided script (macOS):**
+```bash
+# Auto-detect and connect
+bash icarus_terminal.sh
+```
+
+### What You'll See
+
+Upon successful connection, you'll see the ICARUS OS terminal GUI with:
+- ASCII art header
+- Heartbeat banner (flashing with LED)
+- Demo task progress bars
+- Semaphore/pipe visualizations
+- Message history panels
+- Stress test statistics (if enabled)
+
+**Example output:**
+```
+┌──────────────────────────────────────────────────────────────┐
+│   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │
+│   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │
+│   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │
+│   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │
+│   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
+│   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
+│   Preemptive Kernel • ARMv7E-M • STM32H750                   │
+└──────────────────────────────────────────────────────────────┘
+
+[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]
+[producer] ████████████────────  160/200 ticks  →[42]
+[consumer] ██████████──────────  100/190 ticks  ←[42]
+```
+
+---
+
 ## Overview
 
 ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750). The kernel provides deterministic task scheduling, context switching, and a clean API for embedded real-time applications.
