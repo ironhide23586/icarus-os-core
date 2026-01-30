@@ -96,7 +96,8 @@ INPUT                  = Core/Inc/icarus \
                          Core/Src/icarus \
                          Core/Src/bsp \
                          Core/Src/main.c \
-                         README.md
+                         README.md \
+                         docs/do178c
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.h \
