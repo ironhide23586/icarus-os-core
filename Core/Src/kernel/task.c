@@ -47,71 +47,70 @@ __attribute__((section(".dtcm")))
 #endif
 static message_pipe_t message_pipe_pool[MAX_MESSAGE_QUEUES];
 
-// Stack pool placed in RAM_D1 (same as other BSS data)
-// With MAX_TASKS=128: 128 × 512 × 4 = 256KB
-static uint32_t stack_pool[MAX_TASKS][STACK_WORDS];
-
 #ifndef HOST_TEST
 __attribute__((section(".dtcm")))
 #endif
 static int8_t cleanup_task_idx[MAX_TASKS]; // when a task needs to be cleanup, its idx is stored here
 
 #ifndef HOST_TEST
-__attribute__((section(".dtcm")))
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
 #endif
-uint8_t current_task_index = 0;
+uint8_t current_task_index;
 
 #ifndef HOST_TEST
-__attribute__((section(".dtcm")))
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
 #endif
-uint8_t running_task_count = 0;
+uint8_t running_task_count;
 
 #ifndef HOST_TEST
-__attribute__((section(".dtcm")))
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
 #endif
-uint8_t num_created_tasks = 0;
+uint8_t num_created_tasks;
 
 #ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-int8_t current_cleanup_task_idx = -1;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
 #endif
 volatile uint32_t current_task_ticks_remaining;
 
 #ifndef HOST_TEST
-__attribute__((section(".dtcm")))
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
 #endif
 volatile uint32_t ticks_per_task;
 
 #ifndef HOST_TEST
-__attribute__((section(".dtcm")))
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
 #endif
 uint32_t cpu_vregisters[CPU_VREGISTERS_SIZE];  // virtual registers for CPU to save and restore context
 
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
+#endif
+volatile uint32_t os_tick_count;
 
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
+#endif
+volatile uint8_t os_running;
 
-// #ifndef HOST_TEST
-// __attribute__((section(".dtcm")))
-// #endif
-volatile uint32_t os_tick_count = 0;
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
+#endif
+volatile uint8_t critical_stack_depth;
 
-// #ifndef HOST_TEST
-// __attribute__((section(".dtcm")))
-// #endif
-volatile uint8_t os_running = 0;
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
+#endif
+volatile bool scheduler_enabled;
 
-// #ifndef HOST_TEST
-// __attribute__((section(".dtcm")))
-// #endif
-volatile bool scheduler_enabled = true;
+#ifndef HOST_TEST
+__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
+#endif
+int8_t current_cleanup_task_idx;
 
-// #ifndef HOST_TEST
-// __attribute__((section(".dtcm")))
-// #endif
-volatile uint8_t critical_stack_depth = 0;
+// Stack pool placed in RAM_D1 (same as other BSS data)
+// With MAX_TASKS=128: 128 × 512 × 4 = 256KB
+static uint32_t stack_pool[MAX_TASKS][STACK_WORDS];
+
 
 extern void start_cold_task(task_t *task);
 extern void os_yield_trampoline(void);
@@ -228,7 +227,7 @@ void os_init(void) {
     ticks_per_task = TICKS_PER_TASK;
     running_task_count = 0;
     current_task_index = 0;
-
+    current_cleanup_task_idx = -1;
     uint8_t i;
     current_task_ticks_remaining = ticks_per_task;
     for (i = 0; i < MAX_TASKS; i++) {
@@ -249,6 +248,7 @@ void os_init(void) {
 
     os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
     os_register_task(os_heartbeart_task, ">ICARUS_HEARTBEART<");
+    scheduler_enabled = true;
 }
 
 

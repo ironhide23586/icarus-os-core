@@ -95,6 +95,20 @@ LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
 
+/* Zero fill the DTCM segment. */
+  ldr r2, =_sdtcm
+  ldr r4, =_edtcm
+  movs r3, #0
+  b LoopFillZeroDtcm
+
+FillZeroDtcm:
+  str  r3, [r2]
+  adds r2, r2, #4
+
+LoopFillZeroDtcm:
+  cmp r2, r4
+  bcc FillZeroDtcm
+
 /* Call static constructors */
     bl __libc_init_array
 /* Call the application's entry point.*/

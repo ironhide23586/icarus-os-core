@@ -170,9 +170,11 @@ SECTIONS
   .dtcm (NOLOAD) :
   {
     . = ALIGN(4);
+    _sdtcm = .;
     *(.dtcm)
     *(.dtcm*)
     . = ALIGN(4);
+    _edtcm = .;
   } >DTCMRAM
 
   /* Remove information from the standard libraries */
