@@ -26,7 +26,9 @@
  */
 
 #include "icarus/icarus_task.h"
+#if ICARUS_ENABLE_HEARTBEAT_VIS
 #include "bsp/bsp_display.h"
+#endif
 #include "bsp/bsp_led.h"
 #include "main.h"
 

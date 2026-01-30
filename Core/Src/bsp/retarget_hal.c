@@ -16,7 +16,6 @@ extern uint32_t task_active_sleep(uint32_t ticks);
 /* Function prototypes */
 int32_t platform_write(void* handle, uint8_t reg, const uint8_t *bufp, uint16_t len);
 int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len);
-void platform_delay(uint32_t ms);
 
 static void MPU_Config(void)
 {
@@ -98,11 +97,6 @@ int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len) {
 	HAL_I2C_Mem_Read((I2C_HandleTypeDef*) handle, IMU_ADDRESS, reg, I2C_MEMADD_SIZE_8BIT,
 			bufp, len, HAL_MAX_DELAY);
 	return 0;
-}
-
-
-void platform_delay(uint32_t ms) {
-    HAL_Delay(ms);
 }
 
 

@@ -990,18 +990,6 @@ void test_platform_read_zero_length(void) {
 	TEST_ASSERT_EQUAL(0, result);
 }
 
-// Test: platform_delay
-void test_platform_delay(void) {
-	platform_delay(100);
-	TEST_PASS();
-}
-
-// Test: platform_delay with zero (boundary case)
-void test_platform_delay_zero(void) {
-	platform_delay(0);
-	TEST_PASS();
-}
-
 // Test: hal_init
 // hal_init calls hardware initialization functions, all of which are mocked
 void test_hal_init(void) {
@@ -2007,8 +1995,6 @@ int main(void) {
 	RUN_TEST(test_platform_write_zero_length);
 	RUN_TEST(test_platform_read);
 	RUN_TEST(test_platform_read_zero_length);
-	RUN_TEST(test_platform_delay);
-	RUN_TEST(test_platform_delay_zero);
 	// Note: test_hal_init is ignored - hal_init requires extensive hardware simulation
 	RUN_TEST(test_hal_init);
 	

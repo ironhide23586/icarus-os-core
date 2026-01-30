@@ -181,17 +181,17 @@
             <symbol>entry</symbol>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" verbose="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" cwe="571" file0="../Core/Src/icarus/icarus_task.c">
-            <location file="../Core/Src/icarus/icarus_task.c" line="469" column="38" info="Condition &apos;task_index&lt;num_created_tasks&apos; is always true"/>
-            <location file="../Core/Src/icarus/icarus_task.c" line="464" column="20" info="Assuming that condition &apos;task_index&gt;=num_created_tasks&apos; is not redundant"/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="471" column="38" info="Condition &apos;task_index&lt;num_created_tasks&apos; is always true"/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="466" column="20" info="Assuming that condition &apos;task_index&gt;=num_created_tasks&apos; is not redundant"/>
         </error>
         <error id="duplicateExpression" severity="style" msg="Same expression on both sides of &apos;-&apos; because &apos;os_tick_count&apos; and &apos;st&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/icarus/icarus_task.c">
-            <location file="../Core/Src/icarus/icarus_task.c" line="427" column="31"/>
-            <location file="../Core/Src/icarus/icarus_task.c" line="419" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="429" column="31"/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="421" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
         </error>
         <error id="unsignedLessThanZero" severity="style" msg="Checking if unsigned expression &apos;ticks&apos; is less than zero." verbose="The unsigned expression &apos;ticks&apos; will never be negative so it is either pointless or an error to check if it is." cwe="570" file0="../Core/Src/icarus/icarus_task.c">
-            <location file="../Core/Src/icarus/icarus_task.c" line="428" column="19" info="Unsigned less than zero"/>
-            <location file="../Core/Src/icarus/icarus_task.c" line="427" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
-            <location file="../Core/Src/icarus/icarus_task.c" line="419" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="430" column="19" info="Unsigned less than zero"/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="429" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
+            <location file="../Core/Src/icarus/icarus_task.c" line="421" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
             <symbol>ticks</symbol>
         </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>

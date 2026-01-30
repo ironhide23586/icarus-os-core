@@ -116,8 +116,7 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 |--------|-------------|--------------|-----------------|
 | BSP-020 | System shall write to I2C | `test_platform_write`, `test_platform_write_zero_length` | `platform_write()` |
 | BSP-021 | System shall read from I2C | `test_platform_read`, `test_platform_read_zero_length` | `platform_read()` |
-| BSP-022 | System shall provide platform delay | `test_platform_delay`, `test_platform_delay_zero` | `platform_delay()` |
-| BSP-023 | System shall initialize hardware | `test_hal_init` | `hal_init()` |
+| BSP-022 | System shall initialize hardware | `test_hal_init` | `hal_init()` |
 
 ### 3.10 BSP - Standard I/O
 
