@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include "icarus/icarus_config.h"
 #ifdef HOST_TEST
 // For host testing, include mock header for os_yield_pendsv
 #include "mock_asm.h"
@@ -218,7 +219,7 @@ ITCM_FUNC void SysTick_Handler(void)
   os_tick_count++;
 
   if (os_running && --current_task_ticks_remaining == 0 && scheduler_enabled) {
-    current_task_ticks_remaining = TICKS_PER_TASK;  // Reset for next task
+    current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;  // Reset for next task
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
   }
   

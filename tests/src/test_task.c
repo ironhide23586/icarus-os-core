@@ -5,7 +5,7 @@
  */
 
 #include "unity.h"
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
 #include "bsp/display.h"
 #include "bsp/error.h"
 #include "retarget_hal.h"
@@ -33,10 +33,10 @@ extern int8_t current_cleanup_task_idx;
 extern volatile bool scheduler_enabled;
 extern volatile uint8_t critical_stack_depth;
 extern volatile uint32_t current_task_ticks_remaining;
-extern task_t* task_list[];
+extern icarus_task_t* task_list[];
 extern uint32_t cpu_vregisters[];
-extern semaphore_t* semaphore_list[];
-extern message_pipe_t* message_pipe_list[];
+extern icarus_semaphore_t* semaphore_list[];
+extern icarus_pipe_t* message_pipe_list[];
 
 // Test task functions
 static void test_task_1(void) {
@@ -197,7 +197,7 @@ void test_os_init(void) {
 	TEST_ASSERT_EQUAL(0, os_running);
 	TEST_ASSERT_EQUAL(0, running_task_count);
 	TEST_ASSERT_EQUAL(0, current_task_index);
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK, current_task_ticks_remaining);
 	
 	// os_init registers 2 system tasks (idle and heartbeat)
 	TEST_ASSERT_EQUAL(2, num_created_tasks);
@@ -208,7 +208,7 @@ void test_os_init(void) {
 	
 	// Verify system task names
 	TEST_ASSERT_EQUAL_STRING("ICARUS_KEEPALIVE_TASK", task_list[0]->name);
-	TEST_ASSERT_EQUAL_STRING(">ICARUS_HEARTBEART<", task_list[1]->name);
+	TEST_ASSERT_EQUAL_STRING(">ICARUS_HEARTBEAT<", task_list[1]->name);
 }
 
 // Test: os_register_task
@@ -227,11 +227,11 @@ void test_os_register_task(void) {
 	
 	// Verify task_list entry was used
 	TEST_ASSERT_NOT_NULL(task_list[initial_count]);
-	TEST_ASSERT_EQUAL(TASK_COLD, task_list[initial_count]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_COLD, task_list[initial_count]->task_state);
 	TEST_ASSERT_EQUAL_STRING("registered_task", task_list[initial_count]->name);
 	TEST_ASSERT_NOT_NULL(task_list[initial_count]->function);
 	TEST_ASSERT_NOT_NULL(task_list[initial_count]->stack_base);
-	TEST_ASSERT_EQUAL(PRI_LOW, task_list[initial_count]->task_priority);
+	TEST_ASSERT_EQUAL(TASK_PRIORITY_LOW, task_list[initial_count]->task_priority);
 	TEST_ASSERT_NOT_NULL(task_list[initial_count]->stack_pointer);
 }
 
@@ -314,7 +314,7 @@ void test_os_start_valid_tasks(void) {
 	os_start();
 	
 	// Verify task was started (mock sets state to RUNNING)
-	TEST_ASSERT_EQUAL(TASK_RUNNING, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_RUNNING, task_list[0]->task_state);
 }
 
 // Test: os_exit_task - with running_task_count > 0
@@ -329,7 +329,7 @@ void test_os_exit_task_with_running_count(void) {
 	os_exit_task();
 	
 	// Task should be FINISHED
-	TEST_ASSERT_EQUAL(TASK_FINISHED, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_FINISHED, task_list[0]->task_state);
 	// running_task_count should be decremented
 	TEST_ASSERT_EQUAL(0, running_task_count);
 	// cleanup_task_idx should be set
@@ -342,14 +342,14 @@ void test_os_exit_task_cleanup_idx_max(void) {
 	os_register_task(test_task_1, "task1");
 	current_task_index = 0;
 	running_task_count = 1;
-	current_cleanup_task_idx = MAX_TASKS - 1;  // At max, can't add more
+	current_cleanup_task_idx = ICARUS_MAX_TASKS - 1;  // At max, can't add more
 	
 	os_exit_task();
 	
 	// Task should be FINISHED
-	TEST_ASSERT_EQUAL(TASK_FINISHED, task_list[0]->task_state);
-	// cleanup_task_idx should stay at max (can't increment past MAX_TASKS - 1)
-	TEST_ASSERT_EQUAL(MAX_TASKS - 1, current_cleanup_task_idx);
+	TEST_ASSERT_EQUAL(TASK_STATE_FINISHED, task_list[0]->task_state);
+	// cleanup_task_idx should stay at max (can't increment past ICARUS_MAX_TASKS - 1)
+	TEST_ASSERT_EQUAL(ICARUS_MAX_TASKS - 1, current_cleanup_task_idx);
 }
 
 // Test: os_exit_task - with running_task_count == 0 (should not decrement below 0)
@@ -364,7 +364,7 @@ void test_os_exit_task_zero_running_count(void) {
 	os_exit_task();
 	
 	// Task should be FINISHED
-	TEST_ASSERT_EQUAL(TASK_FINISHED, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_FINISHED, task_list[0]->task_state);
 	// running_task_count should stay at 0 (not go negative)
 	TEST_ASSERT_EQUAL(0, running_task_count);
 	// cleanup_task_idx should still be set
@@ -378,8 +378,8 @@ void test_os_kill_process_valid(void) {
 	os_register_task(test_task_2, "task2");
 	
 	// Set task states to READY (valid for killing)
-	task_list[0]->task_state = TASK_READY;
-	task_list[1]->task_state = TASK_READY;
+	task_list[0]->task_state = TASK_STATE_READY;
+	task_list[1]->task_state = TASK_STATE_READY;
 	
 	current_task_index = 0;
 	running_task_count = 2;
@@ -389,7 +389,7 @@ void test_os_kill_process_valid(void) {
 	os_kill_process(1);
 	
 	// Verify task was killed
-	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_KILLED, task_list[1]->task_state);
 	TEST_ASSERT_EQUAL(1, running_task_count);
 	TEST_ASSERT_EQUAL(0, current_cleanup_task_idx);
 }
@@ -413,8 +413,8 @@ void test_os_kill_process_index_zero(void) {
 	os_register_task(test_task_1, "task0");
 	os_register_task(test_task_2, "task1");
 	
-	task_list[0]->task_state = TASK_READY;
-	task_list[1]->task_state = TASK_READY;
+	task_list[0]->task_state = TASK_STATE_READY;
+	task_list[1]->task_state = TASK_STATE_READY;
 	current_task_index = 1;
 	running_task_count = 2;
 	
@@ -422,7 +422,7 @@ void test_os_kill_process_index_zero(void) {
 	os_kill_process(0);
 	
 	// Task 0 should still be READY (not killed)
-	TEST_ASSERT_EQUAL(TASK_READY, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_READY, task_list[0]->task_state);
 	TEST_ASSERT_EQUAL(2, running_task_count);
 }
 
@@ -438,7 +438,7 @@ void test_os_task_suicide(void) {
 	os_task_suicide();
 	
 	// Current task should be killed
-	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_KILLED, task_list[1]->task_state);
 	// running_task_count should be decremented
 	TEST_ASSERT_EQUAL(1, running_task_count);
 }
@@ -467,7 +467,7 @@ void test_os_yield(void) {
 	os_yield();
 	
 	// Verify ticks were reset
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK, current_task_ticks_remaining);
 	
 	// Verify PendSV was triggered
 	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
@@ -494,7 +494,7 @@ void test_task_active_sleep(void) {
 	uint32_t actual_sleep = task_active_sleep(sleep_ticks);
 	
 	// Verify task was set to BLOCKED
-	TEST_ASSERT_EQUAL(TASK_BLOCKED, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_BLOCKED, task_list[0]->task_state);
 	
 	// Verify global_tick_paused was set
 	TEST_ASSERT_EQUAL(1000, task_list[0]->global_tick_paused);
@@ -527,13 +527,13 @@ void test_task_blocking_sleep(void) {
 
 // Test: os_create_task with max tasks
 void test_os_create_task_max_tasks(void) {
-	// Fill up to MAX_TASKS
-	running_task_count = MAX_TASKS;
+	// Fill up to ICARUS_MAX_TASKS
+	running_task_count = ICARUS_MAX_TASKS;
 	
 	uint8_t initial_count = num_created_tasks;
 	
 	// Try to create another task (should fail)
-	task_t dummy_task;
+	icarus_task_t dummy_task;
 	uint32_t dummy_stack[100];
 	os_create_task(&dummy_task, test_task_1, dummy_stack, 100, "overflow");
 	
@@ -543,18 +543,18 @@ void test_os_create_task_max_tasks(void) {
 
 // Test: os_create_task normal case
 void test_os_create_task_normal(void) {
-	task_t test_task;
-	uint32_t test_stack[STACK_WORDS];
+	icarus_task_t test_task;
+	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, STACK_WORDS, "created_task");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "created_task");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
-	TEST_ASSERT_EQUAL(TASK_COLD, test_task.task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_COLD, test_task.task_state);
 	TEST_ASSERT_EQUAL_STRING("created_task", test_task.name);
 	TEST_ASSERT_NOT_NULL(test_task.function);
 	TEST_ASSERT_NOT_NULL(test_task.stack_base);
-	TEST_ASSERT_EQUAL(PRI_LOW, test_task.task_priority);
+	TEST_ASSERT_EQUAL(TASK_PRIORITY_LOW, test_task.task_priority);
 	TEST_ASSERT_EQUAL(0, test_task.global_tick_paused);
 	TEST_ASSERT_EQUAL(0, test_task.ticks_to_pause);
 	TEST_ASSERT_NOT_NULL(test_task.stack_pointer);
@@ -562,16 +562,16 @@ void test_os_create_task_normal(void) {
 
 // Test: os_create_task with long name (truncation)
 void test_os_create_task_long_name(void) {
-	task_t test_task;
-	uint32_t test_stack[STACK_WORDS];
+	icarus_task_t test_task;
+	uint32_t test_stack[ICARUS_STACK_WORDS];
 	char long_name[100];
 	memset(long_name, 'A', 99);
 	long_name[99] = '\0';
 	
-	os_create_task(&test_task, test_task_1, test_stack, STACK_WORDS, long_name);
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, long_name);
 	
-	// Name should be truncated to MAX_TASK_NAME_LENGTH - 1
-	TEST_ASSERT_EQUAL('\0', test_task.name[MAX_TASK_NAME_LENGTH - 1]);
+	// Name should be truncated to ICARUS_MAX_TASK_NAME_LEN - 1
+	TEST_ASSERT_EQUAL('\0', test_task.name[ICARUS_MAX_TASK_NAME_LEN - 1]);
 }
 
 // Test: dequeue_print_buffer (tested indirectly through enqueue)
@@ -678,16 +678,16 @@ void test_os_get_current_task_name_null_task(void) {
 	TEST_ASSERT_EQUAL_STRING("unknown", name);
 }
 
-// Test: os_start - num_created_tasks > MAX_TASKS (true branch: return early)
+// Test: os_start - num_created_tasks > ICARUS_MAX_TASKS (true branch: return early)
 void test_os_start_too_many_tasks(void) {
-	num_created_tasks = MAX_TASKS + 1;
+	num_created_tasks = ICARUS_MAX_TASKS + 1;
 	os_start();
 	TEST_PASS();
 }
 
-// Test: os_start - boundary: num_created_tasks == MAX_TASKS
+// Test: os_start - boundary: num_created_tasks == ICARUS_MAX_TASKS
 void test_os_start_boundary_max_tasks(void) {
-	num_created_tasks = MAX_TASKS;
+	num_created_tasks = ICARUS_MAX_TASKS;
 	os_start();
 	TEST_PASS();
 }
@@ -709,7 +709,7 @@ void test_os_kill_process_index_zero_error(void) {
 	os_kill_process(0);
 	
 	// Task 0 should still be COLD (not killed)
-	TEST_ASSERT_EQUAL(TASK_COLD, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_COLD, task_list[0]->task_state);
 }
 
 // Test: os_kill_process - task state >= 4 (already killed/finished, error path)
@@ -719,8 +719,8 @@ void test_os_kill_process_already_killed(void) {
 	os_register_task(test_task_2, "task2");
 	current_task_index = 0;
 	
-	// Set task state to TASK_KILLED (4) or TASK_FINISHED (5)
-	task_list[1]->task_state = TASK_KILLED; // State 4
+	// Set task state to TASK_STATE_KILLED (4) or TASK_STATE_FINISHED (5)
+	task_list[1]->task_state = TASK_STATE_KILLED; // State 4
 	uint8_t initial_count = running_task_count;
 	
 	os_kill_process(1);
@@ -728,7 +728,7 @@ void test_os_kill_process_already_killed(void) {
 	// Should not change running_task_count (state >= 4)
 	TEST_ASSERT_EQUAL(initial_count, running_task_count);
 	// Should still be KILLED
-	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_KILLED, task_list[1]->task_state);
 }
 
 // Test: os_kill_process - suicide case (task_index == current_task_index)
@@ -743,7 +743,7 @@ void test_os_kill_process_suicide(void) {
 	os_kill_process(1);
 	
 	// Task should be killed
-	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_KILLED, task_list[1]->task_state);
 	// running_task_count should be decremented
 	TEST_ASSERT_EQUAL(1, running_task_count);
 }
@@ -754,40 +754,40 @@ void test_os_kill_process_cleanup_idx_max(void) {
 	os_register_task(test_task_1, "task1");
 	os_register_task(test_task_2, "task2");
 	
-	task_list[0]->task_state = TASK_READY;
-	task_list[1]->task_state = TASK_READY;
+	task_list[0]->task_state = TASK_STATE_READY;
+	task_list[1]->task_state = TASK_STATE_READY;
 	current_task_index = 0;
 	running_task_count = 2;
-	current_cleanup_task_idx = MAX_TASKS - 1;  // At max
+	current_cleanup_task_idx = ICARUS_MAX_TASKS - 1;  // At max
 	
 	os_kill_process(1);
 	
 	// Task should be killed
-	TEST_ASSERT_EQUAL(TASK_KILLED, task_list[1]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_KILLED, task_list[1]->task_state);
 	// cleanup_task_idx should stay at max
-	TEST_ASSERT_EQUAL(MAX_TASKS - 1, current_cleanup_task_idx);
+	TEST_ASSERT_EQUAL(ICARUS_MAX_TASKS - 1, current_cleanup_task_idx);
 }
 
-// Test: os_create_task - boundary: running_task_count == MAX_TASKS - 1
+// Test: os_create_task - boundary: running_task_count == ICARUS_MAX_TASKS - 1
 void test_os_create_task_boundary_max_minus_one(void) {
-	running_task_count = MAX_TASKS - 1;
-	task_t test_task;
-	uint32_t test_stack[STACK_WORDS];
+	running_task_count = ICARUS_MAX_TASKS - 1;
+	icarus_task_t test_task;
+	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, STACK_WORDS, "boundary");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "boundary");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
 }
 
-// Test: os_create_task - early return when running_task_count >= MAX_TASKS
+// Test: os_create_task - early return when running_task_count >= ICARUS_MAX_TASKS
 void test_os_create_task_max_running_tasks(void) {
-	task_t test_task;
-	uint32_t test_stack[STACK_WORDS];
+	icarus_task_t test_task;
+	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
-	running_task_count = MAX_TASKS; // At max, should return early
+	running_task_count = ICARUS_MAX_TASKS; // At max, should return early
 	
-	os_create_task(&test_task, test_task_1, test_stack, STACK_WORDS, "max_running");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "max_running");
 	
 	// Should not increment num_created_tasks (early return)
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
@@ -935,7 +935,7 @@ void test_LED_Blink(void) {
 	TEST_ASSERT_TRUE(TEST_PENDSV_IS_SET());
 	
 	// Task should be in BLOCKED state (from the last sleep)
-	TEST_ASSERT_EQUAL(TASK_BLOCKED, task_list[0]->task_state);
+	TEST_ASSERT_EQUAL(TASK_STATE_BLOCKED, task_list[0]->task_state);
 }
 
 // Test: LED_Blink with zero delays (boundary case)
@@ -1027,7 +1027,7 @@ void test_SysTick_Handler(void) {
 	// Initialize state
 	os_tick_count = 0;
 	os_running = 1;
-	current_task_ticks_remaining = TICKS_PER_TASK;
+	current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;
 	scheduler_enabled = true;
 	
 	// Call SysTick_Handler
@@ -1036,14 +1036,14 @@ void test_SysTick_Handler(void) {
 	// Verify tick count incremented
 	TEST_ASSERT_EQUAL(1, os_tick_count);
 	// Verify ticks_remaining decremented
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK - 1, current_task_ticks_remaining);
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK - 1, current_task_ticks_remaining);
 }
 
 // Test: SysTick_Handler - with os_running == 0 (should not trigger scheduler)
 void test_SysTick_Handler_os_not_running(void) {
 	os_tick_count = 0;
 	os_running = 0;
-	current_task_ticks_remaining = TICKS_PER_TASK;
+	current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;
 	scheduler_enabled = true;
 	
 	SysTick_Handler();
@@ -1053,7 +1053,7 @@ void test_SysTick_Handler_os_not_running(void) {
 	// When os_running == 0, the condition short-circuits, so ticks_remaining is NOT decremented
 	// The condition is: if (os_running && --current_task_ticks_remaining == 0 && scheduler_enabled)
 	// Since os_running is 0, the && short-circuits before decrementing
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK, current_task_ticks_remaining);
 	// SCB->ICSR should not be set (scheduler not triggered)
 }
 
@@ -1061,13 +1061,13 @@ void test_SysTick_Handler_os_not_running(void) {
 void test_SysTick_Handler_scheduler_disabled(void) {
 	os_tick_count = 0;
 	os_running = 1;
-	current_task_ticks_remaining = TICKS_PER_TASK;
+	current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;
 	scheduler_enabled = false;
 	
 	SysTick_Handler();
 	
 	TEST_ASSERT_EQUAL(1, os_tick_count);
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK - 1, current_task_ticks_remaining);
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK - 1, current_task_ticks_remaining);
 }
 
 // Test: SysTick_Handler - trigger scheduler when ticks_remaining reaches 0
@@ -1081,8 +1081,8 @@ void test_SysTick_Handler_trigger_scheduler(void) {
 	
 	// Tick should increment
 	TEST_ASSERT_EQUAL(1, os_tick_count);
-	// ticks_remaining should be reset to TICKS_PER_TASK
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK, current_task_ticks_remaining);
+	// ticks_remaining should be reset to ICARUS_TICKS_PER_TASK
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK, current_task_ticks_remaining);
 	// SCB->ICSR should be set (PendSV triggered)
 }
 
@@ -1090,7 +1090,7 @@ void test_SysTick_Handler_trigger_scheduler(void) {
 void test_SysTick_Handler_multiple_ticks(void) {
 	os_tick_count = 0;
 	os_running = 1;
-	current_task_ticks_remaining = TICKS_PER_TASK;
+	current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;
 	scheduler_enabled = true;
 	
 	// Call multiple times
@@ -1099,7 +1099,7 @@ void test_SysTick_Handler_multiple_ticks(void) {
 	}
 	
 	TEST_ASSERT_EQUAL(5, os_tick_count);
-	TEST_ASSERT_EQUAL(TICKS_PER_TASK - 5, current_task_ticks_remaining);
+	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK - 5, current_task_ticks_remaining);
 }
 
 // Test: OTG_FS_IRQHandler - USB interrupt handler
@@ -1140,14 +1140,14 @@ void test_semaphore_init_basic(void) {
 	TEST_ASSERT_EQUAL(5, semaphore_list[0]->max_count);
 }
 
-// Test: semaphore_init - invalid index (>= MAX_SEMAPHORES)
+// Test: semaphore_init - invalid index (>= ICARUS_MAX_SEMAPHORES)
 void test_semaphore_init_invalid_index(void) {
 	test_init_task_list();
 	
-	bool result = semaphore_init(MAX_SEMAPHORES, 5);
+	bool result = semaphore_init(ICARUS_MAX_SEMAPHORES, 5);
 	TEST_ASSERT_FALSE(result);
 	
-	result = semaphore_init(MAX_SEMAPHORES + 10, 5);
+	result = semaphore_init(ICARUS_MAX_SEMAPHORES + 10, 5);
 	TEST_ASSERT_FALSE(result);
 }
 
@@ -1189,23 +1189,23 @@ void test_semaphore_init_multiple(void) {
 	TEST_ASSERT_EQUAL(10, semaphore_list[2]->max_count);
 }
 
-// Test: semaphore_init - boundary: MAX_SEMAPHORES - 1
+// Test: semaphore_init - boundary: ICARUS_MAX_SEMAPHORES - 1
 void test_semaphore_init_boundary(void) {
 	test_init_task_list();
 	
-	bool result = semaphore_init(MAX_SEMAPHORES - 1, 3);
+	bool result = semaphore_init(ICARUS_MAX_SEMAPHORES - 1, 3);
 	TEST_ASSERT_TRUE(result);
-	TEST_ASSERT_TRUE(semaphore_list[MAX_SEMAPHORES - 1]->engaged);
+	TEST_ASSERT_TRUE(semaphore_list[ICARUS_MAX_SEMAPHORES - 1]->engaged);
 }
 
 // Test: semaphore_feed - invalid index
 void test_semaphore_feed_invalid_index(void) {
 	test_init_task_list();
 	
-	bool result = semaphore_feed(MAX_SEMAPHORES);
+	bool result = semaphore_feed(ICARUS_MAX_SEMAPHORES);
 	TEST_ASSERT_FALSE(result);
 	
-	result = semaphore_feed(MAX_SEMAPHORES + 5);
+	result = semaphore_feed(ICARUS_MAX_SEMAPHORES + 5);
 	TEST_ASSERT_FALSE(result);
 }
 
@@ -1238,10 +1238,10 @@ void test_semaphore_feed_basic(void) {
 void test_semaphore_consume_invalid_index(void) {
 	test_init_task_list();
 	
-	bool result = semaphore_consume(MAX_SEMAPHORES);
+	bool result = semaphore_consume(ICARUS_MAX_SEMAPHORES);
 	TEST_ASSERT_FALSE(result);
 	
-	result = semaphore_consume(MAX_SEMAPHORES + 5);
+	result = semaphore_consume(ICARUS_MAX_SEMAPHORES + 5);
 	TEST_ASSERT_FALSE(result);
 }
 
@@ -1361,14 +1361,14 @@ void test_pipe_init_basic(void) {
 	TEST_ASSERT_EQUAL(0, message_pipe_list[0]->dequeue_idx);
 }
 
-// Test: pipe_init - invalid index (>= MAX_MESSAGE_QUEUES)
+// Test: pipe_init - invalid index (>= ICARUS_MAX_MESSAGE_QUEUES)
 void test_pipe_init_invalid_index(void) {
 	test_init_task_list();
 	
-	bool result = pipe_init(MAX_MESSAGE_QUEUES, 64);
+	bool result = pipe_init(ICARUS_MAX_MESSAGE_QUEUES, 64);
 	TEST_ASSERT_FALSE(result);
 	
-	result = pipe_init(MAX_MESSAGE_QUEUES + 10, 64);
+	result = pipe_init(ICARUS_MAX_MESSAGE_QUEUES + 10, 64);
 	TEST_ASSERT_FALSE(result);
 }
 
@@ -1431,13 +1431,13 @@ void test_pipe_init_multiple(void) {
 	TEST_ASSERT_EQUAL(128, message_pipe_list[2]->max_count);
 }
 
-// Test: pipe_init - boundary: MAX_MESSAGE_QUEUES - 1
+// Test: pipe_init - boundary: ICARUS_MAX_MESSAGE_QUEUES - 1
 void test_pipe_init_boundary(void) {
 	test_init_task_list();
 	
-	bool result = pipe_init(MAX_MESSAGE_QUEUES - 1, 32);
+	bool result = pipe_init(ICARUS_MAX_MESSAGE_QUEUES - 1, 32);
 	TEST_ASSERT_TRUE(result);
-	TEST_ASSERT_TRUE(message_pipe_list[MAX_MESSAGE_QUEUES - 1]->engaged);
+	TEST_ASSERT_TRUE(message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES - 1]->engaged);
 }
 
 // Test: pipe_enqueue - invalid index
@@ -1445,7 +1445,7 @@ void test_pipe_enqueue_invalid_index(void) {
 	test_init_task_list();
 	
 	uint8_t data[] = {1, 2, 3};
-	bool result = pipe_enqueue(MAX_MESSAGE_QUEUES, data, 3);
+	bool result = pipe_enqueue(ICARUS_MAX_MESSAGE_QUEUES, data, 3);
 	TEST_ASSERT_FALSE(result);
 }
 
@@ -1522,7 +1522,7 @@ void test_pipe_dequeue_invalid_index(void) {
 	test_init_task_list();
 	
 	uint8_t data[10];
-	bool result = pipe_dequeue(MAX_MESSAGE_QUEUES, data, 3);
+	bool result = pipe_dequeue(ICARUS_MAX_MESSAGE_QUEUES, data, 3);
 	TEST_ASSERT_FALSE(result);
 }
 
@@ -1668,8 +1668,8 @@ void test_semaphore_get_count_basic(void) {
 
 // Test: semaphore_get_count invalid index
 void test_semaphore_get_count_invalid(void) {
-	TEST_ASSERT_EQUAL(0, semaphore_get_count(MAX_SEMAPHORES));
-	TEST_ASSERT_EQUAL(0, semaphore_get_count(MAX_SEMAPHORES + 1));
+	TEST_ASSERT_EQUAL(0, semaphore_get_count(ICARUS_MAX_SEMAPHORES));
+	TEST_ASSERT_EQUAL(0, semaphore_get_count(ICARUS_MAX_SEMAPHORES + 1));
 }
 
 // Test: semaphore_get_count not engaged
@@ -1695,7 +1695,7 @@ void test_semaphore_get_max_count_basic(void) {
 
 // Test: semaphore_get_max_count invalid index
 void test_semaphore_get_max_count_invalid(void) {
-	TEST_ASSERT_EQUAL(0, semaphore_get_max_count(MAX_SEMAPHORES));
+	TEST_ASSERT_EQUAL(0, semaphore_get_max_count(ICARUS_MAX_SEMAPHORES));
 }
 
 // Test: semaphore_get_max_count not engaged
@@ -1728,7 +1728,7 @@ void test_pipe_get_count_basic(void) {
 
 // Test: pipe_get_count invalid index
 void test_pipe_get_count_invalid(void) {
-	TEST_ASSERT_EQUAL(0, pipe_get_count(MAX_MESSAGE_QUEUES));
+	TEST_ASSERT_EQUAL(0, pipe_get_count(ICARUS_MAX_MESSAGE_QUEUES));
 }
 
 // Test: pipe_get_count not engaged
@@ -1749,7 +1749,7 @@ void test_pipe_get_max_count_basic(void) {
 
 // Test: pipe_get_max_count invalid index
 void test_pipe_get_max_count_invalid(void) {
-	TEST_ASSERT_EQUAL(0, pipe_get_max_count(MAX_MESSAGE_QUEUES));
+	TEST_ASSERT_EQUAL(0, pipe_get_max_count(ICARUS_MAX_MESSAGE_QUEUES));
 }
 
 // Test: pipe_get_max_count not engaged

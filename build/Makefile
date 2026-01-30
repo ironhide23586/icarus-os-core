@@ -33,7 +33,7 @@ LINKER_SCRIPT = $(PROJECT_ROOT)/STM32H750VBTX_FLASH.ld
 # Source directories
 CORE_SRC = $(PROJECT_ROOT)/Core/Src
 CORE_BSP_SRC = $(PROJECT_ROOT)/Core/Src/bsp
-CORE_KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/kernel
+CORE_ICARUS_SRC = $(PROJECT_ROOT)/Core/Src/icarus
 CORE_STARTUP = $(PROJECT_ROOT)/Core/Startup
 DRIVERS_HAL = $(PROJECT_ROOT)/Drivers/STM32H7xx_HAL_Driver/Src
 DRIVERS_BSP = $(PROJECT_ROOT)/Drivers/BSP/ST7735
@@ -45,7 +45,7 @@ MIDDLEWARE_USB_CDC = $(PROJECT_ROOT)/Middlewares/ST/STM32_USB_Device_Library/Cla
 # Include directories
 CORE_INC = $(PROJECT_ROOT)/Core/Inc
 CORE_BSP_INC = $(PROJECT_ROOT)/Core/Inc/bsp
-CORE_KERNEL_INC = $(PROJECT_ROOT)/Core/Inc/kernel
+CORE_ICARUS_INC = $(PROJECT_ROOT)/Core/Inc/icarus
 DRIVERS_HAL_INC = $(PROJECT_ROOT)/Drivers/STM32H7xx_HAL_Driver/Inc
 DRIVERS_HAL_LEGACY_INC = $(PROJECT_ROOT)/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
 DRIVERS_CMSIS_DEVICE = $(PROJECT_ROOT)/Drivers/CMSIS/Device/ST/STM32H7xx/Include
@@ -60,7 +60,7 @@ MIDDLEWARE_USB_CDC_INC = $(PROJECT_ROOT)/Middlewares/ST/STM32_USB_Device_Library
 C_SOURCES = \
 	$(wildcard $(CORE_SRC)/*.c) \
 	$(wildcard $(CORE_BSP_SRC)/*.c) \
-	$(wildcard $(CORE_KERNEL_SRC)/*.c) \
+	$(wildcard $(CORE_ICARUS_SRC)/*.c) \
 	$(wildcard $(DRIVERS_HAL)/*.c) \
 	$(wildcard $(DRIVERS_BSP)/*.c) \
 	$(wildcard $(USB_DEVICE_APP)/*.c) \
@@ -70,7 +70,7 @@ C_SOURCES = \
 
 ASM_SOURCES = \
 	$(CORE_STARTUP)/startup_stm32h750vbtx.s \
-	$(wildcard $(CORE_KERNEL_SRC)/*.s)
+	$(wildcard $(CORE_ICARUS_SRC)/*.s)
 
 # Object files
 C_OBJECTS = $(C_SOURCES:$(PROJECT_ROOT)/%.c=$(OBJ_DIR)/%.o)
@@ -84,7 +84,7 @@ DEP_FILES = $(C_SOURCES:$(PROJECT_ROOT)/%.c=$(DEP_DIR)/%.d)
 INCLUDES = \
 	-I$(CORE_INC) \
 	-I$(CORE_BSP_INC) \
-	-I$(CORE_KERNEL_INC) \
+	-I$(CORE_ICARUS_INC) \
 	-isystem $(DRIVERS_HAL_INC) \
 	-isystem $(DRIVERS_HAL_LEGACY_INC) \
 	-isystem $(DRIVERS_CMSIS_DEVICE) \
@@ -242,7 +242,7 @@ COVERAGE_SOURCES = $(CPPCHECK_SOURCES)  # Same as cppcheck sources (application 
 CPPCHECK_SOURCES = \
 	$(wildcard $(CORE_SRC)/*.c) \
 	$(wildcard $(CORE_BSP_SRC)/*.c) \
-	$(wildcard $(CORE_KERNEL_SRC)/*.c)
+	$(wildcard $(CORE_ICARUS_SRC)/*.c)
 
 # cppcheck flags
 # --enable=all: Enable all checks
@@ -280,7 +280,7 @@ all: $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) size cppcheck cppcheck-html test-report
 # Create object directories
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Core/Src/bsp
-	@mkdir -p $(OBJ_DIR)/Core/Src/kernel
+	@mkdir -p $(OBJ_DIR)/Core/Src/icarus
 	@mkdir -p $(OBJ_DIR)/Core/Startup
 	@mkdir -p $(OBJ_DIR)/Drivers/STM32H7xx_HAL_Driver/Src
 	@mkdir -p $(OBJ_DIR)/Drivers/BSP/ST7735
@@ -291,7 +291,7 @@ $(OBJ_DIR):
 
 $(DEP_DIR):
 	@mkdir -p $(DEP_DIR)/Core/Src/bsp
-	@mkdir -p $(DEP_DIR)/Core/Src/kernel
+	@mkdir -p $(DEP_DIR)/Core/Src/icarus
 	@mkdir -p $(DEP_DIR)/Core/Startup
 	@mkdir -p $(DEP_DIR)/Drivers/STM32H7xx_HAL_Driver/Src
 	@mkdir -p $(DEP_DIR)/Drivers/BSP/ST7735

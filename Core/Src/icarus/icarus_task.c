@@ -27,6 +27,12 @@
 
 #include "icarus/icarus_task.h"
 #include "bsp/bsp_display.h"
+#include "bsp/bsp_led.h"
+#include "main.h"
+
+#ifdef HOST_TEST
+#include "cmsis_gcc.h"
+#endif
 
 #include <string.h>
 #include <stdio.h>
@@ -380,7 +386,7 @@ uint32_t os_get_task_ticks_remaining(void)
  * @brief Start a cold task (internal)
  * @param task  Task to start
  */
-void task_start(icarus_task_t *task)
+static void task_start(icarus_task_t *task)
 {
     start_cold_task(task);
 }

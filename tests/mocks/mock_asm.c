@@ -16,12 +16,12 @@ extern volatile uint32_t os_tick_count;
 // Mock: start_cold_task
 // In real system, this sets up PSP and branches to task function
 // For testing, we just mark the task as running
-void start_cold_task(task_t *task) {
+void start_cold_task(icarus_task_t *task) {
 	if (task == NULL) {
 		return;
 	}
 	// Mark task as running (simplified for testing)
-	task->task_state = TASK_RUNNING;
+	task->task_state = TASK_STATE_RUNNING;
 	// In real system, this would switch to the task's stack and call the function
 	// For testing, we don't actually execute the task function
 }

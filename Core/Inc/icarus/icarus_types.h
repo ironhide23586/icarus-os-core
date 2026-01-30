@@ -172,38 +172,6 @@ typedef struct {
     uint8_t buffer[ICARUS_MAX_MESSAGE_BYTES];  /**< Circular message buffer */
 } icarus_pipe_t;
 
-/* ============================================================================
- * TYPE ALIASES FOR BACKWARD COMPATIBILITY
- * ========================================================================= */
-
-/** @brief Legacy type alias for task state */
-typedef icarus_task_state_t task_state_t;
-
-/** @brief Legacy type alias for task priority */
-typedef icarus_task_priority_t task_pri_t;
-
-/** @brief Legacy type alias for task control block */
-typedef icarus_task_t task_t;
-
-/** @brief Legacy type alias for semaphore */
-typedef icarus_semaphore_t semaphore_t;
-
-/** @brief Legacy type alias for message pipe */
-typedef icarus_pipe_t message_pipe_t;
-
-/* Legacy state constants */
-#define TASK_COLD       TASK_STATE_COLD
-#define TASK_RUNNING    TASK_STATE_RUNNING
-#define TASK_READY      TASK_STATE_READY
-#define TASK_BLOCKED    TASK_STATE_BLOCKED
-#define TASK_KILLED     TASK_STATE_KILLED
-#define TASK_FINISHED   TASK_STATE_FINISHED
-
-/* Legacy priority constants */
-#define PRI_LOW         TASK_PRIORITY_LOW
-#define PRI_MED         TASK_PRIORITY_MED
-#define PRI_HIGH        TASK_PRIORITY_HIGH
-
 #ifdef __cplusplus
 }
 #endif

@@ -6,9 +6,12 @@
  *      GitHub: https://github.com/ironhide23586/icarus-os-core
  */
 
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
+#include "bsp/bsp_led.h"
+#include "bsp/retarget_hal.h"
 #include "demo_tasks.h"
 #include "stress_test.h"
+#include <stdio.h>
 
 // Set to 1 to enable stress testing, 0 for normal demo mode
 #define ENABLE_STRESS_TEST  1
