@@ -111,7 +111,7 @@ unsigned int sleep(unsigned int seconds);
  * @retval 0   Success
  * @retval -1  Error (check errno)
  */
-int usleep(useconds_t usec);
+int usleep(uint32_t usec);
 
 /* ============================================================================
  * HELPER MACROS

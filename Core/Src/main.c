@@ -6,10 +6,13 @@
  *      GitHub: https://github.com/ironhide23586/icarus-os-core
  */
 
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
+#include "bsp/retarget_hal.h"
 #include "demo_tasks.h"
 #include "demo_tasks_posix.h"
 #include "stress_test.h"
+
+#include <stdio.h>
 
 /* Demo mode selection:
  * 0 = Native ICARUS API demo (os_register_task, semaphore_*, pipe_*)

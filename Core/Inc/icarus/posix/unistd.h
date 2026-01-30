@@ -75,7 +75,7 @@ unsigned int sleep(unsigned int seconds);
  *
  * @note Resolution is 1ms; values < 1000 sleep for 1ms
  */
-int usleep(useconds_t usec);
+int usleep(uint32_t usec);
 
 /* ============================================================================
  * PROCESS FUNCTIONS (STUBS)

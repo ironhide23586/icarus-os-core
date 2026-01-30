@@ -7,7 +7,7 @@
  */
 
 #include "bsp/display.h"
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
 #include <string.h>
 #include <inttypes.h>
 
@@ -461,9 +461,9 @@ void display_init(void) {
     
     // Initialize task rows with empty bars using task names from TCB
     // Note: This assumes tasks are registered in order and we skip system tasks
-    // System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEART_TASK)
+    // System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEAT_TASK)
     // User tasks start from index 2
-    extern task_t* task_list[MAX_TASKS];
+    extern icarus_task_t* task_list[ICARUS_MAX_TASKS];
     extern uint8_t num_created_tasks;
     
     uint8_t user_task_count = 0;

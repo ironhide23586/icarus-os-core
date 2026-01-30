@@ -34,6 +34,8 @@ LINKER_SCRIPT = $(PROJECT_ROOT)/STM32H750VBTX_FLASH.ld
 CORE_SRC = $(PROJECT_ROOT)/Core/Src
 CORE_BSP_SRC = $(PROJECT_ROOT)/Core/Src/bsp
 CORE_KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/kernel
+CORE_ICARUS_SRC = $(PROJECT_ROOT)/Core/Src/icarus
+CORE_ICARUS_POSIX_SRC = $(PROJECT_ROOT)/Core/Src/icarus/posix
 CORE_STARTUP = $(PROJECT_ROOT)/Core/Startup
 DRIVERS_HAL = $(PROJECT_ROOT)/Drivers/STM32H7xx_HAL_Driver/Src
 DRIVERS_BSP = $(PROJECT_ROOT)/Drivers/BSP/ST7735
@@ -61,6 +63,8 @@ C_SOURCES = \
 	$(wildcard $(CORE_SRC)/*.c) \
 	$(wildcard $(CORE_BSP_SRC)/*.c) \
 	$(wildcard $(CORE_KERNEL_SRC)/*.c) \
+	$(wildcard $(CORE_ICARUS_SRC)/*.c) \
+	$(wildcard $(CORE_ICARUS_POSIX_SRC)/*.c) \
 	$(wildcard $(DRIVERS_HAL)/*.c) \
 	$(wildcard $(DRIVERS_BSP)/*.c) \
 	$(wildcard $(USB_DEVICE_APP)/*.c) \
@@ -70,7 +74,8 @@ C_SOURCES = \
 
 ASM_SOURCES = \
 	$(CORE_STARTUP)/startup_stm32h750vbtx.s \
-	$(wildcard $(CORE_KERNEL_SRC)/*.s)
+	$(wildcard $(CORE_KERNEL_SRC)/*.s) \
+	$(wildcard $(CORE_ICARUS_SRC)/*.s)
 
 # Object files
 C_OBJECTS = $(C_SOURCES:$(PROJECT_ROOT)/%.c=$(OBJ_DIR)/%.o)
@@ -281,6 +286,7 @@ all: $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) size cppcheck cppcheck-html test-report
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Core/Src/bsp
 	@mkdir -p $(OBJ_DIR)/Core/Src/kernel
+	@mkdir -p $(OBJ_DIR)/Core/Src/icarus/posix
 	@mkdir -p $(OBJ_DIR)/Core/Startup
 	@mkdir -p $(OBJ_DIR)/Drivers/STM32H7xx_HAL_Driver/Src
 	@mkdir -p $(OBJ_DIR)/Drivers/BSP/ST7735
@@ -292,6 +298,7 @@ $(OBJ_DIR):
 $(DEP_DIR):
 	@mkdir -p $(DEP_DIR)/Core/Src/bsp
 	@mkdir -p $(DEP_DIR)/Core/Src/kernel
+	@mkdir -p $(DEP_DIR)/Core/Src/icarus/posix
 	@mkdir -p $(DEP_DIR)/Core/Startup
 	@mkdir -p $(DEP_DIR)/Drivers/STM32H7xx_HAL_Driver/Src
 	@mkdir -p $(DEP_DIR)/Drivers/BSP/ST7735

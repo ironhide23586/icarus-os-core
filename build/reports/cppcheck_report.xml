@@ -141,6 +141,11 @@
             <location file="../Core/Src/stress_test.c" line="608" column="14" info="Variable &apos;sleep_times&apos; can be declared as const array"/>
             <symbol>sleep_times</symbol>
         </error>
+        <error id="uninitvar" severity="warning" msg="Uninitialized variable: msg" verbose="Uninitialized variable: msg" cwe="457" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="524" column="32"/>
+            <location file="../Core/Src/stress_test.c" line="520" column="31" info="Assuming condition is false"/>
+            <symbol>msg</symbol>
+        </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;send_tick&apos; is assigned a value that is never used." verbose="Variable &apos;send_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="319" column="24"/>
             <symbol>send_tick</symbol>
@@ -179,10 +184,6 @@
         <error id="constVariablePointer" severity="style" msg="Variable &apos;entry&apos; can be declared as pointer to const" verbose="Variable &apos;entry&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/display.c">
             <location file="../Core/Src/bsp/display.c" line="91" column="34" info="Variable &apos;entry&apos; can be declared as pointer to const"/>
             <symbol>entry</symbol>
-        </error>
-        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" verbose="Condition &apos;task_index&lt;num_created_tasks&apos; is always true" cwe="571" file0="../Core/Src/kernel/task.c">
-            <location file="../Core/Src/kernel/task.c" line="337" column="38" info="Condition &apos;task_index&lt;num_created_tasks&apos; is always true"/>
-            <location file="../Core/Src/kernel/task.c" line="332" column="20" info="Assuming that condition &apos;task_index&gt;=num_created_tasks&apos; is not redundant"/>
         </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>
     </errors>

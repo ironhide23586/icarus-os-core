@@ -28,8 +28,20 @@ extern "C" {
  * POSIX TYPE DEFINITIONS
  * ========================================================================= */
 
-/** @brief Signed size type (for return values that can be -1) */
+/** 
+ * @brief Signed size type (for return values that can be -1) 
+ * @note  Only define if not already defined by newlib/system headers
+ */
+#ifndef _SSIZE_T_DECLARED
+#ifndef __ssize_t_defined
 typedef int32_t     ssize_t;
+#define __ssize_t_defined
+#endif
+#define _SSIZE_T_DECLARED
+#endif
+
+/** @brief Microseconds type for usleep() */
+typedef uint32_t    useconds_t;
 
 /** @brief Process ID type */
 typedef int16_t     pid_t;

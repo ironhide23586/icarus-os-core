@@ -789,7 +789,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-7" name="line-7"></a><span class="cm"> */</span>
 <a id="line-8" name="line-8"></a>
 <a id="line-9" name="line-9"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;bsp/display.h&quot;</span>
-<a id="line-10" name="line-10"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;kernel/task.h&quot;</span>
+<a id="line-10" name="line-10"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;icarus/icarus_task.h&quot;</span>
 <a id="line-11" name="line-11"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
 <a id="line-12" name="line-12"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;inttypes.h&gt;</span>
 <a id="line-13" name="line-13"></a>
@@ -1243,9 +1243,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-461" name="line-461"></a><span class="w">    </span>
 <a id="line-462" name="line-462"></a><span class="w">    </span><span class="c1">// Initialize task rows with empty bars using task names from TCB</span>
 <a id="line-463" name="line-463"></a><span class="w">    </span><span class="c1">// Note: This assumes tasks are registered in order and we skip system tasks</span>
-<a id="line-464" name="line-464"></a><span class="w">    </span><span class="c1">// System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEART_TASK)</span>
+<a id="line-464" name="line-464"></a><span class="w">    </span><span class="c1">// System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEAT_TASK)</span>
 <a id="line-465" name="line-465"></a><span class="w">    </span><span class="c1">// User tasks start from index 2</span>
-<a id="line-466" name="line-466"></a><span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="n">task_t</span><span class="o">*</span><span class="w"> </span><span class="n">task_list</span><span class="p">[</span><span class="n">MAX_TASKS</span><span class="p">];</span>
+<a id="line-466" name="line-466"></a><span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="n">icarus_task_t</span><span class="o">*</span><span class="w"> </span><span class="n">task_list</span><span class="p">[</span><span class="n">ICARUS_MAX_TASKS</span><span class="p">];</span>
 <a id="line-467" name="line-467"></a><span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">num_created_tasks</span><span class="p">;</span>
 <a id="line-468" name="line-468"></a><span class="w">    </span>
 <a id="line-469" name="line-469"></a><span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">user_task_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>

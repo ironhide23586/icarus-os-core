@@ -18,7 +18,7 @@ BUILD_DIR = $(TEST_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj
 
 # Source code to test (all application code that can be tested)
-KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/kernel/task.c
+KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/icarus/icarus_task.c
 BSP_SRC = \
 	$(PROJECT_ROOT)/Core/Src/bsp/error.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_stdio.c \

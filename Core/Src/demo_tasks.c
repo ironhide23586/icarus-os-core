@@ -7,7 +7,7 @@
  */
 
 #include "demo_tasks.h"
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
 #include "display.h"
 
 // Semaphore demo configuration

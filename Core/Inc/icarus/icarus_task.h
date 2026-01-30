@@ -360,7 +360,7 @@ bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
  *
  * @note    This function is placed in ITCM for zero wait-state execution.
  */
-bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+bool pipe_enqueue(uint8_t pipe_idx, const uint8_t* message, uint8_t message_bytes);
 
 /**
  * @brief Dequeue message from pipe
@@ -395,20 +395,6 @@ uint8_t pipe_get_count(uint8_t pipe_idx);
  * @return Maximum capacity in bytes, or 0 if invalid/uninitialized
  */
 uint8_t pipe_get_max_count(uint8_t pipe_idx);
-
-/* ============================================================================
- * LEGACY COMPATIBILITY MACROS
- * ========================================================================= */
-
-/* Map old config names to new names */
-#define MAX_TASKS               ICARUS_MAX_TASKS
-#define MAX_SEMAPHORES          ICARUS_MAX_SEMAPHORES
-#define MAX_MESSAGE_QUEUES      ICARUS_MAX_MESSAGE_QUEUES
-#define MAX_MESSAGE_BUFFER_BYTES ICARUS_MAX_MESSAGE_BYTES
-#define STACK_WORDS             ICARUS_STACK_WORDS
-#define MAX_TASK_NAME_LENGTH    ICARUS_MAX_TASK_NAME_LEN
-#define PRINT_BUFFER_BYTES      ICARUS_PRINT_BUFFER_BYTES
-#define MAX_PRINT_RETRIES       ICARUS_MAX_PRINT_RETRIES
 
 #ifdef __cplusplus
 }

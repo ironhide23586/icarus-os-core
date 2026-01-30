@@ -19,6 +19,7 @@
 
 #include "demo_tasks_posix.h"
 #include "icarus/posix/posix.h"
+#include "icarus/icarus_task.h"
 #include "bsp/bsp_display.h"
 
 #include <stdio.h>
@@ -122,8 +123,8 @@ static uint32_t get_ticks(void)
 static void sleep_ms(uint32_t ms)
 {
     struct timespec ts;
-    ts.tv_sec = ms / 1000;
-    ts.tv_nsec = (ms % 1000) * 1000000L;
+    ts.tv_sec = (time_t)(ms / 1000);
+    ts.tv_nsec = (long)((ms % 1000) * 1000000L);
     nanosleep(&ts, NULL);
 }
 

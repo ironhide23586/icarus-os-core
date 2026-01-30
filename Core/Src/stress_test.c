@@ -15,7 +15,7 @@
  */
 
 #include "stress_test.h"
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
 #include "bsp/display.h"
 
 // Global statistics

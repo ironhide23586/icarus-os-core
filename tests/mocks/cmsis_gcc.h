@@ -22,6 +22,15 @@
 #define __WFI() do {} while(0)
 #define __WFE() do {} while(0)
 
+// IRQ numbers for testing
+typedef enum {
+    PendSV_IRQn = -6,
+    SysTick_IRQn = -1
+} IRQn_Type;
+
+// NVIC functions (no-op for testing)
+#define NVIC_SetPriority(IRQn, priority) do { (void)(IRQn); (void)(priority); } while(0)
+
 // System Control Block (SCB) - minimal mock
 typedef struct {
 	volatile uint32_t ICSR;  // Interrupt Control and State Register

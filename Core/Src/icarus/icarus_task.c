@@ -26,11 +26,17 @@
  */
 
 #include "icarus/icarus_task.h"
+#include "stm32h7xx_hal.h"
 #include "bsp/bsp_display.h"
 
 #include <string.h>
 #include <stdio.h>
 #include <stddef.h>
+
+/* LED functions from BSP (declared here to avoid pulling in all BSP headers) */
+extern void LED_Blink(uint32_t Hdelay, uint32_t Ldelay);
+extern void LED_On(void);
+extern void LED_Off(void);
 
 /* ============================================================================
  * SECTION PLACEMENT MACROS
@@ -380,7 +386,7 @@ uint32_t os_get_task_ticks_remaining(void)
  * @brief Start a cold task (internal)
  * @param task  Task to start
  */
-void task_start(icarus_task_t *task)
+static void task_start(icarus_task_t *task)
 {
     start_cold_task(task);
 }
@@ -649,7 +655,7 @@ bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
     return false;
 }
 
-ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
+ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, const uint8_t* message,
                             uint8_t message_bytes)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||

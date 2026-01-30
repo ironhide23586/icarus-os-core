@@ -137,6 +137,7 @@ extern icarus_task_t* task_list[];
 int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                    void (*start_routine)(void), void *arg)
 {
+    (void)attr; /* attr not fully supported in current implementation */
     (void)arg;  /* arg not supported in current implementation */
 
     if (thread == NULL || start_routine == NULL) {
@@ -436,8 +437,8 @@ int clock_gettime(clockid_t clk_id, struct timespec *tp)
     case CLOCK_MONOTONIC:
     case CLOCK_REALTIME:
         /* Convert ticks to timespec (1 tick = 1ms) */
-        tp->tv_sec = ticks / 1000;
-        tp->tv_nsec = (ticks % 1000) * 1000000L;
+        tp->tv_sec = (time_t)(ticks / 1000);
+        tp->tv_nsec = (long)((ticks % 1000) * 1000000L);
         break;
 
     default:
@@ -500,7 +501,7 @@ unsigned int sleep(unsigned int seconds)
     return 0;
 }
 
-int usleep(useconds_t usec)
+int usleep(uint32_t usec)
 {
     if (usec >= 1000000) {
         errno = EINVAL;
@@ -616,7 +617,7 @@ int mq_send(mqd_t mqdes, const char *msg_ptr, size_t msg_len,
         return -1;
     }
 
-    if (!pipe_enqueue((uint8_t)mqdes, (uint8_t *)msg_ptr, (uint8_t)msg_len)) {
+    if (!pipe_enqueue((uint8_t)mqdes, (const uint8_t *)msg_ptr, (uint8_t)msg_len)) {
         errno = EAGAIN;
         return -1;
     }
