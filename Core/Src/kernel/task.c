@@ -9,6 +9,12 @@
 #include "kernel/task.h"
 #include "bsp/display.h"
 
+/* ITCM attribute for hot path functions - zero wait state execution */
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
 
 #ifndef SKIP_STATIC_ASSERTS
 _Static_assert(offsetof(task_t, stack_pointer) == 12, "task_t.stack_pointer offset mismatch");
@@ -252,7 +258,7 @@ void os_init(void) {
 }
 
 
-uint32_t os_get_tick_count(void) {
+ITCM_FUNC uint32_t os_get_tick_count(void) {
     return os_tick_count;
 }
 
@@ -280,13 +286,13 @@ void task_start(task_t *task) {
 }
 
 
-void os_yield(void) {
+ITCM_FUNC void os_yield(void) {
     current_task_ticks_remaining = ticks_per_task;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
 
-uint32_t task_active_sleep(uint32_t ticks) {
+ITCM_FUNC uint32_t task_active_sleep(uint32_t ticks) {
     task_list[current_task_index]->global_tick_paused = os_tick_count;
     task_list[current_task_index]->ticks_to_pause = ticks;
     task_list[current_task_index]->task_state = TASK_BLOCKED; // BLOCKED
@@ -406,7 +412,7 @@ bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
 }
 
 
-bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
     if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged || message_bytes > message_pipe_list[pipe_idx]->max_count)
         return false;
     while ((message_pipe_list[pipe_idx]->max_count - message_pipe_list[pipe_idx]->count) < message_bytes) {
@@ -426,7 +432,7 @@ bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
 }
 
 
-bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+ITCM_FUNC bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
     if (pipe_idx >= MAX_MESSAGE_QUEUES || !message_pipe_list[pipe_idx]->engaged || message_bytes > message_pipe_list[pipe_idx]->max_count)
         return false;
     while (message_pipe_list[pipe_idx]->count < message_bytes) {
@@ -462,7 +468,7 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
 }
 
 
-bool semaphore_feed(uint8_t semaphore_idx) {
+ITCM_FUNC bool semaphore_feed(uint8_t semaphore_idx) {
     if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
         return false;
     while (semaphore_list[semaphore_idx]->count >= semaphore_list[semaphore_idx]->max_count) {
@@ -476,7 +482,7 @@ bool semaphore_feed(uint8_t semaphore_idx) {
 }
 
 
-bool semaphore_consume(uint8_t semaphore_idx) {
+ITCM_FUNC bool semaphore_consume(uint8_t semaphore_idx) {
     if (semaphore_idx >= MAX_SEMAPHORES || !semaphore_list[semaphore_idx]->engaged)
         return false;
     while (semaphore_list[semaphore_idx]->count == 0) {

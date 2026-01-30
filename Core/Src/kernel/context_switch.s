@@ -2,7 +2,7 @@
 .cpu cortex-m7
 .thumb
 
-.text
+.section .itcm,"ax",%progbits
 
 
 /*

@@ -62,6 +62,19 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  /* ITCM section for hot path code (zero wait states) */
+  /* Code is copied from FLASH to ITCM at startup */
+  .itcm :
+  {
+    . = ALIGN(4);
+    _sitcm = .;
+    *(.itcm)
+    *(.itcm*)
+    . = ALIGN(4);
+    _eitcm = .;
+  } >ITCMRAM AT> FLASH
+  _siitcm = LOADADDR(.itcm);
+
   /* The program code and other data goes into FLASH */
   .text :
   {

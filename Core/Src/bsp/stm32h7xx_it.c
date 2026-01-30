@@ -37,7 +37,12 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+/* ITCM attribute for hot path interrupt handlers */
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -185,7 +190,7 @@ void PendSV_Handler(void)
   /* USER CODE END PendSV_IRQn 1 */
 }
 #else
- __attribute__ ((naked)) void PendSV_Handler(void)
+ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
   __asm__ volatile (
@@ -202,7 +207,7 @@ void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
-void SysTick_Handler(void)
+ITCM_FUNC void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
   extern volatile uint32_t os_tick_count;
