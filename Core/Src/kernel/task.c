@@ -12,8 +12,10 @@
 /* ITCM attribute for hot path functions - zero wait state execution */
 #ifndef HOST_TEST
 #define ITCM_FUNC __attribute__((section(".itcm")))
+#define DTCM_DATA __attribute__((section(".dtcm")))
 #else
 #define ITCM_FUNC
+#define DTCM_DATA
 #endif
 
 #ifndef SKIP_STATIC_ASSERTS
@@ -23,95 +25,24 @@ _Static_assert(offsetof(task_t, global_tick_paused) == 20, "task_t.global_tick_p
 _Static_assert(offsetof(task_t, ticks_to_pause) == 24, "task_t.ticks_to_pause offset mismatch");
 #endif
 
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-task_t* task_list[MAX_TASKS];
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-semaphore_t* semaphore_list[MAX_SEMAPHORES];
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-message_pipe_t* message_pipe_list[MAX_MESSAGE_QUEUES];
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-static task_t task_pool[MAX_TASKS];
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-static semaphore_t semaphore_pool[MAX_SEMAPHORES];
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-static message_pipe_t message_pipe_pool[MAX_MESSAGE_QUEUES];
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))
-#endif
-static int8_t cleanup_task_idx[MAX_TASKS]; // when a task needs to be cleanup, its idx is stored here
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-uint8_t current_task_index;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-uint8_t running_task_count;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-uint8_t num_created_tasks;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-volatile uint32_t current_task_ticks_remaining;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-volatile uint32_t ticks_per_task;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-uint32_t cpu_vregisters[CPU_VREGISTERS_SIZE];  // virtual registers for CPU to save and restore context
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-volatile uint32_t os_tick_count;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-volatile uint8_t os_running;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-volatile uint8_t critical_stack_depth;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-volatile bool scheduler_enabled;
-
-#ifndef HOST_TEST
-__attribute__((section(".dtcm")))  // uninitializzed or vars who can be 0 at beginning (initialized in os_init) can go in .dtcm section
-#endif
-int8_t current_cleanup_task_idx;
+DTCM_DATA task_t* task_list[MAX_TASKS];
+DTCM_DATA semaphore_t* semaphore_list[MAX_SEMAPHORES];
+DTCM_DATA message_pipe_t* message_pipe_list[MAX_MESSAGE_QUEUES];
+DTCM_DATA static task_t task_pool[MAX_TASKS];
+DTCM_DATA static semaphore_t semaphore_pool[MAX_SEMAPHORES];
+DTCM_DATA static message_pipe_t message_pipe_pool[MAX_MESSAGE_QUEUES];
+DTCM_DATA static int8_t cleanup_task_idx[MAX_TASKS];
+DTCM_DATA uint8_t current_task_index;
+DTCM_DATA uint8_t running_task_count;
+DTCM_DATA uint8_t num_created_tasks;
+DTCM_DATA volatile uint32_t current_task_ticks_remaining;
+DTCM_DATA volatile uint32_t ticks_per_task;
+DTCM_DATA uint32_t cpu_vregisters[CPU_VREGISTERS_SIZE];
+DTCM_DATA volatile uint32_t os_tick_count;
+DTCM_DATA volatile uint8_t os_running;
+DTCM_DATA volatile uint8_t critical_stack_depth;
+DTCM_DATA volatile bool scheduler_enabled;
+DTCM_DATA int8_t current_cleanup_task_idx;
 
 // Stack pool placed in RAM_D1 (same as other BSS data)
 // With MAX_TASKS=128: 128 × 512 × 4 = 256KB
