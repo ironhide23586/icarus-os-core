@@ -1,0 +1,28 @@
+var icarus__task_8h =
+[
+    [ "os_create_task", "icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558", null ],
+    [ "os_exit_task", "icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384", null ],
+    [ "os_get_current_task_name", "icarus__task_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c", null ],
+    [ "os_get_running_task_count", "icarus__task_8h.html#ae2e7057f265bec1758ecf2bab3218362", null ],
+    [ "os_get_task_ticks_remaining", "icarus__task_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f", null ],
+    [ "os_get_tick_count", "icarus__task_8h.html#a9ad054a9f7ba66763a95b010bc55f949", null ],
+    [ "os_init", "icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09", null ],
+    [ "os_kill_process", "icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde", null ],
+    [ "os_register_task", "icarus__task_8h.html#afaa47eee07d9632189e536d1ea70a1bf", null ],
+    [ "os_start", "icarus__task_8h.html#a19c7111cf2121a69331d99dabe3e9df0", null ],
+    [ "os_task_suicide", "icarus__task_8h.html#a239acb5d3555fe82bcec605ddef2b9e8", null ],
+    [ "os_yield", "icarus__task_8h.html#a02d2fa79b4b720c7906a7262740db686", null ],
+    [ "pipe_dequeue", "icarus__task_8h.html#ab2cbab03c89366c0ba5f8e1239f18c71", null ],
+    [ "pipe_enqueue", "icarus__task_8h.html#a17349ac08b340c667d1422016c853f61", null ],
+    [ "pipe_get_count", "icarus__task_8h.html#afde35efc753e78f88c6e9abda446808d", null ],
+    [ "pipe_get_max_count", "icarus__task_8h.html#a656ba5cc462c6f126136d8737a831c96", null ],
+    [ "pipe_init", "icarus__task_8h.html#a3ef3d0bf9f6c1fb5be4dd623ab768c5a", null ],
+    [ "semaphore_consume", "icarus__task_8h.html#a0778882901c150b13eaaa726639d28f4", null ],
+    [ "semaphore_feed", "icarus__task_8h.html#adaf4fd634aba7757c187eb339c4ca92b", null ],
+    [ "semaphore_get_count", "icarus__task_8h.html#a1b097749f8c7f30e7cb3b3b49902beab", null ],
+    [ "semaphore_get_max_count", "icarus__task_8h.html#a000289a63b46d8613839bbb28bc93665", null ],
+    [ "semaphore_init", "icarus__task_8h.html#adf56dcf3cc0690836ab8ea00615d81b8", null ],
+    [ "task_active_sleep", "icarus__task_8h.html#ac3bac781800873509713328e27b5ada4", null ],
+    [ "task_blocking_sleep", "icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e", null ],
+    [ "task_busy_wait", "icarus__task_8h.html#abf480b084de52354a2fd785135c1fbed", null ]
+];

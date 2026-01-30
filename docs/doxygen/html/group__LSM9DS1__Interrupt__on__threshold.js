@@ -1,0 +1,27 @@
+var group__LSM9DS1__Interrupt__on__threshold =
+[
+    [ "lsm9ds1_gy_trshld_axis_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga40e2de00cb0ab847b958b329c9be0a72", null ],
+    [ "lsm9ds1_gy_trshld_axis_set", "group__LSM9DS1__Interrupt__on__threshold.html#gaac012dfb8aeeeda8c42c2c4c3aa1ce4b", null ],
+    [ "lsm9ds1_gy_trshld_min_sample_get", "group__LSM9DS1__Interrupt__on__threshold.html#gaea02c082a0c640cc1007381671a5612b", null ],
+    [ "lsm9ds1_gy_trshld_min_sample_set", "group__LSM9DS1__Interrupt__on__threshold.html#ga3d281d676de0b53959a3e0ee0c1c5778", null ],
+    [ "lsm9ds1_gy_trshld_mode_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga409ec4d11dd1aef70e779fce34c69556", null ],
+    [ "lsm9ds1_gy_trshld_mode_set", "group__LSM9DS1__Interrupt__on__threshold.html#ga3f0dfc4aa947e6d6999a60bcdb12b3e8", null ],
+    [ "lsm9ds1_gy_trshld_src_get", "group__LSM9DS1__Interrupt__on__threshold.html#gac76b36a460a21b98f484e8735498e143", null ],
+    [ "lsm9ds1_gy_trshld_x_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga4d0c6447db12a0889ebab0a819244c8b", null ],
+    [ "lsm9ds1_gy_trshld_x_set", "group__LSM9DS1__Interrupt__on__threshold.html#ga5591b88927edf8e3b3977862dc8b5403", null ],
+    [ "lsm9ds1_gy_trshld_y_get", "group__LSM9DS1__Interrupt__on__threshold.html#gaa9961c62808390344bb70cd2958b366b", null ],
+    [ "lsm9ds1_gy_trshld_y_set", "group__LSM9DS1__Interrupt__on__threshold.html#gae4635e6b1213b33d21e63c47d92d4e50", null ],
+    [ "lsm9ds1_gy_trshld_z_get", "group__LSM9DS1__Interrupt__on__threshold.html#gaf65bf0a2bddf574b6bcd7c5d7db679ae", null ],
+    [ "lsm9ds1_gy_trshld_z_set", "group__LSM9DS1__Interrupt__on__threshold.html#gaf0879040bdf9c465650bfc7846ad46ca", null ],
+    [ "lsm9ds1_mag_trshld_axis_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga0aebbd1ea0a998e318ba58a85aa99514", null ],
+    [ "lsm9ds1_mag_trshld_axis_set", "group__LSM9DS1__Interrupt__on__threshold.html#ga2c4d58e390832d82c8ede638ecde4163", null ],
+    [ "lsm9ds1_mag_trshld_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga1d351c0e39928d1f6f23a443fbc0379d", null ],
+    [ "lsm9ds1_mag_trshld_src_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga7f2661c253a569a5e16bea4c04bcd921", null ],
+    [ "lsm9ds1_xl_trshld_axis_get", "group__LSM9DS1__Interrupt__on__threshold.html#gacaecada9dd9a1e6e4f7735149474f289", null ],
+    [ "lsm9ds1_xl_trshld_axis_set", "group__LSM9DS1__Interrupt__on__threshold.html#gaf5be10b1b6d03edbc24215d6c6b8f430", null ],
+    [ "lsm9ds1_xl_trshld_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga9d53c83cf37e74584ad715ee3be4ec82", null ],
+    [ "lsm9ds1_xl_trshld_min_sample_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga74aba7de67869b05b15c98ac36635faa", null ],
+    [ "lsm9ds1_xl_trshld_min_sample_set", "group__LSM9DS1__Interrupt__on__threshold.html#ga61e76a05a205d3d466de5cf804c72918", null ],
+    [ "lsm9ds1_xl_trshld_set", "group__LSM9DS1__Interrupt__on__threshold.html#gad5d84fc30113f2a7631841f982f4ebf4", null ],
+    [ "lsm9ds1_xl_trshld_src_get", "group__LSM9DS1__Interrupt__on__threshold.html#ga10c5105ae8492498d0009ace32a3ce9a", null ]
+];
