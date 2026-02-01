@@ -2,7 +2,7 @@ name: Deploy Doxygen to GitHub Pages
 
 on:
   push:
-    branches: [main, feature/mpu-enable]
+    branches: [master, dev]
   workflow_dispatch:
 
 permissions:
