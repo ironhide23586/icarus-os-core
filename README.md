@@ -419,3 +419,28 @@ cd build && make cppcheck
 ```
 
 ---
+
+## Support ICARUS OS
+
+Building a certifiable RTOS from scratch is a massive undertaking. ICARUS OS is developed in the open because safety-critical software should be transparent, auditable, and accessible to everyone building systems where failure is not an option.
+
+Your sponsorship directly funds:
+- 🔬 **Formal verification tooling** for DAL A/B certification paths
+- 📋 **Full MISRA C:2012 compliance** with commercial static analyzers
+- 🧪 **MC/DC coverage infrastructure** for complete decision coverage
+- 📚 **Expanded platform support** beyond STM32H7
+- ⚡ **Performance optimization** and determinism guarantees
+
+If ICARUS OS helps your project, or you believe in open-source safety-critical software, consider supporting its development:
+
+<p align="center">
+  <a href="https://github.com/sponsors/ironhide23586">
+    <img src="https://img.shields.io/badge/Sponsor%20on-GitHub-ea4aaa?style=for-the-badge&logo=github" alt="Sponsor on GitHub">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://buymeacoffee.com/souham">
+    <img src="https://img.shields.io/badge/Buy%20Me%20A-Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee">
+  </a>
+</p>
+
+---
