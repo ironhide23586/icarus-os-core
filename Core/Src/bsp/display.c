@@ -1,36 +1,104 @@
-/*
- * display.c
+/**
+ * @file    display.c
+ * @brief   ICARUS OS Terminal Display Implementation
+ * @version 0.1.0
  *
- *  Created on: Jan 24, 2026
- *      Author: Souham Biswas
- *      GitHub: https://github.com/ironhide23586/icarus-os-core
+ * @details Implements ANSI terminal-based visualization for real-time kernel
+ *          monitoring. Provides progress bars, semaphore indicators, message
+ *          queue visualizations, and rolling message history displays.
+ *
+ * @par Terminal Requirements:
+ *      - ANSI escape code support (VT100 compatible)
+ *      - UTF-8 encoding for box drawing characters
+ *      - Minimum 80x24 terminal size (100x40 recommended)
+ *      - 115200 baud USB CDC connection
+ *
+ * @par Color Coding:
+ *      - Green: Producers, successful operations
+ *      - Magenta: Consumers, receive operations
+ *      - Cyan: Headers, labels, informational
+ *      - Yellow: Warnings, queue fill indicators
+ *
+ * @see     docs/do178c/design/SDD.md Section 6 - Display Subsystem
+ *
+ * @author  Souham Biswas
+ * @date    2025
+ *
+ * @copyright Copyright 2025 Souham Biswas
+ *            https://github.com/ironhide23586/icarus-os-core
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #include "bsp/display.h"
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
 #include <string.h>
 #include <inttypes.h>
 
-// ANSI escape code helper: move cursor to row, col (1-indexed)
-#define ANSI_GOTO(row, col) printf("\033[%d;%dH", (row), (col))
-// ANSI escape code helpers: show/hide cursor
-#define ANSI_SHOW_CURSOR()  printf("\033[?25h")
-#define ANSI_HIDE_CURSOR()  printf("\033[?25l")
-
-// ANSI color codes
-#define ANSI_RESET      "\033[0m"
-#define ANSI_BOLD       "\033[1m"
-#define ANSI_DIM        "\033[2m"
-#define ANSI_GREEN      "\033[32m"
-#define ANSI_YELLOW     "\033[33m"
-#define ANSI_MAGENTA    "\033[35m"
-#define ANSI_CYAN       "\033[36m"
-#define ANSI_WHITE      "\033[37m"
-#define ANSI_BG_GREEN   "\033[42m"
-#define ANSI_BG_MAGENTA "\033[45m"
+/* ============================================================================
+ * ANSI ESCAPE CODE MACROS
+ * ========================================================================= */
 
 /**
- * @brief Initialize a message history buffer
+ * @defgroup ANSI_CODES ANSI Escape Codes
+ * @brief    Terminal control sequences for cursor and color manipulation
+ * @{
+ */
+
+/** @brief Move cursor to specified row and column (1-indexed) */
+#define ANSI_GOTO(row, col) printf("\033[%d;%dH", (row), (col))
+
+/** @brief Show terminal cursor */
+#define ANSI_SHOW_CURSOR()  printf("\033[?25h")
+
+/** @brief Hide terminal cursor */
+#define ANSI_HIDE_CURSOR()  printf("\033[?25l")
+
+/** @brief Reset all text attributes */
+#define ANSI_RESET      "\033[0m"
+
+/** @brief Bold text attribute */
+#define ANSI_BOLD       "\033[1m"
+
+/** @brief Dim text attribute */
+#define ANSI_DIM        "\033[2m"
+
+/** @brief Green foreground color */
+#define ANSI_GREEN      "\033[32m"
+
+/** @brief Yellow foreground color */
+#define ANSI_YELLOW     "\033[33m"
+
+/** @brief Magenta foreground color */
+#define ANSI_MAGENTA    "\033[35m"
+
+/** @brief Cyan foreground color */
+#define ANSI_CYAN       "\033[36m"
+
+/** @brief White foreground color */
+#define ANSI_WHITE      "\033[37m"
+
+/** @brief Green background color */
+#define ANSI_BG_GREEN   "\033[42m"
+
+/** @brief Magenta background color */
+#define ANSI_BG_MAGENTA "\033[45m"
+
+/** @} */ /* End of ANSI_CODES */
+
+/* ============================================================================
+ * MESSAGE HISTORY IMPLEMENTATION
+ * ========================================================================= */
+
+/**
+ * @brief   Initialize a message history buffer
+ *
+ * @details Clears all entries and resets head/count to zero.
+ *          Must be called before using the history buffer.
+ *
+ * @param[out] hist  Pointer to history buffer to initialize
+ *
+ * @pre     hist != NULL
+ * @post    hist->count == 0, hist->head == 0
  */
 void msg_history_init(msg_history_t* hist) {
     if (hist == NULL) return;
@@ -38,7 +106,20 @@ void msg_history_init(msg_history_t* hist) {
 }
 
 /**
- * @brief Add a message to history
+ * @brief   Add a message to the history buffer
+ *
+ * @details Adds a new entry at the head position using circular buffer
+ *          semantics. Oldest entries are overwritten when buffer is full.
+ *
+ * @param[in,out] hist      Pointer to history buffer
+ * @param[in]     data      Message data bytes
+ * @param[in]     len       Number of bytes in message (clamped to MSG_HISTORY_MAX_BYTES)
+ * @param[in]     source_id Producer/consumer ID (0-254, 0xFF = unknown)
+ * @param[in]     is_send   true = send event, false = receive event
+ *
+ * @pre     hist != NULL
+ * @pre     data != NULL
+ * @pre     len > 0
  */
 void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len, 
                      uint8_t source_id, bool is_send) {
@@ -64,8 +145,25 @@ void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len,
 }
 
 /**
- * @brief Render message history as a rolling window
- * Uses ASCII box drawing for better terminal compatibility
+ * @brief   Render message history as a rolling window display
+ *
+ * @details Displays the last MSG_HISTORY_LEN messages in a bordered panel.
+ *          Uses ASCII box drawing characters for terminal compatibility.
+ *          Color-codes entries: green for sends, magenta for receives.
+ *
+ * @param[in] row   Starting terminal row (1-indexed)
+ * @param[in] col   Column position for left edge of panel
+ * @param[in] hist  Pointer to history buffer to render
+ * @param[in] label Short label for panel header (e.g., "SS", "SM")
+ *
+ * @par Display Format:
+ * @verbatim
+ *     +---SS---+
+ *     |>P0: 42|   <- Producer 0 sent 42
+ *     |<C0: 42|   <- Consumer 0 received 42
+ *     |>P0: 43|
+ *     +---------+
+ * @endverbatim
  */
 void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, const char* label) {
     if (hist == NULL) return;
@@ -115,11 +213,24 @@ void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, c
 }
 
 /**
- * @brief Render a progress bar on a fixed row
- * @param row: terminal row (1-indexed)
- * @param task_name: task name string (from TCB)
- * @param elapsed_ticks: ticks elapsed in current period
- * @param period_ticks: total ticks for this period
+ * @brief   Render a horizontal progress bar for task visualization
+ *
+ * @details Displays a fixed-width progress bar showing task execution progress
+ *          within its current period. Uses Unicode block characters for smooth
+ *          fill animation.
+ *
+ * @param[in] row           Terminal row (1-indexed)
+ * @param[in] task_name     Task name string (from TCB, max 16 chars displayed)
+ * @param[in] elapsed_ticks Ticks elapsed in current period
+ * @param[in] period_ticks  Total ticks for this period (must be > 0)
+ *
+ * @par Display Format:
+ * @verbatim
+ *     [task_name] ████████████────────────────  160 / 2000 ticks
+ * @endverbatim
+ *
+ * @note    Clears to end of line to prevent display artifacts
+ * @note    Division by zero is guarded (period_ticks forced to 1 if 0)
  */
 void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_ticks, uint32_t period_ticks) {
     // Guard against division by zero
@@ -163,10 +274,20 @@ void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_tic
 }
 
 /**
- * @brief Render a simple flashing banner (on/off indicator)
- * @param row: terminal row (1-indexed)
- * @param task_name: task name string
- * @param is_on: true to show banner (LED on), false to clear (LED off)
+ * @brief   Render a flashing banner indicator (heartbeat display)
+ *
+ * @details Displays or clears a star-filled banner synchronized with the
+ *          heartbeat LED. Used to provide visual confirmation that the
+ *          kernel scheduler is running.
+ *
+ * @param[in] row       Terminal row (1-indexed)
+ * @param[in] task_name Task name to display at banner edges
+ * @param[in] is_on     true = show banner (LED on), false = clear line (LED off)
+ *
+ * @par Display Format (when on):
+ * @verbatim
+ *     [>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]
+ * @endverbatim
  */
 void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
     // Move cursor to start of this task's row
@@ -189,8 +310,30 @@ void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
 }
 
 /**
- * @brief Render a vertical bar showing semaphore fill level
- * Uses ASCII box drawing for better terminal compatibility
+ * @brief   Render a vertical bar showing semaphore fill level
+ *
+ * @details Displays a vertical bar chart representing semaphore count as a
+ *          percentage of maximum capacity. Bar fills from bottom to top.
+ *          Uses ASCII box drawing for terminal compatibility.
+ *
+ * @param[in] start_row Top row of the vertical bar (1-indexed)
+ * @param[in] col       Column position for left edge
+ * @param[in] count     Current semaphore count
+ * @param[in] max_count Maximum semaphore capacity
+ *
+ * @par Display Format:
+ * @verbatim
+ *       SEM
+ *     +---+
+ *     |###|  <- Filled portion (green)
+ *     |###|
+ *     |   |  <- Empty portion
+ *     |   |
+ *     +---+
+ *      3/10  <- Current/max count
+ * @endverbatim
+ *
+ * @note    Division by zero is guarded (max_count forced to 1 if 0)
  */
 void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count) {
     if (max_count == 0) {
@@ -234,7 +377,30 @@ void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_
 }
 
 /**
- * @brief Render a message queue visualization panel
+ * @brief   Render a message queue (pipe) visualization panel
+ *
+ * @details Displays a compact panel showing pipe fill level and recent
+ *          send/receive activity. Includes horizontal fill bar and
+ *          directional arrows for message flow indication.
+ *
+ * @param[in] start_row Top row of the panel (1-indexed)
+ * @param[in] col       Column position for left edge
+ * @param[in] label     Short label for the queue (e.g., "Q1", "PIPE0")
+ * @param[in] count     Current byte count in pipe
+ * @param[in] max_count Maximum pipe capacity in bytes
+ * @param[in] last_sent Last message value sent (0-255)
+ * @param[in] last_recv Last message value received (0-255)
+ * @param[in] show_sent true to display sent indicator with animation
+ * @param[in] show_recv true to display received indicator with animation
+ *
+ * @par Display Format:
+ * @verbatim
+ *     PIPE0
+ *     [████────]
+ *      12/32
+ *     →123      <- Green arrow + sent value
+ *     ← 45      <- Magenta arrow + received value
+ * @endverbatim
  */
 void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
                          uint8_t count, uint8_t max_count,
@@ -290,7 +456,22 @@ void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
 }
 
 /**
- * @brief Render a producer task bar with sent message indicator
+ * @brief   Render a producer task progress bar with message indicator
+ *
+ * @details Displays a green-colored progress bar for producer tasks with
+ *          an animated arrow indicator showing the last sent message value.
+ *
+ * @param[in] row           Terminal row (1-indexed)
+ * @param[in] task_name     Task name string
+ * @param[in] elapsed_ticks Ticks elapsed in current period
+ * @param[in] period_ticks  Total ticks for this period
+ * @param[in] msg_value     Last message value sent (0-255)
+ * @param[in] show_msg      true to show message indicator with flash effect
+ *
+ * @par Display Format:
+ * @verbatim
+ *     [producer] ████████████────────  160/2000 →[42]
+ * @endverbatim
  */
 void display_render_producer(uint8_t row, const char* task_name, 
                              uint32_t elapsed_ticks, uint32_t period_ticks,
@@ -337,7 +518,22 @@ void display_render_producer(uint8_t row, const char* task_name,
 }
 
 /**
- * @brief Render a consumer task bar with received message indicator
+ * @brief   Render a consumer task progress bar with message indicator
+ *
+ * @details Displays a magenta-colored progress bar for consumer tasks with
+ *          an animated arrow indicator showing the last received message value.
+ *
+ * @param[in] row           Terminal row (1-indexed)
+ * @param[in] task_name     Task name string
+ * @param[in] elapsed_ticks Ticks elapsed in current period
+ * @param[in] period_ticks  Total ticks for this period
+ * @param[in] msg_value     Last message value received (0-255)
+ * @param[in] show_msg      true to show message indicator with flash effect
+ *
+ * @par Display Format:
+ * @verbatim
+ *     [consumer] ████████████────────  160/2000 ←[42]
+ * @endverbatim
  */
 void display_render_consumer(uint8_t row, const char* task_name,
                              uint32_t elapsed_ticks, uint32_t period_ticks,
@@ -384,7 +580,32 @@ void display_render_consumer(uint8_t row, const char* task_name,
 }
 
 /**
- * @brief Initialize terminal display - clear screen and print header
+ * @brief   Initialize terminal display subsystem
+ *
+ * @details Performs one-time initialization of the terminal display:
+ *          - Clears screen and hides cursor
+ *          - Renders ICARUS ASCII art logo header
+ *          - Initializes task progress bar rows
+ *          - Sets up heartbeat visualization (if enabled)
+ *
+ * @pre     USB CDC must be initialized and connected
+ * @post    Terminal ready for real-time updates
+ *
+ * @note    This function is idempotent - subsequent calls are no-ops
+ * @note    Called automatically by os_idle_task on first run
+ *
+ * @par Logo Display:
+ * @verbatim
+ *     ┌──────────────────────────────────────────────────────────────┐
+ *     │   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │
+ *     │   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │
+ *     │   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │
+ *     │   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │
+ *     │   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
+ *     │   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
+ *     │   Preemptive Kernel • ARMv7E-M • STM32H750                   │
+ *     └──────────────────────────────────────────────────────────────┘
+ * @endverbatim
  */
 void display_init(void) {
     static uint8_t initialized = 0;
@@ -461,9 +682,9 @@ void display_init(void) {
     
     // Initialize task rows with empty bars using task names from TCB
     // Note: This assumes tasks are registered in order and we skip system tasks
-    // System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEART_TASK)
+    // System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEAT_TASK)
     // User tasks start from index 2
-    extern task_t* task_list[MAX_TASKS];
+    extern icarus_task_t* task_list[ICARUS_MAX_TASKS];
     extern uint8_t num_created_tasks;
     
     uint8_t user_task_count = 0;

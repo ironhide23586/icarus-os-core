@@ -1,0 +1,25 @@
+var group__DISPLAY__CONFIG =
+[
+    [ "BAR_COL_START", "group__DISPLAY__CONFIG.html#ga5b21300f1e89017e0764ef5a65b0d778", null ],
+    [ "BAR_WIDTH", "group__DISPLAY__CONFIG.html#gaa67f5290e4cf518cd55c95c8b644d5f2", null ],
+    [ "CYCLE_PAUSE_TICKS", "group__DISPLAY__CONFIG.html#ga13693b851c3e820521040bbf0976ec74", null ],
+    [ "ENABLE_HEARTBEAT_VISUALIZATION", "group__DISPLAY__CONFIG.html#gab6a58c22ab8b716a82ea3874a537d2f7", null ],
+    [ "HEARTBEAT_OFF_TICKS", "group__DISPLAY__CONFIG.html#gaf9a90b28704bf3087ea1286ed174acc6", null ],
+    [ "HEARTBEAT_ON_TICKS", "group__DISPLAY__CONFIG.html#gae9cda8508fa6992391458bbb4fb61916", null ],
+    [ "HEARTBEAT_PERIOD_TICKS", "group__DISPLAY__CONFIG.html#gafcd0a05656c9c6c461b8c4c22b3e9ebb", null ],
+    [ "ICARUS_ENABLE_HEARTBEAT_VIS", "group__DISPLAY__CONFIG.html#ga415024f369cebe906f95822f2d5d0403", null ],
+    [ "ICARUS_HEARTBEAT_OFF_TICKS", "group__DISPLAY__CONFIG.html#gad1dc7d87bddd485428711624e7e50305", null ],
+    [ "ICARUS_HEARTBEAT_ON_TICKS", "group__DISPLAY__CONFIG.html#ga74704f36e4cf9109ab43a7adc574107a", null ],
+    [ "RENDER_INTERVAL_TICKS", "group__DISPLAY__CONFIG.html#gabcf256d833472f221afd42989453ea5e", null ],
+    [ "ROW_HEADER", "group__DISPLAY__CONFIG.html#gafef940f96d54536529508c2ce07651df", null ],
+    [ "ROW_HEARTBEAT", "group__DISPLAY__CONFIG.html#ga7149271dd64220833ebe4f204e128bc3", null ],
+    [ "ROW_SEPARATOR", "group__DISPLAY__CONFIG.html#ga5bbabe205ef784895414d792bcf8b2b2", null ],
+    [ "ROW_TASK_A", "group__DISPLAY__CONFIG.html#gaf8606fb88b9b101e4cfdb54ae1e2b328", null ],
+    [ "ROW_TASK_B", "group__DISPLAY__CONFIG.html#gab5169458543c4c0b41c66d1a7feee50f", null ],
+    [ "ROW_TASK_C", "group__DISPLAY__CONFIG.html#ga37f46862fc36f45c2c19f912ccc5f4e3", null ],
+    [ "TASK_A_PERIOD_TICKS", "group__DISPLAY__CONFIG.html#ga51bfa0b08497b02051bcee67c1d86f08", null ],
+    [ "TASK_B_PERIOD_TICKS", "group__DISPLAY__CONFIG.html#ga639310749fcdda078a9c73959acc3eaa", null ],
+    [ "TASK_C_PERIOD_TICKS", "group__DISPLAY__CONFIG.html#ga62d7e706683af67573db02b0e6715249", null ],
+    [ "VBAR_COL", "group__DISPLAY__CONFIG.html#ga886f5233deede8c97c3fdbf57646c206", null ],
+    [ "VBAR_HEIGHT", "group__DISPLAY__CONFIG.html#ga20d02115f59daa68dbef077c8d3dff15", null ]
+];

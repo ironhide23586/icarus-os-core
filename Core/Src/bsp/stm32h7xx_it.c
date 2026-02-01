@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include "icarus/icarus_config.h"
 #ifdef HOST_TEST
 // For host testing, include mock header for os_yield_pendsv
 #include "mock_asm.h"
@@ -37,7 +38,12 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+/* ITCM attribute for hot path interrupt handlers */
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -185,7 +191,7 @@ void PendSV_Handler(void)
   /* USER CODE END PendSV_IRQn 1 */
 }
 #else
- __attribute__ ((naked)) void PendSV_Handler(void)
+ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
   __asm__ volatile (
@@ -202,7 +208,7 @@ void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
-void SysTick_Handler(void)
+ITCM_FUNC void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
   extern volatile uint32_t os_tick_count;
@@ -213,7 +219,7 @@ void SysTick_Handler(void)
   os_tick_count++;
 
   if (os_running && --current_task_ticks_remaining == 0 && scheduler_enabled) {
-    current_task_ticks_remaining = TICKS_PER_TASK;  // Reset for next task
+    current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;  // Reset for next task
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
   }
   

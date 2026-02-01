@@ -8,8 +8,8 @@
 
 #include <stdint.h>
 
-// Minimal definitions from main.h needed for testing
-#define TICKS_PER_TASK 50
+// Include icarus config for ICARUS_TICKS_PER_TASK
+#include "icarus/icarus_config.h"
 
 // Error handler (mock)
 void Error_Handler(void);

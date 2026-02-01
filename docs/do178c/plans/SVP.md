@@ -2,7 +2,7 @@
 
 **Document ID:** ICARUS-SVP-001  
 **Version:** 0.1  
-**Date:** 2026-01-26  
+**Date:** 2025-01-26  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
 
@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
-| 0.1 | 2026-01-26 | Kiro | Initial draft |
+| 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
 
 ---
 
@@ -433,8 +433,8 @@ fi
 ### 9.1 Test Results Format
 
 ```
-Test Run: ICARUS-TR-2026-01-26-001
-Date: 2026-01-26
+Test Run: ICARUS-TR-2025-01-26-001
+Date: 2025-01-26
 Environment: Host (macOS, GCC 14.x)
 Configuration: Debug, HOST_TEST defined
 
@@ -468,8 +468,8 @@ See `ICARUS-VER-003 Test Traceability Matrix` for complete matrix.
 
 | Phase | Activity | Target Date | Status |
 |-------|----------|-------------|--------|
-| 1 | Host unit tests | 2026-01-26 | ✅ Complete |
-| 2 | Static analysis (cppcheck) | 2026-01-26 | ✅ Complete |
+| 1 | Host unit tests | 2025-01-26 | ✅ Complete |
+| 2 | Static analysis (cppcheck) | 2025-01-26 | ✅ Complete |
 | 3 | MISRA analysis | TBD | Planned |
 | 4 | Target unit tests | TBD | Planned |
 | 5 | Integration tests | TBD | Planned |

@@ -2,7 +2,7 @@
 
 **Document ID:** ICARUS-PSAC-001  
 **Version:** 0.1  
-**Date:** 2026-01-26  
+**Date:** 2025-01-26  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
 
@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
-| 0.1 | 2026-01-26 | Kiro | Initial draft |
+| 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
 
 ---
 
@@ -439,13 +439,13 @@ See `ICARUS-VER-003 Test Traceability Matrix` for current traceability.
 
 | Milestone | Target Date | Status |
 |-----------|-------------|--------|
-| PSAC Draft | 2026-01-26 | ✅ Complete |
+| PSAC Draft | 2025-01-26 | ✅ Complete |
 | Software Requirements | TBD | Planned |
 | Design Complete | TBD | Planned |
 | Code Complete | TBD | In Progress |
-| Unit Test Complete | 2026-01-26 | ✅ Complete |
+| Unit Test Complete | 2025-01-26 | ✅ Complete |
 | Integration Test Complete | TBD | Planned |
-| Coverage Analysis Complete | 2026-01-26 | ✅ Complete (host) |
+| Coverage Analysis Complete | 2025-01-26 | ✅ Complete (host) |
 | Target Testing Complete | TBD | Planned |
 | SAS Submission | TBD | Planned |
 
