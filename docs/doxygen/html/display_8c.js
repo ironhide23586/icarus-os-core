@@ -1,0 +1,26 @@
+var display_8c =
+[
+    [ "ANSI_BG_GREEN", "group__ANSI__CODES.html#gaa3f9f309f3ed73b3bf9e1750acd0fd97", null ],
+    [ "ANSI_BG_MAGENTA", "group__ANSI__CODES.html#ga3c7bcc8d5ea6dda147782785578a53b3", null ],
+    [ "ANSI_BOLD", "group__ANSI__CODES.html#ga46587b83544b8e9be045bb93f644ac82", null ],
+    [ "ANSI_CYAN", "group__ANSI__CODES.html#ga8e74e295b54795a32a16ea744f6aed5e", null ],
+    [ "ANSI_DIM", "group__ANSI__CODES.html#ga51fea81bd0f75dcc2fc1b341d9cc7958", null ],
+    [ "ANSI_GOTO", "group__ANSI__CODES.html#gad113952704c7e95007de4953ec44d098", null ],
+    [ "ANSI_GREEN", "group__ANSI__CODES.html#gad050fd71ced44460a0c723a1715c40e5", null ],
+    [ "ANSI_HIDE_CURSOR", "group__ANSI__CODES.html#ga3d9372801a83aa79290a0388a6c3abc8", null ],
+    [ "ANSI_MAGENTA", "group__ANSI__CODES.html#ga8a9c0853e05b02c03acdfaab90f534c8", null ],
+    [ "ANSI_RESET", "group__ANSI__CODES.html#gaf77a445894f2f750d43cf2182cd29e55", null ],
+    [ "ANSI_SHOW_CURSOR", "group__ANSI__CODES.html#ga4319fbb8f21090c85438cb4daa3bc62a", null ],
+    [ "ANSI_WHITE", "group__ANSI__CODES.html#ga141dae929732a29e6654ebc4741d6c93", null ],
+    [ "ANSI_YELLOW", "group__ANSI__CODES.html#gaf6e8b5c7b35e8bff4c581efd8019c798", null ],
+    [ "display_init", "display_8c.html#a407d5033a6f0198221c8a9081d7e807e", null ],
+    [ "display_render_banner", "display_8c.html#a40122382f60e1f27a4483c193578628e", null ],
+    [ "display_render_bar", "display_8c.html#a7520bc2f8594614588d9d31f3415d0fb", null ],
+    [ "display_render_consumer", "display_8c.html#ad127e7f8ce900ae5e9bec5d1a4c10f83", null ],
+    [ "display_render_msg_history", "display_8c.html#a1157ea2c970e78ff6261f35c1801b078", null ],
+    [ "display_render_pipe", "display_8c.html#a09198df6430376e95efd208b1c158f97", null ],
+    [ "display_render_producer", "display_8c.html#ab6dc27a9942fa96fd5368031c8155a58", null ],
+    [ "display_render_vbar", "display_8c.html#aa23e6d0b5d3afdbda5c81cba51a5d6f9", null ],
+    [ "msg_history_add", "display_8c.html#a265707d0ecea8ba5bc116e7349f66af1", null ],
+    [ "msg_history_init", "display_8c.html#a6c3781539153538a74dd53ab3233f7b6", null ]
+];

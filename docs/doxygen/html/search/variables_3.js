@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['cleanup_5ftask_5fidx_0',['cleanup_task_idx',['../group__KERNEL__DATA.html#gab6b7ccecbf26fe99c61c36f303a256b2',1,'icarus_task.c']]],
+  ['count_1',['count',['../structicarus__semaphore__t.html#ad2f55245f78ea15c0bd5927af7707786',1,'icarus_semaphore_t::count'],['../structicarus__pipe__t.html#a8ef464a20655016f9152ba40d3dd4e70',1,'icarus_pipe_t::count'],['../structmsg__history__t.html#a21c48aa1145e822ed2faa96cb72b4ced',1,'msg_history_t::count']]],
+  ['cpu_5fvregisters_2',['cpu_vregisters',['../group__SCHEDULER__STATE.html#gac9ea1bd42e65785713a0ce362b0ae77f',1,'icarus_task.c']]],
+  ['critical_5fstack_5fdepth_3',['critical_stack_depth',['../group__SCHEDULER__STATE.html#ga8f52138584fd6575cfe437c737b9e9de',1,'icarus_task.c']]],
+  ['ctrl_5freg10_4',['ctrl_reg10',['../unionlsm9ds1__reg__t.html#ad77feee1c95bf8d195f36f7e09a6e1bf',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg1_5fg_5',['ctrl_reg1_g',['../unionlsm9ds1__reg__t.html#a9670b93777837512965c2f0100a758b3',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg1_5fm_6',['ctrl_reg1_m',['../unionlsm9ds1__reg__t.html#ae736e4fc35aac03cb2825fc45c77119c',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg2_5fg_7',['ctrl_reg2_g',['../unionlsm9ds1__reg__t.html#a7294c62ce46c74a9af81a960c43bfdeb',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg2_5fm_8',['ctrl_reg2_m',['../unionlsm9ds1__reg__t.html#a1187c83d1bab382d74bca4b7bce4f302',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg3_5fg_9',['ctrl_reg3_g',['../unionlsm9ds1__reg__t.html#aa103a1ec0c71ffe365c8eff4999b1205',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg3_5fm_10',['ctrl_reg3_m',['../unionlsm9ds1__reg__t.html#a733d726da2c80e41d13cc0b34ed5cf60',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg4_11',['ctrl_reg4',['../unionlsm9ds1__reg__t.html#a5a44fe7f2323193e4f793c8c857589c0',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg4_5fm_12',['ctrl_reg4_m',['../unionlsm9ds1__reg__t.html#a04d69e73af168c96cf1bbf5a56a42630',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg5_5fm_13',['ctrl_reg5_m',['../unionlsm9ds1__reg__t.html#af22679efcf669dd25d6b6309b1f505f7',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg5_5fxl_14',['ctrl_reg5_xl',['../unionlsm9ds1__reg__t.html#ac03ce9a93b979648450c28d247c84094',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg6_5fxl_15',['ctrl_reg6_xl',['../unionlsm9ds1__reg__t.html#acdcd578ab9efd1f23ebdb0abe684bbe0',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg7_5fxl_16',['ctrl_reg7_xl',['../unionlsm9ds1__reg__t.html#ae32206b8197756985ad5edcd66e1e549',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg8_17',['ctrl_reg8',['../unionlsm9ds1__reg__t.html#af3ab78347708d4d87eda0b9f34728d14',1,'lsm9ds1_reg_t']]],
+  ['ctrl_5freg9_18',['ctrl_reg9',['../unionlsm9ds1__reg__t.html#abd4678bdc328d11d98ecc3758e0e8381',1,'lsm9ds1_reg_t']]],
+  ['current_5fcleanup_5ftask_5fidx_19',['current_cleanup_task_idx',['../group__SCHEDULER__STATE.html#ga67d3a97b38bd640b4bb92e51ca895f9b',1,'icarus_task.c']]],
+  ['current_5ftask_5findex_20',['current_task_index',['../group__SCHEDULER__STATE.html#ga1e57cf56984cc68485c1b2f52f0d8ce2',1,'icarus_task.c']]],
+  ['current_5ftask_5fticks_5fremaining_21',['current_task_ticks_remaining',['../group__SCHEDULER__STATE.html#ga0d0a488ee168eb96e031931a33190afe',1,'icarus_task.c']]]
+];

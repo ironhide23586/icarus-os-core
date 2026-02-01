@@ -1,21 +1,48 @@
-/*
- * stress_test.c
+/**
+ * @file    stress_test.c
+ * @brief   ICARUS (Intelligent Cooperative Architecture for Real-time 
+ *          Unified Systems) OS Kernel Stress Test Suite
+ * @version 0.1.0
  *
- *  Created on: Jan 29, 2026
- *      Author: Souham Biswas
- *      GitHub: https://github.com/ironhide23586/icarus-os-core
+ * @details Comprehensive stress test suite for ICARUS OS kernel primitives.
+ *          Creates high-contention scenarios to validate:
+ *          - Semaphore operations under heavy concurrent load
+ *          - Message pipe throughput and blocking behavior
+ *          - Task scheduler fairness and responsiveness
+ *          - Critical section handling and race condition prevention
  *
- *  Stress test suite for ICARUS OS kernel primitives
- *  
- *  This module creates high-contention scenarios to test:
- *  - Semaphore operations under heavy load
- *  - Message pipe throughput and blocking behavior
- *  - Task scheduler fairness and responsiveness
- *  - Critical section handling
+ * @par Test Categories:
+ *      | Category        | Tasks | Description                          |
+ *      |-----------------|-------|--------------------------------------|
+ *      | Semaphore Hammer| 2     | Rapid feed/consume on same semaphore |
+ *      | Semaphore Med   | 2     | Medium-speed adaptive operations     |
+ *      | Semaphore Slow  | 1     | Pattern-based slow operations        |
+ *      | Semaphore Mutex | 2     | Binary semaphore (mutex) stress      |
+ *      | Pipe Flood      | 2     | Maximum throughput pipe test         |
+ *      | Pipe Multi-Prod | 4     | Multiple producers, single consumer  |
+ *      | Pipe VarSize    | 2     | Variable message size test           |
+ *      | Scheduler       | 3     | Yield spam, sleep patterns, CPU hog  |
+ *      | Statistics      | 1     | Real-time stats display              |
+ *
+ * @par Verification:
+ *      The stress tests include built-in verification that checks:
+ *      - Sequence ordering (per-producer FIFO preserved)
+ *      - Data integrity (message content matches expected)
+ *      - No overflow/underflow errors
+ *
+ * @see     stress_test.h for configuration and statistics structure
+ * @see     icarus_task.h for kernel API
+ *
+ * @author  Souham Biswas
+ * @date    2025
+ *
+ * @copyright Copyright 2025 Souham Biswas
+ *            https://github.com/ironhide23586/icarus-os-core
+ *            Licensed under the Apache License, Version 2.0
  */
 
 #include "stress_test.h"
-#include "kernel/task.h"
+#include "icarus/icarus_task.h"
 #include "bsp/display.h"
 
 // Global statistics
@@ -51,7 +78,14 @@ stress_stats_t g_stress_stats = {0};
 // Multiple tasks competing for the same semaphores
 // ============================================================================
 
-// Semaphore hammer - rapid feed/consume on sem 4
+/**
+ * @brief   Fast semaphore hammer task 0
+ *
+ * @details Performs rapid burst feed/consume operations on STRESS_SEM_IDX_BASE.
+ *          Tracks maximum wait time for contention analysis.
+ *
+ * @note    Pattern: burst feed → sleep → burst consume → sleep
+ */
 static void sem_hammer_fast_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE;
@@ -102,7 +136,14 @@ static void sem_hammer_fast_0(void) {
     }
 }
 
-// Competing hammer on same semaphore
+/**
+ * @brief   Fast semaphore hammer task 1 (competing)
+ *
+ * @details Competes with sem_hammer_fast_0 on same semaphore using
+ *          opposite pattern (consume first, then feed).
+ *
+ * @note    Pattern: burst consume → sleep → burst feed → sleep
+ */
 static void sem_hammer_fast_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE;
@@ -136,7 +177,12 @@ static void sem_hammer_fast_1(void) {
     }
 }
 
-// Medium speed semaphore stress on sem 5
+/**
+ * @brief   Medium-speed adaptive semaphore stress task 0
+ *
+ * @details Adapts behavior based on semaphore fill level - feeds when
+ *          below half capacity, consumes when above.
+ */
 static void sem_stress_med_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 1;
@@ -172,7 +218,11 @@ static void sem_stress_med_0(void) {
     }
 }
 
-// Competing medium speed task
+/**
+ * @brief   Medium-speed semaphore stress task 1 (competing)
+ *
+ * @details Alternates consume/feed with explicit yields between operations.
+ */
 static void sem_stress_med_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 1;
@@ -200,7 +250,12 @@ static void sem_stress_med_1(void) {
     }
 }
 
-// Slow but steady semaphore stress on sem 6
+/**
+ * @brief   Slow pattern-based semaphore stress task
+ *
+ * @details Uses rotating 4-phase pattern with varying feed/consume counts
+ *          to create irregular load patterns.
+ */
 static void sem_stress_slow(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 2;
@@ -242,7 +297,12 @@ static void sem_stress_slow(void) {
     }
 }
 
-// Binary semaphore stress (mutex-like) on sem 7
+/**
+ * @brief   Binary semaphore (mutex) stress task 0
+ *
+ * @details Uses binary semaphore as mutex to protect critical section.
+ *          Performs work inside critical section then yields.
+ */
 static void sem_mutex_stress_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 3;
@@ -275,6 +335,12 @@ static void sem_mutex_stress_0(void) {
     }
 }
 
+/**
+ * @brief   Binary semaphore (mutex) stress task 1 (competing)
+ *
+ * @details Competes with sem_mutex_stress_0 for mutex, performs
+ *          shorter critical section work.
+ */
 static void sem_mutex_stress_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 3;
@@ -310,7 +376,14 @@ static void sem_mutex_stress_1(void) {
 // High-throughput message passing with various patterns
 // ============================================================================
 
-// Fast pipe flood - pipe 4
+/**
+ * @brief   Pipe flood sender task
+ *
+ * @details Sends 4-byte sequence messages as fast as possible to create
+ *          backpressure. Tracks wait times when pipe is full.
+ *
+ * @note    Verifies: Sequence ordering preserved under load
+ */
 static void pipe_flood_sender(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE;
@@ -352,6 +425,14 @@ static void pipe_flood_sender(void) {
     }
 }
 
+/**
+ * @brief   Pipe flood receiver task
+ *
+ * @details Receives messages slower than sender to create backpressure.
+ *          Verifies sequence ordering is preserved.
+ *
+ * @note    Increments seq_errors on out-of-order detection
+ */
 static void pipe_flood_receiver(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE;
@@ -394,7 +475,12 @@ static void pipe_flood_receiver(void) {
     }
 }
 
-// Multi-producer pipe stress - pipe 5
+/**
+ * @brief   Multi-producer pipe task 0
+ *
+ * @details First of three producers sending to same pipe with
+ *          producer ID 0x00 in message header.
+ */
 static void pipe_multi_prod_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -419,6 +505,11 @@ static void pipe_multi_prod_0(void) {
     }
 }
 
+/**
+ * @brief   Multi-producer pipe task 1
+ *
+ * @details Second producer with ID 0x01, slightly different timing.
+ */
 static void pipe_multi_prod_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -443,6 +534,11 @@ static void pipe_multi_prod_1(void) {
     }
 }
 
+/**
+ * @brief   Multi-producer pipe task 2
+ *
+ * @details Third producer with ID 0x02, different timing.
+ */
 static void pipe_multi_prod_2(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -467,6 +563,15 @@ static void pipe_multi_prod_2(void) {
     }
 }
 
+/**
+ * @brief   Multi-producer pipe consumer
+ *
+ * @details Single consumer for multi-producer pipe. Verifies per-producer
+ *          sequence ordering is preserved despite interleaving.
+ *
+ * @note    Increments seq_errors if per-producer order violated
+ * @note    Increments data_errors if invalid producer ID received
+ */
 static void pipe_multi_cons(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -503,7 +608,12 @@ static void pipe_multi_cons(void) {
     }
 }
 
-// Variable size message stress - pipe 6
+/**
+ * @brief   Variable-size message sender
+ *
+ * @details Sends messages of varying sizes (1, 2, 4, 8 bytes) in
+ *          rotating pattern to test pipe handling of different sizes.
+ */
 static void pipe_varsz_sender(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 2;
@@ -536,6 +646,14 @@ static void pipe_varsz_sender(void) {
     }
 }
 
+/**
+ * @brief   Variable-size message receiver
+ *
+ * @details Receives variable-size messages and verifies data pattern
+ *          integrity for each message.
+ *
+ * @note    Increments data_errors if pattern mismatch detected
+ */
 static void pipe_varsz_receiver(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 2;
@@ -579,7 +697,12 @@ static void pipe_varsz_receiver(void) {
 // Rapid context switching and yield patterns
 // ============================================================================
 
-// Yield spammer - tests scheduler fairness
+/**
+ * @brief   Yield spammer task
+ *
+ * @details Rapidly yields in bursts to stress scheduler fairness.
+ *          Tests that other tasks still get CPU time.
+ */
 static void yield_spammer(void) {
     const char* task_name = os_get_current_task_name();
     uint32_t yield_count = 0;
@@ -601,7 +724,12 @@ static void yield_spammer(void) {
     }
 }
 
-// Mixed sleep patterns
+/**
+ * @brief   Mixed sleep pattern task
+ *
+ * @details Cycles through different sleep durations (1, 5, 20, 50, 100 ticks)
+ *          to test scheduler handling of varied timing requirements.
+ */
 static void sleep_pattern_task(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t pattern = 0;
@@ -620,7 +748,12 @@ static void sleep_pattern_task(void) {
     }
 }
 
-// CPU hog - tests preemption
+/**
+ * @brief   CPU hog task
+ *
+ * @details Burns CPU cycles without yielding to test preemption.
+ *          Verifies scheduler can preempt non-cooperative tasks.
+ */
 static void cpu_hog_task(void) {
     const char* task_name = os_get_current_task_name();
     volatile uint32_t counter = 0;
@@ -647,6 +780,15 @@ static void cpu_hog_task(void) {
 // STATISTICS DISPLAY TASK
 // ============================================================================
 
+/**
+ * @brief   Statistics display task
+ *
+ * @details Periodically renders stress test statistics to terminal including
+ *          operation counts, wait times, and verification error status.
+ *
+ * @note    Updates every 500ms
+ * @note    Shows PASS/FAIL based on error counts
+ */
 static void stats_display_task(void) {
     while (1) {
         // Line 1: Operation counts
@@ -702,6 +844,12 @@ static void stats_display_task(void) {
 // HEADER DISPLAY
 // ============================================================================
 
+/**
+ * @brief   Initialize stress test header display
+ *
+ * @details Renders the stress test section header to terminal with
+ *          configuration summary.
+ */
 static void stress_header_init(void) {
     ANSI_GOTO(STRESS_ROW_HEADER, 1);
     printf("\033[1;33m");  // Bold yellow
@@ -720,10 +868,28 @@ static void stress_header_init(void) {
 // INITIALIZATION
 // ============================================================================
 
+/**
+ * @brief   Get pointer to global stress test statistics
+ *
+ * @details Returns pointer to the global statistics structure for
+ *          external monitoring or logging.
+ *
+ * @return  stress_stats_t*  Pointer to global statistics
+ *
+ * @see     stress_test_reset_stats()
+ */
 stress_stats_t* stress_test_get_stats(void) {
     return &g_stress_stats;
 }
 
+/**
+ * @brief   Reset all stress test statistics to zero
+ *
+ * @details Clears all counters in the global statistics structure.
+ *          Call before starting a new test run for clean metrics.
+ *
+ * @see     stress_test_get_stats()
+ */
 void stress_test_reset_stats(void) {
     g_stress_stats.sem_feeds = 0;
     g_stress_stats.sem_consumes = 0;
@@ -743,6 +909,29 @@ void stress_test_reset_stats(void) {
     g_stress_stats.underflow_errors = 0;
 }
 
+/**
+ * @brief   Initialize and register all stress test tasks
+ *
+ * @details Initializes stress test IPC primitives and registers all
+ *          stress test tasks with the kernel. Call after os_init()
+ *          and before os_start().
+ *
+ * @par Registered Tasks (19 total):
+ *      - 7 semaphore stress tasks
+ *      - 8 pipe stress tasks
+ *      - 3 scheduler stress tasks
+ *      - 1 statistics display task
+ *
+ * @pre     os_init() must have been called
+ *
+ * @post    4 stress semaphores initialized
+ * @post    4 stress pipes initialized
+ * @post    All stress tasks registered
+ * @post    Statistics reset to zero
+ *
+ * @see     os_init()
+ * @see     stress_test_get_stats()
+ */
 void stress_test_init(void) {
     // Reset statistics
     stress_test_reset_stats();

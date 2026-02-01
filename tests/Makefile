@@ -18,7 +18,7 @@ BUILD_DIR = $(TEST_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj
 
 # Source code to test (all application code that can be tested)
-KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/kernel/task.c
+KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/icarus/icarus_task.c
 BSP_SRC = \
 	$(PROJECT_ROOT)/Core/Src/bsp/error.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_stdio.c \
@@ -31,7 +31,7 @@ BSP_SRC = \
 # All application source files
 APP_SRC = $(KERNEL_SRC) $(BSP_SRC)
 
-KERNEL_INC = $(PROJECT_ROOT)/Core/Inc/kernel
+KERNEL_INC = $(PROJECT_ROOT)/Core/Inc/icarus
 
 # Test sources (all test_*.c files)
 TEST_SOURCES = $(wildcard $(SRC_DIR)/test_*.c)
@@ -202,9 +202,9 @@ $(COVERAGE_INFO): test
 		sed -i '' "s|SF:\.\./Core/Src/|SF:$$PROJECT_ABS/Core/Src/|g" $(COVERAGE_INFO) 2>/dev/null || true; \
 		rm -f $(COVERAGE_INFO).bak 2>/dev/null || true; \
 	fi
-	@# Extract only application source files (Core/Src/kernel/*, Core/Src/bsp/*)
+	@# Extract only application source files (Core/Src/icarus/*, Core/Src/bsp/*)
 	@if [ -f $(COVERAGE_INFO) ]; then \
-		lcov --extract $(COVERAGE_INFO) '*/Core/Src/kernel/*' '*/Core/Src/bsp/*' --output-file $(COVERAGE_INFO) || true; \
+		lcov --extract $(COVERAGE_INFO) '*/Core/Src/icarus/*' '*/Core/Src/bsp/*' --output-file $(COVERAGE_INFO) || true; \
 	fi
 
 coverage-summary: coverage
