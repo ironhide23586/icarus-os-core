@@ -7,6 +7,8 @@
 **Intelligent Certifiable Autonomous Real-time Unified System**
 
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://ironhide23586.github.io/icarus-os-core/)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ea4aaa)](https://github.com/sponsors/ironhide23586)
+[![Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow)](https://buymeacoffee.com/souham)
 
 A minimal, deterministic real-time kernel for Cortex-M designed to support DO-178C DAL C certification objectives. Built from the ground up with safety-critical aerospace and defense applications in mind.
 
