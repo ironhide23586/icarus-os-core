@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo_landscape.jpeg" alt="ICARUS OS Banner" width="100%">
+</p>
+
 # ICARUS OS Core
 
 **Intelligent Certifiable Autonomous Real-time Unified System**
