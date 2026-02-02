@@ -1,5 +1,5 @@
 /**
- * @file    icarus_types.h
+ * @file    types.h
  * @brief   ICARUS OS Core Type Definitions
  * @version 0.1.0
  *
@@ -29,7 +29,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "icarus_config.h"
+#include "icarus/config.h"
 
 /* ============================================================================
  * TASK STATE DEFINITIONS

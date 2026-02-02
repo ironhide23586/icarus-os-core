@@ -1,0 +1,147 @@
+/**
+ * @file    pipe.c
+ * @brief   ICARUS Message Pipe Implementation
+ * @version 0.1.0
+ *
+ * @details Byte-stream message pipes for inter-task communication.
+ *
+ * @author  Souham Biswas
+ * @date    2025
+ *
+ * @copyright Copyright 2025 Souham Biswas
+ *            https://github.com/ironhide23586/icarus-os-core
+ *            Licensed under the Apache License, Version 2.0
+ */
+
+#include "icarus/pipe.h"
+#include "icarus/kernel.h"
+#include "icarus/scheduler.h"
+
+/* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
+
+/* ============================================================================
+ * MESSAGE PIPE IMPLEMENTATION
+ * ========================================================================= */
+
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
+{
+    enter_critical();
+
+    if (pipe_idx < ICARUS_MAX_MESSAGE_QUEUES &&
+        pipe_capacity_bytes > 0 &&
+        pipe_capacity_bytes <= ICARUS_MAX_MESSAGE_BYTES) {
+
+        if (!message_pipe_list[pipe_idx]->engaged) {
+            message_pipe_list[pipe_idx]->count = 0;
+            message_pipe_list[pipe_idx]->max_count = pipe_capacity_bytes;
+            message_pipe_list[pipe_idx]->enqueue_idx = 0;
+            message_pipe_list[pipe_idx]->dequeue_idx = 0;
+            message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+            message_pipe_list[pipe_idx]->engaged = true;
+
+            for (uint16_t i = 0; i < ICARUS_MAX_MESSAGE_BYTES; i++) {
+                message_pipe_list[pipe_idx]->buffer[i] = 0;
+            }
+
+            exit_critical();
+            return true;
+        }
+    }
+
+    exit_critical();
+    return false;
+}
+
+ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
+                            uint8_t message_bytes)
+{
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged ||
+        message_bytes > message_pipe_list[pipe_idx]->max_count) {
+        return false;
+    }
+
+    while ((message_pipe_list[pipe_idx]->max_count -
+            message_pipe_list[pipe_idx]->count) < message_bytes) {
+        task_active_sleep(1);
+        if ((message_pipe_list[pipe_idx]->max_count -
+             message_pipe_list[pipe_idx]->count) >= message_bytes) {
+            scheduler_enabled = false;
+        }
+    }
+
+    enter_critical();
+
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message_pipe_list[pipe_idx]->buffer[
+            message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
+        message_pipe_list[pipe_idx]->enqueue_idx =
+            (uint8_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count++;
+    }
+
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+
+    return true;
+}
+
+ITCM_FUNC bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
+                            uint8_t message_bytes)
+{
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged ||
+        message_bytes > message_pipe_list[pipe_idx]->max_count) {
+        return false;
+    }
+
+    while (message_pipe_list[pipe_idx]->count < message_bytes) {
+        task_active_sleep(1);
+        if (message_pipe_list[pipe_idx]->count >= message_bytes) {
+            scheduler_enabled = false;
+        }
+    }
+
+    enter_critical();
+
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message[i] = message_pipe_list[pipe_idx]->buffer[
+            message_pipe_list[pipe_idx]->dequeue_idx];
+        message_pipe_list[pipe_idx]->dequeue_idx =
+            (uint8_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count--;
+    }
+
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+
+    return true;
+}
+
+uint8_t pipe_get_count(uint8_t pipe_idx)
+{
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged) {
+        return 0;
+    }
+    return message_pipe_list[pipe_idx]->count;
+}
+
+uint8_t pipe_get_max_count(uint8_t pipe_idx)
+{
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged) {
+        return 0;
+    }
+    return message_pipe_list[pipe_idx]->max_count;
+}

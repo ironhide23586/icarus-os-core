@@ -24,7 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
-#include "icarus/icarus_config.h"
+#include "icarus/config.h"
 #ifdef HOST_TEST
 // For host testing, include mock header for os_yield_pendsv
 #include "mock_asm.h"

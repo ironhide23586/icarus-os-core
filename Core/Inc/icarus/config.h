@@ -1,5 +1,5 @@
 /**
- * @file    icarus_config.h
+ * @file    config.h
  * @brief   ICARUS OS Configuration Header
  * @version 0.1.0
  *
