@@ -31,7 +31,7 @@
 
 #include "demo_tasks.h"
 #include "icarus/icarus_task.h"
-#include "display.h"
+#include "bsp/display.h"
 
 // Semaphore demo configuration
 #define SEM_IDX           0      // Semaphore index to use

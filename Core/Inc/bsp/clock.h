@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-#include "bsp_config.h"
+#include "bsp/config.h"
 
 /**
  * @brief Configure system clocks

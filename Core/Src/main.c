@@ -27,12 +27,7 @@
  *            Licensed under the Apache License, Version 2.0
  */
 
-#include "icarus/icarus_task.h"
-#include "bsp/bsp_led.h"
-#include "bsp/retarget_hal.h"
-#include "demo_tasks.h"
-#include "stress_test.h"
-#include <stdio.h>
+#include "main.h"
 
 /* ============================================================================
  * CONFIGURATION

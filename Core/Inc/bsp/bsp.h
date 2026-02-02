@@ -32,18 +32,18 @@ extern "C" {
  * BSP MODULE INCLUDES
  * ========================================================================= */
 
-#include "bsp/bsp_config.h"     /* Board configuration and pin definitions */
-#include "bsp/bsp_clock.h"      /* Clock and power management */
-#include "bsp/bsp_gpio.h"       /* GPIO driver */
-#include "bsp/bsp_uart.h"       /* UART/USART driver (if used) */
-#include "bsp/bsp_spi.h"        /* SPI driver */
-#include "bsp/bsp_i2c.h"        /* I2C driver */
-#include "bsp/bsp_timer.h"      /* Timer/PWM driver */
-#include "bsp/bsp_rtc.h"        /* Real-Time Clock driver */
-#include "bsp/bsp_usb.h"        /* USB CDC driver */
-#include "bsp/bsp_display.h"    /* Terminal display driver */
-#include "bsp/bsp_led.h"        /* LED control */
-#include "bsp/bsp_error.h"      /* Error handling */
+#include "bsp/config.h"     /* Board configuration and pin definitions */
+#include "bsp/clock.h"      /* Clock and power management */
+#include "bsp/gpio.h"       /* GPIO driver */
+#include "bsp/uart.h"       /* UART/USART driver (if used) */
+#include "bsp/spi.h"        /* SPI driver */
+#include "bsp/i2c.h"        /* I2C driver */
+#include "bsp/timer.h"      /* Timer/PWM driver */
+#include "bsp/rtc.h"        /* Real-Time Clock driver */
+#include "bsp/usb.h"        /* USB CDC driver */
+#include "bsp/display.h"    /* Terminal display driver */
+#include "bsp/led.h"        /* LED control */
+#include "bsp/error.h"      /* Error handling */
 
 /* ============================================================================
  * BSP INITIALIZATION

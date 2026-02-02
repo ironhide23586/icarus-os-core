@@ -1,7 +1,7 @@
 #include "lcd.h"
 #include "font.h"
-#include "spi.h"
-#include "tim.h"
+#include "bsp/spi.h"
+#include "bsp/timer.h"
 
 //SPI��ʾ���ӿ�
 //LCD_RST

@@ -27,11 +27,12 @@
  */
 
 #include "icarus/icarus_task.h"
+#include "bsp/config.h"
 #if ICARUS_ENABLE_HEARTBEAT_VIS
-#include "bsp/bsp_display.h"
+#include "bsp/display.h"
 #endif
-#include "bsp/bsp_led.h"
-#include "main.h"
+#include "bsp/led.h"
+#include "bsp/error.h"
 
 #ifdef HOST_TEST
 #include "cmsis_gcc.h"

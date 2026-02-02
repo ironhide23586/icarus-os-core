@@ -33,15 +33,17 @@ extern "C" {
  * INCLUDES
  * ========================================================================= */
 
-#include "main.h"
-#include "i2c.h"
-#include "rtc.h"
-#include "spi.h"
-#include "tim.h"
+// #include "main.h"
+#include "bsp/i2c.h"
+#include "bsp/rtc.h"
+#include "bsp/spi.h"
+#include "bsp/timer.h"
 #include "usb_device.h"
-#include "gpio.h"
+#include "bsp/gpio.h"
 #include "lcd.h"
-#include "lsm9ds1_reg.h"
+#include "bsp/lsm9ds1_reg.h"
+
+#include "bsp/mpu.h"
 
 /* ============================================================================
  * CONFIGURATION

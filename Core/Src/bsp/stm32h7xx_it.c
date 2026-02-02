@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include "bsp/config.h"
 
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/

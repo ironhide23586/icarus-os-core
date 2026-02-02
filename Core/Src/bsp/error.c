@@ -26,7 +26,7 @@
 #ifndef SRC_BSP_ERROR_C_
 #define SRC_BSP_ERROR_C_
 
-#include "error.h"
+#include "bsp/error.h"
 
 /**
  * @brief   System error handler for unrecoverable faults
