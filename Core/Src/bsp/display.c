@@ -30,7 +30,8 @@
  */
 
 #include "bsp/display.h"
-#include "icarus/icarus_task.h"
+#include "icarus/kernel.h"
+#include "icarus/scheduler.h"
 #include <string.h>
 #include <inttypes.h>
 

@@ -5,7 +5,7 @@
  */
 
 #include "unity.h"
-#include "icarus/icarus_task.h"
+#include "icarus/icarus.h"
 #include "bsp/display.h"
 #include "bsp/error.h"
 #include "retarget_hal.h"

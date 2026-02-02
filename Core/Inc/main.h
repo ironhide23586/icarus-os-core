@@ -28,7 +28,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal.h"
-#include "icarus/icarus_task.h"
+#include "icarus/icarus.h"
 #include "bsp/led.h"
 #include "bsp/retarget_hal.h"
 #include "demo_tasks.h"

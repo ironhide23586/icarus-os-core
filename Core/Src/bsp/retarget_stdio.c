@@ -7,7 +7,8 @@
  */
 
 
-#include "icarus/icarus_task.h"
+#include "icarus/kernel.h"
+#include "icarus/scheduler.h"
 
 #include "usbd_cdc_if.h"
 #include "usbd_def.h"

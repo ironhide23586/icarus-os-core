@@ -30,7 +30,7 @@
  */
 
 #include "demo_tasks.h"
-#include "icarus/icarus_task.h"
+#include "icarus/icarus.h"
 #include "bsp/display.h"
 
 // Semaphore demo configuration

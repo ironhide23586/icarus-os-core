@@ -6,7 +6,7 @@
 #ifndef MOCK_ASM_H
 #define MOCK_ASM_H
 
-#include "icarus/icarus_task.h"
+#include "icarus/types.h"
 
 // Mock assembly functions for host testing
 // These are ARM assembly functions in context_switch.s
