@@ -177,17 +177,17 @@
             <location file="../Core/Src/bsp/display.c" line="0" column="0"/>
         </error>
         <error id="shadowVariable" severity="style" msg="Local variable &apos;task_list&apos; shadows outer variable" verbose="Local variable &apos;task_list&apos; shadows outer variable" cwe="398" file0="../Core/Src/bsp/display.c">
-            <location file="../Core/Src/bsp/display.c" line="687" column="27" info="Shadow variable"/>
+            <location file="../Core/Src/bsp/display.c" line="688" column="27" info="Shadow variable"/>
             <location file="../Core/Inc/icarus/kernel.h" line="34" column="23" info="Shadowed declaration"/>
             <symbol>task_list</symbol>
         </error>
         <error id="shadowVariable" severity="style" msg="Local variable &apos;num_created_tasks&apos; shadows outer variable" verbose="Local variable &apos;num_created_tasks&apos; shadows outer variable" cwe="398" file0="../Core/Src/bsp/display.c">
-            <location file="../Core/Src/bsp/display.c" line="688" column="20" info="Shadow variable"/>
+            <location file="../Core/Src/bsp/display.c" line="689" column="20" info="Shadow variable"/>
             <location file="../Core/Inc/icarus/kernel.h" line="49" column="16" info="Shadowed declaration"/>
             <symbol>num_created_tasks</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;entry&apos; can be declared as pointer to const" verbose="Variable &apos;entry&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/display.c">
-            <location file="../Core/Src/bsp/display.c" line="189" column="34" info="Variable &apos;entry&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/bsp/display.c" line="190" column="34" info="Variable &apos;entry&apos; can be declared as pointer to const"/>
             <symbol>entry</symbol>
         </error>
         <error id="duplicateExpression" severity="style" msg="Same expression on both sides of &apos;-&apos; because &apos;os_tick_count&apos; and &apos;st&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/icarus/scheduler.c">
