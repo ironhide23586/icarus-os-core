@@ -42,7 +42,7 @@ extern "C" {
 #include "bsp/gpio.h"
 #include "lcd.h"
 #include "bsp/lsm9ds1_reg.h"
-
+#include "bsp/config.h"
 #include "bsp/mpu.h"
 
 /* ============================================================================

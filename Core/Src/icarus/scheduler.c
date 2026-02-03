@@ -17,6 +17,13 @@
 #include "icarus/kernel.h"
 #include "bsp/config.h"
 
+#include <stddef.h>  // For NULL
+#ifndef HOST_TEST
+#include "stm32h7xx.h"  // For SCB and SCB_ICSR_PENDSVSET_Msk
+#else
+#include "cmsis_gcc.h"  // For SCB mock during testing
+#endif
+
 /* ============================================================================
  * SECTION PLACEMENT MACROS
  * ========================================================================= */

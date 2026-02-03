@@ -10,7 +10,7 @@
 #include "mock_gpio.h"
 
 // Include icarus config for ICARUS_TICKS_PER_TASK
-#include "icarus/icarus_config.h"
+#include "icarus/config.h"
 
 // GPIO pin definitions
 #define E3_Pin GPIO_PIN_3

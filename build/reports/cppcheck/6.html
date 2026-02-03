@@ -285,7 +285,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
     <div id="menu">
      <p><a href="index.html">Defects:</a> scheduler.c</p>
-<a href="6.html#line-87"> duplicateExpression 87</a><a href="6.html#line-87"> unsignedLessThanZero 87</a><a href="6.html#line-94"> duplicateExpression 94</a><a href="6.html#line-94"> unsignedLessThanZero 94</a><a href="6.html#line-95"> unsignedLessThanZero 95</a>
+<a href="6.html#line-94"> duplicateExpression 94</a><a href="6.html#line-94"> unsignedLessThanZero 94</a><a href="6.html#line-101"> duplicateExpression 101</a><a href="6.html#line-101"> unsignedLessThanZero 101</a><a href="6.html#line-102"> unsignedLessThanZero 102</a>
     </div>
     <div id="content">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">  1</span>
@@ -387,7 +387,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
-<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/**</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/**</span>
 <a id="line-2" name="line-2"></a><span class="cm"> * @file    scheduler.c</span>
 <a id="line-3" name="line-3"></a><span class="cm"> * @brief   ICARUS Scheduler Implementation</span>
 <a id="line-4" name="line-4"></a><span class="cm"> * @version 0.1.0</span>
@@ -406,87 +413,94 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-17" name="line-17"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;icarus/kernel.h&quot;</span>
 <a id="line-18" name="line-18"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;bsp/config.h&quot;</span>
 <a id="line-19" name="line-19"></a>
-<a id="line-20" name="line-20"></a><span class="cm">/* ============================================================================</span>
-<a id="line-21" name="line-21"></a><span class="cm"> * SECTION PLACEMENT MACROS</span>
-<a id="line-22" name="line-22"></a><span class="cm"> * ========================================================================= */</span>
-<a id="line-23" name="line-23"></a>
-<a id="line-24" name="line-24"></a><span class="cp">#ifndef HOST_TEST</span>
-<a id="line-25" name="line-25"></a><span class="cp">#define ITCM_FUNC __attribute__((section(&quot;.itcm&quot;)))</span>
-<a id="line-26" name="line-26"></a><span class="cp">#else</span>
-<a id="line-27" name="line-27"></a><span class="cp">#define ITCM_FUNC</span>
-<a id="line-28" name="line-28"></a><span class="cp">#endif</span>
-<a id="line-29" name="line-29"></a>
-<a id="line-30" name="line-30"></a><span class="cm">/* ============================================================================</span>
-<a id="line-31" name="line-31"></a><span class="cm"> * TASK INFORMATION</span>
-<a id="line-32" name="line-32"></a><span class="cm"> * ========================================================================= */</span>
-<a id="line-33" name="line-33"></a>
-<a id="line-34" name="line-34"></a><span class="n">ITCM_FUNC</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">os_get_tick_count</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-35" name="line-35"></a><span class="p">{</span>
-<a id="line-36" name="line-36"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
-<a id="line-37" name="line-37"></a><span class="p">}</span>
-<a id="line-38" name="line-38"></a>
-<a id="line-39" name="line-39"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">os_get_running_task_count</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-40" name="line-40"></a><span class="p">{</span>
-<a id="line-41" name="line-41"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">running_task_count</span><span class="p">;</span>
-<a id="line-42" name="line-42"></a><span class="p">}</span>
-<a id="line-43" name="line-43"></a>
-<a id="line-44" name="line-44"></a><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">os_get_current_task_name</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-45" name="line-45"></a><span class="p">{</span>
-<a id="line-46" name="line-46"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_task_index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">num_created_tasks</span><span class="w"> </span><span class="o">&amp;&amp;</span>
-<a id="line-47" name="line-47"></a><span class="w">        </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-48" name="line-48"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">;</span>
-<a id="line-49" name="line-49"></a><span class="w">    </span><span class="p">}</span>
-<a id="line-50" name="line-50"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;unknown&quot;</span><span class="p">;</span>
-<a id="line-51" name="line-51"></a><span class="p">}</span>
-<a id="line-52" name="line-52"></a>
-<a id="line-53" name="line-53"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">os_get_task_ticks_remaining</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-54" name="line-54"></a><span class="p">{</span>
-<a id="line-55" name="line-55"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">current_task_ticks_remaining</span><span class="p">;</span>
-<a id="line-56" name="line-56"></a><span class="p">}</span>
-<a id="line-57" name="line-57"></a>
-<a id="line-58" name="line-58"></a><span class="cm">/* ============================================================================</span>
-<a id="line-59" name="line-59"></a><span class="cm"> * TASK SCHEDULING</span>
-<a id="line-60" name="line-60"></a><span class="cm"> * ========================================================================= */</span>
-<a id="line-61" name="line-61"></a>
-<a id="line-62" name="line-62"></a><span class="n">ITCM_FUNC</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">os_yield</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-63" name="line-63"></a><span class="p">{</span>
-<a id="line-64" name="line-64"></a><span class="w">    </span><span class="n">current_task_ticks_remaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_per_task</span><span class="p">;</span>
-<a id="line-65" name="line-65"></a><span class="w">    </span><span class="n">SCB</span><span class="o">-&gt;</span><span class="n">ICSR</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">SCB_ICSR_PENDSVSET_Msk</span><span class="p">;</span>
-<a id="line-66" name="line-66"></a><span class="p">}</span>
-<a id="line-67" name="line-67"></a>
-<a id="line-68" name="line-68"></a><span class="n">ITCM_FUNC</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span>
-<a id="line-69" name="line-69"></a><span class="p">{</span>
-<a id="line-70" name="line-70"></a><span class="w">    </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">global_tick_paused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
-<a id="line-71" name="line-71"></a><span class="w">    </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">ticks_to_pause</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks</span><span class="p">;</span>
-<a id="line-72" name="line-72"></a><span class="w">    </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">task_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TASK_STATE_BLOCKED</span><span class="p">;</span>
-<a id="line-73" name="line-73"></a><span class="w">    </span><span class="n">os_yield</span><span class="p">();</span>
-<a id="line-74" name="line-74"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os_tick_count</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">global_tick_paused</span><span class="p">;</span>
-<a id="line-75" name="line-75"></a><span class="p">}</span>
-<a id="line-76" name="line-76"></a>
-<a id="line-77" name="line-77"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">task_blocking_sleep</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span>
-<a id="line-78" name="line-78"></a><span class="p">{</span>
-<a id="line-79" name="line-79"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
-<a id="line-80" name="line-80"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">task_busy_wait</span><span class="p">(</span><span class="n">ticks</span><span class="p">);</span>
-<a id="line-81" name="line-81"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
-<a id="line-82" name="line-82"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
-<a id="line-83" name="line-83"></a><span class="p">}</span>
-<a id="line-84" name="line-84"></a>
-<a id="line-85" name="line-85"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">task_busy_wait</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span>
-<a id="line-86" name="line-86"></a><span class="p">{</span>
-<a id="line-87" name="line-87"></a><span class="hll"><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span><span class="error2">&lt;--- 'st' is assigned value 'os_tick_count' here.</span><span class="error2">&lt;--- 'st' is assigned value 'os_tick_count' here.</span>
-</span><a id="line-88" name="line-88"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
-<a id="line-89" name="line-89"></a>
-<a id="line-90" name="line-90"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-91" name="line-91"></a><span class="cp">#ifdef HOST_TEST</span>
-<a id="line-92" name="line-92"></a><span class="w">        </span><span class="n">os_tick_count</span><span class="o">++</span><span class="p">;</span>
-<a id="line-93" name="line-93"></a><span class="cp">#endif</span>
-<a id="line-94" name="line-94"></a><span class="hll"><span class="w">        </span><span class="n">delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="p">;</span><div class="verbose expandable"><span class="error2">&lt;--- Same expression on both sides of '-' because 'os_tick_count' and 'st' represent the same value. <span class="marker">[+]</span></span><div class="content">Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct.</div></div><span class="error2">&lt;--- Assignment 'delta=os_tick_count-st', assigned value is 0</span>
-</span><a id="line-95" name="line-95"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">delta</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="error2">&lt;--- Unsigned less than zero</span>
-</span><a id="line-96" name="line-96"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
-<a id="line-97" name="line-97"></a><span class="w">        </span><span class="p">}</span>
-<a id="line-98" name="line-98"></a><span class="w">    </span><span class="p">}</span>
-<a id="line-99" name="line-99"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
-<a id="line-100" name="line-100"></a><span class="p">}</span>
+<a id="line-20" name="line-20"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stddef.h&gt;</span><span class="c1">  // For NULL</span>
+<a id="line-21" name="line-21"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-22" name="line-22"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;stm32h7xx.h&quot;</span><span class="c1">  // For SCB and SCB_ICSR_PENDSVSET_Msk</span>
+<a id="line-23" name="line-23"></a><span class="cp">#else</span>
+<a id="line-24" name="line-24"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;cmsis_gcc.h&quot;</span><span class="c1">  // For SCB mock during testing</span>
+<a id="line-25" name="line-25"></a><span class="cp">#endif</span>
+<a id="line-26" name="line-26"></a>
+<a id="line-27" name="line-27"></a><span class="cm">/* ============================================================================</span>
+<a id="line-28" name="line-28"></a><span class="cm"> * SECTION PLACEMENT MACROS</span>
+<a id="line-29" name="line-29"></a><span class="cm"> * ========================================================================= */</span>
+<a id="line-30" name="line-30"></a>
+<a id="line-31" name="line-31"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-32" name="line-32"></a><span class="cp">#define ITCM_FUNC __attribute__((section(&quot;.itcm&quot;)))</span>
+<a id="line-33" name="line-33"></a><span class="cp">#else</span>
+<a id="line-34" name="line-34"></a><span class="cp">#define ITCM_FUNC</span>
+<a id="line-35" name="line-35"></a><span class="cp">#endif</span>
+<a id="line-36" name="line-36"></a>
+<a id="line-37" name="line-37"></a><span class="cm">/* ============================================================================</span>
+<a id="line-38" name="line-38"></a><span class="cm"> * TASK INFORMATION</span>
+<a id="line-39" name="line-39"></a><span class="cm"> * ========================================================================= */</span>
+<a id="line-40" name="line-40"></a>
+<a id="line-41" name="line-41"></a><span class="n">ITCM_FUNC</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">os_get_tick_count</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-42" name="line-42"></a><span class="p">{</span>
+<a id="line-43" name="line-43"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
+<a id="line-44" name="line-44"></a><span class="p">}</span>
+<a id="line-45" name="line-45"></a>
+<a id="line-46" name="line-46"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">os_get_running_task_count</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-47" name="line-47"></a><span class="p">{</span>
+<a id="line-48" name="line-48"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">running_task_count</span><span class="p">;</span>
+<a id="line-49" name="line-49"></a><span class="p">}</span>
+<a id="line-50" name="line-50"></a>
+<a id="line-51" name="line-51"></a><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">os_get_current_task_name</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-52" name="line-52"></a><span class="p">{</span>
+<a id="line-53" name="line-53"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_task_index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">num_created_tasks</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<a id="line-54" name="line-54"></a><span class="w">        </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-55" name="line-55"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">;</span>
+<a id="line-56" name="line-56"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-57" name="line-57"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;unknown&quot;</span><span class="p">;</span>
+<a id="line-58" name="line-58"></a><span class="p">}</span>
+<a id="line-59" name="line-59"></a>
+<a id="line-60" name="line-60"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">os_get_task_ticks_remaining</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-61" name="line-61"></a><span class="p">{</span>
+<a id="line-62" name="line-62"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">current_task_ticks_remaining</span><span class="p">;</span>
+<a id="line-63" name="line-63"></a><span class="p">}</span>
+<a id="line-64" name="line-64"></a>
+<a id="line-65" name="line-65"></a><span class="cm">/* ============================================================================</span>
+<a id="line-66" name="line-66"></a><span class="cm"> * TASK SCHEDULING</span>
+<a id="line-67" name="line-67"></a><span class="cm"> * ========================================================================= */</span>
+<a id="line-68" name="line-68"></a>
+<a id="line-69" name="line-69"></a><span class="n">ITCM_FUNC</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">os_yield</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-70" name="line-70"></a><span class="p">{</span>
+<a id="line-71" name="line-71"></a><span class="w">    </span><span class="n">current_task_ticks_remaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks_per_task</span><span class="p">;</span>
+<a id="line-72" name="line-72"></a><span class="w">    </span><span class="n">SCB</span><span class="o">-&gt;</span><span class="n">ICSR</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">SCB_ICSR_PENDSVSET_Msk</span><span class="p">;</span>
+<a id="line-73" name="line-73"></a><span class="p">}</span>
+<a id="line-74" name="line-74"></a>
+<a id="line-75" name="line-75"></a><span class="n">ITCM_FUNC</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span>
+<a id="line-76" name="line-76"></a><span class="p">{</span>
+<a id="line-77" name="line-77"></a><span class="w">    </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">global_tick_paused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
+<a id="line-78" name="line-78"></a><span class="w">    </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">ticks_to_pause</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ticks</span><span class="p">;</span>
+<a id="line-79" name="line-79"></a><span class="w">    </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">task_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TASK_STATE_BLOCKED</span><span class="p">;</span>
+<a id="line-80" name="line-80"></a><span class="w">    </span><span class="n">os_yield</span><span class="p">();</span>
+<a id="line-81" name="line-81"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os_tick_count</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">task_list</span><span class="p">[</span><span class="n">current_task_index</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">global_tick_paused</span><span class="p">;</span>
+<a id="line-82" name="line-82"></a><span class="p">}</span>
+<a id="line-83" name="line-83"></a>
+<a id="line-84" name="line-84"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">task_blocking_sleep</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span>
+<a id="line-85" name="line-85"></a><span class="p">{</span>
+<a id="line-86" name="line-86"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-87" name="line-87"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">task_busy_wait</span><span class="p">(</span><span class="n">ticks</span><span class="p">);</span>
+<a id="line-88" name="line-88"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-89" name="line-89"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
+<a id="line-90" name="line-90"></a><span class="p">}</span>
+<a id="line-91" name="line-91"></a>
+<a id="line-92" name="line-92"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">task_busy_wait</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span>
+<a id="line-93" name="line-93"></a><span class="p">{</span>
+<a id="line-94" name="line-94"></a><span class="hll"><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span><span class="error2">&lt;--- 'st' is assigned value 'os_tick_count' here.</span><span class="error2">&lt;--- 'st' is assigned value 'os_tick_count' here.</span>
+</span><a id="line-95" name="line-95"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
+<a id="line-96" name="line-96"></a>
+<a id="line-97" name="line-97"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-98" name="line-98"></a><span class="cp">#ifdef HOST_TEST</span>
+<a id="line-99" name="line-99"></a><span class="w">        </span><span class="n">os_tick_count</span><span class="o">++</span><span class="p">;</span>
+<a id="line-100" name="line-100"></a><span class="cp">#endif</span>
+<a id="line-101" name="line-101"></a><span class="hll"><span class="w">        </span><span class="n">delta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="p">;</span><div class="verbose expandable"><span class="error2">&lt;--- Same expression on both sides of '-' because 'os_tick_count' and 'st' represent the same value. <span class="marker">[+]</span></span><div class="content">Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct.</div></div><span class="error2">&lt;--- Assignment 'delta=os_tick_count-st', assigned value is 0</span>
+</span><a id="line-102" name="line-102"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">delta</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ticks</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="error2">&lt;--- Unsigned less than zero</span>
+</span><a id="line-103" name="line-103"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<a id="line-104" name="line-104"></a><span class="w">        </span><span class="p">}</span>
+<a id="line-105" name="line-105"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-106" name="line-106"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">delta</span><span class="p">;</span>
+<a id="line-107" name="line-107"></a><span class="p">}</span>
 </pre></div></td></tr></table></div>
 
     </div>

@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// Include GPIO mocks
+#include "mock_gpio.h"
+
 // Mock HAL functions and types
 typedef struct {
 	uint32_t Instance;
@@ -20,11 +23,11 @@ typedef struct {
 
 typedef struct {
 	uint32_t Instance;
-} SPI_HandleTypeDef;
+} RTC_HandleTypeDef;
 
 typedef struct {
 	uint32_t Instance;
-} RTC_HandleTypeDef;
+} SPI_HandleTypeDef;
 
 // Mock HAL status
 typedef enum {
@@ -78,6 +81,9 @@ typedef struct {
 void HAL_MPU_Disable(void);
 void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init);
 void HAL_MPU_Enable(uint32_t MPU_Control);
+
+// Mock MPU configuration function
+void MPU_Config(void);
 
 // Mock RCC/PWR functions
 typedef struct {
@@ -150,6 +156,12 @@ HAL_StatusTypeDef HAL_Init(void);
 
 // Mock I2C constants
 #define I2C_MEMADD_SIZE_8BIT 0
+
+// Mock TIM constants and functions
+#define TIM_CHANNEL_2 0x04U
+#define __HAL_TIM_SET_COMPARE(htim, channel, compare) do { (void)(htim); (void)(channel); (void)(compare); } while(0)
+
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 // Mock SCB cache functions
 void SCB_EnableICache(void);

@@ -191,13 +191,13 @@
             <symbol>entry</symbol>
         </error>
         <error id="duplicateExpression" severity="style" msg="Same expression on both sides of &apos;-&apos; because &apos;os_tick_count&apos; and &apos;st&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/icarus/scheduler.c">
-            <location file="../Core/Src/icarus/scheduler.c" line="94" column="31"/>
-            <location file="../Core/Src/icarus/scheduler.c" line="87" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <location file="../Core/Src/icarus/scheduler.c" line="101" column="31"/>
+            <location file="../Core/Src/icarus/scheduler.c" line="94" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
         </error>
         <error id="unsignedLessThanZero" severity="style" msg="Checking if unsigned expression &apos;ticks&apos; is less than zero." verbose="The unsigned expression &apos;ticks&apos; will never be negative so it is either pointless or an error to check if it is." cwe="570" file0="../Core/Src/icarus/scheduler.c">
-            <location file="../Core/Src/icarus/scheduler.c" line="95" column="19" info="Unsigned less than zero"/>
-            <location file="../Core/Src/icarus/scheduler.c" line="94" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
-            <location file="../Core/Src/icarus/scheduler.c" line="87" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <location file="../Core/Src/icarus/scheduler.c" line="102" column="19" info="Unsigned less than zero"/>
+            <location file="../Core/Src/icarus/scheduler.c" line="101" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
+            <location file="../Core/Src/icarus/scheduler.c" line="94" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
             <symbol>ticks</symbol>
         </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>

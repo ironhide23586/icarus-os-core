@@ -18,7 +18,12 @@ BUILD_DIR = $(TEST_DIR)/build
 OBJ_DIR = $(BUILD_DIR)/obj
 
 # Source code to test (all application code that can be tested)
-KERNEL_SRC = $(PROJECT_ROOT)/Core/Src/icarus/icarus_task.c
+KERNEL_SRC = \
+	$(PROJECT_ROOT)/Core/Src/icarus/kernel.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/scheduler.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/task.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/semaphore.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/pipe.c
 BSP_SRC = \
 	$(PROJECT_ROOT)/Core/Src/bsp/error.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_stdio.c \
@@ -89,9 +94,9 @@ LDFLAGS = \
 
 # Object files
 UNITY_OBJ = $(OBJ_DIR)/unity.o
-KERNEL_OBJ = $(OBJ_DIR)/task.o
+KERNEL_OBJS = $(KERNEL_SRC:$(PROJECT_ROOT)/Core/Src/icarus/%.c=$(OBJ_DIR)/%.o)
 BSP_OBJS = $(BSP_SRC:$(PROJECT_ROOT)/Core/Src/bsp/%.c=$(OBJ_DIR)/bsp_%.o)
-APP_OBJS = $(KERNEL_OBJ) $(BSP_OBJS)
+APP_OBJS = $(KERNEL_OBJS) $(BSP_OBJS)
 TEST_OBJS = $(TEST_SOURCES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 MOCK_OBJS = $(MOCK_SOURCES:$(MOCKS_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -126,9 +131,9 @@ $(UNITY_OBJ): $(UNITY_DIR)/unity.c | $(OBJ_DIR)
 	@mkdir -p $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-# Compile kernel source (with test defines)
-$(KERNEL_OBJ): $(KERNEL_SRC) | $(OBJ_DIR)
-	@echo "Compiling kernel source for testing..."
+# Compile kernel source files (with test defines)
+$(OBJ_DIR)/%.o: $(PROJECT_ROOT)/Core/Src/icarus/%.c | $(OBJ_DIR)
+	@echo "Compiling kernel source: $<"
 	@mkdir -p $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
