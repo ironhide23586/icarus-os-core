@@ -79,7 +79,11 @@ extern "C" {
 
 /* LED (Active High) */
 #define BSP_LED_PIN             GPIO_PIN_3
+#ifndef HOST_TEST
+#define BSP_LED_PORT            GPIOE
+#else
 #define BSP_LED_PORT            (&GPIOE)
+#endif
 #define BSP_LED_CLK_ENABLE()    __HAL_RCC_GPIOE_CLK_ENABLE()
 
 /* User Button (Active Low with Pull-Down) */
