@@ -535,7 +535,7 @@ void test_os_create_task_max_tasks(void) {
 	// Try to create another task (should fail)
 	icarus_task_t dummy_task;
 	uint32_t dummy_stack[100];
-	os_create_task(&dummy_task, test_task_1, dummy_stack, 100, "overflow");
+	os_create_task(&dummy_task, test_task_1, dummy_stack, 100, NULL, "overflow");
 	
 	// Should not increment num_created_tasks
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
@@ -547,7 +547,7 @@ void test_os_create_task_normal(void) {
 	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "created_task");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "created_task");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
 	TEST_ASSERT_EQUAL(TASK_STATE_COLD, test_task.task_state);
@@ -568,7 +568,7 @@ void test_os_create_task_long_name(void) {
 	memset(long_name, 'A', 99);
 	long_name[99] = '\0';
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, long_name);
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, long_name);
 	
 	// Name should be truncated to ICARUS_MAX_TASK_NAME_LEN - 1
 	TEST_ASSERT_EQUAL('\0', test_task.name[ICARUS_MAX_TASK_NAME_LEN - 1]);
@@ -775,7 +775,7 @@ void test_os_create_task_boundary_max_minus_one(void) {
 	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "boundary");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "boundary");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
 }
@@ -787,7 +787,7 @@ void test_os_create_task_max_running_tasks(void) {
 	uint8_t initial_count = num_created_tasks;
 	running_task_count = ICARUS_MAX_TASKS; // At max, should return early
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "max_running");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "max_running");
 	
 	// Should not increment num_created_tasks (early return)
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);

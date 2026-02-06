@@ -120,6 +120,13 @@ void exit_critical(void);
  */
 uint32_t* kernel_get_stack(uint8_t task_idx);
 
+/**
+ * @brief Get data pointer for task index (internal use)
+ * @param task_idx Task index
+ * @return Pointer to data memory
+ */
+uint32_t* kernel_get_data(uint8_t task_idx);
+
 #ifdef __cplusplus
 }
 #endif

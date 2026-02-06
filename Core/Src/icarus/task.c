@@ -31,7 +31,8 @@ extern uint32_t* kernel_get_stack(uint8_t task_idx);
  * ========================================================================= */
 
 void os_create_task(icarus_task_t *task, void (*function)(void),
-                    uint32_t *stack, uint32_t stack_size, const char *name)
+                    uint32_t *stack, uint32_t stack_size,
+                    uint32_t *data, const char *name)
 {
     if (running_task_count >= ICARUS_MAX_TASKS) {
         return;
@@ -60,13 +61,16 @@ void os_create_task(icarus_task_t *task, void (*function)(void),
     *(stack_top)   = 0;                               /* R0 */
 
     task->stack_pointer = stack_top;
+    task->data_pointer = data;
     num_created_tasks++;
 }
 
 void os_register_task(void (*function)(void), const char *name)
 {
     os_create_task(task_list[num_created_tasks], function,
-                   kernel_get_stack(num_created_tasks), ICARUS_STACK_WORDS, name);
+                   kernel_get_stack(num_created_tasks), 
+                   ICARUS_STACK_WORDS, 
+                   kernel_get_data(num_created_tasks), name);
 }
 
 /* ============================================================================

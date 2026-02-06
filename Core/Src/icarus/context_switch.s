@@ -31,6 +31,7 @@
 .equ TCB_TASK_STATE,    16      /* offsetof(icarus_task_t, task_state) */
 .equ TCB_TICK_PAUSED,   20      /* offsetof(icarus_task_t, global_tick_paused) */
 .equ TCB_TICKS_PAUSE,   24      /* offsetof(icarus_task_t, ticks_to_pause) */
+.equ TCB_DATA_PTR,      28      /* offsetof(icarus_task_t, data_pointer) */
 
 /* Task state constants */
 .equ STATE_COLD,        0
@@ -123,6 +124,16 @@ find_next_task:
 yield_postprocess:
     /* Switch to next task */
     strb    r9, [r0]                    /* Update current_task_index */
+
+    //////////////////
+    
+    push    {r0-r3, r12, lr}
+    ldr     r0, [r11, #TCB_DATA_PTR]
+    bl      MPU_ConfigureTaskData
+    pop     {r0-r3, r12, lr}
+
+    ///////////////////
+
     ldr     r1, [r11, #TCB_STACK_PTR]   /* Load next task's SP */
     mov     r5, #STATE_RUNNING
     strb    r5, [r11, #TCB_TASK_STATE]  /* Set state to RUNNING */

@@ -124,6 +124,8 @@ typedef struct {
     uint32_t global_tick_paused;                /**< Tick count when blocked (offset 20) */
     uint32_t ticks_to_pause;                    /**< Ticks to remain blocked (offset 24) */
 
+    uint32_t *data_pointer;                     /**< Current data pointer (offset 28) */
+
     /* ---- Additional metadata ---- */
     icarus_task_priority_t task_priority;       /**< Task priority level */
     char name[ICARUS_MAX_TASK_NAME_LEN];        /**< Human-readable task name */

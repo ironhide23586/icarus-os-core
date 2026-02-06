@@ -43,7 +43,8 @@ void os_register_task(void (*function)(void), const char *name);
  * @param name       Task name
  */
 void os_create_task(icarus_task_t *task, void (*function)(void),
-                    uint32_t *stack, uint32_t stack_size, const char *name);
+                    uint32_t *stack, uint32_t stack_size, 
+                    uint32_t *data, const char *name);
 
 /* ============================================================================
  * TASK LIFECYCLE

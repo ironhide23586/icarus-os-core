@@ -8,25 +8,7 @@
  * MPU CONFIGURATION
  * ========================================================================= */
 
-/**
- * @brief   Configure Memory Protection Unit for QSPI flash access
- *
- * @details Sets up two MPU regions for QSPI memory-mapped flash:
- *          - Region 0: 256MB background region with no access (catches stray accesses)
- *          - Region 1: 8MB overlay for actual flash with read-only, cacheable access
- *
- * @par Region Configuration:
- *      | Region | Base       | Size  | Access    | Cache     | Execute |
- *      |--------|------------|-------|-----------|-----------|---------|
- *      | 0      | 0x90000000 | 256MB | No Access | None      | No      |
- *      | 1      | 0x90000000 | 8MB   | Priv RO   | WT Cache  | Yes     |
- *
- * @note    Must be called before enabling caches
- * @note    Uses privileged default memory map for non-configured regions
- *
- * @see     ARMv7-M Architecture Reference Manual, Section B3.5 (MPU)
- * @see     STM32H750 Reference Manual RM0433, Section 2.3.4
- */
+
 void MPU_Config(void)
 {
   MPU_Region_InitTypeDef MPU_InitStruct = {0};
@@ -65,3 +47,22 @@ void MPU_Config(void)
   /* Enables the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
+
+void MPU_ConfigureTaskData(uint32_t task_data_base) {
+    MPU_Region_InitTypeDef MPU_InitStruct = {0};
+    
+    MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+    MPU_InitStruct.Number = MPU_REGION_NUMBER4;  // Dynamic task data region
+    MPU_InitStruct.BaseAddress = task_data_base;
+    MPU_InitStruct.Size = TASK_DATA_SIZE_MPU;
+    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+    MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+    MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
+    MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
+    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
+    MPU_InitStruct.SubRegionDisable = 0x00;
+    
+    HAL_MPU_ConfigRegion(&MPU_InitStruct);
+}
+

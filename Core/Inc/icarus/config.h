@@ -74,10 +74,17 @@ extern "C" {
 
 /**
  * @brief Stack size per task in 32-bit words
+ * @note  256 words = 1KB per task
+ *        Must be even for 8-byte alignment (ARM ABI requirement)
+ */
+#define ICARUS_STACK_WORDS          256
+
+/**
+ * @brief Data region size per task in 32-bit words
  * @note  512 words = 2KB per task
  *        Must be even for 8-byte alignment (ARM ABI requirement)
  */
-#define ICARUS_STACK_WORDS          512
+#define ICARUS_DATA_WORDS         512 
 
 /**
  * @brief Number of SysTick interrupts per task time slice

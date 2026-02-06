@@ -83,6 +83,13 @@ DTCM_DATA int8_t current_cleanup_task_idx;
 
 static uint32_t stack_pool[ICARUS_MAX_TASKS][ICARUS_STACK_WORDS];
 
+
+/* ============================================================================
+ * DATA POOL (RAM_D1)
+ * ========================================================================= */
+
+static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS];
+
 /* ============================================================================
  * EXTERNAL ASSEMBLY FUNCTIONS
  * ========================================================================= */
@@ -230,4 +237,14 @@ void os_start(void)
 uint32_t* kernel_get_stack(uint8_t task_idx)
 {
     return stack_pool[task_idx];
+}
+
+
+/* ============================================================================
+ * DATA POOL ACCESS (for task.c)
+ * ========================================================================= */
+
+uint32_t* kernel_get_data(uint8_t task_idx)
+{
+    return data_pool[task_idx];
 }
