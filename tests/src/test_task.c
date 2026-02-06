@@ -16,6 +16,27 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <signal.h>
+#include <stdlib.h>
+
+// Coverage flush function declarations
+#if defined(__GNUC__) && !defined(__clang__)
+extern void __gcov_flush(void);
+#elif defined(__clang__)
+extern int __llvm_profile_write_file(void);
+#endif
+
+// Signal handler to flush coverage data before crash
+static void signal_handler(int sig) {
+	fprintf(stderr, "\n[SIGNAL] Caught signal %d, flushing coverage data...\n", sig);
+#if defined(__GNUC__) && !defined(__clang__)
+	__gcov_flush();
+#elif defined(__clang__)
+	__llvm_profile_write_file();
+#endif
+	fprintf(stderr, "[SIGNAL] Coverage data flushed, exiting...\n");
+	exit(sig);
+}
 
 // Function prototype for __io_putchar
 int __io_putchar(int ch);
@@ -766,6 +787,7 @@ void test_os_kill_process_cleanup_idx_max(void) {
 
 // Test: os_create_task - boundary: running_task_count == ICARUS_MAX_TASKS - 1
 void test_os_create_task_boundary_max_minus_one(void) {
+	test_init_task_list();  // Initialize task_list before calling os_register_task
 	running_task_count = ICARUS_MAX_TASKS - 1;
 	uint8_t initial_count = num_created_tasks;
 	
@@ -776,6 +798,7 @@ void test_os_create_task_boundary_max_minus_one(void) {
 
 // Test: os_create_task - early return when running_task_count >= ICARUS_MAX_TASKS
 void test_os_create_task_max_running_tasks(void) {
+	test_init_task_list();  // Initialize task_list before calling os_register_task
 	uint8_t initial_count = num_created_tasks;
 	running_task_count = ICARUS_MAX_TASKS; // At max, should return early
 	
@@ -1897,6 +1920,12 @@ void test_display_render_msg_history_basic(void) {
 
 // Test runner
 int main(void) {
+	// Install signal handlers to flush coverage data on crash
+	signal(SIGSEGV, signal_handler);
+	signal(SIGABRT, signal_handler);
+	signal(SIGILL, signal_handler);
+	signal(SIGFPE, signal_handler);
+	
 	UNITY_BEGIN();
 	
 	// Basic tests
@@ -2076,5 +2105,17 @@ int main(void) {
 	RUN_TEST(test_display_render_msg_history_null);
 	RUN_TEST(test_display_render_msg_history_basic);
 	
-	return UNITY_END();
+	int result = UNITY_END();
+	
+	// Flush coverage data before exit to ensure .gcda files are written
+	// even if there's a segfault during cleanup
+#if defined(__GNUC__) && !defined(__clang__)
+	extern void __gcov_flush(void);
+	__gcov_flush();
+#elif defined(__clang__)
+	extern int __llvm_profile_write_file(void);
+	__llvm_profile_write_file();
+#endif
+	
+	return result;
 }

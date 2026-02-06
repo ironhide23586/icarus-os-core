@@ -118,7 +118,7 @@ all: test
 # Build test executable
 test: $(TEST_EXE)
 	@echo "Running tests..."
-	@$(TEST_EXE) || true
+	@LLVM_PROFILE_FILE="$(OBJ_DIR)/test_runner.profraw" $(TEST_EXE) || true
 
 # Link test executable
 $(TEST_EXE): $(UNITY_OBJ) $(APP_OBJS) $(TEST_OBJS) $(MOCK_OBJS) | $(BUILD_DIR) $(OBJ_DIR)
