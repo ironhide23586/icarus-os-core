@@ -27,6 +27,13 @@
 extern uint32_t* kernel_get_stack(uint8_t task_idx);
 
 /* ============================================================================
+ * EXTERNAL KERNEL DATA
+ * ========================================================================= */
+
+extern int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
+extern int8_t current_cleanup_task_idx;
+
+/* ============================================================================
  * TASK CREATION (PRIVILEGED INTERNAL)
  * ========================================================================= */
 
@@ -100,19 +107,29 @@ void os_exit_task(void)
         running_task_count--;
     }
 
+    // Add to cleanup queue
+    if (current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
+        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)current_task_index;
+    }
+
     os_yield();
 }
 
 void os_kill_process(uint8_t task_index)
 {
-    if (task_index >= num_created_tasks || task_index < 2) {
-        return;  /* Cannot kill system tasks */
+    if (task_index >= num_created_tasks || task_index == 0) {
+        return;  /* Cannot kill task 0 (idle task) or invalid indices */
     }
 
     task_list[task_index]->task_state = TASK_STATE_KILLED;
 
     if (running_task_count > 0) {
         running_task_count--;
+    }
+
+    // Add to cleanup queue
+    if (current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
+        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)task_index;
     }
 
     if (task_index == current_task_index) {

@@ -60,7 +60,7 @@ DTCM_DATA icarus_pipe_t* message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 DTCM_DATA static icarus_task_t task_pool[ICARUS_MAX_TASKS];
 DTCM_DATA static icarus_semaphore_t semaphore_pool[ICARUS_MAX_SEMAPHORES];
 DTCM_DATA static icarus_pipe_t message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
-DTCM_DATA static int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
+DTCM_DATA int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * SCHEDULER STATE (DTCM - Zero Wait State)
