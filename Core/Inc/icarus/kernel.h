@@ -26,6 +26,7 @@ extern "C" {
 #include "bsp/retarget_hal.h"
 #include "icarus/config.h"
 #include "icarus/types.h"
+#include "icarus/svc.h"
 
 /* ============================================================================
  * KERNEL STATE (extern declarations)

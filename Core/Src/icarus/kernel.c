@@ -15,6 +15,7 @@
 
 #include "icarus/kernel.h"
 #include "icarus/task.h"
+#include "icarus/svc.h"
 #include "bsp/display.h"
 #include "bsp/led.h"
 
@@ -117,7 +118,15 @@ void __enter_critical(void)
  */
 void enter_critical(void)
 {
+#ifdef HOST_TEST
     __enter_critical();
+#else
+    __asm__ volatile (
+        "svc %0\n"
+        :
+        : "I" (SVC_ENTER_CRITICAL)
+    );
+#endif
 }
 
 /**
@@ -137,7 +146,15 @@ void __exit_critical(void)
  */
 void exit_critical(void)
 {
+#ifdef HOST_TEST
     __exit_critical();
+#else
+    __asm__ volatile (
+        "svc %0\n"
+        :
+        : "I" (SVC_EXIT_CRITICAL)
+    );
+#endif
 }
 
 /* ============================================================================
@@ -261,7 +278,15 @@ void __os_init(void)
  */
 void os_init(void)
 {
+#ifdef HOST_TEST
     __os_init();
+#else
+    __asm__ volatile (
+        "svc %0\n"
+        :
+        : "I" (SVC_OS_INIT)
+    );
+#endif
 }
 
 /**
@@ -282,7 +307,15 @@ void __os_start(void)
  */
 void os_start(void)
 {
+#ifdef HOST_TEST
     __os_start();
+#else
+    __asm__ volatile (
+        "svc %0\n"
+        :
+        : "I" (SVC_OS_START)
+    );
+#endif
 }
 
 /* ============================================================================
@@ -324,5 +357,18 @@ void* __kernel_protected_data(uint16_t num_words) {
  * @note  Will become SVC wrapper in privileged mode
  */
 void* kernel_protected_data(uint16_t num_words) {
+#ifdef HOST_TEST
     return __kernel_protected_data(num_words);
+#else
+    void* res;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "r" (num_words), "I" (SVC_KERNEL_PROTECTED_DATA)
+        : "r0"
+    );
+    return res;
+#endif
 }

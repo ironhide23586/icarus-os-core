@@ -16,6 +16,7 @@
 #include "icarus/semaphore.h"
 #include "icarus/kernel.h"
 #include "icarus/scheduler.h"
+#include "icarus/svc.h"
 
 /* ============================================================================
  * SECTION PLACEMENT MACROS
@@ -60,7 +61,21 @@ bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
  */
 bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
 {
+#ifdef HOST_TEST
     return __semaphore_init(semaphore_idx, semaphore_count);
+#else
+    bool semaphore_init_succeeded;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (semaphore_init_succeeded)
+        : "r" (semaphore_idx), "r" (semaphore_count), "I" (SVC_SEMAPHORE_INIT)
+        : "r0", "r1"
+    );
+    return semaphore_init_succeeded;
+#endif
 }
 
 /**
@@ -93,7 +108,20 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
  */
 bool semaphore_feed(uint8_t semaphore_idx)
 {
+#ifdef HOST_TEST
     return __semaphore_feed(semaphore_idx);
+#else
+    bool semaphore_feed_succeeded;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (semaphore_feed_succeeded)
+        : "r" (semaphore_idx), "I" (SVC_SEMAPHORE_FEED)
+        : "r0"
+    );
+    return semaphore_feed_succeeded;
+#endif
 }
 
 /**
@@ -125,7 +153,20 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
  */
 bool semaphore_consume(uint8_t semaphore_idx)
 {
+#ifdef HOST_TEST
     return __semaphore_consume(semaphore_idx);
+#else
+    bool semaphore_consume_succeeded;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (semaphore_consume_succeeded)
+        : "r" (semaphore_idx), "I" (SVC_SEMAPHORE_CONSUME)
+        : "r0"
+    );
+    return semaphore_consume_succeeded;
+#endif
 }
 
 uint32_t semaphore_get_count(uint8_t semaphore_idx)
