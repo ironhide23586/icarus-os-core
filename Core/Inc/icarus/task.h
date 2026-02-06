@@ -67,6 +67,12 @@ void os_kill_process(uint8_t task_index);
  */
 void os_task_suicide(void);
 
+/* ============================================================================
+ * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
+ * ========================================================================= */
+
+void __os_register_task(void (*function)(void), const char *name);
+
 #ifdef __cplusplus
 }
 #endif

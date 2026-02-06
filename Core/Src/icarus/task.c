@@ -65,12 +65,25 @@ void os_create_task(icarus_task_t *task, void (*function)(void),
     num_created_tasks++;
 }
 
-void os_register_task(void (*function)(void), const char *name)
+/**
+ * @brief Privileged implementation of os_register_task
+ * @note  Internal function - use os_register_task() wrapper
+ */
+void __os_register_task(void (*function)(void), const char *name)
 {
     os_create_task(task_list[num_created_tasks], function,
                    kernel_get_stack(num_created_tasks), 
                    ICARUS_STACK_WORDS, 
                    kernel_get_data(num_created_tasks), name);
+}
+
+/**
+ * @brief Public API for registering a task
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_register_task(void (*function)(void), const char *name)
+{
+    __os_register_task(function, name);
 }
 
 /* ============================================================================

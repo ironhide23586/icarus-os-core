@@ -31,9 +31,13 @@
  * MESSAGE PIPE IMPLEMENTATION
  * ========================================================================= */
 
-bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
+/**
+ * @brief Privileged implementation of pipe_init
+ * @note  Internal function - use pipe_init() wrapper
+ */
+bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 {
-    enter_critical();
+    __enter_critical();
 
     if (pipe_idx < ICARUS_MAX_MESSAGE_QUEUES &&
         pipe_capacity_bytes > 0 &&
@@ -51,16 +55,29 @@ bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
                 message_pipe_list[pipe_idx]->buffer[i] = 0;
             }
 
-            exit_critical();
+            __exit_critical();
             return true;
         }
     }
 
-    exit_critical();
+    __exit_critical();
     return false;
 }
 
-ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
+/**
+ * @brief Public API for initializing a message pipe
+ * @note  Will become SVC wrapper in privileged mode
+ */
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
+{
+    return __pipe_init(pipe_idx, pipe_capacity_bytes);
+}
+
+/**
+ * @brief Privileged implementation of pipe_enqueue
+ * @note  Internal function - use pipe_enqueue() wrapper
+ */
+ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
@@ -78,7 +95,7 @@ ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
         }
     }
 
-    enter_critical();
+    __enter_critical();
 
     for (uint8_t i = 0; i < message_bytes; i++) {
         message_pipe_list[pipe_idx]->buffer[
@@ -90,12 +107,26 @@ ITCM_FUNC bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
     }
 
     message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
+    __exit_critical();
 
     return true;
 }
 
-ITCM_FUNC bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
+/**
+ * @brief Public API for enqueueing data to a message pipe
+ * @note  Will become SVC wrapper in privileged mode
+ */
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
+                            uint8_t message_bytes)
+{
+    return __pipe_enqueue(pipe_idx, message, message_bytes);
+}
+
+/**
+ * @brief Privileged implementation of pipe_dequeue
+ * @note  Internal function - use pipe_dequeue() wrapper
+ */
+ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
@@ -111,7 +142,7 @@ ITCM_FUNC bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
         }
     }
 
-    enter_critical();
+    __enter_critical();
 
     for (uint8_t i = 0; i < message_bytes; i++) {
         message[i] = message_pipe_list[pipe_idx]->buffer[
@@ -123,9 +154,19 @@ ITCM_FUNC bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     }
 
     message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
+    __exit_critical();
 
     return true;
+}
+
+/**
+ * @brief Public API for dequeueing data from a message pipe
+ * @note  Will become SVC wrapper in privileged mode
+ */
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
+                            uint8_t message_bytes)
+{
+    return __pipe_dequeue(pipe_idx, message, message_bytes);
 }
 
 uint8_t pipe_get_count(uint8_t pipe_idx)

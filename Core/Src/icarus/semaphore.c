@@ -31,9 +31,13 @@
  * SEMAPHORE IMPLEMENTATION
  * ========================================================================= */
 
-bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
+/**
+ * @brief Privileged implementation of semaphore_init
+ * @note  Internal function - use semaphore_init() wrapper
+ */
+bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
 {
-    enter_critical();
+    __enter_critical();
 
     if (semaphore_idx < ICARUS_MAX_SEMAPHORES && semaphore_count > 0) {
         if (!semaphore_list[semaphore_idx]->engaged) {
@@ -41,16 +45,29 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
             semaphore_list[semaphore_idx]->max_count = semaphore_count;
             semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
             semaphore_list[semaphore_idx]->engaged = true;
-            exit_critical();
+            __exit_critical();
             return true;
         }
     }
 
-    exit_critical();
+    __exit_critical();
     return false;
 }
 
-ITCM_FUNC bool semaphore_feed(uint8_t semaphore_idx)
+/**
+ * @brief Public API for initializing a semaphore
+ * @note  Will become SVC wrapper in privileged mode
+ */
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
+{
+    return __semaphore_init(semaphore_idx, semaphore_count);
+}
+
+/**
+ * @brief Privileged implementation of semaphore_feed
+ * @note  Internal function - use semaphore_feed() wrapper
+ */
+ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
 {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
@@ -62,15 +79,28 @@ ITCM_FUNC bool semaphore_feed(uint8_t semaphore_idx)
         task_active_sleep(1);
     }
 
-    enter_critical();
+    __enter_critical();
     ++semaphore_list[semaphore_idx]->count;
     semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
+    __exit_critical();
 
     return true;
 }
 
-ITCM_FUNC bool semaphore_consume(uint8_t semaphore_idx)
+/**
+ * @brief Public API for feeding (incrementing) a semaphore
+ * @note  Will become SVC wrapper in privileged mode
+ */
+bool semaphore_feed(uint8_t semaphore_idx)
+{
+    return __semaphore_feed(semaphore_idx);
+}
+
+/**
+ * @brief Privileged implementation of semaphore_consume
+ * @note  Internal function - use semaphore_consume() wrapper
+ */
+ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
 {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
@@ -81,12 +111,21 @@ ITCM_FUNC bool semaphore_consume(uint8_t semaphore_idx)
         task_active_sleep(1);
     }
 
-    enter_critical();
+    __enter_critical();
     --semaphore_list[semaphore_idx]->count;
     semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
+    __exit_critical();
 
     return true;
+}
+
+/**
+ * @brief Public API for consuming (decrementing) a semaphore
+ * @note  Will become SVC wrapper in privileged mode
+ */
+bool semaphore_consume(uint8_t semaphore_idx)
+{
+    return __semaphore_consume(semaphore_idx);
 }
 
 uint32_t semaphore_get_count(uint8_t semaphore_idx)
