@@ -189,6 +189,7 @@ static void os_heartbeat_task(void)
 
 void os_init(void)
 {
+    hal_init();
     uint8_t i;
 
     os_running = 0;

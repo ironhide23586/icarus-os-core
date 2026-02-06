@@ -67,7 +67,6 @@
  */
 int main(void)
 {
-    hal_init();
     os_init();
 
     demo_tasks_init();
