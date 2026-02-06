@@ -89,6 +89,7 @@ static uint32_t stack_pool[ICARUS_MAX_TASKS][ICARUS_STACK_WORDS];
  * ========================================================================= */
 
 static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS];
+static uint16_t data_pool_word_offsets[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * EXTERNAL ASSEMBLY FUNCTIONS
@@ -200,6 +201,7 @@ void os_init(void)
     for (i = 0; i < ICARUS_MAX_TASKS; i++) {
         task_list[i] = &task_pool[i];
         cleanup_task_idx[i] = -1;
+        data_pool_word_offsets[i] = 0;
     }
 
     for (i = 0; i < ICARUS_MAX_SEMAPHORES; i++) {
@@ -247,4 +249,17 @@ uint32_t* kernel_get_stack(uint8_t task_idx)
 uint32_t* kernel_get_data(uint8_t task_idx)
 {
     return data_pool[task_idx];
+}
+
+
+
+void* kernel_protected_data(uint16_t num_words) {
+    if (data_pool_word_offsets[current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
+        return NULL;
+    enter_critical();
+    uint16_t current_offset = data_pool_word_offsets[current_task_index];
+    data_pool_word_offsets[current_task_index] += num_words;
+    uint32_t *ret_ptr = &data_pool[current_task_index][current_offset];
+    exit_critical();
+    return (void*) ret_ptr;
 }

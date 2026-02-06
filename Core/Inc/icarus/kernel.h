@@ -127,6 +127,10 @@ uint32_t* kernel_get_stack(uint8_t task_idx);
  */
 uint32_t* kernel_get_data(uint8_t task_idx);
 
+
+void* kernel_protected_data(uint16_t num_words);
+
+
 #ifdef __cplusplus
 }
 #endif

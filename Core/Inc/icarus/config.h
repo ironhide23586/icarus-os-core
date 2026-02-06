@@ -84,7 +84,7 @@ extern "C" {
  * @note  512 words = 2KB per task
  *        Must be even for 8-byte alignment (ARM ABI requirement)
  */
-#define ICARUS_DATA_WORDS         512 
+#define ICARUS_DATA_WORDS           512 
 
 /**
  * @brief Number of SysTick interrupts per task time slice
