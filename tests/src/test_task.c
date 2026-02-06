@@ -1,5 +1,5 @@
 /*
- * test_task.c
+ * task_list[initial_count]->c
  * Comprehensive unit tests for kernel task management functions
  * Tests all public API functions and major code paths
  */
@@ -525,53 +525,49 @@ void test_task_blocking_sleep(void) {
 	TEST_ASSERT_TRUE(result >= 10);  // Should have waited at least 10 ticks
 }
 
-// Test: os_create_task with max tasks
+// Test: os_register_task with max tasks
 void test_os_create_task_max_tasks(void) {
 	// Fill up to ICARUS_MAX_TASKS
 	running_task_count = ICARUS_MAX_TASKS;
 	
 	uint8_t initial_count = num_created_tasks;
 	
-	// Try to create another task (should fail)
-	icarus_task_t dummy_task;
-	uint32_t dummy_stack[100];
-	os_create_task(&dummy_task, test_task_1, dummy_stack, 100, NULL, "overflow");
+	// Try to register another task (should fail silently)
+	os_register_task(test_task_1, "overflow");
 	
 	// Should not increment num_created_tasks
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
 }
 
-// Test: os_create_task normal case
+// Test: os_register_task normal case
 void test_os_create_task_normal(void) {
-	icarus_task_t test_task;
-	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "created_task");
+	os_register_task(test_task_1, "created_task");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
-	TEST_ASSERT_EQUAL(TASK_STATE_COLD, test_task.task_state);
-	TEST_ASSERT_EQUAL_STRING("created_task", test_task.name);
-	TEST_ASSERT_NOT_NULL(test_task.function);
-	TEST_ASSERT_NOT_NULL(test_task.stack_base);
-	TEST_ASSERT_EQUAL(TASK_PRIORITY_LOW, test_task.task_priority);
-	TEST_ASSERT_EQUAL(0, test_task.global_tick_paused);
-	TEST_ASSERT_EQUAL(0, test_task.ticks_to_pause);
-	TEST_ASSERT_NOT_NULL(test_task.stack_pointer);
+	TEST_ASSERT_EQUAL(TASK_STATE_COLD, task_list[initial_count]->task_state);
+	TEST_ASSERT_EQUAL_STRING("created_task", task_list[initial_count]->name);
+	TEST_ASSERT_NOT_NULL(task_list[initial_count]->function);
+	TEST_ASSERT_NOT_NULL(task_list[initial_count]->stack_base);
+	TEST_ASSERT_EQUAL(TASK_PRIORITY_LOW, task_list[initial_count]->task_priority);
+	TEST_ASSERT_EQUAL(0, task_list[initial_count]->global_tick_paused);
+	TEST_ASSERT_EQUAL(0, task_list[initial_count]->ticks_to_pause);
+	TEST_ASSERT_NOT_NULL(task_list[initial_count]->stack_pointer);
 }
 
 // Test: os_create_task with long name (truncation)
 void test_os_create_task_long_name(void) {
-	icarus_task_t test_task;
-	uint32_t test_stack[ICARUS_STACK_WORDS];
+	uint8_t initial_count = num_created_tasks;
 	char long_name[100];
 	memset(long_name, 'A', 99);
 	long_name[99] = '\0';
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, long_name);
+	os_register_task(test_task_1, long_name);
 	
 	// Name should be truncated to ICARUS_MAX_TASK_NAME_LEN - 1
-	TEST_ASSERT_EQUAL('\0', test_task.name[ICARUS_MAX_TASK_NAME_LEN - 1]);
+	TEST_ASSERT_EQUAL(ICARUS_MAX_TASK_NAME_LEN - 1, strlen(task_list[initial_count]->name));
+	TEST_ASSERT_EQUAL('\0', task_list[initial_count]->name[ICARUS_MAX_TASK_NAME_LEN - 1]);
 }
 
 // Test: dequeue_print_buffer (tested indirectly through enqueue)
@@ -771,23 +767,19 @@ void test_os_kill_process_cleanup_idx_max(void) {
 // Test: os_create_task - boundary: running_task_count == ICARUS_MAX_TASKS - 1
 void test_os_create_task_boundary_max_minus_one(void) {
 	running_task_count = ICARUS_MAX_TASKS - 1;
-	icarus_task_t test_task;
-	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "boundary");
+	os_register_task(test_task_1, "boundary");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
 }
 
 // Test: os_create_task - early return when running_task_count >= ICARUS_MAX_TASKS
 void test_os_create_task_max_running_tasks(void) {
-	icarus_task_t test_task;
-	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	running_task_count = ICARUS_MAX_TASKS; // At max, should return early
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "max_running");
+	os_register_task(test_task_1, "max_running");
 	
 	// Should not increment num_created_tasks (early return)
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);

@@ -31,20 +31,9 @@ extern "C" {
  * @brief Register a task with automatic stack allocation
  * @param function Task entry point
  * @param name     Task name (max ICARUS_MAX_TASK_NAME_LEN chars)
+ * @note  This is the only public API for task creation
  */
 void os_register_task(void (*function)(void), const char *name);
-
-/**
- * @brief Create a task with explicit stack allocation
- * @param task       TCB to initialize
- * @param function   Task entry point
- * @param stack      Stack memory (8-byte aligned)
- * @param stack_size Stack size in 32-bit words
- * @param name       Task name
- */
-void os_create_task(icarus_task_t *task, void (*function)(void),
-                    uint32_t *stack, uint32_t stack_size, 
-                    uint32_t *data, const char *name);
 
 /* ============================================================================
  * TASK LIFECYCLE

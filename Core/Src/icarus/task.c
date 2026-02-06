@@ -27,12 +27,18 @@
 extern uint32_t* kernel_get_stack(uint8_t task_idx);
 
 /* ============================================================================
- * TASK CREATION
+ * TASK CREATION (PRIVILEGED INTERNAL)
  * ========================================================================= */
 
-void os_create_task(icarus_task_t *task, void (*function)(void),
-                    uint32_t *stack, uint32_t stack_size,
-                    uint32_t *data, const char *name)
+/**
+ * @brief Privileged implementation of task creation
+ * @note  Internal function - not exposed to user tasks
+ * @note  Called by __os_register_task() only
+ * @note  Non-static for test access only
+ */
+static void __os_create_task(icarus_task_t *task, void (*function)(void),
+                             uint32_t *stack, uint32_t stack_size,
+                             uint32_t *data, const char *name)
 {
     if (running_task_count >= ICARUS_MAX_TASKS) {
         return;
@@ -71,18 +77,14 @@ void os_create_task(icarus_task_t *task, void (*function)(void),
  */
 void __os_register_task(void (*function)(void), const char *name)
 {
-    os_create_task(task_list[num_created_tasks], function,
-                   kernel_get_stack(num_created_tasks), 
-                   ICARUS_STACK_WORDS, 
-                   kernel_get_data(num_created_tasks), name);
+    __os_create_task(task_list[num_created_tasks], function,
+                     kernel_get_stack(num_created_tasks), 
+                     ICARUS_STACK_WORDS, 
+                     kernel_get_data(num_created_tasks), name);
 }
 
-/**
- * @brief Public API for registering a task
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_register_task(void (*function)(void), const char *name)
-{
+
+void os_register_task(void (*function)(void), const char *name) {
     __os_register_task(function, name);
 }
 

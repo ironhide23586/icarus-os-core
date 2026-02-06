@@ -28,7 +28,6 @@ extern "C" {
 #define SVC_TASK_ACTIVE_SLEEP           0
 #define SVC_TASK_BLOCKING_SLEEP         1
 
-
 #define SVC_ENTER_CRITICAL              2
 #define SVC_EXIT_CRITICAL               3
 
