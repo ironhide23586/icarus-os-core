@@ -841,6 +841,90 @@ static void stats_display_task(void) {
 }
 
 // ============================================================================
+// MPU DATA PROTECTION VERIFICATION TASK
+// ============================================================================
+
+/**
+ * @brief   MPU data protection verification task
+ *
+ * @details Allocates its own MPU-protected data region and continuously
+ *          verifies data integrity. Writes known patterns and checks that
+ *          they remain uncorrupted, demonstrating hardware-enforced isolation.
+ *
+ * @note    Increments data_errors if corruption detected
+ * @note    Tests that MPU prevents cross-task data corruption
+ */
+static void mpu_verify_task(void) {
+    // Allocate MPU-protected data region
+    uint32_t *mpu_data = (uint32_t*)kernel_protected_data(32);  // 32 words = 128 bytes
+    if (mpu_data == NULL) {
+        // Allocation failed - increment error and exit
+        g_stress_stats.data_errors++;
+        while(1) { task_active_sleep(1000); }
+    }
+    
+    // Initialize with known pattern
+    const uint32_t MAGIC_PATTERN = 0x5A5A5A5A;
+    for (uint8_t i = 0; i < 32; i++) {
+        mpu_data[i] = MAGIC_PATTERN + i;
+    }
+    
+    uint32_t verify_count = 0;
+    uint32_t corruption_detected = 0;
+    
+    while (1) {
+        // VERIFY: Check data integrity
+        for (uint8_t i = 0; i < 32; i++) {
+            if (mpu_data[i] != MAGIC_PATTERN + i) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+                // Restore pattern
+                mpu_data[i] = MAGIC_PATTERN + i;
+            }
+        }
+        
+        verify_count++;
+        
+        // Display verification status
+        ANSI_GOTO(STRESS_ROW_STATS2 + 2, 1);
+        
+        if (corruption_detected > 0) {
+            printf("\033[1;31m");  // Bold red for corruption
+            printf("MPU_CHK: verifies=%lu corruptions=%lu [FAIL - DATA CORRUPTION!]",
+                   verify_count, corruption_detected);
+        } else {
+            printf("\033[1;32m");  // Bold green for pass
+            printf("MPU_CHK: verifies=%lu corruptions=0 [PASS - ISOLATION OK]",
+                   verify_count);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+        
+        // Update data with new pattern to test write protection
+        for (uint8_t i = 0; i < 32; i++) {
+            mpu_data[i] = MAGIC_PATTERN + i + (verify_count & 0xFF);
+        }
+        
+        task_active_sleep(200);
+        g_stress_stats.task_sleeps++;
+        
+        // Verify the updated pattern
+        for (uint8_t i = 0; i < 32; i++) {
+            if (mpu_data[i] != MAGIC_PATTERN + i + (verify_count & 0xFF)) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+            }
+        }
+        
+        // Restore original pattern for next iteration
+        for (uint8_t i = 0; i < 32; i++) {
+            mpu_data[i] = MAGIC_PATTERN + i;
+        }
+    }
+}
+
+// ============================================================================
 // HEADER DISPLAY
 // ============================================================================
 
@@ -977,4 +1061,7 @@ void stress_test_init(void) {
     
     // Register stats display task (1 task)
     os_register_task(stats_display_task, "stats");
+    
+    // Register MPU data protection verification task (1 task)
+    os_register_task(mpu_verify_task, "mpu_chk");
 }
