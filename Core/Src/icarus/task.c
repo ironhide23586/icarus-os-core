@@ -24,14 +24,15 @@
  * EXTERNAL FUNCTIONS
  * ========================================================================= */
 
-extern uint32_t* kernel_get_stack(uint8_t task_idx);
+extern uint32_t* __kernel_get_stack(uint8_t task_idx);
+extern uint32_t* __kernel_get_data(uint8_t task_idx);
 
 /* ============================================================================
  * EXTERNAL KERNEL DATA
  * ========================================================================= */
 
-extern int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
-extern int8_t current_cleanup_task_idx;
+extern int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
+extern int8_t __current_cleanup_task_idx;
 
 /* ============================================================================
  * TASK CREATION (PRIVILEGED INTERNAL)
@@ -47,7 +48,7 @@ static void __os_create_task(icarus_task_t *task, void (*function)(void),
                              uint32_t *stack, uint32_t stack_size,
                              uint32_t *data, const char *name)
 {
-    if (running_task_count >= ICARUS_MAX_TASKS) {
+    if (__running_task_count >= ICARUS_MAX_TASKS) {
         return;
     }
 
@@ -62,20 +63,20 @@ static void __os_create_task(icarus_task_t *task, void (*function)(void),
     strncpy(task->name, name, ICARUS_MAX_TASK_NAME_LEN);
     task->name[ICARUS_MAX_TASK_NAME_LEN - 1] = '\0';
 
-    uint32_t *stack_top = stack + stack_size - 1;
+    uint32_t *_stack_top = stack + stack_size - 1;
 
-    *(stack_top--) = 0x01000000;                      /* xPSR */
-    *(stack_top--) = (uint32_t)(uintptr_t)function;   /* PC */
-    *(stack_top--) = (uint32_t)(uintptr_t)os_exit_task; /* LR */
-    *(stack_top--) = 0;                               /* R12 */
-    *(stack_top--) = 0;                               /* R3 */
-    *(stack_top--) = 0;                               /* R2 */
-    *(stack_top--) = 0;                               /* R1 */
-    *(stack_top)   = 0;                               /* R0 */
+    *(_stack_top--) = 0x01000000;                      /* xPSR */
+    *(_stack_top--) = (uint32_t)(uintptr_t)function;   /* PC */
+    *(_stack_top--) = (uint32_t)(uintptr_t)os_exit_task; /* LR */
+    *(_stack_top--) = 0;                               /* R12 */
+    *(_stack_top--) = 0;                               /* R3 */
+    *(_stack_top--) = 0;                               /* R2 */
+    *(_stack_top--) = 0;                               /* R1 */
+    *(_stack_top)   = 0;                               /* R0 */
 
-    task->stack_pointer = stack_top;
+    task->stack_pointer = _stack_top;
     task->data_pointer = data;
-    num_created_tasks++;
+    __num_created_tasks++;
 }
 
 /**
@@ -84,27 +85,14 @@ static void __os_create_task(icarus_task_t *task, void (*function)(void),
  */
 void __os_register_task(void (*function)(void), const char *name)
 {
-    __os_create_task(task_list[num_created_tasks], function,
-                     kernel_get_stack(num_created_tasks), 
+    __os_create_task(__task_list[__num_created_tasks], function,
+                     __kernel_get_stack(__num_created_tasks), 
                      ICARUS_STACK_WORDS, 
-                     kernel_get_data(num_created_tasks), name);
+                     __kernel_get_data(__num_created_tasks), name);
 }
 
 
-void os_register_task(void (*function)(void), const char *name) {
-#ifdef HOST_TEST
-    __os_register_task(function, name);
-#else
-    __asm__ volatile (
-        "mov r0, %0\n"
-        "mov r1, %1\n"
-        "svc %2\n"
-        :
-        : "r" (function), "r" (name), "I" (SVC_OS_REGISTER_TASK)
-        : "r0", "r1"
-    );
-#endif
-}
+
 
 /* ============================================================================
  * TASK LIFECYCLE
@@ -112,90 +100,57 @@ void os_register_task(void (*function)(void), const char *name) {
 
 /**
  * @brief Privileged implementation of os_exit_task
- * @note  Internal function - use os_exit_task() wrapper
+ * @note  Internal function - use os_exit_task() wrapper from svc.c
  */
 void __os_exit_task(void)
 {
-    task_list[current_task_index]->task_state = TASK_STATE_FINISHED;
+    __task_list[__current_task_index]->task_state = TASK_STATE_FINISHED;
 
-    if (running_task_count > 0) {
-        running_task_count--;
+    if (__running_task_count > 0) {
+        __running_task_count--;
     }
 
     // Add to cleanup queue
-    if (current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
-        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)current_task_index;
+    if (__current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
+        __cleanup_task_idx[++__current_cleanup_task_idx] = (int8_t)__current_task_index;
     }
 
     __os_yield();  // Call privileged function directly (no SVC from kernel code)
 }
 
 /**
- * @brief Public API for exiting current task
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_exit_task(void)
-{
-#ifdef HOST_TEST
-    __os_exit_task();
-#else
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_OS_EXIT_TASK)
-        :
-    );
-#endif
-}
-
-/**
  * @brief Privileged implementation of os_kill_process
- * @note  Internal function - use os_kill_process() wrapper
+ * @note  Internal function - use os_kill_process() wrapper from svc.c
  */
 void __os_kill_process(uint8_t task_index)
 {
-    if (task_index >= num_created_tasks || task_index == 0) {
+    if (task_index >= __num_created_tasks || task_index == 0) {
         return;  /* Cannot kill task 0 (idle task) or invalid indices */
     }
 
-    task_list[task_index]->task_state = TASK_STATE_KILLED;
+    __task_list[task_index]->task_state = TASK_STATE_KILLED;
 
-    if (running_task_count > 0) {
-        running_task_count--;
+    if (__running_task_count > 0) {
+        __running_task_count--;
     }
 
     // Add to cleanup queue
-    if (current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
-        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)task_index;
+    if (__current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
+        __cleanup_task_idx[++__current_cleanup_task_idx] = (int8_t)task_index;
     }
 
-    if (task_index == current_task_index) {
+    if (task_index == __current_task_index) {
         __os_yield();  // Call privileged function directly (no SVC from kernel code)
     }
 }
 
 /**
- * @brief Public API for killing a task by index
- * @note  Will become SVC wrapper in privileged mode
+ * @brief Privileged implementation of os_task_suicide
+ * @note  Internal function - use os_task_suicide() wrapper from svc.c
  */
-void os_kill_process(uint8_t task_index)
-{
-#ifdef HOST_TEST
-    __os_kill_process(task_index);
-#else
-    __asm__ volatile (
-        "mov r0, %0\n"
-        "svc %1\n"
-        :
-        : "r" (task_index), "I" (SVC_OS_KILL_PROCESS)
-        : "r0"
-    );
-#endif
-}
-
-void os_task_suicide(void)
+void __os_task_suicide(void)
 {
     printf("[INFO] %s committed suicide\r\n",
-           task_list[current_task_index]->name);
-    os_kill_process(current_task_index);
+           __task_list[__current_task_index]->name);
+    __os_kill_process(__current_task_index);
 }

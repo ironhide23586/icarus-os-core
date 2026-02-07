@@ -685,14 +685,14 @@ void display_init(void) {
     // Note: This assumes tasks are registered in order and we skip system tasks
     // System tasks are registered first (ICARUS_KEEPALIVE_TASK, ICARUS_HEARTBEAT_TASK)
     // User tasks start from index 2
-    extern icarus_task_t* task_list[ICARUS_MAX_TASKS];
-    extern uint8_t num_created_tasks;
+    extern icarus_task_t* __task_list[ICARUS_MAX_TASKS];
+    extern uint8_t __num_created_tasks;
     
     uint8_t user_task_count = 0;
-    for (uint8_t i = 0; i < num_created_tasks && user_task_count < 3; i++) {
+    for (uint8_t i = 0; i < __num_created_tasks && user_task_count < 3; i++) {
         // Skip system tasks (they start with "ICARUS_")
-        if (task_list[i] != NULL && task_list[i]->name[0] != '\0') {
-            const char* name = task_list[i]->name;
+        if (__task_list[i] != NULL && __task_list[i]->name[0] != '\0') {
+            const char* name = __task_list[i]->name;
             if (strncmp(name, "ICARUS_", 7) != 0) {
                 // This is a user task
                 uint8_t row = ROW_TASK_A + user_task_count;

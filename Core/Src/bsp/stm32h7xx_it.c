@@ -26,7 +26,7 @@
 #include <stdbool.h>
 #include "icarus/config.h"
 #ifdef HOST_TEST
-// For host testing, include mock header for os_yield_pendsv
+// For host testing, include mock header for __os_yield_pendsv
 #include "mock_asm.h"
 #endif
 /* USER CODE END Includes */
@@ -184,7 +184,7 @@ void DebugMon_Handler(void)
 void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
-  os_yield_pendsv();
+  __os_yield_pendsv();
   /* USER CODE END PendSV_IRQn 0 */
   /* USER CODE BEGIN PendSV_IRQn 1 */
 
@@ -195,7 +195,7 @@ ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
   __asm__ volatile (
-    "b os_yield_pendsv"
+    "b __os_yield_pendsv"
   );
   
   /* USER CODE END PendSV_IRQn 0 */
@@ -211,15 +211,15 @@ ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 ITCM_FUNC void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-  extern volatile uint32_t os_tick_count;
-  extern volatile uint8_t os_running;
-  extern volatile uint32_t current_task_ticks_remaining;
-  extern volatile bool scheduler_enabled;
+  extern volatile uint32_t __os_tick_count;
+  extern volatile uint8_t __os_running;
+  extern volatile uint32_t __current_task_ticks_remaining;
+  extern volatile bool __scheduler_enabled;
   
-  os_tick_count++;
+  __os_tick_count++;
 
-  if (os_running && --current_task_ticks_remaining == 0 && scheduler_enabled) {
-    current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;  // Reset for next task
+  if (__os_running && --__current_task_ticks_remaining == 0 && __scheduler_enabled) {
+    __current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;  // Reset for next task
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
   }
   

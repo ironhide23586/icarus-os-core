@@ -33,37 +33,49 @@ extern "C" {
  * ========================================================================= */
 
 /** @brief Array of pointers to all task control blocks */
-extern icarus_task_t* task_list[ICARUS_MAX_TASKS];
+extern icarus_task_t* __task_list[ICARUS_MAX_TASKS];
 
 /** @brief Array of pointers to all semaphores */
-extern icarus_semaphore_t* semaphore_list[ICARUS_MAX_SEMAPHORES];
+extern icarus_semaphore_t* __semaphore_list[ICARUS_MAX_SEMAPHORES];
 
 /** @brief Array of pointers to all message pipes */
-extern icarus_pipe_t* message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
+extern icarus_pipe_t* __message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 
 /** @brief Index of currently executing task */
-extern uint8_t current_task_index;
+extern uint8_t __current_task_index;
 
 /** @brief Count of tasks in active states */
-extern uint8_t running_task_count;
+extern uint8_t __running_task_count;
 
 /** @brief Total number of created tasks */
-extern uint8_t num_created_tasks;
+extern uint8_t __num_created_tasks;
 
 /** @brief Ticks remaining in current task's time slice */
-extern volatile uint32_t current_task_ticks_remaining;
+extern volatile uint32_t __current_task_ticks_remaining;
 
 /** @brief Configured ticks per time slice */
-extern volatile uint32_t ticks_per_task;
+extern volatile uint32_t __ticks_per_task;
 
 /** @brief System tick counter */
-extern volatile uint32_t os_tick_count;
+extern volatile uint32_t __os_tick_count;
 
 /** @brief Flag indicating OS is running */
-extern volatile uint8_t os_running;
+extern volatile uint8_t __os_running;
 
 /** @brief Scheduler enable flag */
-extern volatile bool scheduler_enabled;
+extern volatile bool __scheduler_enabled;
+
+/** @brief Critical section nesting depth */
+extern volatile uint8_t __critical_stack_depth;
+
+/** @brief CPU virtual registers for context switching */
+extern uint32_t __cpu_vregisters[16];
+
+/** @brief Cleanup task index array */
+extern int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
+
+/** @brief Current cleanup task index */
+extern int8_t __current_cleanup_task_idx;
 
 /* ============================================================================
  * KERNEL INITIALIZATION
@@ -141,6 +153,8 @@ void __exit_critical(void);
 void __os_init(void);
 void __os_start(void);
 void* __kernel_protected_data(uint16_t num_words);
+uint32_t* __kernel_get_stack(uint8_t task_idx);
+uint32_t* __kernel_get_data(uint8_t task_idx);
 
 #ifdef __cplusplus
 }

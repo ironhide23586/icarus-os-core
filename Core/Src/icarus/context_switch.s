@@ -42,47 +42,47 @@
 .equ STATE_FINISHED,    5
 
 /* ============================================================================
- * os_yield_pendsv - PendSV Context Switch Handler
+ * __os_yield_pendsv - PendSV Context Switch Handler
  * ============================================================================
  *
  * Called from PendSV_Handler to perform context switch.
  * Saves current task context, selects next ready task, restores its context.
  *
  * Register usage:
- *   r0  - current_task_index address / scratch
- *   r1  - task_list address / next task SP
+ *   r0  - __current_task_index address / scratch
+ *   r1  - __task_list address / next task SP
  *   r2  - scratch (index calculations)
  *   r3  - current TCB pointer
  *   r4  - current PSP / task state
- *   r5  - num_created_tasks
- *   r6  - scheduler_enabled / scratch
- *   r7  - os_tick_count / scratch
+ *   r5  - __num_created_tasks
+ *   r6  - __scheduler_enabled / scratch
+ *   r7  - __os_tick_count / scratch
  *   r8  - scratch (tick calculations)
  *   r9  - next_task_index
  *   r10 - scratch (index * 4)
  *   r11 - next TCB pointer
  */
 
-.global os_yield_pendsv
-.type os_yield_pendsv, %function
+.global __os_yield_pendsv
+.type __os_yield_pendsv, %function
 
-os_yield_pendsv:
+__os_yield_pendsv:
     /* Save current task context */
     mrs     r0, psp                     /* Read Process Stack Pointer */
     stmdb   r0!, {r4-r11}               /* Push R4-R11 to task stack */
     mov     r4, r0                      /* Save updated PSP */
 
     /* Load kernel state pointers */
-    ldr     r0, =current_task_index
-    ldr     r1, =task_list
-    ldr     r5, =num_created_tasks
+    ldr     r0, =__current_task_index
+    ldr     r1, =__task_list
+    ldr     r5, =__num_created_tasks
     ldrb    r5, [r5]                    /* r5 = task count */
     ldrb    r9, [r0]                    /* r9 = current index (will become next) */
 
     /* Save current task's stack pointer to TCB */
-    ldrb    r2, [r0]                    /* r2 = current_task_index */
+    ldrb    r2, [r0]                    /* r2 = __current_task_index */
     lsl     r2, r2, #2                  /* r2 = index * 4 (pointer size) */
-    ldr     r3, [r1, r2]                /* r3 = task_list[current_task_index] */
+    ldr     r3, [r1, r2]                /* r3 = __task_list[__current_task_index] */
     str     r4, [r3, #TCB_STACK_PTR]    /* Save PSP to TCB */
 
     /* Check if current task should transition to READY */
@@ -100,7 +100,7 @@ find_next_task:
 
     /* Load next task's TCB */
     lsl     r10, r9, #2                 /* r10 = next_index * 4 */
-    ldr     r11, [r1, r10]              /* r11 = task_list[next_index] */
+    ldr     r11, [r1, r10]              /* r11 = __task_list[next_index] */
     ldrb    r4, [r11, #TCB_TASK_STATE]  /* r4 = next task state */
 
     /* State machine: determine if task is runnable */
@@ -123,7 +123,7 @@ find_next_task:
 
 yield_postprocess:
     /* Switch to next task */
-    strb    r9, [r0]                    /* Update current_task_index */
+    strb    r9, [r0]                    /* Update __current_task_index */
 
     /* Set up Memory Protection Unit for task data section */
     push    {r0-r3, r12, lr}
@@ -148,7 +148,7 @@ branch_to_next_task:
 
 check_sleep_ticks:
     /* Check if blocked task's sleep has expired */
-    ldr     r7, =os_tick_count
+    ldr     r7, =__os_tick_count
     ldr     r7, [r7]                    /* r7 = current tick */
     ldr     r6, [r11, #TCB_TICK_PAUSED] /* r6 = tick when blocked */
     ldr     r8, [r11, #TCB_TICKS_PAUSE] /* r8 = ticks to sleep */
@@ -159,7 +159,7 @@ check_sleep_ticks:
 
 set_task_to_ready:
     /* Check if scheduler is enabled before transitioning */
-    ldr     r6, =scheduler_enabled
+    ldr     r6, =__scheduler_enabled
     ldrb    r6, [r6]
     cmp     r6, #0
     beq     defer_ctx_switch            /* Scheduler disabled, defer */
@@ -170,7 +170,7 @@ set_task_to_ready:
 
 increment_running_count:
     /* First time running this task */
-    ldr     r7, =running_task_count
+    ldr     r7, =__running_task_count
     ldrb    r6, [r7]
     add     r6, r6, #1
     strb    r6, [r7]
@@ -181,18 +181,18 @@ defer_ctx_switch:
     mov     r11, r3                     /* Next = current */
     b       yield_postprocess
 
-.size os_yield_pendsv, .-os_yield_pendsv
+.size __os_yield_pendsv, .-__os_yield_pendsv
 
 /* ============================================================================
- * start_cold_task - Initialize and Start First Task
+ * __start_cold_task - Initialize and Start First Task
  * ============================================================================
  *
- * Called once from os_start() to begin task execution.
+ * Called once from __os_start() to begin task execution.
  * Sets up PSP, enables interrupts, and jumps to first task.
  *
  * @param r0  Pointer to task control block (TCB)
  *
- * Stack frame expected (set up by os_create_task):
+ * Stack frame expected (set up by __os_create_task):
  *   [SP+24] xPSR
  *   [SP+20] PC (entry point)
  *   [SP+16] LR (os_exit_task)
@@ -203,10 +203,10 @@ defer_ctx_switch:
  *   [SP-4]  R0  <- Initial SP points here
  */
 
-.global start_cold_task
-.type start_cold_task, %function
+.global __start_cold_task
+.type __start_cold_task, %function
 
-start_cold_task:
+__start_cold_task:
     /* Load task's initial stack pointer */
     ldr     r1, [r0, #TCB_STACK_PTR]
     msr     psp, r1                     /* Set Process Stack Pointer */
@@ -227,17 +227,17 @@ start_cold_task:
     msr     apsr_nzcvq, r5              /* Restore flags */
 
     /* Set OS running flags */
-    ldr     r5, =os_running
+    ldr     r5, =__os_running
     mov     r6, #1
     strb    r6, [r5]
 
-    ldr     r5, =running_task_count
+    ldr     r5, =__running_task_count
     strb    r6, [r5]
 
     /* Enable interrupts and jump to task */
     cpsie   i                           /* Enable IRQ */
     bx      r4                          /* Branch to task entry point */
 
-.size start_cold_task, .-start_cold_task
+.size __start_cold_task, .-__start_cold_task
 
 /* End of context_switch.s */

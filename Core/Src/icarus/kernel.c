@@ -15,6 +15,7 @@
 
 #include "icarus/kernel.h"
 #include "icarus/task.h"
+#include "icarus/scheduler.h"
 #include "icarus/svc.h"
 #include "bsp/display.h"
 #include "bsp/led.h"
@@ -53,50 +54,50 @@ _Static_assert(offsetof(icarus_task_t, ticks_to_pause) == 24,
  * KERNEL DATA STRUCTURES (DTCM - Zero Wait State)
  * ========================================================================= */
 
-DTCM_DATA icarus_task_t* task_list[ICARUS_MAX_TASKS];
-DTCM_DATA icarus_semaphore_t* semaphore_list[ICARUS_MAX_SEMAPHORES];
-DTCM_DATA icarus_pipe_t* message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
+DTCM_DATA icarus_task_t* __task_list[ICARUS_MAX_TASKS];
+DTCM_DATA icarus_semaphore_t* __semaphore_list[ICARUS_MAX_SEMAPHORES];
+DTCM_DATA icarus_pipe_t* __message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 
-DTCM_DATA static icarus_task_t task_pool[ICARUS_MAX_TASKS];
-DTCM_DATA static icarus_semaphore_t semaphore_pool[ICARUS_MAX_SEMAPHORES];
-DTCM_DATA static icarus_pipe_t message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
-DTCM_DATA int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
+DTCM_DATA static icarus_task_t __task_pool[ICARUS_MAX_TASKS];
+DTCM_DATA static icarus_semaphore_t __semaphore_pool[ICARUS_MAX_SEMAPHORES];
+DTCM_DATA static icarus_pipe_t __message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
+DTCM_DATA int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * SCHEDULER STATE (DTCM - Zero Wait State)
  * ========================================================================= */
 
-DTCM_DATA uint8_t current_task_index;
-DTCM_DATA uint8_t running_task_count;
-DTCM_DATA uint8_t num_created_tasks;
-DTCM_DATA volatile uint32_t current_task_ticks_remaining;
-DTCM_DATA volatile uint32_t ticks_per_task;
-DTCM_DATA uint32_t cpu_vregisters[16];
-DTCM_DATA volatile uint32_t os_tick_count;
-DTCM_DATA volatile uint8_t os_running;
-DTCM_DATA volatile uint8_t critical_stack_depth;
-DTCM_DATA volatile bool scheduler_enabled;
-DTCM_DATA int8_t current_cleanup_task_idx;
+DTCM_DATA uint8_t __current_task_index;
+DTCM_DATA uint8_t __running_task_count;
+DTCM_DATA uint8_t __num_created_tasks;
+DTCM_DATA volatile uint32_t __current_task_ticks_remaining;
+DTCM_DATA volatile uint32_t __ticks_per_task;
+DTCM_DATA uint32_t __cpu_vregisters[16];
+DTCM_DATA volatile uint32_t __os_tick_count;
+DTCM_DATA volatile uint8_t __os_running;
+DTCM_DATA volatile uint8_t __critical_stack_depth;
+DTCM_DATA volatile bool __scheduler_enabled;
+DTCM_DATA int8_t __current_cleanup_task_idx;
 
 /* ============================================================================
  * STACK POOL (RAM_D1)
  * ========================================================================= */
 
-static uint32_t stack_pool[ICARUS_MAX_TASKS][ICARUS_STACK_WORDS];
+static uint32_t __stack_pool[ICARUS_MAX_TASKS][ICARUS_STACK_WORDS];
 
 
 /* ============================================================================
  * DATA POOL (RAM_D1)
  * ========================================================================= */
 
-static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS];
-static uint16_t data_pool_word_offsets[ICARUS_MAX_TASKS];
+static uint32_t __data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS];
+static uint16_t __data_pool_word_offsets[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * EXTERNAL ASSEMBLY FUNCTIONS
  * ========================================================================= */
 
-extern void start_cold_task(icarus_task_t *task);
+extern void __start_cold_task(icarus_task_t *task);
 
 /* ============================================================================
  * CRITICAL SECTION MANAGEMENT
@@ -104,57 +105,23 @@ extern void start_cold_task(icarus_task_t *task);
 
 /**
  * @brief Privileged implementation of enter_critical
- * @note  Internal function - use enter_critical() wrapper
+ * @note  Internal function - use enter_critical() wrapper from svc.c
  */
 void __enter_critical(void)
 {
-    scheduler_enabled = false;
-    critical_stack_depth++;
-}
-
-/**
- * @brief Public API for entering critical section
- * @note  Will become SVC wrapper in privileged mode
- */
-void enter_critical(void)
-{
-#ifdef HOST_TEST
-    __enter_critical();
-#else
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_ENTER_CRITICAL)
-    );
-#endif
+    __scheduler_enabled = false;
+    __critical_stack_depth++;
 }
 
 /**
  * @brief Privileged implementation of exit_critical
- * @note  Internal function - use exit_critical() wrapper
+ * @note  Internal function - use exit_critical() wrapper from svc.c
  */
 void __exit_critical(void)
 {
-    if (--critical_stack_depth == 0) {
-        scheduler_enabled = true;
+    if (--__critical_stack_depth == 0) {
+        __scheduler_enabled = true;
     }
-}
-
-/**
- * @brief Public API for exiting critical section
- * @note  Will become SVC wrapper in privileged mode
- */
-void exit_critical(void)
-{
-#ifdef HOST_TEST
-    __exit_critical();
-#else
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_EXIT_CRITICAL)
-    );
-#endif
 }
 
 /* ============================================================================
@@ -164,24 +131,24 @@ void exit_critical(void)
 static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
                               bool should_engage)
 {
-    semaphore_list[semaphore_idx]->count = semaphore_count;
-    semaphore_list[semaphore_idx]->max_count = semaphore_count;
-    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    semaphore_list[semaphore_idx]->engaged = should_engage;
+    __semaphore_list[semaphore_idx]->count = semaphore_count;
+    __semaphore_list[semaphore_idx]->max_count = semaphore_count;
+    __semaphore_list[semaphore_idx]->tick_updated_at = __os_tick_count;
+    __semaphore_list[semaphore_idx]->engaged = should_engage;
 }
 
 static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
                                bool should_engage)
 {
-    message_pipe_list[message_pipe_idx]->count = 0;
-    message_pipe_list[message_pipe_idx]->max_count = max_messages;
-    message_pipe_list[message_pipe_idx]->enqueue_idx = 0;
-    message_pipe_list[message_pipe_idx]->dequeue_idx = 0;
-    message_pipe_list[message_pipe_idx]->tick_updated_at = os_tick_count;
-    message_pipe_list[message_pipe_idx]->engaged = should_engage;
+    __message_pipe_list[message_pipe_idx]->count = 0;
+    __message_pipe_list[message_pipe_idx]->max_count = max_messages;
+    __message_pipe_list[message_pipe_idx]->enqueue_idx = 0;
+    __message_pipe_list[message_pipe_idx]->dequeue_idx = 0;
+    __message_pipe_list[message_pipe_idx]->tick_updated_at = __os_tick_count;
+    __message_pipe_list[message_pipe_idx]->engaged = should_engage;
 
-    for (uint16_t i = 0; i < ICARUS_MAX_MESSAGE_BYTES; i++) {
-        message_pipe_list[message_pipe_idx]->buffer[i] = 0;
+    for (uint16_t _i = 0; _i < ICARUS_MAX_MESSAGE_BYTES; _i++) {
+        __message_pipe_list[message_pipe_idx]->buffer[_i] = 0;
     }
 }
 
@@ -193,63 +160,35 @@ static void os_idle_task(void)
 {
     display_init();
     while (1) {
-#ifdef HOST_TEST
-        os_yield();  // In tests, call wrapper (no inline assembly on host)
-#else
-        __os_yield();  // On hardware, call privileged function directly
-#endif
+        __os_yield();  // Call privileged function directly
     }
 }
 
 static void os_heartbeat_task(void)
 {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
-#ifdef HOST_TEST
-    const char* task_name = os_get_current_task_name();  // In tests, call wrapper
-#else
-    const char* task_name = __os_get_current_task_name();  // On hardware, call privileged function directly
-#endif
+    const char* _task_name = __os_get_current_task_name();  // Call privileged function directly
 #endif
 
     while (1) {
-        if (os_running) {
+        if (__os_running) {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
-            display_render_banner(ROW_HEARTBEAT, task_name, true);
-#ifdef HOST_TEST
-            task_active_sleep(8);  // In tests, call wrapper
-#else
-            __task_active_sleep(8);  // On hardware, call privileged function directly
-#endif
+            display_render_banner(ROW_HEARTBEAT, _task_name, true);
+            __task_active_sleep(8);  // Call privileged function directly
             LED_On();
-#ifdef HOST_TEST
-            task_active_sleep(ICARUS_HEARTBEAT_ON_TICKS - 1);
-#else
             __task_active_sleep(ICARUS_HEARTBEAT_ON_TICKS - 1);
-#endif
-            display_render_banner(ROW_HEARTBEAT, task_name, false);
-#ifdef HOST_TEST
-            task_active_sleep(8);
-#else
+            display_render_banner(ROW_HEARTBEAT, _task_name, false);
             __task_active_sleep(8);
-#endif
             LED_Off();
-#ifdef HOST_TEST
-            task_active_sleep(ICARUS_HEARTBEAT_OFF_TICKS - 1);
-#else
             __task_active_sleep(ICARUS_HEARTBEAT_OFF_TICKS - 1);
-#endif
 #else
             LED_Blink(ICARUS_HEARTBEAT_ON_TICKS, ICARUS_HEARTBEAT_OFF_TICKS);
 #endif
         } else {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
-            display_render_banner(ROW_HEARTBEAT, task_name, false);
+            display_render_banner(ROW_HEARTBEAT, _task_name, false);
 #endif
-#ifdef HOST_TEST
-            task_active_sleep(100);
-#else
             __task_active_sleep(100);
-#endif
         }
     }
 }
@@ -260,99 +199,65 @@ static void os_heartbeat_task(void)
 
 /**
  * @brief Privileged implementation of os_init
- * @note  Internal function - use os_init() wrapper
+ * @note  Internal function - use os_init() wrapper from svc.c
  */
 void __os_init(void)
 {
     hal_init();
-    uint8_t i;
+    uint8_t _i;
 
-    os_running = 0;
-    ticks_per_task = ICARUS_TICKS_PER_TASK;
-    running_task_count = 0;
-    current_task_index = 0;
-    current_cleanup_task_idx = -1;
-    current_task_ticks_remaining = ticks_per_task;
+    __os_running = 0;
+    __ticks_per_task = ICARUS_TICKS_PER_TASK;
+    __running_task_count = 0;
+    __current_task_index = 0;
+    __current_cleanup_task_idx = -1;
+    __current_task_ticks_remaining = __ticks_per_task;
 
-    for (i = 0; i < ICARUS_MAX_TASKS; i++) {
-        task_list[i] = &task_pool[i];
-        cleanup_task_idx[i] = -1;
-        data_pool_word_offsets[i] = 0;
+    for (_i = 0; _i < ICARUS_MAX_TASKS; _i++) {
+        __task_list[_i] = &__task_pool[_i];
+        __cleanup_task_idx[_i] = -1;
+        __data_pool_word_offsets[_i] = 0;
     }
 
-    for (i = 0; i < ICARUS_MAX_SEMAPHORES; i++) {
-        semaphore_list[i] = &semaphore_pool[i];
-        __init_sem(i, 0, false);
+    for (_i = 0; _i < ICARUS_MAX_SEMAPHORES; _i++) {
+        __semaphore_list[_i] = &__semaphore_pool[_i];
+        __init_sem(_i, 0, false);
     }
 
-    for (i = 0; i < ICARUS_MAX_MESSAGE_QUEUES; i++) {
-        message_pipe_list[i] = &message_pipe_pool[i];
-        __init_pipe(i, 0, false);
+    for (_i = 0; _i < ICARUS_MAX_MESSAGE_QUEUES; _i++) {
+        __message_pipe_list[_i] = &__message_pipe_pool[_i];
+        __init_pipe(_i, 0, false);
     }
 
-    for (i = 0; i < 16; i++) {
-        cpu_vregisters[i] = 0;
+    for (_i = 0; _i < 16; _i++) {
+        __cpu_vregisters[_i] = 0;
     }
 
-    os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
-    os_register_task(os_heartbeat_task, ">ICARUS_HEARTBEAT<");
+    __os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
+    __os_register_task(os_heartbeat_task, ">ICARUS_HEARTBEAT<");
 
-    scheduler_enabled = true;
-}
-
-/**
- * @brief Public API for kernel initialization
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_init(void)
-{
-#ifdef HOST_TEST
-    __os_init();
-#else
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_OS_INIT)
-    );
-#endif
+    __scheduler_enabled = true;
 }
 
 /**
  * @brief Privileged implementation of os_start
- * @note  Internal function - use os_start() wrapper
+ * @note  Internal function - use os_start() wrapper from svc.c
  */
 void __os_start(void)
 {
-    if (num_created_tasks == 0 || num_created_tasks > ICARUS_MAX_TASKS) {
+    if (__num_created_tasks == 0 || __num_created_tasks > ICARUS_MAX_TASKS) {
         return;
     }
-    start_cold_task(task_list[current_task_index]);
-}
-
-/**
- * @brief Public API for starting the scheduler
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_start(void)
-{
-#ifdef HOST_TEST
-    __os_start();
-#else
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_OS_START)
-    );
-#endif
+    __start_cold_task(__task_list[__current_task_index]);
 }
 
 /* ============================================================================
  * STACK POOL ACCESS (for task.c)
  * ========================================================================= */
 
-uint32_t* kernel_get_stack(uint8_t task_idx)
+uint32_t* __kernel_get_stack(uint8_t task_idx)
 {
-    return stack_pool[task_idx];
+    return __stack_pool[task_idx];
 }
 
 
@@ -360,43 +265,22 @@ uint32_t* kernel_get_stack(uint8_t task_idx)
  * DATA POOL ACCESS (for task.c)
  * ========================================================================= */
 
-uint32_t* kernel_get_data(uint8_t task_idx)
+uint32_t* __kernel_get_data(uint8_t task_idx)
 {
-    return data_pool[task_idx];
+    return __data_pool[task_idx];
 }
 
 /**
  * @brief Privileged implementation of kernel_protected_data
- * @note  Internal function - use kernel_protected_data() wrapper
+ * @note  Internal function - use kernel_protected_data() wrapper from svc.c
  */
 void* __kernel_protected_data(uint16_t num_words) {
-    if (data_pool_word_offsets[current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
+    if (__data_pool_word_offsets[__current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
         return NULL;
     __enter_critical();
-    uint16_t current_offset = data_pool_word_offsets[current_task_index];
-    data_pool_word_offsets[current_task_index] += num_words;
-    uint32_t *ret_ptr = &data_pool[current_task_index][current_offset];
+    uint16_t _current_offset = __data_pool_word_offsets[__current_task_index];
+    __data_pool_word_offsets[__current_task_index] += num_words;
+    uint32_t *_ret_ptr = &__data_pool[__current_task_index][_current_offset];
     __exit_critical();
-    return (void*) ret_ptr;
-}
-
-/**
- * @brief Public API for allocating protected task data
- * @note  Will become SVC wrapper in privileged mode
- */
-void* kernel_protected_data(uint16_t num_words) {
-#ifdef HOST_TEST
-    return __kernel_protected_data(num_words);
-#else
-    void* res;
-    __asm__ volatile (
-        "mov r0, %1\n"
-        "svc %2\n"
-        "mov %0, r0\n"
-        : "=r" (res)
-        : "r" (num_words), "I" (SVC_KERNEL_PROTECTED_DATA)
-        : "r0"
-    );
-    return res;
-#endif
+    return (void*) _ret_ptr;
 }

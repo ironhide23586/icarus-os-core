@@ -10,13 +10,13 @@
 // Track yield calls for testing
 static uint32_t yield_call_count = 0;
 
-// External reference to os_tick_count for tick simulation
-extern volatile uint32_t os_tick_count;
+// External reference to __os_tick_count for tick simulation
+extern volatile uint32_t __os_tick_count;
 
-// Mock: start_cold_task
+// Mock: __start_cold_task
 // In real system, this sets up PSP and branches to task function
 // For testing, we just mark the task as running
-void start_cold_task(icarus_task_t *task) {
+void __start_cold_task(icarus_task_t *task) {
 	if (task == NULL) {
 		return;
 	}
@@ -32,10 +32,10 @@ void os_yield_trampoline(void) {
 	// Mock: do nothing
 }
 
-// Mock: os_yield_pendsv
+// Mock: __os_yield_pendsv
 // In real system, this performs the actual context switch
 // For testing, we track calls and can simulate task state changes
-void os_yield_pendsv(void) {
+void __os_yield_pendsv(void) {
 	yield_call_count++;
 	// Mock: In a real context switch, blocked tasks would be checked
 	// For testing, we just track that yield was called
@@ -43,10 +43,10 @@ void os_yield_pendsv(void) {
 
 // Test helper: simulate tick advancement
 void test_advance_ticks(uint32_t ticks) {
-	os_tick_count += ticks;
+	__os_tick_count += ticks;
 }
 
-// Test helper: get number of times os_yield_pendsv was called
+// Test helper: get number of times __os_yield_pendsv was called
 uint32_t test_get_yield_count(void) {
 	return yield_call_count;
 }

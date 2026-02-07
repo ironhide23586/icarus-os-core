@@ -12,9 +12,9 @@
 // These are ARM assembly functions in context_switch.s
 // For host testing, we provide C implementations
 
-void start_cold_task(icarus_task_t *task);
+void __start_cold_task(icarus_task_t *task);
 void os_yield_trampoline(void);
-void os_yield_pendsv(void);
+void __os_yield_pendsv(void);
 
 // Test helper: simulate tick advancement
 // Call this to advance os_tick_count, allowing sleep functions to complete
