@@ -53,7 +53,19 @@ ITCM_FUNC uint32_t __os_get_tick_count(void)
  */
 uint32_t os_get_tick_count(void)
 {
+#ifdef HOST_TEST
     return __os_get_tick_count();
+#else
+    uint32_t res;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "I" (SVC_OS_GET_TICK_COUNT)
+        : "r0"
+    );
+    return res;
+#endif
 }
 
 uint8_t os_get_running_task_count(void)
@@ -80,7 +92,19 @@ const char* __os_get_current_task_name(void)
  */
 const char* os_get_current_task_name(void)
 {
+#ifdef HOST_TEST
     return __os_get_current_task_name();
+#else
+    const char* res;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "I" (SVC_OS_GET_CURRENT_TASK_NAME)
+        : "r0"
+    );
+    return res;
+#endif
 }
 
 uint32_t os_get_task_ticks_remaining(void)
@@ -108,7 +132,15 @@ ITCM_FUNC void __os_yield(void)
  */
 void os_yield(void)
 {
+#ifdef HOST_TEST
     __os_yield();
+#else
+    __asm__ volatile (
+        "svc %0\n"
+        :
+        : "I" (SVC_OS_YIELD)
+    );
+#endif
 }
 
 /**
@@ -130,7 +162,20 @@ ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks)
  */
 uint32_t task_active_sleep(uint32_t ticks)
 {
+#ifdef HOST_TEST
     return __task_active_sleep(ticks);
+#else
+    uint32_t res;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "r" (ticks), "I" (SVC_TASK_ACTIVE_SLEEP)
+        : "r0"
+    );
+    return res;
+#endif
 }
 
 /**
@@ -151,7 +196,20 @@ uint32_t __task_blocking_sleep(uint32_t ticks)
  */
 uint32_t task_blocking_sleep(uint32_t ticks)
 {
+#ifdef HOST_TEST
     return __task_blocking_sleep(ticks);
+#else
+    uint32_t res;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "r" (ticks), "I" (SVC_TASK_BLOCKING_SLEEP)
+        : "r0"
+    );
+    return res;
+#endif
 }
 
 uint32_t task_busy_wait(uint32_t ticks)

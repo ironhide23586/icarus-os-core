@@ -41,13 +41,14 @@ extern "C" {
 #define SVC_OS_REGISTER_TASK            10
 #define SVC_OS_GET_CURRENT_TASK_NAME    11
 #define SVC_OS_GET_TICK_COUNT           12
+#define SVC_OS_EXIT_TASK                13
+#define SVC_OS_KILL_PROCESS             14
 
-#define SVC_SEMAPHORE_INIT              13
-#define SVC_SEMAPHORE_CONSUME           14
-#define SVC_SEMAPHORE_FEED              15
+#define SVC_SEMAPHORE_INIT              15
+#define SVC_SEMAPHORE_CONSUME           16
+#define SVC_SEMAPHORE_FEED              17
 
-
-#define SVC_KERNEL_PROTECTED_DATA       16
+#define SVC_KERNEL_PROTECTED_DATA       18
 
 
 

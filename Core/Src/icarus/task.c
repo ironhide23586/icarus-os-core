@@ -92,14 +92,29 @@ void __os_register_task(void (*function)(void), const char *name)
 
 
 void os_register_task(void (*function)(void), const char *name) {
+#ifdef HOST_TEST
     __os_register_task(function, name);
+#else
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "mov r1, %1\n"
+        "svc %2\n"
+        :
+        : "r" (function), "r" (name), "I" (SVC_OS_REGISTER_TASK)
+        : "r0", "r1"
+    );
+#endif
 }
 
 /* ============================================================================
  * TASK LIFECYCLE
  * ========================================================================= */
 
-void os_exit_task(void)
+/**
+ * @brief Privileged implementation of os_exit_task
+ * @note  Internal function - use os_exit_task() wrapper
+ */
+void __os_exit_task(void)
 {
     task_list[current_task_index]->task_state = TASK_STATE_FINISHED;
 
@@ -112,10 +127,32 @@ void os_exit_task(void)
         cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)current_task_index;
     }
 
-    os_yield();
+    __os_yield();  // Call privileged function directly (no SVC from kernel code)
 }
 
-void os_kill_process(uint8_t task_index)
+/**
+ * @brief Public API for exiting current task
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_exit_task(void)
+{
+#ifdef HOST_TEST
+    __os_exit_task();
+#else
+    __asm__ volatile (
+        "svc %0\n"
+        :
+        : "I" (SVC_OS_EXIT_TASK)
+        :
+    );
+#endif
+}
+
+/**
+ * @brief Privileged implementation of os_kill_process
+ * @note  Internal function - use os_kill_process() wrapper
+ */
+void __os_kill_process(uint8_t task_index)
 {
     if (task_index >= num_created_tasks || task_index == 0) {
         return;  /* Cannot kill task 0 (idle task) or invalid indices */
@@ -133,8 +170,27 @@ void os_kill_process(uint8_t task_index)
     }
 
     if (task_index == current_task_index) {
-        os_yield();
+        __os_yield();  // Call privileged function directly (no SVC from kernel code)
     }
+}
+
+/**
+ * @brief Public API for killing a task by index
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_kill_process(uint8_t task_index)
+{
+#ifdef HOST_TEST
+    __os_kill_process(task_index);
+#else
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "svc %1\n"
+        :
+        : "r" (task_index), "I" (SVC_OS_KILL_PROCESS)
+        : "r0"
+    );
+#endif
 }
 
 void os_task_suicide(void)

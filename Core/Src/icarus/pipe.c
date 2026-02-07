@@ -70,7 +70,21 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
  */
 bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 {
+#ifdef HOST_TEST
     return __pipe_init(pipe_idx, pipe_capacity_bytes);
+#else
+    bool res;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "r" (pipe_idx), "r" (pipe_capacity_bytes), "I" (SVC_PIPE_INIT)
+        : "r0", "r1"
+    );
+    return res;
+#endif
 }
 
 /**

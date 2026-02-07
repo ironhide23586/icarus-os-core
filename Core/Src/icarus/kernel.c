@@ -193,27 +193,51 @@ static void os_idle_task(void)
 {
     display_init();
     while (1) {
-        os_yield();
+#ifdef HOST_TEST
+        os_yield();  // In tests, call wrapper (no inline assembly on host)
+#else
+        __os_yield();  // On hardware, call privileged function directly
+#endif
     }
 }
 
 static void os_heartbeat_task(void)
 {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
-    const char* task_name = os_get_current_task_name();
+#ifdef HOST_TEST
+    const char* task_name = os_get_current_task_name();  // In tests, call wrapper
+#else
+    const char* task_name = __os_get_current_task_name();  // On hardware, call privileged function directly
+#endif
 #endif
 
     while (1) {
         if (os_running) {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
             display_render_banner(ROW_HEARTBEAT, task_name, true);
-            task_active_sleep(8);
+#ifdef HOST_TEST
+            task_active_sleep(8);  // In tests, call wrapper
+#else
+            __task_active_sleep(8);  // On hardware, call privileged function directly
+#endif
             LED_On();
+#ifdef HOST_TEST
             task_active_sleep(ICARUS_HEARTBEAT_ON_TICKS - 1);
+#else
+            __task_active_sleep(ICARUS_HEARTBEAT_ON_TICKS - 1);
+#endif
             display_render_banner(ROW_HEARTBEAT, task_name, false);
+#ifdef HOST_TEST
             task_active_sleep(8);
+#else
+            __task_active_sleep(8);
+#endif
             LED_Off();
+#ifdef HOST_TEST
             task_active_sleep(ICARUS_HEARTBEAT_OFF_TICKS - 1);
+#else
+            __task_active_sleep(ICARUS_HEARTBEAT_OFF_TICKS - 1);
+#endif
 #else
             LED_Blink(ICARUS_HEARTBEAT_ON_TICKS, ICARUS_HEARTBEAT_OFF_TICKS);
 #endif
@@ -221,7 +245,11 @@ static void os_heartbeat_task(void)
 #if ICARUS_ENABLE_HEARTBEAT_VIS
             display_render_banner(ROW_HEARTBEAT, task_name, false);
 #endif
+#ifdef HOST_TEST
             task_active_sleep(100);
+#else
+            __task_active_sleep(100);
+#endif
         }
     }
 }

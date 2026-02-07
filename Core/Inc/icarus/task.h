@@ -61,6 +61,8 @@ void os_task_suicide(void);
  * ========================================================================= */
 
 void __os_register_task(void (*function)(void), const char *name);
+void __os_exit_task(void);
+void __os_kill_process(uint8_t task_index);
 
 #ifdef __cplusplus
 }
