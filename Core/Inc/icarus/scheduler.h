@@ -24,6 +24,16 @@ extern "C" {
 #include <stdint.h>
 
 /* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
+
+/* ============================================================================
  * TASK SCHEDULING
  * ========================================================================= */
 
@@ -89,11 +99,11 @@ uint32_t os_get_task_ticks_remaining(void);
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
 
-void __os_yield(void);
-uint32_t __task_active_sleep(uint32_t ticks);
+ITCM_FUNC void __os_yield(void);
+ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks);
 uint32_t __task_blocking_sleep(uint32_t ticks);
 uint32_t __task_busy_wait(uint32_t ticks);
-uint32_t __os_get_tick_count(void);
+ITCM_FUNC uint32_t __os_get_tick_count(void);
 uint8_t __os_get_running_task_count(void);
 const char* __os_get_current_task_name(void);
 uint32_t __os_get_task_ticks_remaining(void);

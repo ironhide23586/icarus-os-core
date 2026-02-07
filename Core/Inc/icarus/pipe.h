@@ -25,6 +25,16 @@ extern "C" {
 #include <stdbool.h>
 
 /* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
+
+/* ============================================================================
  * MESSAGE PIPE API
  * ========================================================================= */
 
@@ -77,8 +87,8 @@ uint8_t pipe_get_max_count(uint8_t pipe_idx);
  * ========================================================================= */
 
 bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
-bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
-bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
 uint8_t __pipe_get_count(uint8_t pipe_idx);
 uint8_t __pipe_get_max_count(uint8_t pipe_idx);
 

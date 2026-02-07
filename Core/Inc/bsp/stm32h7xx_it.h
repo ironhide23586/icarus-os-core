@@ -45,16 +45,23 @@ extern "C" {
 
 /* USER CODE END EM */
 
+/* Section placement macros --------------------------------------------------*/
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
+
 /* Exported functions prototypes ---------------------------------------------*/
 void NMI_Handler(void);
 void HardFault_Handler(void);
 void MemManage_Handler(void);
 void BusFault_Handler(void);
 void UsageFault_Handler(void);
-void SVC_Handler(void);
+ITCM_FUNC void SVC_Handler(void);
 void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
+ITCM_FUNC void PendSV_Handler(void);
+ITCM_FUNC void SysTick_Handler(void);
 void OTG_FS_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 

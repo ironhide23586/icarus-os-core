@@ -24,6 +24,16 @@ extern "C" {
 #include <stdbool.h>
 
 /* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define ITCM_FUNC __attribute__((section(".itcm")))
+#else
+#define ITCM_FUNC
+#endif
+
+/* ============================================================================
  * SEMAPHORE API
  * ========================================================================= */
 
@@ -72,8 +82,8 @@ uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
  * ========================================================================= */
 
 bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
-bool __semaphore_feed(uint8_t semaphore_idx);
-bool __semaphore_consume(uint8_t semaphore_idx);
+ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx);
+ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx);
 uint32_t __semaphore_get_count(uint8_t semaphore_idx);
 uint32_t __semaphore_get_max_count(uint8_t semaphore_idx);
 
