@@ -104,15 +104,13 @@ extern void __start_cold_task(icarus_task_t *task);
  * ========================================================================= */
 
 /* Privileged implementation - called via SVC from enter_critical() */
-void __enter_critical(void)
-{
+void __enter_critical(void) {
     __scheduler_enabled = false;
     __critical_stack_depth++;
 }
 
 /* Privileged implementation - called via SVC from exit_critical() */
-void __exit_critical(void)
-{
+void __exit_critical(void) {
     if (--__critical_stack_depth == 0) {
         __scheduler_enabled = true;
     }
@@ -123,8 +121,7 @@ void __exit_critical(void)
  * ========================================================================= */
 
 static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
-                              bool should_engage)
-{
+                              bool should_engage) {
     __semaphore_list[semaphore_idx]->count = semaphore_count;
     __semaphore_list[semaphore_idx]->max_count = semaphore_count;
     __semaphore_list[semaphore_idx]->tick_updated_at = __os_tick_count;
@@ -132,8 +129,7 @@ static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
 }
 
 static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
-                               bool should_engage)
-{
+                               bool should_engage) {
     __message_pipe_list[message_pipe_idx]->count = 0;
     __message_pipe_list[message_pipe_idx]->max_count = max_messages;
     __message_pipe_list[message_pipe_idx]->enqueue_idx = 0;
@@ -192,8 +188,7 @@ static void os_heartbeat_task(void)
  * ========================================================================= */
 
 /* Privileged implementation - called via SVC from os_init() */
-void __os_init(void)
-{
+void __os_init(void) {
     hal_init();
     uint8_t _i;
 
@@ -231,11 +226,11 @@ void __os_init(void)
 }
 
 /* Privileged implementation - called via SVC from os_start() */
-void __os_start(void)
-{
-    if (__num_created_tasks == 0 || __num_created_tasks > ICARUS_MAX_TASKS) {
+void __os_start(void) {
+    if ((__num_created_tasks == 0) || (__num_created_tasks > ICARUS_MAX_TASKS)) {
         return;
     }
+    
     __start_cold_task(__task_list[__current_task_index]);
 }
 
@@ -243,8 +238,7 @@ void __os_start(void)
  * STACK POOL ACCESS (for task.c)
  * ========================================================================= */
 
-uint32_t* __kernel_get_stack(uint8_t task_idx)
-{
+uint32_t* __kernel_get_stack(uint8_t task_idx) {
     return __stack_pool[task_idx];
 }
 
@@ -253,19 +247,22 @@ uint32_t* __kernel_get_stack(uint8_t task_idx)
  * DATA POOL ACCESS (for task.c)
  * ========================================================================= */
 
-uint32_t* __kernel_get_data(uint8_t task_idx)
-{
+uint32_t* __kernel_get_data(uint8_t task_idx) {
     return __data_pool[task_idx];
 }
 
 /* Privileged implementation - called via SVC from kernel_protected_data() */
 void* __kernel_protected_data(uint16_t num_words) {
-    if (__data_pool_word_offsets[__current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
+    if ((__data_pool_word_offsets[__current_task_index] + num_words > ICARUS_DATA_WORDS) ||
+        (num_words == 0)) {
         return NULL;
+    }
+    
     __enter_critical();
     uint16_t _current_offset = __data_pool_word_offsets[__current_task_index];
     __data_pool_word_offsets[__current_task_index] += num_words;
     uint32_t *_ret_ptr = &__data_pool[__current_task_index][_current_offset];
     __exit_critical();
+    
     return (void*) _ret_ptr;
 }
