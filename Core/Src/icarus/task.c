@@ -31,8 +31,8 @@ extern uint32_t* __kernel_get_data(uint8_t task_idx);
  * EXTERNAL KERNEL DATA
  * ========================================================================= */
 
-extern DTCM_DATA int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
-extern DTCM_DATA int8_t __current_cleanup_task_idx;
+extern int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
+extern int8_t __current_cleanup_task_idx;
 
 /* ============================================================================
  * TASK CREATION (PRIVILEGED INTERNAL)
