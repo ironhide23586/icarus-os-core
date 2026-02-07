@@ -1918,6 +1918,211 @@ void test_display_render_msg_history_basic(void) {
 	TEST_PASS();
 }
 
+// ============================================================================
+// kernel_protected_data Tests
+// ============================================================================
+
+// Test: kernel_protected_data - basic allocation
+void test_kernel_protected_data_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_test");
+	__current_task_index = 0;
+	
+	// Allocate 10 words
+	void* ptr = kernel_protected_data(10);
+	
+	TEST_ASSERT_NOT_NULL(ptr);
+	
+	// Allocate another 5 words
+	void* ptr2 = kernel_protected_data(5);
+	
+	TEST_ASSERT_NOT_NULL(ptr2);
+	TEST_ASSERT_NOT_EQUAL(ptr, ptr2);  // Should be different addresses
+}
+
+// Test: kernel_protected_data - zero words (should fail)
+void test_kernel_protected_data_zero_words(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_zero");
+	__current_task_index = 0;
+	
+	void* ptr = kernel_protected_data(0);
+	
+	TEST_ASSERT_NULL(ptr);
+}
+
+// Test: kernel_protected_data - exceed available space
+void test_kernel_protected_data_exceed_space(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_exceed");
+	__current_task_index = 0;
+	
+	// Try to allocate more than ICARUS_DATA_WORDS
+	void* ptr = kernel_protected_data(ICARUS_DATA_WORDS + 1);
+	
+	TEST_ASSERT_NULL(ptr);
+}
+
+// Test: kernel_protected_data - allocate exactly ICARUS_DATA_WORDS
+void test_kernel_protected_data_exact_size(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_exact");
+	__current_task_index = 0;
+	
+	void* ptr = kernel_protected_data(ICARUS_DATA_WORDS);
+	
+	TEST_ASSERT_NOT_NULL(ptr);
+	
+	// Next allocation should fail (no space left)
+	void* ptr2 = kernel_protected_data(1);
+	TEST_ASSERT_NULL(ptr2);
+}
+
+// Test: kernel_protected_data - multiple allocations
+void test_kernel_protected_data_multiple(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_multi");
+	__current_task_index = 0;
+	
+	void* ptr1 = kernel_protected_data(10);
+	void* ptr2 = kernel_protected_data(20);
+	void* ptr3 = kernel_protected_data(30);
+	
+	TEST_ASSERT_NOT_NULL(ptr1);
+	TEST_ASSERT_NOT_NULL(ptr2);
+	TEST_ASSERT_NOT_NULL(ptr3);
+	
+	// All should be different
+	TEST_ASSERT_NOT_EQUAL(ptr1, ptr2);
+	TEST_ASSERT_NOT_EQUAL(ptr2, ptr3);
+	TEST_ASSERT_NOT_EQUAL(ptr1, ptr3);
+}
+
+// Test: kernel_protected_data - write and read data
+void test_kernel_protected_data_write_read(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_rw");
+	__current_task_index = 0;
+	
+	uint32_t* data = (uint32_t*)kernel_protected_data(5);
+	TEST_ASSERT_NOT_NULL(data);
+	
+	// Write test pattern
+	for (int i = 0; i < 5; i++) {
+		data[i] = 0xDEADBEEF + i;
+	}
+	
+	// Read back and verify
+	for (int i = 0; i < 5; i++) {
+		TEST_ASSERT_EQUAL_HEX32(0xDEADBEEF + i, data[i]);
+	}
+}
+
+// ============================================================================
+// kernel_get_stack Tests
+// ============================================================================
+
+// Test: kernel_get_stack - basic functionality
+void test_kernel_get_stack_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "stack_test");
+	
+	// Get stack for task 0
+	uint32_t* stack = kernel_get_stack(0);
+	
+	TEST_ASSERT_NOT_NULL(stack);
+}
+
+// Test: kernel_get_stack - multiple tasks have different stacks
+void test_kernel_get_stack_multiple(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "stack1");
+	os_register_task(test_task_1, "stack2");
+	os_register_task(test_task_1, "stack3");
+	
+	uint32_t* stack0 = kernel_get_stack(0);
+	uint32_t* stack1 = kernel_get_stack(1);
+	uint32_t* stack2 = kernel_get_stack(2);
+	
+	TEST_ASSERT_NOT_NULL(stack0);
+	TEST_ASSERT_NOT_NULL(stack1);
+	TEST_ASSERT_NOT_NULL(stack2);
+	
+	// All stacks should be different
+	TEST_ASSERT_NOT_EQUAL(stack0, stack1);
+	TEST_ASSERT_NOT_EQUAL(stack1, stack2);
+	TEST_ASSERT_NOT_EQUAL(stack0, stack2);
+}
+
+// Test: kernel_get_stack - boundary: ICARUS_MAX_TASKS - 1
+void test_kernel_get_stack_boundary(void) {
+	// Get stack for last valid task index
+	uint32_t* stack = kernel_get_stack(ICARUS_MAX_TASKS - 1);
+	
+	TEST_ASSERT_NOT_NULL(stack);
+}
+
+// ============================================================================
+// kernel_get_data Tests
+// ============================================================================
+
+// Test: kernel_get_data - basic functionality
+void test_kernel_get_data_basic(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_test");
+	
+	// Get data for task 0
+	uint32_t* data = kernel_get_data(0);
+	
+	TEST_ASSERT_NOT_NULL(data);
+}
+
+// Test: kernel_get_data - multiple tasks have different data areas
+void test_kernel_get_data_multiple(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data1");
+	os_register_task(test_task_1, "data2");
+	os_register_task(test_task_1, "data3");
+	
+	uint32_t* data0 = kernel_get_data(0);
+	uint32_t* data1 = kernel_get_data(1);
+	uint32_t* data2 = kernel_get_data(2);
+	
+	TEST_ASSERT_NOT_NULL(data0);
+	TEST_ASSERT_NOT_NULL(data1);
+	TEST_ASSERT_NOT_NULL(data2);
+	
+	// All data areas should be different
+	TEST_ASSERT_NOT_EQUAL(data0, data1);
+	TEST_ASSERT_NOT_EQUAL(data1, data2);
+	TEST_ASSERT_NOT_EQUAL(data0, data2);
+}
+
+// Test: kernel_get_data - boundary: ICARUS_MAX_TASKS - 1
+void test_kernel_get_data_boundary(void) {
+	// Get data for last valid task index
+	uint32_t* data = kernel_get_data(ICARUS_MAX_TASKS - 1);
+	
+	TEST_ASSERT_NOT_NULL(data);
+}
+
+// Test: kernel_get_data - write and read
+void test_kernel_get_data_write_read(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "data_rw");
+	
+	uint32_t* data = kernel_get_data(0);
+	TEST_ASSERT_NOT_NULL(data);
+	
+	// Write test pattern
+	data[0] = 0x12345678;
+	data[1] = 0xABCDEF00;
+	
+	// Read back and verify
+	TEST_ASSERT_EQUAL_HEX32(0x12345678, data[0]);
+	TEST_ASSERT_EQUAL_HEX32(0xABCDEF00, data[1]);
+}
+
 // Test runner
 int main(void) {
 	// Install signal handlers to flush coverage data on crash
@@ -2104,6 +2309,25 @@ int main(void) {
 	RUN_TEST(test_msg_history_add_clamp_len);
 	RUN_TEST(test_display_render_msg_history_null);
 	RUN_TEST(test_display_render_msg_history_basic);
+	
+	// Kernel Data Protection Tests
+	RUN_TEST(test_kernel_protected_data_basic);
+	RUN_TEST(test_kernel_protected_data_zero_words);
+	RUN_TEST(test_kernel_protected_data_exceed_space);
+	RUN_TEST(test_kernel_protected_data_exact_size);
+	RUN_TEST(test_kernel_protected_data_multiple);
+	RUN_TEST(test_kernel_protected_data_write_read);
+	
+	// Kernel Stack Accessor Tests
+	RUN_TEST(test_kernel_get_stack_basic);
+	RUN_TEST(test_kernel_get_stack_multiple);
+	RUN_TEST(test_kernel_get_stack_boundary);
+	
+	// Kernel Data Accessor Tests
+	RUN_TEST(test_kernel_get_data_basic);
+	RUN_TEST(test_kernel_get_data_multiple);
+	RUN_TEST(test_kernel_get_data_boundary);
+	RUN_TEST(test_kernel_get_data_write_read);
 	
 	int result = UNITY_END();
 	
