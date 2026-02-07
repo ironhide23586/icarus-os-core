@@ -102,7 +102,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
 
     while ((message_pipe_list[pipe_idx]->max_count -
             message_pipe_list[pipe_idx]->count) < message_bytes) {
-        task_active_sleep(1);
+        __task_active_sleep(1);  // Call privileged function directly
         if ((message_pipe_list[pipe_idx]->max_count -
              message_pipe_list[pipe_idx]->count) >= message_bytes) {
             scheduler_enabled = false;
@@ -133,7 +133,22 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
 bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
+#ifdef HOST_TEST
     return __pipe_enqueue(pipe_idx, message, message_bytes);
+#else
+    bool res;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "r" (pipe_idx), "r" (message), "r" (message_bytes), "I" (SVC_PIPE_ENQUEUE)
+        : "r0", "r1", "r2"
+    );
+    return res;
+#endif
 }
 
 /**
@@ -150,7 +165,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     }
 
     while (message_pipe_list[pipe_idx]->count < message_bytes) {
-        task_active_sleep(1);
+        __task_active_sleep(1);  // Call privileged function directly
         if (message_pipe_list[pipe_idx]->count >= message_bytes) {
             scheduler_enabled = false;
         }
@@ -180,7 +195,22 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
 bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
+#ifdef HOST_TEST
     return __pipe_dequeue(pipe_idx, message, message_bytes);
+#else
+    bool res;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (res)
+        : "r" (pipe_idx), "r" (message), "r" (message_bytes), "I" (SVC_PIPE_DEQUEUE)
+        : "r0", "r1", "r2"
+    );
+    return res;
+#endif
 }
 
 uint8_t pipe_get_count(uint8_t pipe_idx)
