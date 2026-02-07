@@ -1,9 +1,9 @@
 # Plan for Software Aspects of Certification (PSAC)
 
 **Document ID:** ICARUS-PSAC-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
+**Version:** 1.0  
+**Date:** 2025-02-07  
+**Status:** Current  
 **Classification:** Public (Open Source)  
 
 ---
@@ -23,6 +23,7 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 1.0 | 2025-02-07 | Souham Biswas | Updated with SVC architecture, 142 tests, privilege separation |
 
 ---
 
@@ -76,7 +77,7 @@ This PSAC covers the ICARUS OS real-time operating system kernel and board suppo
 
 ### 2.1 System Description
 
-ICARUS OS is a preemptive real-time operating system designed for embedded aerospace applications. The system provides task scheduling, inter-task communication, and hardware abstraction for the STM32H750 Cortex-M7 microcontroller.
+ICARUS OS is a preemptive real-time operating system designed for embedded aerospace applications. The system provides task scheduling, inter-task communication, privilege separation via SVC mechanism, and hardware abstraction for the STM32H750 Cortex-M7 microcontroller with MPU-based memory protection.
 
 ### 2.2 System Functions
 
@@ -86,6 +87,9 @@ The system provides the following high-level functions:
 |----------|-------------|
 | Task Scheduling | Preemptive round-robin scheduling with 50ms time quantum |
 | Task Management | Task creation, termination, sleep, and yield operations |
+| Privilege Separation | SVC-based kernel protection with 28 entry points |
+| Memory Protection | MPU-ready architecture with ITCM/DTCM optimization |
+| IPC | Semaphores (32) and message pipes (32) for inter-task communication |
 | Interrupt Handling | SysTick timer, fault handlers, USB interrupts |
 | Hardware Abstraction | GPIO, I2C, SPI, display, LED control |
 | Debug Output | USB CDC serial output for diagnostics |
@@ -95,11 +99,23 @@ The system provides the following high-level functions:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Application Tasks                         │
+│                    (Unprivileged Mode)                       │
+├─────────────────────────────────────────────────────────────┤
+│                    Public API Layer                          │
+│                    (SVC Wrappers)                            │
+├─────────────────────────────────────────────────────────────┤
+│                    SVC Handler                               │
+│                    (Privilege Boundary)                      │
 ├─────────────────────────────────────────────────────────────┤
 │                    ICARUS OS Kernel                          │
+│                    (Privileged Mode, MPU Protected)          │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │  Scheduler  │  │Task Manager │  │ Critical Sections   │  │
+│  │  Scheduler  │  │Task Manager │  │   IPC (Sem/Pipe)    │  │
+│  │  (ITCM)     │  │             │  │   (ITCM)            │  │
 │  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │  Kernel Data (DTCM - Zero Wait State)                   │ │
+│  └─────────────────────────────────────────────────────────┘ │
 ├─────────────────────────────────────────────────────────────┤
 │                 Board Support Package (BSP)                  │
 │  ┌───────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌───────┐ ┌──────────┐  │
@@ -109,6 +125,7 @@ The system provides the following high-level functions:
 │                    STM32 HAL Drivers                         │
 ├─────────────────────────────────────────────────────────────┤
 │                 STM32H750 Hardware (Cortex-M7)               │
+│                 ITCM (64KB) | DTCM (128KB) | Flash (128KB)   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -119,8 +136,11 @@ The system provides the following high-level functions:
 | Processor | STM32H750VBT6 (ARM Cortex-M7) |
 | Clock Speed | Up to 480 MHz |
 | Flash | 128 KB internal + external QSPI |
-| RAM | 1 MB (DTCM, SRAM1-4, AXI SRAM) |
+| ITCM | 64 KB (zero wait-state code) |
+| DTCM | 128 KB (zero wait-state data) |
+| AXI SRAM | 512 KB (general purpose) |
 | Peripherals | USB OTG, SPI, I2C, GPIO, TIM |
+| MPU | 16 regions, privilege separation |
 
 
 ---
