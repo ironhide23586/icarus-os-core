@@ -141,7 +141,14 @@ uint32_t* kernel_get_stack(uint8_t task_idx);
  */
 uint32_t* kernel_get_data(uint8_t task_idx);
 
-
+/**
+ * @brief Allocate MPU-protected data for current task
+ * @param num_words Number of 32-bit words to allocate
+ * @return Pointer to allocated memory, or NULL on error
+ * @note  Memory is allocated from task's protected data pool
+ * @note  Allocations are permanent for task lifetime
+ * @note  Returns NULL if num_words is 0 or exceeds available space
+ */
 void* kernel_protected_data(uint16_t num_words);
 
 /* ============================================================================

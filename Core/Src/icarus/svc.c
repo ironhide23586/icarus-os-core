@@ -5,6 +5,21 @@
  *
  * @details SVC handler and wrapper functions for MPU-protected kernel calls.
  *
+ *          ARCHITECTURE:
+ *          - Public API functions (no prefix) are defined here as SVC wrappers
+ *          - Each wrapper invokes an SVC instruction with a unique SVC number
+ *          - The SVC handler (in assembly) switches to privileged mode
+ *          - Privileged implementations (__prefix) execute with full access
+ *          - This provides memory protection via MPU while maintaining clean API
+ *
+ *          NAMING CONVENTION:
+ *          - Public API: function_name() - SVC wrapper (this file)
+ *          - Privileged: __function_name() - actual implementation (other files)
+ *
+ *          HOST_TEST MODE:
+ *          - When HOST_TEST is defined, wrappers call privileged functions directly
+ *          - This allows unit testing on host without ARM SVC instructions
+ *
  * @author  Souham Biswas
  * @date    2025
  *
@@ -24,6 +39,11 @@
  * CRITICAL SECTION WRAPPERS
  * ========================================================================= */
 
+/**
+ * @brief Enter critical section (disable scheduler)
+ * @details Public API wrapper that calls __enter_critical() via SVC
+ * @note Supports nesting via __critical_stack_depth counter
+ */
 void enter_critical(void)
 {
 #ifdef HOST_TEST
@@ -37,6 +57,11 @@ void enter_critical(void)
 #endif
 }
 
+/**
+ * @brief Exit critical section (re-enable scheduler if outermost)
+ * @details Public API wrapper that calls __exit_critical() via SVC
+ * @note Re-enables scheduler only when __critical_stack_depth reaches 0
+ */
 void exit_critical(void)
 {
 #ifdef HOST_TEST
@@ -54,6 +79,11 @@ void exit_critical(void)
  * KERNEL INITIALIZATION WRAPPERS
  * ========================================================================= */
 
+/**
+ * @brief Initialize the ICARUS kernel
+ * @details Public API wrapper that calls __os_init() via SVC
+ * @note Must be called before any other kernel function
+ */
 void os_init(void)
 {
 #ifdef HOST_TEST
@@ -67,6 +97,11 @@ void os_init(void)
 #endif
 }
 
+/**
+ * @brief Start the ICARUS scheduler
+ * @details Public API wrapper that calls __os_start() via SVC
+ * @warning This function never returns!
+ */
 void os_start(void)
 {
 #ifdef HOST_TEST
