@@ -29,53 +29,63 @@ extern "C" {
 #include "icarus/svc.h"
 
 /* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define DTCM_DATA __attribute__((section(".dtcm")))
+#else
+#define DTCM_DATA
+#endif
+
+/* ============================================================================
  * KERNEL STATE (extern declarations)
  * ========================================================================= */
 
 /** @brief Array of pointers to all task control blocks */
-extern icarus_task_t* __task_list[ICARUS_MAX_TASKS];
+extern DTCM_DATA icarus_task_t* __task_list[ICARUS_MAX_TASKS];
 
 /** @brief Array of pointers to all semaphores */
-extern icarus_semaphore_t* __semaphore_list[ICARUS_MAX_SEMAPHORES];
+extern DTCM_DATA icarus_semaphore_t* __semaphore_list[ICARUS_MAX_SEMAPHORES];
 
 /** @brief Array of pointers to all message pipes */
-extern icarus_pipe_t* __message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
+extern DTCM_DATA icarus_pipe_t* __message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 
 /** @brief Index of currently executing task */
-extern uint8_t __current_task_index;
+extern DTCM_DATA uint8_t __current_task_index;
 
 /** @brief Count of tasks in active states */
-extern uint8_t __running_task_count;
+extern DTCM_DATA uint8_t __running_task_count;
 
 /** @brief Total number of created tasks */
-extern uint8_t __num_created_tasks;
+extern DTCM_DATA uint8_t __num_created_tasks;
 
 /** @brief Ticks remaining in current task's time slice */
-extern volatile uint32_t __current_task_ticks_remaining;
+extern DTCM_DATA volatile uint32_t __current_task_ticks_remaining;
 
 /** @brief Configured ticks per time slice */
-extern volatile uint32_t __ticks_per_task;
+extern DTCM_DATA volatile uint32_t __ticks_per_task;
 
 /** @brief System tick counter */
-extern volatile uint32_t __os_tick_count;
+extern DTCM_DATA volatile uint32_t __os_tick_count;
 
 /** @brief Flag indicating OS is running */
-extern volatile uint8_t __os_running;
+extern DTCM_DATA volatile uint8_t __os_running;
 
 /** @brief Scheduler enable flag */
-extern volatile bool __scheduler_enabled;
+extern DTCM_DATA volatile bool __scheduler_enabled;
 
 /** @brief Critical section nesting depth */
-extern volatile uint8_t __critical_stack_depth;
+extern DTCM_DATA volatile uint8_t __critical_stack_depth;
 
 /** @brief CPU virtual registers for context switching */
-extern uint32_t __cpu_vregisters[16];
+extern DTCM_DATA uint32_t __cpu_vregisters[16];
 
 /** @brief Cleanup task index array */
-extern int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
+extern DTCM_DATA int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
 
 /** @brief Current cleanup task index */
-extern int8_t __current_cleanup_task_idx;
+extern DTCM_DATA int8_t __current_cleanup_task_idx;
 
 /* ============================================================================
  * KERNEL INITIALIZATION

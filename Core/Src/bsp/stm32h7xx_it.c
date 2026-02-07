@@ -41,8 +41,10 @@
 /* ITCM attribute for hot path interrupt handlers */
 #ifndef HOST_TEST
 #define ITCM_FUNC __attribute__((section(".itcm")))
+#define DTCM_DATA __attribute__((section(".dtcm")))
 #else
 #define ITCM_FUNC
+#define DTCM_DATA
 #endif
 /* USER CODE END PD */
 
@@ -211,10 +213,10 @@ ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 ITCM_FUNC void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-  extern volatile uint32_t __os_tick_count;
-  extern volatile uint8_t __os_running;
-  extern volatile uint32_t __current_task_ticks_remaining;
-  extern volatile bool __scheduler_enabled;
+  extern DTCM_DATA volatile uint32_t __os_tick_count;
+  extern DTCM_DATA volatile uint8_t __os_running;
+  extern DTCM_DATA volatile uint32_t __current_task_ticks_remaining;
+  extern DTCM_DATA volatile bool __scheduler_enabled;
   
   __os_tick_count++;
 
