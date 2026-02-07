@@ -64,16 +64,29 @@ SECTIONS
 
   /* ITCM section for hot path code (zero wait states) */
   /* Code is copied from FLASH to ITCM at startup */
-  .itcm :
+  
+  /* Privileged kernel code section - MPU protected */
+  .itcm_privileged :
   {
     . = ALIGN(4);
-    _sitcm = .;
-    *(.itcm)
+    _sitcm_priv = .;
+    *(.itcm.privileged)      /* Privileged kernel functions only */
+    . = ALIGN(4);
+    _eitcm_priv = .;
+  } >ITCMRAM AT> FLASH
+  _siitcm_priv = LOADADDR(.itcm_privileged);
+  
+  /* User code section - accessible to unprivileged tasks */
+  .itcm_user :
+  {
+    . = ALIGN(4);
+    _sitcm_user = .;
+    *(.itcm)                 /* User ITCM functions */
     *(.itcm*)
     . = ALIGN(4);
-    _eitcm = .;
+    _eitcm_user = .;
   } >ITCMRAM AT> FLASH
-  _siitcm = LOADADDR(.itcm);
+  _siitcm_user = LOADADDR(.itcm_user);
 
   /* The program code and other data goes into FLASH */
   .text :
@@ -180,14 +193,26 @@ SECTIONS
   } >RAM_D1
 
   /* DTCM section for fast kernel data (zero wait states) */
-  .dtcm (NOLOAD) :
+  
+  /* Privileged kernel data section - MPU protected */
+  .dtcm_privileged (NOLOAD) :
   {
     . = ALIGN(4);
-    _sdtcm = .;
-    *(.dtcm)
+    _sdtcm_priv = .;
+    *(.dtcm.privileged)      /* Privileged kernel data only */
+    . = ALIGN(4);
+    _edtcm_priv = .;
+  } >DTCMRAM
+  
+  /* User data section - accessible to unprivileged tasks */
+  .dtcm_user (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _sdtcm_user = .;
+    *(.dtcm)                 /* User DTCM data */
     *(.dtcm*)
     . = ALIGN(4);
-    _edtcm = .;
+    _edtcm_user = .;
   } >DTCMRAM
 
   /* Remove information from the standard libraries */

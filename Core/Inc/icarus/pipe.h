@@ -29,9 +29,11 @@ extern "C" {
  * ========================================================================= */
 
 #ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
+#define ITCM_FUNC_USER __attribute__((section(".itcm")))
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
 #else
-#define ITCM_FUNC
+#define ITCM_FUNC_USER
+#define ITCM_FUNC_PRIV
 #endif
 
 /* ============================================================================
@@ -87,8 +89,8 @@ uint8_t pipe_get_max_count(uint8_t pipe_idx);
  * ========================================================================= */
 
 bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
-ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
-ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+ITCM_FUNC_PRIV bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+ITCM_FUNC_PRIV bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
 uint8_t __pipe_get_count(uint8_t pipe_idx);
 uint8_t __pipe_get_max_count(uint8_t pipe_idx);
 

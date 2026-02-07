@@ -60,8 +60,9 @@ extern "C" {
 
 #define MPU_REGION_QSPI_BACKGROUND  MPU_REGION_NUMBER0
 #define MPU_REGION_QSPI_FLASH       MPU_REGION_NUMBER1
-#define MPU_REGION_DTCM             MPU_REGION_NUMBER2
-#define MPU_REGION_ITCM             MPU_REGION_NUMBER3
+#define MPU_REGION_ITCM_PRIVILEGED  MPU_REGION_NUMBER2
+#define MPU_REGION_DTCM             MPU_REGION_NUMBER3
+#define MPU_REGION_TASK_DATA        MPU_REGION_NUMBER4
 
 
 /**
@@ -96,16 +97,24 @@ extern "C" {
 /**
  * @brief   Configure Memory Protection Unit for QSPI flash access
  *
- * @details Sets up two MPU regions for QSPI memory-mapped flash:
- *          - Region 0: 256MB background region with no access (catches stray accesses)
- *          - Region 1: 8MB overlay for actual flash with read-only, cacheable access
+ * @details Sets up MPU regions for system protection:
+ *          - Region 0: 256MB QSPI background region with no access (catches stray accesses)
+ *          - Region 1: 8MB QSPI overlay for actual flash with read-only, cacheable access
+ *          - Region 2: Privileged ITCM kernel code (no access for unprivileged)
+ *          - Region 3: Privileged DTCM kernel data (no access for unprivileged)
+ *          - Region 4: Task-specific data (configured dynamically per task)
  *
  * @par Region Configuration:
- *      | Region | Base       | Size  | Access    | Cache     | Execute |
- *      |--------|------------|-------|-----------|-----------|---------|
- *      | 0      | 0x90000000 | 256MB | No Access | None      | No      |
- *      | 1      | 0x90000000 | 8MB   | Priv RO   | WT Cache  | Yes     |
+ *      | Region | Base       | Size     | Access         | Cache     | Execute |
+ *      |--------|------------|----------|----------------|-----------|---------|
+ *      | 0      | 0x90000000 | 256MB    | No Access      | None      | No      |
+ *      | 1      | 0x90000000 | 8MB      | Priv RO        | WT Cache  | Yes     |
+ *      | 2      | 0x00000000 | Dynamic  | Priv RO/Exec   | None      | Yes     |
+ *      | 3      | 0x20000000 | Dynamic  | Priv RW        | None      | No      |
+ *      | 4      | Dynamic    | Dynamic  | Full Access    | Cache     | No      |
  *
+ * @note    Region 2 and 3 sizes are calculated dynamically from linker symbols
+ * @note    User code can still use remaining ITCM/DTCM space not covered by MPU regions
  * @note    Must be called before enabling caches
  * @note    Uses privileged default memory map for non-configured regions
  *

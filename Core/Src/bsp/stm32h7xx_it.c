@@ -40,11 +40,13 @@
 /* USER CODE BEGIN PD */
 /* ITCM attribute for hot path interrupt handlers */
 #ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
-#define DTCM_DATA __attribute__((section(".dtcm")))
+#define ITCM_FUNC_USER __attribute__((section(".itcm")))
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
+#define DTCM_DATA_USER __attribute__((section(".dtcm")))
 #else
-#define ITCM_FUNC
-#define DTCM_DATA
+#define ITCM_FUNC_USER
+#define ITCM_FUNC_PRIV
+#define DTCM_DATA_USER
 #endif
 /* USER CODE END PD */
 
@@ -155,7 +157,7 @@ void UsageFault_Handler(void)
 /**
   * @brief This function handles System service call via SWI instruction.
   */
-ITCM_FUNC void SVC_Handler(void)
+ITCM_FUNC_PRIV void SVC_Handler(void)
 {
   
 }
@@ -188,7 +190,7 @@ void PendSV_Handler(void)
   /* USER CODE END PendSV_IRQn 1 */
 }
 #else
-ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
+ITCM_FUNC_PRIV __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
   __asm__ volatile (
@@ -205,7 +207,7 @@ ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
-ITCM_FUNC void SysTick_Handler(void)
+ITCM_FUNC_PRIV void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
   extern volatile uint32_t __os_tick_count;

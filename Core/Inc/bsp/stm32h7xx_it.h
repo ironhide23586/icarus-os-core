@@ -47,9 +47,15 @@ extern "C" {
 
 /* Section placement macros --------------------------------------------------*/
 #ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
+#define ITCM_FUNC_USER __attribute__((section(".itcm")))
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
+#define DTCM_DATA_USER __attribute__((section(".dtcm")))
+#define DTCM_DATA_PRIV __attribute__((section(".dtcm.privileged")))
 #else
-#define ITCM_FUNC
+#define ITCM_FUNC_USER
+#define ITCM_FUNC_PRIV
+#define DTCM_DATA_USER
+#define DTCM_DATA_PRIV
 #endif
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -58,10 +64,10 @@ void HardFault_Handler(void);
 void MemManage_Handler(void);
 void BusFault_Handler(void);
 void UsageFault_Handler(void);
-ITCM_FUNC void SVC_Handler(void);
+ITCM_FUNC_PRIV void SVC_Handler(void);
 void DebugMon_Handler(void);
-ITCM_FUNC void PendSV_Handler(void);
-ITCM_FUNC void SysTick_Handler(void);
+ITCM_FUNC_PRIV void PendSV_Handler(void);
+ITCM_FUNC_PRIV void SysTick_Handler(void);
 void OTG_FS_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 

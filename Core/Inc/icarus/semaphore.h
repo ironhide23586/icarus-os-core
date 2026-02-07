@@ -28,9 +28,11 @@ extern "C" {
  * ========================================================================= */
 
 #ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
+#define ITCM_FUNC_USER __attribute__((section(".itcm")))
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
 #else
-#define ITCM_FUNC
+#define ITCM_FUNC_USER
+#define ITCM_FUNC_PRIV
 #endif
 
 /* ============================================================================
@@ -82,8 +84,8 @@ uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
  * ========================================================================= */
 
 bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
-ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx);
-ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx);
+ITCM_FUNC_PRIV bool __semaphore_feed(uint8_t semaphore_idx);
+ITCM_FUNC_PRIV bool __semaphore_consume(uint8_t semaphore_idx);
 uint32_t __semaphore_get_count(uint8_t semaphore_idx);
 uint32_t __semaphore_get_max_count(uint8_t semaphore_idx);
 

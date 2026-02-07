@@ -226,8 +226,10 @@ INCLUDE_PATH           = Core/Inc \
                          Drivers/STM32H7xx_HAL_Driver/Inc
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = __attribute__(x)= \
-                         ITCM_FUNC= \
-                         DTCM_DATA= \
+                         ITCM_FUNC_USER= \
+                         ITCM_FUNC_PRIV= \
+                         DTCM_DATA_USER= \
+                         DTCM_DATA_PRIV= \
                          STM32H750xx \
                          USE_HAL_DRIVER
 EXPAND_AS_DEFINED      = 

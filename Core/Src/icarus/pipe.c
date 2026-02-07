@@ -22,9 +22,11 @@
  * ========================================================================= */
 
 #ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
+#define ITCM_FUNC_USER __attribute__((section(".itcm")))
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
 #else
-#define ITCM_FUNC
+#define ITCM_FUNC_USER
+#define ITCM_FUNC_PRIV
 #endif
 
 /* ============================================================================
@@ -32,7 +34,7 @@
  * ========================================================================= */
 
 /* Privileged implementation - called via SVC from pipe_init() */
-bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
+ITCM_FUNC_PRIV bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 {
     __enter_critical();
 
@@ -62,7 +64,7 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 }
 
 /* Privileged implementation - called via SVC from pipe_enqueue() */
-ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
+ITCM_FUNC_PRIV bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
@@ -98,7 +100,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
 }
 
 /* Privileged implementation - called via SVC from pipe_dequeue() */
-ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
+ITCM_FUNC_PRIV bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
@@ -131,7 +133,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     return true;
 }
 
-uint8_t __pipe_get_count(uint8_t pipe_idx)
+ITCM_FUNC_PRIV uint8_t __pipe_get_count(uint8_t pipe_idx)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !__message_pipe_list[pipe_idx]->engaged) {
@@ -140,7 +142,7 @@ uint8_t __pipe_get_count(uint8_t pipe_idx)
     return __message_pipe_list[pipe_idx]->count;
 }
 
-uint8_t __pipe_get_max_count(uint8_t pipe_idx)
+ITCM_FUNC_PRIV uint8_t __pipe_get_max_count(uint8_t pipe_idx)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !__message_pipe_list[pipe_idx]->engaged) {

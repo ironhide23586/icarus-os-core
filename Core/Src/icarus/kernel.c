@@ -27,11 +27,15 @@
  * ========================================================================= */
 
 #ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
-#define DTCM_DATA __attribute__((section(".dtcm")))
+#define ITCM_FUNC_USER __attribute__((section(".itcm")))
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
+#define DTCM_DATA_USER __attribute__((section(".dtcm")))
+#define DTCM_DATA_PRIV __attribute__((section(".dtcm.privileged")))
 #else
-#define ITCM_FUNC
-#define DTCM_DATA
+#define ITCM_FUNC_USER
+#define ITCM_FUNC_PRIV
+#define DTCM_DATA_USER
+#define DTCM_DATA_PRIV
 #endif
 
 /* ============================================================================
@@ -54,30 +58,30 @@ _Static_assert(offsetof(icarus_task_t, ticks_to_pause) == 24,
  * KERNEL DATA STRUCTURES (DTCM - Zero Wait State)
  * ========================================================================= */
 
-DTCM_DATA icarus_task_t* __task_list[ICARUS_MAX_TASKS];
-DTCM_DATA icarus_semaphore_t* __semaphore_list[ICARUS_MAX_SEMAPHORES];
-DTCM_DATA icarus_pipe_t* __message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
+DTCM_DATA_PRIV icarus_task_t* __task_list[ICARUS_MAX_TASKS];
+DTCM_DATA_PRIV icarus_semaphore_t* __semaphore_list[ICARUS_MAX_SEMAPHORES];
+DTCM_DATA_PRIV icarus_pipe_t* __message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 
-DTCM_DATA static icarus_task_t __task_pool[ICARUS_MAX_TASKS];
-DTCM_DATA static icarus_semaphore_t __semaphore_pool[ICARUS_MAX_SEMAPHORES];
-DTCM_DATA static icarus_pipe_t __message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
-DTCM_DATA int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
+DTCM_DATA_PRIV static icarus_task_t __task_pool[ICARUS_MAX_TASKS];
+DTCM_DATA_PRIV static icarus_semaphore_t __semaphore_pool[ICARUS_MAX_SEMAPHORES];
+DTCM_DATA_PRIV static icarus_pipe_t __message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
+DTCM_DATA_PRIV int8_t __cleanup_task_idx[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * SCHEDULER STATE (DTCM - Zero Wait State)
  * ========================================================================= */
 
-DTCM_DATA uint8_t __current_task_index;
-DTCM_DATA uint8_t __running_task_count;
-DTCM_DATA uint8_t __num_created_tasks;
-DTCM_DATA volatile uint32_t __current_task_ticks_remaining;
-DTCM_DATA volatile uint32_t __ticks_per_task;
-DTCM_DATA uint32_t __cpu_vregisters[16];
-DTCM_DATA volatile uint32_t __os_tick_count;
-DTCM_DATA volatile uint8_t __os_running;
-DTCM_DATA volatile uint8_t __critical_stack_depth;
-DTCM_DATA volatile bool __scheduler_enabled;
-DTCM_DATA int8_t __current_cleanup_task_idx;
+DTCM_DATA_PRIV uint8_t __current_task_index;
+DTCM_DATA_PRIV uint8_t __running_task_count;
+DTCM_DATA_PRIV uint8_t __num_created_tasks;
+DTCM_DATA_PRIV volatile uint32_t __current_task_ticks_remaining;
+DTCM_DATA_PRIV volatile uint32_t __ticks_per_task;
+DTCM_DATA_PRIV uint32_t __cpu_vregisters[16];
+DTCM_DATA_PRIV volatile uint32_t __os_tick_count;
+DTCM_DATA_PRIV volatile uint8_t __os_running;
+DTCM_DATA_PRIV volatile uint8_t __critical_stack_depth;
+DTCM_DATA_PRIV volatile bool __scheduler_enabled;
+DTCM_DATA_PRIV int8_t __current_cleanup_task_idx;
 
 /* ============================================================================
  * STACK POOL (RAM_D1)
@@ -104,13 +108,13 @@ extern void __start_cold_task(icarus_task_t *task);
  * ========================================================================= */
 
 /* Privileged implementation - called via SVC from enter_critical() */
-void __enter_critical(void) {
+ITCM_FUNC_PRIV void __enter_critical(void) {
     __scheduler_enabled = false;
     __critical_stack_depth++;
 }
 
 /* Privileged implementation - called via SVC from exit_critical() */
-void __exit_critical(void) {
+ITCM_FUNC_PRIV void __exit_critical(void) {
     if (--__critical_stack_depth == 0) {
         __scheduler_enabled = true;
     }
@@ -188,7 +192,7 @@ static void os_heartbeat_task(void)
  * ========================================================================= */
 
 /* Privileged implementation - called via SVC from os_init() */
-void __os_init(void) {
+ITCM_FUNC_PRIV void __os_init(void) {
     hal_init();
     uint8_t _i;
 
@@ -226,7 +230,7 @@ void __os_init(void) {
 }
 
 /* Privileged implementation - called via SVC from os_start() */
-void __os_start(void) {
+ITCM_FUNC_PRIV void __os_start(void) {
     if ((__num_created_tasks == 0) || (__num_created_tasks > ICARUS_MAX_TASKS)) {
         return;
     }
@@ -252,7 +256,7 @@ uint32_t* __kernel_get_data(uint8_t task_idx) {
 }
 
 /* Privileged implementation - called via SVC from kernel_protected_data() */
-void* __kernel_protected_data(uint16_t num_words) {
+ITCM_FUNC_PRIV void* __kernel_protected_data(uint16_t num_words) {
     if ((__data_pool_word_offsets[__current_task_index] + num_words > ICARUS_DATA_WORDS) ||
         (num_words == 0)) {
         return NULL;

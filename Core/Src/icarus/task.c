@@ -75,7 +75,7 @@ static void __os_create_task(icarus_task_t *task, void (*function)(void),
 }
 
 /* Privileged implementation - called via SVC from os_register_task() */
-void __os_register_task(void (*function)(void), const char *name)
+ITCM_FUNC_PRIV void __os_register_task(void (*function)(void), const char *name)
 {
     __os_create_task(__task_list[__num_created_tasks], function,
                      __kernel_get_stack(__num_created_tasks), 
@@ -91,7 +91,7 @@ void __os_register_task(void (*function)(void), const char *name)
  * ========================================================================= */
 
 /* Privileged implementation - called via SVC from os_exit_task() */
-void __os_exit_task(void)
+ITCM_FUNC_PRIV void __os_exit_task(void)
 {
     __task_list[__current_task_index]->task_state = TASK_STATE_FINISHED;
 
@@ -108,7 +108,7 @@ void __os_exit_task(void)
 }
 
 /* Privileged implementation - called via SVC from os_kill_process() */
-void __os_kill_process(uint8_t task_index)
+ITCM_FUNC_PRIV void __os_kill_process(uint8_t task_index)
 {
     if (task_index >= __num_created_tasks || task_index == 0) {
         return;  /* Cannot kill task 0 (idle task) or invalid indices */
@@ -131,7 +131,7 @@ void __os_kill_process(uint8_t task_index)
 }
 
 /* Privileged implementation - called via SVC from os_task_suicide() */
-void __os_task_suicide(void)
+ITCM_FUNC_PRIV void __os_task_suicide(void)
 {
     printf("[INFO] %s committed suicide\r\n",
            __task_list[__current_task_index]->name);
