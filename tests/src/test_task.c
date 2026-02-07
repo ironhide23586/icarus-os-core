@@ -1009,7 +1009,7 @@ void test_platform_read_zero_length(void) {
 // hal_init calls hardware initialization functions, all of which are mocked
 void test_hal_init(void) {
 	// hal_init calls:
-	// - MPU_Config (mocked via HAL_MPU_* functions)
+	// - __mpu_config (mocked via HAL_MPU_* functions)
 	// - CPU_CACHE_Enable (mocked via SCB_Enable* functions)
 	// - HAL_Init (mocked)
 	// - SystemClock_Config (mocked via HAL_RCC_* functions)

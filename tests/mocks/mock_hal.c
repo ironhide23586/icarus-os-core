@@ -55,7 +55,7 @@ void HAL_MPU_Enable(uint32_t MPU_Control) {
 }
 
 // Mock MPU configuration function
-void MPU_Config(void) {
+void __mpu_config(void) {
 	// Mock: do nothing
 }
 

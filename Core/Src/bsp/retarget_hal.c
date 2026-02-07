@@ -36,6 +36,7 @@
 
 #include "bsp/retarget_hal.h"
 #include "bsp/error.h"
+#include "bsp/mpu.h"
 
 /* ============================================================================
  * FORWARD DECLARATIONS
@@ -56,7 +57,7 @@ int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len);
  *          Must be called after MPU configuration to ensure proper
  *          cacheability attributes are in effect.
  *
- * @pre     MPU_Config() must be called first
+ * @pre     __mpu_config() must be called first
  * @post    I-Cache and D-Cache enabled
  *
  * @note    Cache coherency must be managed for DMA operations
@@ -206,7 +207,7 @@ void hal_init(void) {
     SCB->VTOR = BSP_FLASH_BASE;
   #endif
 
-  MPU_Config();
+  __mpu_config();
   CPU_CACHE_Enable();
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */

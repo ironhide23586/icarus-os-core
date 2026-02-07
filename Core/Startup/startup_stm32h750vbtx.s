@@ -66,9 +66,9 @@ Reset_Handler:
   bl  SystemInit
 
 /* Copy the privileged ITCM code from flash to ITCM RAM */
-  ldr r0, =_sitcm_priv
-  ldr r1, =_eitcm_priv
-  ldr r2, =_siitcm_priv
+  ldr r0, =__sitcm_priv
+  ldr r1, =__eitcm_priv
+  ldr r2, =__siitcm_priv
   movs r3, #0
   b LoopCopyItcmPrivInit
 
@@ -83,9 +83,9 @@ LoopCopyItcmPrivInit:
   bcc CopyItcmPrivInit
 
 /* Copy the user ITCM code from flash to ITCM RAM */
-  ldr r0, =_sitcm_user
-  ldr r1, =_eitcm_user
-  ldr r2, =_siitcm_user
+  ldr r0, =__sitcm_user
+  ldr r1, =__eitcm_user
+  ldr r2, =__siitcm_user
   movs r3, #0
   b LoopCopyItcmUserInit
 
@@ -130,8 +130,8 @@ LoopFillZerobss:
   bcc FillZerobss
 
 /* Zero fill the privileged DTCM segment. */
-  ldr r2, =_sdtcm_priv
-  ldr r4, =_edtcm_priv
+  ldr r2, =__sdtcm_priv
+  ldr r4, =__edtcm_priv
   movs r3, #0
   b LoopFillZeroDtcmPriv
 
@@ -144,8 +144,8 @@ LoopFillZeroDtcmPriv:
   bcc FillZeroDtcmPriv
 
 /* Zero fill the user DTCM segment. */
-  ldr r2, =_sdtcm_user
-  ldr r4, =_edtcm_user
+  ldr r2, =__sdtcm_user
+  ldr r4, =__edtcm_user
   movs r3, #0
   b LoopFillZeroDtcmUser
 

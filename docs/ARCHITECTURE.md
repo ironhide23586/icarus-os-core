@@ -34,11 +34,12 @@ ICARUS OS is a preemptive real-time kernel for ARM Cortex-M7 (STM32H750) designe
 |----------------|-------|
 | **Scheduling** | Preemptive round-robin, 50ms time quantum |
 | **Context Switch** | ~2μs (ITCM-optimized) |
-| **Max Tasks** | 32 (configurable) |
-| **Task Stack** | 2KB per task (DTCM) |
-| **IPC** | Semaphores (32), Pipes (32) |
+| **Max Tasks** | 128 (configurable) |
+| **Task Stack** | 1KB per task (RAM_D1) |
+| **Task Data** | 2KB per task (RAM_D1, MPU-protected) |
+| **IPC** | Semaphores (64), Pipes (64) |
 | **Memory Model** | Static allocation only |
-| **Privilege Model** | SVC-based kernel protection |
+| **Privilege Model** | SVC-based kernel protection with MPU |
 
 ---
 
@@ -96,57 +97,63 @@ ICARUS OS is a preemptive real-time kernel for ARM Cortex-M7 (STM32H750) designe
 │ ITCM (0x00000000) - 64 KB                                   │
 │   Instruction Tightly-Coupled Memory (zero wait-state)      │
 │   ┌─────────────────────────────────────────────────────┐   │
-│   │ Critical kernel code:                                │   │
+│   │ .itcm_privileged [MPU Region 2 - Priv Only]:        │   │
 │   │ - __os_yield()                                       │   │
 │   │ - __task_active_sleep()                              │   │
 │   │ - __os_get_tick_count()                              │   │
 │   │ - __semaphore_feed/consume()                         │   │
 │   │ - __pipe_enqueue/dequeue()                           │   │
-│   │ - SVC_Handler(), PendSV_Handler(), SysTick_Handler() │   │
+│   │ - __mpu_config(), __mpu_configure_task_data()        │   │
+│   │ - SVC_Handler(), SysTick_Handler()                   │   │
+│   ├─────────────────────────────────────────────────────┤   │
+│   │ .itcm_user [Accessible]:                             │   │
+│   │ - User hot-path code                                 │   │
 │   │ - Context switch assembly                            │   │
 │   └─────────────────────────────────────────────────────┘   │
-│   Used: ~3 KB (5%) | Free: ~61 KB                           │
 ├─────────────────────────────────────────────────────────────┤
 │ DTCM (0x20000000) - 128 KB                                  │
 │   Data Tightly-Coupled Memory (zero wait-state)             │
 │   ┌─────────────────────────────────────────────────────┐   │
-│   │ Kernel data structures:                              │   │
-│   │ - __task_list[32]                                    │   │
-│   │ - __semaphore_list[32]                               │   │
-│   │ - __message_pipe_list[32]                            │   │
+│   │ .dtcm_privileged [MPU Region 3 - Priv Only]:        │   │
+│   │ - __task_list[128]                                   │   │
+│   │ - __semaphore_list[64]                               │   │
+│   │ - __message_pipe_list[64]                            │   │
 │   │ - __current_task_index                               │   │
 │   │ - __os_tick_count                                    │   │
 │   │ - __scheduler_enabled                                │   │
-│   │ - Task stacks (64 KB total, 2KB each)               │   │
-│   │ - Task data pools (64 KB total, 2KB each)           │   │
+│   ├─────────────────────────────────────────────────────┤   │
+│   │ .dtcm_user [Accessible]:                             │   │
+│   │ - User fast data                                     │   │
 │   └─────────────────────────────────────────────────────┘   │
-│   Used: ~70 KB (55%) | Free: ~58 KB                         │
 ├─────────────────────────────────────────────────────────────┤
 │ Flash (0x08000000) - 128 KB                                 │
 │   Program code and constants                                │
 │   - Application code                                         │
 │   - Non-critical kernel code                                │
 │   - Constant data                                            │
-│   Used: ~50 KB (39%) | Free: ~78 KB                         │
 ├─────────────────────────────────────────────────────────────┤
 │ AXI SRAM (0x24000000) - 512 KB                              │
 │   General purpose RAM                                        │
-│   - Heap (if needed)                                         │
+│   - Task stack pools                                         │
+│   - Task data pools                                          │
 │   - BSS segment                                              │
-│   - Other data                                               │
+│   - Heap (if needed)                                         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### Section Placement Strategy
 
-**ITCM Placement** (`ITCM_FUNC` attribute):
-- Functions in critical execution paths
+**ITCM Placement** (`ITCM_FUNC_PRIV` / `ITCM_FUNC_USER` attributes):
+- Privileged kernel functions in `.itcm.privileged` (MPU-protected)
+- User hot-path functions in `.itcm` (accessible)
 - Interrupt handlers (SVC, PendSV, SysTick)
 - Scheduler hot paths
 - IPC operations (semaphores, pipes)
 - Goal: Zero wait-state execution for determinism
 
-**DTCM Placement** (`DTCM_DATA` attribute):
+**DTCM Placement** (`DTCM_DATA_PRIV` / `DTCM_DATA_USER` attributes):
+- Privileged kernel state variables in `.dtcm.privileged` (MPU-protected)
+- User fast data in `.dtcm` (accessible)
 - All kernel state variables (prefixed with `__`)
 - Task control blocks and stacks
 - Semaphore and pipe data structures
@@ -178,8 +185,20 @@ Application Task (Unprivileged)
         ↓
   __os_yield()  ← Privileged implementation (__ prefix)
         ↓
-   Kernel Data  ← Access DTCM structures
+   Kernel Data  ← Access MPU-protected DTCM structures
 ```
+
+### MPU Region Configuration
+
+| Region | Base       | Size     | Access         | Purpose |
+|--------|------------|----------|----------------|---------|
+| 0      | 0x90000000 | 256MB    | No Access      | QSPI background trap |
+| 1      | 0x90000000 | 8MB      | Priv RO        | QSPI flash (cacheable) |
+| 2      | 0x00000000 | Dynamic  | Priv RO/Exec   | Privileged ITCM kernel code |
+| 3      | 0x20000000 | Dynamic  | Priv RW        | Privileged DTCM kernel data |
+| 4      | Dynamic    | Dynamic  | Full Access    | Per-task data region |
+
+Regions 2 and 3 sizes are calculated at boot from linker symbols (`__sitcm_priv`/`__eitcm_priv`, `__sdtcm_priv`/`__edtcm_priv`). Region 4 is reconfigured on every context switch.
 
 ### Privilege Levels
 
@@ -238,11 +257,11 @@ Application Task (Unprivileged)
 All kernel state variables use `__` prefix (double underscore):
 
 ```c
-// Kernel state (DTCM)
-extern DTCM_DATA icarus_task_t* __task_list[ICARUS_MAX_TASKS];
-extern DTCM_DATA uint8_t __current_task_index;
-extern DTCM_DATA volatile uint32_t __os_tick_count;
-extern DTCM_DATA volatile bool __scheduler_enabled;
+// Kernel state (DTCM privileged)
+extern DTCM_DATA_PRIV icarus_task_t* __task_list[ICARUS_MAX_TASKS];
+extern DTCM_DATA_PRIV uint8_t __current_task_index;
+extern DTCM_DATA_PRIV volatile uint32_t __os_tick_count;
+extern DTCM_DATA_PRIV volatile bool __scheduler_enabled;
 ```
 
 **Rationale**: The `__` prefix indicates these variables are:
@@ -263,9 +282,9 @@ bool semaphore_feed(uint8_t semaphore_idx);
 **Privileged Implementations** (`__` prefix):
 ```c
 void __os_init(void);
-ITCM_FUNC void __os_yield(void);
-ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks);
-ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx);
+ITCM_FUNC_PRIV void __os_yield(void);
+ITCM_FUNC_PRIV uint32_t __task_active_sleep(uint32_t ticks);
+ITCM_FUNC_PRIV bool __semaphore_feed(uint8_t semaphore_idx);
 ```
 
 **Rationale**: 
@@ -487,13 +506,15 @@ __pipe_enqueue(idx, msg, len)  [ITCM, Privileged]
 ### Zero Wait-State Execution
 
 **ITCM Placement**:
-- Critical kernel functions marked with `ITCM_FUNC`
+- Critical kernel functions marked with `ITCM_FUNC_PRIV`
+- User hot-path functions marked with `ITCM_FUNC_USER`
 - Interrupt handlers in ITCM
 - Context switch code in ITCM
 - Result: Deterministic execution, no cache misses
 
 **DTCM Placement**:
-- All kernel data structures marked with `DTCM_DATA`
+- All kernel data structures marked with `DTCM_DATA_PRIV`
+- User fast data marked with `DTCM_DATA_USER`
 - Task stacks in DTCM
 - Scheduler state in DTCM
 - Result: Deterministic data access, no cache misses
@@ -569,17 +590,12 @@ __pipe_enqueue(idx, msg, len)  [ITCM, Privileged]
    - Priority inheritance for mutexes
    - Preemption by higher-priority tasks
 
-2. **MPU Configuration**
-   - Memory protection for task stacks
-   - Kernel/user space separation
-   - Fault isolation
-
-3. **Stack Overflow Detection**
+2. **Stack Overflow Detection**
    - Stack canaries
    - MPU-based detection
    - Automatic task termination
 
-4. **Formal Verification**
+3. **Formal Verification**
    - Model checking for deadlock detection
    - Proof of scheduling properties
    - WCET analysis

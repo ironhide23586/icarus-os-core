@@ -174,6 +174,45 @@ typedef struct {
     uint8_t buffer[ICARUS_MAX_MESSAGE_BYTES];  /**< Circular message buffer */
 } icarus_pipe_t;
 
+/* ============================================================================
+ * COMPILE-TIME STRUCTURE VALIDATION
+ * ========================================================================= */
+
+#ifndef SKIP_STATIC_ASSERTS
+#include <stddef.h>
+
+/* TCB field offsets - must match context_switch.s constants */
+_Static_assert(offsetof(icarus_task_t, stack_pointer) == 12,
+               "TCB stack_pointer must be at offset 12 for context_switch.s");
+_Static_assert(offsetof(icarus_task_t, task_state) == 16,
+               "TCB task_state must be at offset 16 for context_switch.s");
+_Static_assert(offsetof(icarus_task_t, global_tick_paused) == 20,
+               "TCB global_tick_paused must be at offset 20 for context_switch.s");
+_Static_assert(offsetof(icarus_task_t, ticks_to_pause) == 24,
+               "TCB ticks_to_pause must be at offset 24 for context_switch.s");
+_Static_assert(offsetof(icarus_task_t, data_pointer) == 28,
+               "TCB data_pointer must be at offset 28 for context_switch.s");
+
+/* Assembly uses ldrb/strb for task_state - enum must fit in 1 byte.
+ * ARM GCC with -fshort-enums packs this to 1 byte; offset asserts
+ * above guarantee the field layout regardless of padding. */
+_Static_assert(sizeof(icarus_task_state_t) <= 4,
+               "icarus_task_state_t must fit within 4 bytes");
+
+/* Task state values must match context_switch.s constants */
+_Static_assert(TASK_STATE_COLD == 0, "STATE_COLD must be 0");
+_Static_assert(TASK_STATE_RUNNING == 1, "STATE_RUNNING must be 1");
+_Static_assert(TASK_STATE_READY == 2, "STATE_READY must be 2");
+_Static_assert(TASK_STATE_BLOCKED == 3, "STATE_BLOCKED must be 3");
+_Static_assert(TASK_STATE_KILLED == 4, "STATE_KILLED must be 4");
+_Static_assert(TASK_STATE_FINISHED == 5, "STATE_FINISHED must be 5");
+
+/* Pipe count/max_count are uint8_t - ensure config fits */
+_Static_assert(ICARUS_MAX_MESSAGE_BYTES <= 255,
+               "ICARUS_MAX_MESSAGE_BYTES must fit in uint8_t (pipe count field)");
+
+#endif /* SKIP_STATIC_ASSERTS */
+
 #ifdef __cplusplus
 }
 #endif

@@ -67,6 +67,22 @@ extern "C" {
 #define SVC_KERNEL_GET_DATA             27
 #define SVC_KERNEL_PROTECTED_DATA       28
 
+/* ============================================================================
+ * COMPILE-TIME SVC VALIDATION
+ * ========================================================================= */
+
+/* SVC instruction encodes number in 1 byte (0-255) */
+_Static_assert(SVC_KERNEL_PROTECTED_DATA <= 255,
+               "Highest SVC number must fit in 8-bit immediate");
+
+/* Ensure SVC_KERNEL_PROTECTED_DATA is the highest defined SVC number */
+_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_TASK_ACTIVE_SLEEP,
+               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_KERNEL_GET_DATA,
+               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_OS_GET_TASK_TICKS_REMAINING,
+               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+
 
 
 

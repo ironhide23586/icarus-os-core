@@ -40,7 +40,7 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 | **Certification Target** | DO-178C DAL C |
 | **Coding Standard** | MISRA C:2012 subset |
 | **Architecture** | SVC-based privilege separation |
-| **Memory Protection** | MPU-ready with ITCM/DTCM optimization |
+| **Memory Protection** | MPU-enforced ITCM/DTCM privilege separation |
 
 ---
 
@@ -238,25 +238,24 @@ ICARUS OS uses optimized memory placement for maximum performance:
 ```
 ┌─────────────────────────────────────────┐
 │ ITCM (0x00000000) - 64 KB               │
-│   Critical kernel code (zero wait)      │
-│   - Context switch (PendSV_Handler)     │
-│   - Scheduler (os_yield)                │
-│   - IPC (semaphores, pipes)             │
-│   Used: 2.5 KB (4%) | Free: 61.5 KB     │
+│   .itcm_privileged [MPU Priv Only]      │
+│   - Kernel functions (__os_yield, etc.) │
+│   .itcm_user [Accessible]              │
+│   - User hot-path code                  │
 ├─────────────────────────────────────────┤
 │ DTCM (0x20000000) - 128 KB              │
-│   Fast data access (zero wait)          │
-│   - Task stacks (64 KB)                 │
-│   - Kernel data structures              │
-│   Used: 64 KB (50%) | Free: 64 KB       │
+│   .dtcm_privileged [MPU Priv Only]      │
+│   - Kernel state (__task_list, etc.)    │
+│   .dtcm_user [Accessible]              │
+│   - User fast data                      │
 ├─────────────────────────────────────────┤
 │ Flash (0x08000000) - 128 KB             │
 │   Program code and constants            │
-│   Used: ~50 KB                          │
 ├─────────────────────────────────────────┤
 │ AXI SRAM (0x24000000) - 512 KB          │
-│   General purpose RAM                   │
-│   - Heap, BSS, other data               │
+│   - Task stack pools                    │
+│   - Task data pools (MPU per-task)      │
+│   - BSS, heap                           │
 └─────────────────────────────────────────┘
 ```
 
@@ -367,7 +366,7 @@ ICARUS is designed to be the first open-source RTOS with:
 - **Preemptive Round-Robin Scheduling**: Time-sliced task execution with configurable time quantum (50ms default)
 - **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV (~2μs)
 - **SVC-Based Privilege Separation**: Clean kernel/user separation with Supervisor Call mechanism
-- **MPU-Ready Architecture**: Memory protection with ITCM/DTCM zero wait-state optimization
+- **MPU-Enforced Privilege Separation**: Memory protection with ITCM/DTCM privileged/user split
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
 - **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages

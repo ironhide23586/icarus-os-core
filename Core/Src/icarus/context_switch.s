@@ -128,7 +128,7 @@ yield_postprocess:
     /* Set up Memory Protection Unit for task data section */
     push    {r0-r3, r12, lr}
     ldr     r0, [r11, #TCB_DATA_PTR]
-    bl      MPU_ConfigureTaskData
+    bl      __mpu_configure_task_data
     pop     {r0-r3, r12, lr}
 
     ldr     r1, [r11, #TCB_STACK_PTR]   /* Load next task's SP */

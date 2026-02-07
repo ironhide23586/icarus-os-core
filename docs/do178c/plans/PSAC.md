@@ -88,7 +88,7 @@ The system provides the following high-level functions:
 | Task Scheduling | Preemptive round-robin scheduling with 50ms time quantum |
 | Task Management | Task creation, termination, sleep, and yield operations |
 | Privilege Separation | SVC-based kernel protection with 28 entry points |
-| Memory Protection | MPU-ready architecture with ITCM/DTCM optimization |
+| Memory Protection | MPU-enforced privilege separation with ITCM/DTCM split |
 | IPC | Semaphores (32) and message pipes (32) for inter-task communication |
 | Interrupt Handling | SysTick timer, fault handlers, USB interrupts |
 | Hardware Abstraction | GPIO, I2C, SPI, display, LED control |

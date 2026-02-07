@@ -193,12 +193,44 @@ extern "C" {
 #error "ICARUS_STACK_WORDS must be even for 8-byte stack alignment (ARM ABI)"
 #endif
 
+#if (ICARUS_DATA_WORDS % 2) != 0
+#error "ICARUS_DATA_WORDS must be even for 8-byte alignment (ARM ABI)"
+#endif
+
+#if (ICARUS_DATA_WORDS * 4) & ((ICARUS_DATA_WORDS * 4) - 1)
+#error "ICARUS_DATA_WORDS * 4 must be a power of 2 (MPU region size requirement)"
+#endif
+
+#if (ICARUS_STACK_WORDS * 4) & ((ICARUS_STACK_WORDS * 4) - 1)
+#error "ICARUS_STACK_WORDS * 4 must be a power of 2 (MPU alignment requirement)"
+#endif
+
 #if (ICARUS_PRINT_BUFFER_BYTES > 64)
 #error "ICARUS_PRINT_BUFFER_BYTES must be <= 64 for USB FS CDC packet sizing"
 #endif
 
 #if (ICARUS_MAX_TASKS > 255)
 #error "ICARUS_MAX_TASKS must be <= 255 (uint8_t index)"
+#endif
+
+#if (ICARUS_MAX_SEMAPHORES > 255)
+#error "ICARUS_MAX_SEMAPHORES must be <= 255 (uint8_t index)"
+#endif
+
+#if (ICARUS_MAX_MESSAGE_QUEUES > 255)
+#error "ICARUS_MAX_MESSAGE_QUEUES must be <= 255 (uint8_t index)"
+#endif
+
+#if (ICARUS_MAX_MESSAGE_BYTES > 255)
+#error "ICARUS_MAX_MESSAGE_BYTES must be <= 255 (uint8_t count in pipe)"
+#endif
+
+#if (ICARUS_TICKS_PER_TASK < 1)
+#error "ICARUS_TICKS_PER_TASK must be > 0"
+#endif
+
+#if (ICARUS_MAX_TASK_NAME_LEN < 1)
+#error "ICARUS_MAX_TASK_NAME_LEN must be > 0"
 #endif
 
 #ifdef __cplusplus

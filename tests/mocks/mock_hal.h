@@ -83,7 +83,7 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init);
 void HAL_MPU_Enable(uint32_t MPU_Control);
 
 // Mock MPU configuration function
-void MPU_Config(void);
+void __mpu_config(void);
 
 // Mock RCC/PWR functions
 typedef struct {

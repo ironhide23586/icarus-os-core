@@ -39,20 +39,26 @@
 #endif
 
 /* ============================================================================
- * COMPILE-TIME STRUCTURE VALIDATION
+ * COMPILE-TIME MEMORY POOL VALIDATION
  * ========================================================================= */
 
 #ifndef SKIP_STATIC_ASSERTS
 #include <stddef.h>
-_Static_assert(offsetof(icarus_task_t, stack_pointer) == 12,
-               "TCB stack_pointer offset mismatch - update context_switch.s");
-_Static_assert(offsetof(icarus_task_t, task_state) == 16,
-               "TCB task_state offset mismatch - update context_switch.s");
-_Static_assert(offsetof(icarus_task_t, global_tick_paused) == 20,
-               "TCB global_tick_paused offset mismatch - update context_switch.s");
-_Static_assert(offsetof(icarus_task_t, ticks_to_pause) == 24,
-               "TCB ticks_to_pause offset mismatch - update context_switch.s");
-#endif
+
+/* Stack pool must fit in RAM_D1 (512KB) */
+_Static_assert(ICARUS_MAX_TASKS * ICARUS_STACK_WORDS * 4 <= 512 * 1024,
+               "Stack pool exceeds RAM_D1 capacity (512KB)");
+
+/* Data pool must fit in RAM_D1 (512KB) */
+_Static_assert(ICARUS_MAX_TASKS * ICARUS_DATA_WORDS * 4 <= 512 * 1024,
+               "Data pool exceeds RAM_D1 capacity (512KB)");
+
+/* Combined pools must fit in RAM_D1 */
+_Static_assert((ICARUS_MAX_TASKS * ICARUS_STACK_WORDS * 4) +
+               (ICARUS_MAX_TASKS * ICARUS_DATA_WORDS * 4) <= 512 * 1024,
+               "Combined stack + data pools exceed RAM_D1 capacity (512KB)");
+
+#endif /* SKIP_STATIC_ASSERTS */
 
 /* ============================================================================
  * KERNEL DATA STRUCTURES (DTCM - Zero Wait State)

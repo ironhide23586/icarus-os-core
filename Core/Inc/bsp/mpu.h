@@ -94,6 +94,16 @@ extern "C" {
 #define TASK_DATA_SIZE_BYTES (ICARUS_DATA_WORDS * 4)
 #define TASK_DATA_SIZE_MPU   BYTES_TO_MPU_SIZE(TASK_DATA_SIZE_BYTES)
 
+/* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
+#else
+#define ITCM_FUNC_PRIV
+#endif
+
 /**
  * @brief   Configure Memory Protection Unit for QSPI flash access
  *
@@ -121,14 +131,14 @@ extern "C" {
  * @see     ARMv7-M Architecture Reference Manual, Section B3.5 (MPU)
  * @see     STM32H750 Reference Manual RM0433, Section 2.3.4
  */
-void MPU_Config(void);
+ITCM_FUNC_PRIV void __mpu_config(void);
 
 /**
  * @brief Configure MPU for current task's data region
  * @param task_id Task identifier
  * @note Called from assembly context switch handler
  */
-void MPU_ConfigureTaskData(uint32_t task_data_base);
+ITCM_FUNC_PRIV void __mpu_configure_task_data(uint32_t task_data_base);
 
 #ifdef __cplusplus
 }

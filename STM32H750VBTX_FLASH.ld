@@ -69,24 +69,24 @@ SECTIONS
   .itcm_privileged :
   {
     . = ALIGN(4);
-    _sitcm_priv = .;
+    __sitcm_priv = .;
     *(.itcm.privileged)      /* Privileged kernel functions only */
     . = ALIGN(4);
-    _eitcm_priv = .;
+    __eitcm_priv = .;
   } >ITCMRAM AT> FLASH
-  _siitcm_priv = LOADADDR(.itcm_privileged);
+  __siitcm_priv = LOADADDR(.itcm_privileged);
   
   /* User code section - accessible to unprivileged tasks */
   .itcm_user :
   {
     . = ALIGN(4);
-    _sitcm_user = .;
+    __sitcm_user = .;
     *(.itcm)                 /* User ITCM functions */
     *(.itcm*)
     . = ALIGN(4);
-    _eitcm_user = .;
+    __eitcm_user = .;
   } >ITCMRAM AT> FLASH
-  _siitcm_user = LOADADDR(.itcm_user);
+  __siitcm_user = LOADADDR(.itcm_user);
 
   /* The program code and other data goes into FLASH */
   .text :
@@ -198,21 +198,21 @@ SECTIONS
   .dtcm_privileged (NOLOAD) :
   {
     . = ALIGN(4);
-    _sdtcm_priv = .;
+    __sdtcm_priv = .;
     *(.dtcm.privileged)      /* Privileged kernel data only */
     . = ALIGN(4);
-    _edtcm_priv = .;
+    __edtcm_priv = .;
   } >DTCMRAM
   
   /* User data section - accessible to unprivileged tasks */
   .dtcm_user (NOLOAD) :
   {
     . = ALIGN(4);
-    _sdtcm_user = .;
+    __sdtcm_user = .;
     *(.dtcm)                 /* User DTCM data */
     *(.dtcm*)
     . = ALIGN(4);
-    _edtcm_user = .;
+    __edtcm_user = .;
   } >DTCMRAM
 
   /* Remove information from the standard libraries */

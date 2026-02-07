@@ -1,18 +1,41 @@
 
 #include "bsp/mpu.h"
+#include "bsp/error.h"
 #include "stm32h7xx.h"
+
+/* ============================================================================
+ * SECTION PLACEMENT MACROS
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#define ITCM_FUNC_PRIV __attribute__((section(".itcm.privileged")))
+#else
+#define ITCM_FUNC_PRIV
+#endif
+
+/* ============================================================================
+ * COMPILE-TIME MPU VALIDATION
+ * ========================================================================= */
+
+/* Task data region must be power of 2 for MPU */
+_Static_assert((TASK_DATA_SIZE_BYTES & (TASK_DATA_SIZE_BYTES - 1)) == 0,
+               "TASK_DATA_SIZE_BYTES must be power of 2 (MPU region requirement)");
+
+/* Task data region must be at least 32 bytes (MPU minimum) */
+_Static_assert(TASK_DATA_SIZE_BYTES >= 32,
+               "TASK_DATA_SIZE_BYTES must be >= 32 (MPU minimum region size)");
 
 /* ============================================================================
  * LINKER SYMBOLS
  * ========================================================================= */
 
 /* Privileged ITCM section boundaries (from linker script) */
-extern uint32_t _sitcm_priv;
-extern uint32_t _eitcm_priv;
+extern uint32_t __sitcm_priv;
+extern uint32_t __eitcm_priv;
 
 /* Privileged DTCM section boundaries (from linker script) */
-extern uint32_t _sdtcm_priv;
-extern uint32_t _edtcm_priv;
+extern uint32_t __sdtcm_priv;
+extern uint32_t __edtcm_priv;
 
 /* ============================================================================
  * HELPER FUNCTIONS
@@ -24,18 +47,18 @@ extern uint32_t _edtcm_priv;
  * @return MPU region size code (5-31 for 32B to 4GB)
  * @note Rounds up to next power of 2
  */
-static uint8_t calculate_mpu_region_size(uint32_t size_bytes)
+static ITCM_FUNC_PRIV uint8_t __calculate_mpu_region_size(uint32_t size_bytes)
 {
     /* MPU regions must be power of 2, minimum 32 bytes */
-    uint32_t mpu_size = 32;
-    uint8_t size_bits = 5;
+    uint32_t _mpu_size = 32;
+    uint8_t _size_bits = 5;
     
-    while (mpu_size < size_bytes && size_bits < 32) {
-        mpu_size <<= 1;
-        size_bits++;
+    while (_mpu_size < size_bytes && _size_bits < 32) {
+        _mpu_size <<= 1;
+        _size_bits++;
     }
     
-    return size_bits - 1;  /* MPU uses (size_bits - 1) encoding */
+    return _size_bits - 1;  /* MPU uses (size_bits - 1) encoding */
 }
 
 /**
@@ -44,7 +67,7 @@ static uint8_t calculate_mpu_region_size(uint32_t size_bytes)
  * @param region_size Region size in bytes (must be power of 2)
  * @return Aligned address
  */
-static uint32_t align_to_region(uint32_t addr, uint32_t region_size)
+static ITCM_FUNC_PRIV uint32_t __align_to_region(uint32_t addr, uint32_t region_size)
 {
     return addr & ~(region_size - 1);
 }
@@ -54,9 +77,25 @@ static uint32_t align_to_region(uint32_t addr, uint32_t region_size)
  * ========================================================================= */
 
 
-void MPU_Config(void)
+ITCM_FUNC_PRIV void __mpu_config(void)
 {
-  MPU_Region_InitTypeDef MPU_InitStruct = {0};
+  MPU_Region_InitTypeDef _mpu_init = {0};
+
+  /* Runtime validation of linker-provided section sizes */
+  uint32_t _itcm_priv_start = (uint32_t)&__sitcm_priv;
+  uint32_t _itcm_priv_end = (uint32_t)&__eitcm_priv;
+  uint32_t _itcm_priv_size = _itcm_priv_end - _itcm_priv_start;
+  uint32_t _dtcm_priv_start = (uint32_t)&__sdtcm_priv;
+  uint32_t _dtcm_priv_end = (uint32_t)&__edtcm_priv;
+  uint32_t _dtcm_priv_size = _dtcm_priv_end - _dtcm_priv_start;
+
+  /* Privileged sections must fit within their respective TCM regions */
+  if (_itcm_priv_size > BSP_ITCM_SIZE) { Error_Handler(); }
+  if (_dtcm_priv_size > BSP_DTCM_SIZE) { Error_Handler(); }
+
+  /* Privileged sections must not be empty (kernel code/data must exist) */
+  if (_itcm_priv_size == 0) { Error_Handler(); }
+  if (_dtcm_priv_size == 0) { Error_Handler(); }
 
   /* Disables the MPU */
   HAL_MPU_Disable();
@@ -64,112 +103,98 @@ void MPU_Config(void)
   /* ========================================================================
    * REGION 0: QSPI Background (256MB) - No Access
    * ======================================================================== */
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.Number           = MPU_REGION_QSPI_BACKGROUND;
-  MPU_InitStruct.BaseAddress      = QSPI_BASE;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_256MB;
-  MPU_InitStruct.AccessPermission = MPU_REGION_NO_ACCESS;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.SubRegionDisable = 0x00;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
+  _mpu_init.Enable           = MPU_REGION_ENABLE;
+  _mpu_init.Number           = MPU_REGION_QSPI_BACKGROUND;
+  _mpu_init.BaseAddress      = QSPI_BASE;
+  _mpu_init.Size             = MPU_REGION_SIZE_256MB;
+  _mpu_init.AccessPermission = MPU_REGION_NO_ACCESS;
+  _mpu_init.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
+  _mpu_init.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
+  _mpu_init.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  _mpu_init.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+  _mpu_init.TypeExtField     = MPU_TEX_LEVEL1;
+  _mpu_init.SubRegionDisable = 0x00;
+  HAL_MPU_ConfigRegion(&_mpu_init);
 
   /* ========================================================================
    * REGION 1: QSPI Flash (8MB) - Privileged Read-Only, Cacheable
    * ======================================================================== */
-  MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-  MPU_InitStruct.Number           = MPU_REGION_QSPI_FLASH;
-  MPU_InitStruct.BaseAddress      = QSPI_BASE;
-  MPU_InitStruct.Size             = MPU_REGION_SIZE_8MB;
-  MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RO;
-  MPU_InitStruct.IsBufferable     = MPU_ACCESS_BUFFERABLE;
-  MPU_InitStruct.IsCacheable      = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-  MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
-  MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL1;
-  MPU_InitStruct.SubRegionDisable = 0x00;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
+  _mpu_init.Enable           = MPU_REGION_ENABLE;
+  _mpu_init.Number           = MPU_REGION_QSPI_FLASH;
+  _mpu_init.BaseAddress      = QSPI_BASE;
+  _mpu_init.Size             = MPU_REGION_SIZE_8MB;
+  _mpu_init.AccessPermission = MPU_REGION_PRIV_RO;
+  _mpu_init.IsBufferable     = MPU_ACCESS_BUFFERABLE;
+  _mpu_init.IsCacheable      = MPU_ACCESS_CACHEABLE;
+  _mpu_init.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+  _mpu_init.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+  _mpu_init.TypeExtField     = MPU_TEX_LEVEL1;
+  _mpu_init.SubRegionDisable = 0x00;
+  HAL_MPU_ConfigRegion(&_mpu_init);
 
   /* ========================================================================
    * REGION 2: Privileged ITCM Kernel Code - Privileged Execute Only
    * ======================================================================== */
-  uint32_t itcm_priv_start = (uint32_t)&_sitcm_priv;
-  uint32_t itcm_priv_end = (uint32_t)&_eitcm_priv;
-  uint32_t itcm_priv_size = itcm_priv_end - itcm_priv_start;
-  
-  if (itcm_priv_size > 0) {
-    /* Calculate power-of-2 region size */
-    uint8_t region_size_code = calculate_mpu_region_size(itcm_priv_size);
-    uint32_t region_size_bytes = 1UL << (region_size_code + 1);
+  if (_itcm_priv_size > 0) {
+    uint8_t _region_size_code = __calculate_mpu_region_size(_itcm_priv_size);
+    uint32_t _region_size_bytes = 1UL << (_region_size_code + 1);
+    uint32_t _aligned_base = __align_to_region(_itcm_priv_start, _region_size_bytes);
     
-    /* Align base address to region size */
-    uint32_t aligned_base = align_to_region(itcm_priv_start, region_size_bytes);
-    
-    MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-    MPU_InitStruct.Number           = MPU_REGION_ITCM_PRIVILEGED;
-    MPU_InitStruct.BaseAddress      = aligned_base;
-    MPU_InitStruct.Size             = region_size_code << 1;  /* HAL expects size << 1 */
-    MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RO;     /* Privileged read-only, unprivileged no access */
-    MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
-    MPU_InitStruct.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
-    MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-    MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;  /* Executable */
-    MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL0;
-    MPU_InitStruct.SubRegionDisable = 0x00;
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
+    _mpu_init.Enable           = MPU_REGION_ENABLE;
+    _mpu_init.Number           = MPU_REGION_ITCM_PRIVILEGED;
+    _mpu_init.BaseAddress      = _aligned_base;
+    _mpu_init.Size             = _region_size_code << 1;
+    _mpu_init.AccessPermission = MPU_REGION_PRIV_RO;
+    _mpu_init.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
+    _mpu_init.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
+    _mpu_init.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+    _mpu_init.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+    _mpu_init.TypeExtField     = MPU_TEX_LEVEL0;
+    _mpu_init.SubRegionDisable = 0x00;
+    HAL_MPU_ConfigRegion(&_mpu_init);
   }
 
   /* ========================================================================
    * REGION 3: Privileged DTCM Kernel Data - Privileged Read/Write Only
    * ======================================================================== */
-  uint32_t dtcm_priv_start = (uint32_t)&_sdtcm_priv;
-  uint32_t dtcm_priv_end = (uint32_t)&_edtcm_priv;
-  uint32_t dtcm_priv_size = dtcm_priv_end - dtcm_priv_start;
-  
-  if (dtcm_priv_size > 0) {
-    /* Calculate power-of-2 region size */
-    uint8_t region_size_code = calculate_mpu_region_size(dtcm_priv_size);
-    uint32_t region_size_bytes = 1UL << (region_size_code + 1);
+  if (_dtcm_priv_size > 0) {
+    uint8_t _region_size_code = __calculate_mpu_region_size(_dtcm_priv_size);
+    uint32_t _region_size_bytes = 1UL << (_region_size_code + 1);
+    uint32_t _aligned_base = __align_to_region(_dtcm_priv_start, _region_size_bytes);
     
-    /* Align base address to region size */
-    uint32_t aligned_base = align_to_region(dtcm_priv_start, region_size_bytes);
-    
-    MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
-    MPU_InitStruct.Number           = MPU_REGION_DTCM;
-    MPU_InitStruct.BaseAddress      = aligned_base;
-    MPU_InitStruct.Size             = region_size_code << 1;  /* HAL expects size << 1 */
-    MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RW;     /* Privileged RW, unprivileged no access */
-    MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
-    MPU_InitStruct.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
-    MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-    MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
-    MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL0;
-    MPU_InitStruct.SubRegionDisable = 0x00;
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
+    _mpu_init.Enable           = MPU_REGION_ENABLE;
+    _mpu_init.Number           = MPU_REGION_DTCM;
+    _mpu_init.BaseAddress      = _aligned_base;
+    _mpu_init.Size             = _region_size_code << 1;
+    _mpu_init.AccessPermission = MPU_REGION_PRIV_RW;
+    _mpu_init.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
+    _mpu_init.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
+    _mpu_init.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+    _mpu_init.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
+    _mpu_init.TypeExtField     = MPU_TEX_LEVEL0;
+    _mpu_init.SubRegionDisable = 0x00;
+    HAL_MPU_ConfigRegion(&_mpu_init);
   }
 
   /* Enables the MPU with privileged default memory map */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
 
-void MPU_ConfigureTaskData(uint32_t task_data_base) {
-    MPU_Region_InitTypeDef MPU_InitStruct = {0};
+ITCM_FUNC_PRIV void __mpu_configure_task_data(uint32_t task_data_base) {
+    MPU_Region_InitTypeDef _mpu_init = {0};
     
-    MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-    MPU_InitStruct.Number = MPU_REGION_TASK_DATA;  /* Region 4 - dynamic task data */
-    MPU_InitStruct.BaseAddress = task_data_base;
-    MPU_InitStruct.Size = TASK_DATA_SIZE_MPU;
-    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-    MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
-    MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
-    MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
-    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-    MPU_InitStruct.SubRegionDisable = 0x00;
+    _mpu_init.Enable = MPU_REGION_ENABLE;
+    _mpu_init.Number = MPU_REGION_TASK_DATA;
+    _mpu_init.BaseAddress = task_data_base;
+    _mpu_init.Size = TASK_DATA_SIZE_MPU;
+    _mpu_init.AccessPermission = MPU_REGION_FULL_ACCESS;
+    _mpu_init.IsCacheable = MPU_ACCESS_CACHEABLE;
+    _mpu_init.IsBufferable = MPU_ACCESS_BUFFERABLE;
+    _mpu_init.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+    _mpu_init.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
+    _mpu_init.TypeExtField = MPU_TEX_LEVEL0;
+    _mpu_init.SubRegionDisable = 0x00;
     
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
+    HAL_MPU_ConfigRegion(&_mpu_init);
 }
 
