@@ -1,9 +1,9 @@
 # Software Design Description (SDD)
 
 **Document ID:** ICARUS-SDD-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
+**Version:** 1.0  
+**Date:** 2025-02-07  
+**Status:** Current  
 **Classification:** Public (Open Source)  
 
 ---
@@ -23,6 +23,7 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 1.0 | 2025-02-07 | Souham Biswas | Updated with SVC-based privilege architecture, MPU protection, ITCM/DTCM optimization, 142 tests |
 
 ---
 
@@ -45,11 +46,13 @@ This document covers:
 
 | Principle | Description |
 |-----------|-------------|
-| **Determinism** | All operations have bounded, predictable timing |
+| **Determinism** | All operations have bounded, predictable timing via ITCM/DTCM |
 | **Static Allocation** | No dynamic memory after initialization |
-| **Minimal Footprint** | Kernel <32KB code, <8KB RAM |
+| **Privilege Separation** | SVC-based kernel protection with MPU readiness |
+| **Zero Wait-State** | Critical code in ITCM, data in DTCM for deterministic execution |
+| **Minimal Footprint** | Kernel ~50KB code, ~70KB RAM (DTCM) |
 | **Portability** | Hardware abstraction enables multi-platform |
-| **Certifiability** | Design supports DO-178C verification |
+| **Certifiability** | Design supports DO-178C verification with 142 unit tests |
 
 ---
 
@@ -61,25 +64,41 @@ This document covers:
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         APPLICATION LAYER                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐ │
-│  │ User Task 1 │  │ User Task 2 │  │ User Task N │  │   AI Tasks      │ │
+│  │ User Task 1 │  │ User Task 2 │  │ User Task N │  │  Demo Tasks     │ │
+│  │(Unprivileged│  │(Unprivileged│  │(Unprivileged│  │ (Stress Test)   │ │
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘ │
 ├─────────┴────────────────┴────────────────┴──────────────────┴──────────┤
-│                          ICARUS KERNEL                                   │
+│                       PUBLIC API LAYER (SVC Wrappers)                    │
 │  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │                      KERNEL API                                    │  │
-│  │  os_init() os_start() os_yield() task_sleep() ipc_send() ai_run() │  │
+│  │  os_init() os_start() os_yield() task_active_sleep()             │  │
+│  │  semaphore_feed() semaphore_consume() pipe_enqueue() pipe_dequeue│  │
+│  │  (All invoke SVC instruction to enter privileged mode)            │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────────────┤
+│                       SVC HANDLER LAYER (Privilege Boundary)             │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  SVC_Handler() - Dispatches to privileged implementations         │  │
+│  │  (Enforces privilege separation, validates SVC numbers)           │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────────────┤
+│                    PRIVILEGED KERNEL LAYER (MPU Protected)               │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐ │
-│  │  Scheduler  │  │Task Manager │  │     IPC     │  │   AI Runtime    │ │
-│  │             │  │             │  │  (Planned)  │  │   (Planned)     │ │
-│  │• Round-robin│  │• Create     │  │• Queues     │  │• Model loader   │ │
-│  │• Preemptive │  │• Kill       │  │• Semaphores │  │• Inference      │ │
-│  │• Priority   │  │• Sleep      │  │• Mutexes    │  │• Operators      │ │
+│  │  Scheduler  │  │Task Manager │  │     IPC     │  │   Kernel Core   │ │
+│  │             │  │             │  │             │  │                 │ │
+│  │• __os_yield │  │• __os_      │  │• __semaphore│  │• __os_init      │ │
+│  │• __task_    │  │  register_  │  │  _feed/     │  │• __enter_       │ │
+│  │  active_    │  │  task       │  │  consume    │  │  critical       │ │
+│  │  sleep      │  │• __os_kill_ │  │• __pipe_    │  │• __kernel_      │ │
+│  │• __os_get_  │  │  process    │  │  enqueue/   │  │  protected_data │ │
+│  │  tick_count │  │• __os_exit_ │  │  dequeue    │  │                 │ │
+│  │             │  │  task       │  │             │  │(DTCM data access│ │
+│  │(ITCM code)  │  │             │  │(ITCM code)  │  │ ITCM code)      │ │
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘ │
 ├─────────┴────────────────┴────────────────┴──────────────────┴──────────┤
 │                    PLATFORM ABSTRACTION LAYER                            │
 │  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │  icarus_hal_init()  icarus_hal_context_switch()  icarus_hal_tick()│  │
+│  │  hal_init()  PendSV_Handler()  SysTick_Handler()                 │  │
+│  │  (Context switching, interrupt handling)                          │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                     BOARD SUPPORT PACKAGE (BSP)                          │
@@ -89,7 +108,7 @@ This document covers:
 ├────────┴─────────────┴─────────────┴─────────────┴─────────────┴────────┤
 │                        HARDWARE LAYER                                    │
 │  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │  STM32H750 (Cortex-M7) │ STM32F4 │ RISC-V │ Zynq │ x86 (Sim)     │  │
+│  │  STM32H750 (Cortex-M7) - ITCM/DTCM/Flash/AXI SRAM                │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -98,17 +117,19 @@ This document covers:
 
 | Component | Status | Source Location | Description |
 |-----------|--------|-----------------|-------------|
-| Scheduler | ✅ Implemented | `kernel/task.c` | Preemptive round-robin |
-| Task Manager | ✅ Implemented | `kernel/task.c` | Task lifecycle management |
-| Context Switch | ✅ Implemented | `kernel/context_switch.s` | ARM assembly context save/restore |
-| Semaphores | ✅ Implemented | `kernel/task.c` | Bounded counting semaphores |
-| IPC | 🔲 Planned | `kernel/ipc.c` | Message queues, mutexes |
-| AI Runtime | 🔲 Planned | `kernel/ai_runtime.c` | Deterministic inference |
-| BSP - GPIO | ✅ Implemented | `bsp/gpio.c` | Digital I/O |
-| BSP - I2C | ✅ Implemented | `bsp/i2c.c` | I2C communication |
-| BSP - SPI | ✅ Implemented | `bsp/spi.c` | SPI communication |
-| BSP - Display | ✅ Implemented | `bsp/display.c` | Terminal display with vertical bar |
+| Kernel Core | ✅ Implemented | `Core/Src/icarus/kernel.c` | Initialization, critical sections, protected data |
+| Scheduler | ✅ Implemented | `Core/Src/icarus/scheduler.c` | Preemptive round-robin, timing services |
+| Task Manager | ✅ Implemented | `Core/Src/icarus/task.c` | Task lifecycle management |
+| Context Switch | ✅ Implemented | `Core/Src/icarus/context_switch.s` | ARM assembly context save/restore |
+| Semaphores | ✅ Implemented | `Core/Src/icarus/semaphore.c` | Bounded counting semaphores |
+| Pipes | ✅ Implemented | `Core/Src/icarus/pipe.c` | Message queues (FIFO byte streams) |
+| SVC Layer | ✅ Implemented | `Core/Src/icarus/svc.c` | Privilege separation wrappers |
+| BSP - GPIO | ✅ Implemented | `Core/Src/bsp/gpio.c` | Digital I/O |
+| BSP - I2C | ✅ Implemented | `Core/Src/bsp/i2c.c` | I2C communication |
+| BSP - SPI | ✅ Implemented | `Core/Src/bsp/spi.c` | SPI communication |
+| BSP - Display | ✅ Implemented | `Core/Src/bsp/display.c` | Terminal display with ANSI visualization |
 | BSP - USB | ✅ Implemented | `USB_DEVICE/` | USB CDC serial |
+| Unit Tests | ✅ Implemented | `tests/src/test_task.c` | 142 tests, 88.5% coverage |
 
 
 ---

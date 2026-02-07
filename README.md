@@ -35,10 +35,12 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 | Metric | Status |
 |--------|--------|
 | **Test Coverage** | 88.5% line, 85.9% function |
-| **Unit Tests** | 131 tests, 0 failures |
+| **Unit Tests** | 142 tests, 0 failures |
 | **Static Analysis** | cppcheck clean |
 | **Certification Target** | DO-178C DAL C |
 | **Coding Standard** | MISRA C:2012 subset |
+| **Architecture** | SVC-based privilege separation |
+| **Memory Protection** | MPU-ready with ITCM/DTCM optimization |
 
 ---
 
@@ -363,17 +365,20 @@ ICARUS is designed to be the first open-source RTOS with:
 ### Key Features
 
 - **Preemptive Round-Robin Scheduling**: Time-sliced task execution with configurable time quantum (50ms default)
-- **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV
+- **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV (~2μs)
+- **SVC-Based Privilege Separation**: Clean kernel/user separation with Supervisor Call mechanism
+- **MPU-Ready Architecture**: Memory protection with ITCM/DTCM zero wait-state optimization
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
 - **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
 - **Blocking Sleep**: Busy-wait sleep for critical timing
+- **Protected Data Allocation**: MPU-protected per-task data pools
 - **Visual Debugging**: Terminal-based display with progress bars, message history, semaphore/pipe visualization
-- **Stress Testing**: Built-in stress test suite with real-time verification
+- **Stress Testing**: Built-in stress test suite with real-time verification (19 concurrent tasks)
 - **USB CDC Support**: Serial communication via USB Virtual COM Port
-- **MPU Configuration**: Memory Protection Unit setup for QSPI flash access
 - **MISRA C Compliant**: Follows MISRA C:2012 coding standards
+- **Comprehensive Testing**: 142 unit tests with 88.5% line coverage
 
 ---
 
