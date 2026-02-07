@@ -1,9 +1,9 @@
 # Structural Coverage Analysis Report
 
 **Document ID:** ICARUS-VER-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
+**Version:** 1.0  
+**Date:** 2025-02-07  
+**Status:** Current  
 **Classification:** Public (Open Source)  
 
 ## 1. Purpose
@@ -16,15 +16,20 @@ This analysis covers host-based unit testing of the following software component
 
 | Component | Source File | Description |
 |-----------|-------------|-------------|
-| Kernel | `Core/Src/kernel/task.c` | Task scheduler and management |
-| Display BSP | `Core/Src/bsp/display.c` | LCD display driver |
+| Kernel Core | `Core/Src/icarus/kernel.c` | Initialization, critical sections, protected data |
+| Scheduler | `Core/Src/icarus/scheduler.c` | Task scheduling and timing services |
+| Task Manager | `Core/Src/icarus/task.c` | Task lifecycle management |
+| Semaphores | `Core/Src/icarus/semaphore.c` | Counting semaphores |
+| Pipes | `Core/Src/icarus/pipe.c` | Message queues |
+| SVC Layer | `Core/Src/icarus/svc.c` | Privilege separation wrappers |
+| Display BSP | `Core/Src/bsp/display.c` | Terminal display driver |
 | I/O BSP | `Core/Src/bsp/retarget_stdio.c` | Standard I/O retargeting |
 | HAL BSP | `Core/Src/bsp/retarget_hal.c` | Hardware abstraction |
 | Interrupts | `Core/Src/bsp/stm32h7xx_it.c` | Interrupt handlers |
 | Error | `Core/Src/bsp/error.c` | Error handling |
 
 **Out of Scope:**
-- `Core/Src/kernel/context_switch.s` - ARM assembly (requires target testing)
+- `Core/Src/icarus/context_switch.s` - ARM assembly (requires target testing)
 - STM32 HAL drivers - Third-party vendor code
 - USB middleware - Third-party vendor code
 
@@ -91,8 +96,8 @@ make coverage-html       # Generate HTML report
 
 ### 4.3 Test Results
 
-- **Total Tests:** 131
-- **Passed:** 131
+- **Total Tests:** 142
+- **Passed:** 142
 - **Failed:** 0
 - **Ignored:** 0
 

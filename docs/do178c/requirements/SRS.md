@@ -137,11 +137,23 @@ The following system-level requirements are allocated to ICARUS OS:
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | HLR-KRN-060 | The kernel shall use static memory allocation only | Must | ✅ Implemented |
-| HLR-KRN-061 | The kernel shall detect stack overflow | Should | Planned |
-| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Should | Planned |
-| HLR-KRN-063 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
+| HLR-KRN-061 | The kernel shall provide MPU-protected data pools per task | Must | ✅ Implemented |
+| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Should | ✅ Architecture Ready |
+| HLR-KRN-063 | The kernel shall place critical code in ITCM for zero wait-state | Must | ✅ Implemented |
+| HLR-KRN-064 | The kernel shall place critical data in DTCM for zero wait-state | Must | ✅ Implemented |
+| HLR-KRN-065 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
 
-#### 3.1.7 Fault Handling
+#### 3.1.7 Privilege Separation
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| HLR-KRN-080 | The kernel shall enforce privilege separation via SVC mechanism | Must | ✅ Implemented |
+| HLR-KRN-081 | The kernel shall validate all SVC numbers | Must | ✅ Implemented |
+| HLR-KRN-082 | The kernel shall protect kernel data from unprivileged access | Must | ✅ Implemented |
+| HLR-KRN-083 | The kernel shall provide 28 SVC entry points | Must | ✅ Implemented |
+| HLR-KRN-084 | The kernel shall execute privileged functions in handler mode | Must | ✅ Implemented |
+
+#### 3.1.8 Fault Handling
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
@@ -256,21 +268,23 @@ The following system-level requirements are allocated to ICARUS OS:
 
 | ID | Requirement | Value | Status |
 |----|-------------|-------|--------|
-| PRF-010 | Kernel code size | <32KB | ✅ Met |
-| PRF-011 | Kernel RAM usage | <8KB + stacks | ✅ Met |
-| PRF-012 | Per-task stack (minimum) | 512 bytes | ✅ Met |
-| PRF-013 | AI runtime code size | <64KB | Planned |
-| PRF-014 | AI runtime RAM (base) | <16KB | Planned |
+| PRF-010 | Kernel code size | <64KB | ✅ Met (~50KB) |
+| PRF-011 | Kernel DTCM usage | <128KB | ✅ Met (~70KB) |
+| PRF-012 | Per-task stack (default) | 2KB | ✅ Met |
+| PRF-013 | Per-task data pool (default) | 2KB | ✅ Met |
+| PRF-014 | AI runtime code size | <64KB | Planned |
+| PRF-015 | AI runtime RAM (base) | <16KB | Planned |
 
 ### 4.3 Scalability Requirements
 
 | ID | Requirement | Value | Status |
 |----|-------------|-------|--------|
-| PRF-020 | Maximum tasks | 16 (configurable) | ✅ Met |
+| PRF-020 | Maximum tasks | 32 (configurable) | ✅ Met |
 | PRF-021 | Maximum priority levels | 8 | Planned |
-| PRF-022 | Maximum message queues | 8 | Planned |
-| PRF-023 | Maximum semaphores | 20 | ✅ Met |
+| PRF-022 | Maximum message pipes | 32 | ✅ Met |
+| PRF-023 | Maximum semaphores | 32 | ✅ Met |
 | PRF-024 | Maximum AI models loaded | 4 | Planned |
+| PRF-025 | Pipe capacity | 128 bytes | ✅ Met |
 
 ---
 
@@ -279,24 +293,50 @@ The following system-level requirements are allocated to ICARUS OS:
 ### 5.1 Kernel API
 
 ```c
-// Task Management
+// Kernel Initialization
 void os_init(void);
 void os_start(void);
+
+// Task Management
 void os_register_task(void (*function)(void), const char *name);
-void os_create_task(task_t *task, void (*function)(void), 
-                    uint32_t *stack, uint32_t stack_size, const char *name);
 void os_exit_task(void);
 void os_kill_process(uint8_t task_index);
+void os_task_suicide(void);
 
 // Scheduling
 void os_yield(void);
 uint32_t task_active_sleep(uint32_t ticks);
 uint32_t task_blocking_sleep(uint32_t ticks);
+uint32_t task_busy_wait(uint32_t ticks);
 
 // Information
 uint32_t os_get_tick_count(void);
 uint8_t os_get_running_task_count(void);
 const char* os_get_current_task_name(void);
+uint32_t os_get_task_ticks_remaining(void);
+
+// Critical Sections
+void enter_critical(void);
+void exit_critical(void);
+
+// Semaphores
+bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
+bool semaphore_feed(uint8_t semaphore_idx);
+bool semaphore_consume(uint8_t semaphore_idx);
+uint32_t semaphore_get_count(uint8_t semaphore_idx);
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
+
+// Message Pipes
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+uint8_t pipe_get_count(uint8_t pipe_idx);
+uint8_t pipe_get_max_count(uint8_t pipe_idx);
+
+// Protected Memory
+void* kernel_protected_data(uint16_t num_words);
+uint32_t* kernel_get_stack(uint8_t task_idx);
+uint32_t* kernel_get_data(uint8_t task_idx);
 
 // IPC (Planned)
 int ipc_queue_create(queue_t *queue, size_t item_size, size_t capacity);

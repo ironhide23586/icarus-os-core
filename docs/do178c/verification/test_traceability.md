@@ -1,9 +1,9 @@
 # Test Traceability Matrix
 
 **Document ID:** ICARUS-VER-003  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
+**Version:** 1.0  
+**Date:** 2025-02-07  
+**Status:** Current  
 **Classification:** Public (Open Source)  
 
 ## 1. Purpose
@@ -142,18 +142,27 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 
 | Category | Test Cases | Pass | Fail | Ignored |
 |----------|------------|------|------|---------|
-| Kernel - Task Management | 18 | 18 | 0 | 0 |
-| Kernel - Scheduling | 7 | 7 | 0 | 0 |
-| Kernel - Critical Sections | 3 | 3 | 0 | 0 |
-| Kernel - Semaphores | 6 | 6 | 0 | 0 |
-| Kernel - Message Pipes | 13 | 13 | 0 | 0 |
-| Kernel - Print Buffer | 5 | 5 | 0 | 0 |
-| BSP - Display | 21 | 21 | 0 | 0 |
+| Kernel - Initialization | 2 | 2 | 0 | 0 |
+| Kernel - Task Management | 20 | 20 | 0 | 0 |
+| Kernel - Scheduling | 8 | 8 | 0 | 0 |
+| Kernel - Critical Sections | 1 | 1 | 0 | 0 |
+| Kernel - Protected Data | 13 | 13 | 0 | 0 |
+| Kernel - Semaphores | 15 | 15 | 0 | 0 |
+| Kernel - Message Pipes | 23 | 23 | 0 | 0 |
+| BSP - Display | 18 | 18 | 0 | 0 |
 | BSP - LED | 4 | 4 | 0 | 0 |
-| BSP - Platform I/O | 7 | 7 | 0 | 0 |
+| BSP - Platform I/O | 5 | 5 | 0 | 0 |
 | BSP - Standard I/O | 3 | 3 | 0 | 0 |
-| BSP - Interrupts | 8 | 8 | 0 | 0 |
-| **Total** | **131** | **131** | **0** | **0** |
+| BSP - HAL | 1 | 1 | 0 | 0 |
+| BSP - Interrupts | 7 | 7 | 0 | 0 |
+| BSP - USB | 1 | 1 | 0 | 0 |
+| BSP - Debug | 1 | 1 | 0 | 0 |
+| **Total** | **142** | **142** | **0** | **0** |
+
+**Coverage Metrics:**
+- Line Coverage: 88.5%
+- Function Coverage: 85.9%
+- Branch Coverage: In progress
 
 ## 5. Untested Requirements
 
@@ -180,3 +189,4 @@ The following requirements require target integration testing:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 1.0 | 2025-02-07 | Souham Biswas | Updated with 142 tests, added protected data tests, coverage metrics |
