@@ -38,12 +38,7 @@ extern int8_t __current_cleanup_task_idx;
  * TASK CREATION (PRIVILEGED INTERNAL)
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of task creation
- * @note  Internal function - not exposed to user tasks
- * @note  Called by __os_register_task() only
- * @note  Non-static for test access only
- */
+/* Privileged internal function - called by __os_register_task() only */
 static void __os_create_task(icarus_task_t *task, void (*function)(void),
                              uint32_t *stack, uint32_t stack_size,
                              uint32_t *data, const char *name)
@@ -79,10 +74,7 @@ static void __os_create_task(icarus_task_t *task, void (*function)(void),
     __num_created_tasks++;
 }
 
-/**
- * @brief Privileged implementation of os_register_task
- * @note  Internal function - use os_register_task() wrapper
- */
+/* Privileged implementation - called via SVC from os_register_task() */
 void __os_register_task(void (*function)(void), const char *name)
 {
     __os_create_task(__task_list[__num_created_tasks], function,
@@ -98,10 +90,7 @@ void __os_register_task(void (*function)(void), const char *name)
  * TASK LIFECYCLE
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of os_exit_task
- * @note  Internal function - use os_exit_task() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_exit_task() */
 void __os_exit_task(void)
 {
     __task_list[__current_task_index]->task_state = TASK_STATE_FINISHED;
@@ -118,10 +107,7 @@ void __os_exit_task(void)
     __os_yield();  // Call privileged function directly (no SVC from kernel code)
 }
 
-/**
- * @brief Privileged implementation of os_kill_process
- * @note  Internal function - use os_kill_process() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_kill_process() */
 void __os_kill_process(uint8_t task_index)
 {
     if (task_index >= __num_created_tasks || task_index == 0) {
@@ -144,10 +130,7 @@ void __os_kill_process(uint8_t task_index)
     }
 }
 
-/**
- * @brief Privileged implementation of os_task_suicide
- * @note  Internal function - use os_task_suicide() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_task_suicide() */
 void __os_task_suicide(void)
 {
     printf("[INFO] %s committed suicide\r\n",

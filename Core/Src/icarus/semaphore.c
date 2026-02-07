@@ -32,10 +32,7 @@
  * SEMAPHORE IMPLEMENTATION
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of semaphore_init
- * @note  Internal function - use semaphore_init() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from semaphore_init() */
 bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
 {
     __enter_critical();
@@ -55,10 +52,7 @@ bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
     return false;
 }
 
-/**
- * @brief Privileged implementation of semaphore_feed
- * @note  Internal function - use semaphore_feed() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from semaphore_feed() */
 ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
 {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
@@ -79,10 +73,7 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
     return true;
 }
 
-/**
- * @brief Privileged implementation of semaphore_consume
- * @note  Internal function - use semaphore_consume() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from semaphore_consume() */
 ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
 {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||

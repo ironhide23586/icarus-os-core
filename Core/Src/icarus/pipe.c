@@ -31,10 +31,7 @@
  * MESSAGE PIPE IMPLEMENTATION
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of pipe_init
- * @note  Internal function - use pipe_init() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from pipe_init() */
 bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 {
     __enter_critical();
@@ -64,10 +61,7 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
     return false;
 }
 
-/**
- * @brief Privileged implementation of pipe_enqueue
- * @note  Internal function - use pipe_enqueue() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from pipe_enqueue() */
 ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {
@@ -103,10 +97,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
     return true;
 }
 
-/**
- * @brief Privileged implementation of pipe_dequeue
- * @note  Internal function - use pipe_dequeue() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from pipe_dequeue() */
 ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
                             uint8_t message_bytes)
 {

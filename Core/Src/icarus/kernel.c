@@ -103,20 +103,14 @@ extern void __start_cold_task(icarus_task_t *task);
  * CRITICAL SECTION MANAGEMENT
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of enter_critical
- * @note  Internal function - use enter_critical() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from enter_critical() */
 void __enter_critical(void)
 {
     __scheduler_enabled = false;
     __critical_stack_depth++;
 }
 
-/**
- * @brief Privileged implementation of exit_critical
- * @note  Internal function - use exit_critical() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from exit_critical() */
 void __exit_critical(void)
 {
     if (--__critical_stack_depth == 0) {
@@ -197,10 +191,7 @@ static void os_heartbeat_task(void)
  * KERNEL INITIALIZATION
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of os_init
- * @note  Internal function - use os_init() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_init() */
 void __os_init(void)
 {
     hal_init();
@@ -239,10 +230,7 @@ void __os_init(void)
     __scheduler_enabled = true;
 }
 
-/**
- * @brief Privileged implementation of os_start
- * @note  Internal function - use os_start() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_start() */
 void __os_start(void)
 {
     if (__num_created_tasks == 0 || __num_created_tasks > ICARUS_MAX_TASKS) {
@@ -270,10 +258,7 @@ uint32_t* __kernel_get_data(uint8_t task_idx)
     return __data_pool[task_idx];
 }
 
-/**
- * @brief Privileged implementation of kernel_protected_data
- * @note  Internal function - use kernel_protected_data() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from kernel_protected_data() */
 void* __kernel_protected_data(uint16_t num_words) {
     if (__data_pool_word_offsets[__current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
         return NULL;

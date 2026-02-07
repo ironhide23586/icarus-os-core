@@ -39,11 +39,6 @@
  * CRITICAL SECTION WRAPPERS
  * ========================================================================= */
 
-/**
- * @brief Enter critical section (disable scheduler)
- * @details Public API wrapper that calls __enter_critical() via SVC
- * @note Supports nesting via __critical_stack_depth counter
- */
 void enter_critical(void)
 {
 #ifdef HOST_TEST
@@ -57,11 +52,6 @@ void enter_critical(void)
 #endif
 }
 
-/**
- * @brief Exit critical section (re-enable scheduler if outermost)
- * @details Public API wrapper that calls __exit_critical() via SVC
- * @note Re-enables scheduler only when __critical_stack_depth reaches 0
- */
 void exit_critical(void)
 {
 #ifdef HOST_TEST
@@ -79,11 +69,6 @@ void exit_critical(void)
  * KERNEL INITIALIZATION WRAPPERS
  * ========================================================================= */
 
-/**
- * @brief Initialize the ICARUS kernel
- * @details Public API wrapper that calls __os_init() via SVC
- * @note Must be called before any other kernel function
- */
 void os_init(void)
 {
 #ifdef HOST_TEST
@@ -97,11 +82,6 @@ void os_init(void)
 #endif
 }
 
-/**
- * @brief Start the ICARUS scheduler
- * @details Public API wrapper that calls __os_start() via SVC
- * @warning This function never returns!
- */
 void os_start(void)
 {
 #ifdef HOST_TEST

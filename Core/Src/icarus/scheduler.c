@@ -38,10 +38,7 @@
  * TASK INFORMATION
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of os_get_tick_count
- * @note  Internal function - use os_get_tick_count() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_get_tick_count() */
 ITCM_FUNC uint32_t __os_get_tick_count(void)
 {
     return __os_tick_count;
@@ -52,10 +49,7 @@ uint8_t __os_get_running_task_count(void)
     return __running_task_count;
 }
 
-/**
- * @brief Privileged implementation of os_get_current_task_name
- * @note  Internal function - use os_get_current_task_name() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_get_current_task_name() */
 const char* __os_get_current_task_name(void)
 {
     if (__current_task_index < __num_created_tasks &&
@@ -74,20 +68,14 @@ uint32_t __os_get_task_ticks_remaining(void)
  * TASK SCHEDULING
  * ========================================================================= */
 
-/**
- * @brief Privileged implementation of os_yield
- * @note  Internal function - use os_yield() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from os_yield() */
 ITCM_FUNC void __os_yield(void)
 {
     __current_task_ticks_remaining = __ticks_per_task;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
-/**
- * @brief Privileged implementation of task_active_sleep
- * @note  Internal function - use task_active_sleep() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from task_active_sleep() */
 ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks)
 {
     __task_list[__current_task_index]->global_tick_paused = __os_tick_count;
@@ -97,10 +85,7 @@ ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks)
     return __os_tick_count - __task_list[__current_task_index]->global_tick_paused;
 }
 
-/**
- * @brief Privileged implementation of task_blocking_sleep
- * @note  Internal function - use task_blocking_sleep() wrapper from svc.c
- */
+/* Privileged implementation - called via SVC from task_blocking_sleep() */
 uint32_t __task_blocking_sleep(uint32_t ticks)
 {
     __enter_critical();
