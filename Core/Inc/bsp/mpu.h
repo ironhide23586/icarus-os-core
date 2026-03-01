@@ -30,7 +30,6 @@ extern "C" {
 /** @brief DTCM RAM base address (128KB, zero wait-state data) */
 #define BSP_DTCM_BASE           0x20000000UL
 #define BSP_DTCM_SIZE           (128 * 1024)
-
 /** @brief AXI SRAM (RAM_D1) base address (512KB) */
 #define BSP_RAM_D1_BASE         0x24000000UL
 #define BSP_RAM_D1_SIZE         (512 * 1024)

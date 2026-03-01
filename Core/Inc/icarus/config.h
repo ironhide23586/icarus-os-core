@@ -150,9 +150,9 @@ extern "C" {
 
 #ifndef HOST_TEST
 #  define ITCM_FUNC       __attribute__((section(".itcm")))
-#  define ITCM_FUNC_PRIV  __attribute__((section(".itcm")))
+#  define ITCM_FUNC_PRIV  __attribute__((section(".itcm_priv")))
 #  define DTCM_DATA       __attribute__((section(".dtcm")))
-#  define DTCM_DATA_PRIV  __attribute__((section(".dtcm")))
+#  define DTCM_DATA_PRIV  __attribute__((section(".dtcm_priv")))
 #else
 #  define ITCM_FUNC
 #  define ITCM_FUNC_PRIV

@@ -62,18 +62,32 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
-  /* ITCM section for hot path code (zero wait states) */
-  /* Code is copied from FLASH to ITCM at startup */
-  .itcm :
+  /* ITCM sections for hot path code (zero wait states)              */
+  /* Both sections are copied from FLASH to ITCM at startup          */
+
+  /* Privileged-only kernel code: SVC_Handler, PendSV_Handler,       */
+  /* __os_yield, __task_active_sleep, __os_get_tick_count             */
+  .itcm_priv :
   {
     . = ALIGN(4);
-    _sitcm = .;
-    *(.itcm)
-    *(.itcm*)
+    _sitcm_priv = .;
+    *(.itcm_priv)
+    *(.itcm_priv*)
     . = ALIGN(4);
-    _eitcm = .;
+    _eitcm_priv = .;
   } >ITCMRAM AT> FLASH
-  _siitcm = LOADADDR(.itcm);
+  _siitcm_priv = LOADADDR(.itcm_priv);
+
+  /* User-executable hot-path code: spinning wrappers, context switch */
+  .itcm_user :
+  {
+    . = ALIGN(4);
+    _sitcm_user = .;
+    *(.itcm)
+    . = ALIGN(4);
+    _eitcm_user = .;
+  } >ITCMRAM AT> FLASH
+  _siitcm_user = LOADADDR(.itcm_user);
 
   /* The program code and other data goes into FLASH */
   .text :
@@ -185,9 +199,19 @@ SECTIONS
     . = ALIGN(4);
     _sdtcm = .;
     *(.dtcm)
-    *(.dtcm*)
     . = ALIGN(4);
     _edtcm = .;
+  } >DTCMRAM
+
+  /* DTCM privileged-only kernel state (task_list, scheduler vars, pools) */
+  .dtcm_priv (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _sdtcm_priv = .;
+    *(.dtcm_priv)
+    *(.dtcm_priv*)
+    . = ALIGN(4);
+    _edtcm_priv = .;
   } >DTCMRAM
 
   /* Remove information from the standard libraries */
