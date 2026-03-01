@@ -28,11 +28,7 @@
  * SECTION PLACEMENT MACROS
  * ========================================================================= */
 
-#ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
-#else
-#define ITCM_FUNC
-#endif
+/* Defined centrally in icarus/config.h — included via icarus/kernel.h */
 
 /* ============================================================================
  * TASK INFORMATION
@@ -42,7 +38,7 @@
  * @brief Privileged implementation of os_get_tick_count
  * @note  Internal function - use os_get_tick_count() wrapper
  */
-ITCM_FUNC uint32_t __os_get_tick_count(void) {
+ITCM_FUNC_PRIV uint32_t __os_get_tick_count(void) {
     return os_tick_count;
 }
 
@@ -82,7 +78,7 @@ uint32_t __os_get_task_ticks_remaining(void) {
  * @brief Privileged implementation of os_yield
  * @note  Internal function - use os_yield() wrapper
  */
-ITCM_FUNC void __os_yield(void) {
+ITCM_FUNC_PRIV void __os_yield(void) {
     current_task_ticks_remaining = ticks_per_task;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
@@ -91,7 +87,7 @@ ITCM_FUNC void __os_yield(void) {
  * @brief Privileged implementation of task_active_sleep
  * @note  Internal function - use task_active_sleep() wrapper
  */
-ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks) {
+ITCM_FUNC_PRIV uint32_t __task_active_sleep(uint32_t ticks) {
     task_list[current_task_index]->global_tick_paused = os_tick_count;
     task_list[current_task_index]->ticks_to_pause = ticks;
     task_list[current_task_index]->task_state = TASK_STATE_BLOCKED;

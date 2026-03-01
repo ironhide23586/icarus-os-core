@@ -24,13 +24,7 @@
  * SECTION PLACEMENT MACROS
  * ========================================================================= */
 
-#ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
-#define DTCM_DATA __attribute__((section(".dtcm")))
-#else
-#define ITCM_FUNC
-#define DTCM_DATA
-#endif
+/* Defined centrally in icarus/config.h — included via icarus/kernel.h */
 
 /* ============================================================================
  * COMPILE-TIME STRUCTURE VALIDATION
@@ -49,33 +43,33 @@ _Static_assert(offsetof(icarus_task_t, ticks_to_pause) == 24,
 #endif
 
 /* ============================================================================
- * KERNEL DATA STRUCTURES (DTCM - Zero Wait State)
+ * KERNEL DATA STRUCTURES (DTCM_PRIV - privileged-only, zero wait state)
  * ========================================================================= */
 
-DTCM_DATA icarus_task_t* task_list[ICARUS_MAX_TASKS];
-DTCM_DATA icarus_semaphore_t* semaphore_list[ICARUS_MAX_SEMAPHORES];
-DTCM_DATA icarus_pipe_t* message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
+DTCM_DATA_PRIV icarus_task_t* task_list[ICARUS_MAX_TASKS];
+DTCM_DATA_PRIV icarus_semaphore_t* semaphore_list[ICARUS_MAX_SEMAPHORES];
+DTCM_DATA_PRIV icarus_pipe_t* message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 
-DTCM_DATA static icarus_task_t task_pool[ICARUS_MAX_TASKS];
-DTCM_DATA static icarus_semaphore_t semaphore_pool[ICARUS_MAX_SEMAPHORES];
-DTCM_DATA static icarus_pipe_t message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
-DTCM_DATA int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
+DTCM_DATA_PRIV static icarus_task_t task_pool[ICARUS_MAX_TASKS];
+DTCM_DATA_PRIV static icarus_semaphore_t semaphore_pool[ICARUS_MAX_SEMAPHORES];
+DTCM_DATA_PRIV static icarus_pipe_t message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
+DTCM_DATA_PRIV int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
 
 /* ============================================================================
- * SCHEDULER STATE (DTCM - Zero Wait State)
+ * SCHEDULER STATE (DTCM_PRIV - privileged-only, zero wait state)
  * ========================================================================= */
 
-DTCM_DATA uint8_t current_task_index;
-DTCM_DATA uint8_t running_task_count;
-DTCM_DATA uint8_t num_created_tasks;
-DTCM_DATA volatile uint32_t current_task_ticks_remaining;
-DTCM_DATA volatile uint32_t ticks_per_task;
-DTCM_DATA uint32_t cpu_vregisters[16];
-DTCM_DATA volatile uint32_t os_tick_count;
-DTCM_DATA volatile uint8_t os_running;
-DTCM_DATA volatile uint8_t critical_stack_depth;
-DTCM_DATA volatile bool scheduler_enabled;
-DTCM_DATA int8_t current_cleanup_task_idx;
+DTCM_DATA_PRIV uint8_t current_task_index;
+DTCM_DATA_PRIV uint8_t running_task_count;
+DTCM_DATA_PRIV uint8_t num_created_tasks;
+DTCM_DATA_PRIV volatile uint32_t current_task_ticks_remaining;
+DTCM_DATA_PRIV volatile uint32_t ticks_per_task;
+DTCM_DATA_PRIV uint32_t cpu_vregisters[16];
+DTCM_DATA_PRIV volatile uint32_t os_tick_count;
+DTCM_DATA_PRIV volatile uint8_t os_running;
+DTCM_DATA_PRIV volatile uint8_t critical_stack_depth;
+DTCM_DATA_PRIV volatile bool scheduler_enabled;
+DTCM_DATA_PRIV int8_t current_cleanup_task_idx;
 
 /* ============================================================================
  * STACK POOL (RAM_D1)

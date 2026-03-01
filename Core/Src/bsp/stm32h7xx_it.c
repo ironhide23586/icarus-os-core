@@ -39,12 +39,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/* ITCM attribute for hot path interrupt handlers */
-#ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
-#else
-#define ITCM_FUNC
-#endif
+/* ITCM_FUNC and ITCM_FUNC_PRIV are defined in icarus/config.h */
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -224,7 +219,7 @@ void SVC_Handler(void)
   /* Empty for host testing */
 }
 #else
-ITCM_FUNC __attribute__((naked)) void SVC_Handler(void)
+ITCM_FUNC_PRIV __attribute__((naked)) void SVC_Handler(void)
 {
   __asm__ volatile (
     "tst lr, #4\n"
@@ -264,7 +259,7 @@ void PendSV_Handler(void)
   /* USER CODE END PendSV_IRQn 1 */
 }
 #else
-ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
+ITCM_FUNC_PRIV __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
   __asm__ volatile (

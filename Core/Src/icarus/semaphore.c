@@ -21,11 +21,7 @@
  * SECTION PLACEMENT MACROS
  * ========================================================================= */
 
-#ifndef HOST_TEST
-#define ITCM_FUNC __attribute__((section(".itcm")))
-#else
-#define ITCM_FUNC
-#endif
+/* Defined centrally in icarus/config.h — included via icarus/kernel.h */
 
 /* ============================================================================
  * SEMAPHORE IMPLEMENTATION
