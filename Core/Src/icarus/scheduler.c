@@ -111,9 +111,9 @@ ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks)
  */
 uint32_t __task_blocking_sleep(uint32_t ticks)
 {
-    __enter_critical();
-    uint32_t delta = __task_busy_wait(ticks);
-    __exit_critical();
+    enter_critical();
+    uint32_t delta = task_busy_wait(ticks);
+    exit_critical();
     return delta;
 }
 

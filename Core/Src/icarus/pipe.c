@@ -79,14 +79,14 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
 
     while ((message_pipe_list[pipe_idx]->max_count -
             message_pipe_list[pipe_idx]->count) < message_bytes) {
-        __task_active_sleep(1);
+        task_active_sleep(1);
         if ((message_pipe_list[pipe_idx]->max_count -
              message_pipe_list[pipe_idx]->count) >= message_bytes) {
             scheduler_enabled = false;
         }
     }
 
-    __enter_critical();
+    enter_critical();
 
     for (uint8_t i = 0; i < message_bytes; i++) {
         message_pipe_list[pipe_idx]->buffer[
@@ -98,7 +98,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
     }
 
     message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    __exit_critical();
+    exit_critical();
 
     return true;
 }
@@ -117,13 +117,13 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     }
 
     while (message_pipe_list[pipe_idx]->count < message_bytes) {
-        __task_active_sleep(1);
+        task_active_sleep(1);
         if (message_pipe_list[pipe_idx]->count >= message_bytes) {
             scheduler_enabled = false;
         }
     }
 
-    __enter_critical();
+    enter_critical();
 
     for (uint8_t i = 0; i < message_bytes; i++) {
         message[i] = message_pipe_list[pipe_idx]->buffer[
@@ -135,7 +135,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     }
 
     message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    __exit_critical();
+    exit_critical();
 
     return true;
 }

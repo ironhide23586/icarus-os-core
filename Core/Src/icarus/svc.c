@@ -306,33 +306,10 @@ uint32_t task_active_sleep(uint32_t ticks) {
 #endif
 }
 uint32_t task_blocking_sleep(uint32_t ticks) {
-#ifndef HOST_TEST
-    enter_critical();
-    uint32_t delta = task_busy_wait(ticks);
-    exit_critical();
-    return delta;
-#else
     return __task_blocking_sleep(ticks);
-#endif
 }
 uint32_t task_busy_wait(uint32_t ticks) {
-#ifndef HOST_TEST
-    /* Spin-loop must run in thread mode so SysTick can fire.
-       Reads os_tick_count directly — will be in user-readable
-       memory once MPU regions are configured. */
-    extern volatile uint32_t os_tick_count;
-    uint32_t st = os_tick_count;
-    uint32_t delta;
-    while (1) {
-        delta = os_tick_count - st;
-        if (delta >= ticks) {
-            break;
-        }
-    }
-    return delta;
-#else
     return __task_busy_wait(ticks);
-#endif
 }
 uint8_t os_get_running_task_count(void) {
 #ifndef HOST_TEST
@@ -410,67 +387,10 @@ bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
 #endif
 }
 bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
-#ifndef HOST_TEST
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged ||
-        message_bytes > message_pipe_list[pipe_idx]->max_count) {
-        return false;
-    }
-
-    while ((message_pipe_list[pipe_idx]->max_count -
-            message_pipe_list[pipe_idx]->count) < message_bytes) {
-        task_active_sleep(1);
-    }
-
-    enter_critical();
-
-    for (uint8_t i = 0; i < message_bytes; i++) {
-        message_pipe_list[pipe_idx]->buffer[
-            message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
-        message_pipe_list[pipe_idx]->enqueue_idx =
-            (uint8_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1) %
-            message_pipe_list[pipe_idx]->max_count;
-        message_pipe_list[pipe_idx]->count++;
-    }
-
-    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
-
-    return true;
-#else
     return __pipe_enqueue(pipe_idx, message, message_bytes);
-#endif
 }
 bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
-#ifndef HOST_TEST
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged ||
-        message_bytes > message_pipe_list[pipe_idx]->max_count) {
-        return false;
-    }
-
-    while (message_pipe_list[pipe_idx]->count < message_bytes) {
-        task_active_sleep(1);
-    }
-
-    enter_critical();
-
-    for (uint8_t i = 0; i < message_bytes; i++) {
-        message[i] = message_pipe_list[pipe_idx]->buffer[
-            message_pipe_list[pipe_idx]->dequeue_idx];
-        message_pipe_list[pipe_idx]->dequeue_idx =
-            (uint8_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1) %
-            message_pipe_list[pipe_idx]->max_count;
-        message_pipe_list[pipe_idx]->count--;
-    }
-
-    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
-
-    return true;
-#else
     return __pipe_dequeue(pipe_idx, message, message_bytes);
-#endif
 }
 uint8_t pipe_get_count(uint8_t pipe_idx) {
 #ifndef HOST_TEST
@@ -523,47 +443,10 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
 #endif
 }
 bool semaphore_feed(uint8_t semaphore_idx) {
-#ifndef HOST_TEST
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
-        return false;
-    }
-
-    while (semaphore_list[semaphore_idx]->count >=
-           semaphore_list[semaphore_idx]->max_count) {
-        task_active_sleep(1);
-    }
-
-    enter_critical();
-    ++semaphore_list[semaphore_idx]->count;
-    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
-
-    return true;
-#else
     return __semaphore_feed(semaphore_idx);
-#endif
 }
 bool semaphore_consume(uint8_t semaphore_idx) {
-#ifndef HOST_TEST
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
-        return false;
-    }
-
-    while (semaphore_list[semaphore_idx]->count == 0) {
-        task_active_sleep(1);
-    }
-
-    enter_critical();
-    --semaphore_list[semaphore_idx]->count;
-    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
-
-    return true;
-#else
     return __semaphore_consume(semaphore_idx);
-#endif
 }
 uint32_t semaphore_get_count(uint8_t semaphore_idx) {
 #ifndef HOST_TEST

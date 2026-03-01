@@ -67,13 +67,13 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
 
     while (semaphore_list[semaphore_idx]->count >=
            semaphore_list[semaphore_idx]->max_count) {
-        __task_active_sleep(1);
+        task_active_sleep(1);
     }
 
-    __enter_critical();
+    enter_critical();
     ++semaphore_list[semaphore_idx]->count;
     semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    __exit_critical();
+    exit_critical();
 
     return true;
 }
@@ -90,13 +90,13 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
     }
 
     while (semaphore_list[semaphore_idx]->count == 0) {
-        __task_active_sleep(1);
+        task_active_sleep(1);
     }
 
-    __enter_critical();
+    enter_critical();
     --semaphore_list[semaphore_idx]->count;
     semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
-    __exit_critical();
+    exit_critical();
 
     return true;
 }
