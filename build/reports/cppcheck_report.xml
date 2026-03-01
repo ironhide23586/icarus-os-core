@@ -268,6 +268,33 @@
             <location file="../Core/Src/icarus/scheduler.c" line="126" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
             <symbol>ticks</symbol>
         </error>
+        <error id="duplicateExpression" severity="style" msg="Same expression on both sides of &apos;-&apos; because &apos;os_tick_count&apos; and &apos;st&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/icarus/svc.c">
+            <location file="../Core/Src/icarus/svc.c" line="327" column="31"/>
+            <location file="../Core/Src/icarus/svc.c" line="324" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+        </error>
+        <error id="unsignedLessThanZero" severity="style" msg="Checking if unsigned expression &apos;ticks&apos; is less than zero." verbose="The unsigned expression &apos;ticks&apos; will never be negative so it is either pointless or an error to check if it is." cwe="570" file0="../Core/Src/icarus/svc.c">
+            <location file="../Core/Src/icarus/svc.c" line="328" column="19" info="Unsigned less than zero"/>
+            <location file="../Core/Src/icarus/svc.c" line="327" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
+            <location file="../Core/Src/icarus/svc.c" line="324" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <symbol>ticks</symbol>
+        </error>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;os_tick_count&apos; shadows outer variable" verbose="Local variable &apos;os_tick_count&apos; shadows outer variable" cwe="398" file0="../Core/Src/icarus/svc.c">
+            <location file="../Core/Src/icarus/svc.c" line="323" column="30" info="Shadow variable"/>
+            <location file="../Core/Inc/icarus/kernel.h" line="59" column="26" info="Shadowed declaration"/>
+            <symbol>os_tick_count</symbol>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
+            <location file="../Core/Src/icarus/svc.c" line="101" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <symbol>ptr</symbol>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
+            <location file="../Core/Src/icarus/svc.c" line="106" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <symbol>ptr</symbol>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
+            <location file="../Core/Src/icarus/svc.c" line="111" column="19" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <symbol>ptr</symbol>
+        </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>
     </errors>
 </results>
