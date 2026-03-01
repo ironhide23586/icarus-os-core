@@ -230,8 +230,8 @@ void __os_init(void)
         cpu_vregisters[i] = 0;
     }
 
-    os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
-    os_register_task(os_heartbeat_task, ">ICARUS_HEARTBEAT<");
+    __os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
+    __os_register_task(os_heartbeat_task, ">ICARUS_HEARTBEAT<");
 
     scheduler_enabled = true;
 }

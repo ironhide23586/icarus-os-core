@@ -155,12 +155,7 @@ void UsageFault_Handler(void)
   */
 ITCM_FUNC void SVC_Handler(void)
 {
-  /* USER CODE BEGIN SVCall_IRQn 0 */
-
-  /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
-
-  /* USER CODE END SVCall_IRQn 1 */
+  /* SVC dispatch temporarily disabled - all wrappers are direct calls */
 }
 
 /**

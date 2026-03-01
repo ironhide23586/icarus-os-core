@@ -79,7 +79,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
 
     while ((message_pipe_list[pipe_idx]->max_count -
             message_pipe_list[pipe_idx]->count) < message_bytes) {
-        task_active_sleep(1);
+        __task_active_sleep(1);
         if ((message_pipe_list[pipe_idx]->max_count -
              message_pipe_list[pipe_idx]->count) >= message_bytes) {
             scheduler_enabled = false;
@@ -117,7 +117,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     }
 
     while (message_pipe_list[pipe_idx]->count < message_bytes) {
-        task_active_sleep(1);
+        __task_active_sleep(1);
         if (message_pipe_list[pipe_idx]->count >= message_bytes) {
             scheduler_enabled = false;
         }

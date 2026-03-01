@@ -27,6 +27,8 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
 #define SVC_TASK_ACTIVE_SLEEP           0
 #define SVC_TASK_BLOCKING_SLEEP         1
 
@@ -79,6 +81,18 @@ _Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_KERNEL_GET_DATA,
                "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
 _Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_OS_GET_TASK_TICKS_REMAINING,
                "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+
+/* ============================================================================
+ * SVC HANDLER (called from assembly - target only)
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+/**
+ * @brief C-level SVC dispatcher called from SVC_Handler assembly
+ * @param stack_frame Pointer to exception stack frame
+ */
+void SVC_Handler_C(uint32_t *stack_frame);
+#endif
 
 #ifdef __cplusplus
 }

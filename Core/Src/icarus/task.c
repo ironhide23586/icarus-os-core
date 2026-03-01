@@ -66,9 +66,9 @@ void os_create_task(icarus_task_t *task, void (*function)(void),
 void __os_register_task(void (*function)(void), const char *name)
 {
     os_create_task(task_list[num_created_tasks], function,
-                   kernel_get_stack(num_created_tasks), 
+                   __kernel_get_stack(num_created_tasks), 
                    ICARUS_STACK_WORDS, 
-                   kernel_get_data(num_created_tasks), name);
+                   __kernel_get_data(num_created_tasks), name);
 }
 
 /* ============================================================================

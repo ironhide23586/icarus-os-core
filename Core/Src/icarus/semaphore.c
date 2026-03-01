@@ -67,7 +67,7 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
 
     while (semaphore_list[semaphore_idx]->count >=
            semaphore_list[semaphore_idx]->max_count) {
-        task_active_sleep(1);
+        __task_active_sleep(1);
     }
 
     __enter_critical();
@@ -90,7 +90,7 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
     }
 
     while (semaphore_list[semaphore_idx]->count == 0) {
-        task_active_sleep(1);
+        __task_active_sleep(1);
     }
 
     __enter_critical();
