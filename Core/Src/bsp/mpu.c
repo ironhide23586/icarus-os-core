@@ -11,7 +11,7 @@
  *          | 0 | ITCM_PRIV     | 0x00000000 | 256B  | Priv RO+exec only   |
  *          | 1 | QSPI flash    | 0x90000000 | 8MB   | Priv+User RO+exec   |
  *          | 2 | Internal Flash| 0x08000000 | 128KB | Priv+User RO+exec   |
- *          | 3 | ITCM_USER     | 0x00000100 | 1KB   | Priv+User RO+exec   |
+ *          | 3 | ITCM_USER     | 0x00000400 | 1KB   | Priv+User RO+exec   |
  *          | 4 | Task data     | dynamic    | 2KB   | Priv+User RW        |
  *          | 5 | DTCM          | 0x20000000 | 128KB | Priv+User Full      |
  *          | 6 | RAM_D1        | 0x24000000 | 512KB | Priv+User Full      |
@@ -100,7 +100,8 @@ void MPU_Config(void) {
 
     /* ---- Region 3: ITCM_USER 1KB — Priv+User RO+exec ---- */
     /* Spinning wrappers, context switch (os_yield_pendsv).                 */
-    /* Starts at 0x100 (immediately after the 256B ITCM_PRIV region).       */
+    /* Linker script pads .itcm_priv to 1KB so _sitcm_user = 0x00000400.   */
+    /* MPU requires base address to be a multiple of region size (1KB).     */
     r.Enable           = MPU_REGION_ENABLE;
     r.Number           = MPU_REGION_ITCM_USER;
     r.BaseAddress      = (uint32_t)&_sitcm_user;
