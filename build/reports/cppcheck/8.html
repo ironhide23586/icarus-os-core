@@ -792,7 +792,101 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">502</span>
 <span class="normal">503</span>
 <span class="normal">504</span>
-<span class="normal">505</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/**</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span>
+<span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/**</span>
 <a id="line-2" name="line-2"></a><span class="cm"> * @file    svc.c</span>
 <a id="line-3" name="line-3"></a><span class="cm"> * @brief   ICARUS Supervisor Call (SVC) Implementation</span>
 <a id="line-4" name="line-4"></a><span class="cm"> * @version 0.1.0</span>
@@ -1204,99 +1298,193 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-410" name="line-410"></a><span class="cp">#endif</span>
 <a id="line-411" name="line-411"></a><span class="p">}</span>
 <a id="line-412" name="line-412"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">pipe_enqueue</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-413" name="line-413"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_enqueue</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">);</span>
-<a id="line-414" name="line-414"></a><span class="p">}</span>
-<a id="line-415" name="line-415"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">pipe_dequeue</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-416" name="line-416"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_dequeue</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">);</span>
-<a id="line-417" name="line-417"></a><span class="p">}</span>
-<a id="line-418" name="line-418"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">pipe_get_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-419" name="line-419"></a><span class="cp">#ifndef HOST_TEST</span>
-<a id="line-420" name="line-420"></a><span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-421" name="line-421"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
-<a id="line-422" name="line-422"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-423" name="line-423"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-424" name="line-424"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-425" name="line-425"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<a id="line-426" name="line-426"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">pipe_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_PIPE_GET_COUNT</span><span class="p">)</span>
-<a id="line-427" name="line-427"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
-<a id="line-428" name="line-428"></a><span class="w">    </span><span class="p">);</span>
-<a id="line-429" name="line-429"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-430" name="line-430"></a><span class="cp">#else</span>
-<a id="line-431" name="line-431"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_get_count</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">);</span>
-<a id="line-432" name="line-432"></a><span class="cp">#endif</span>
-<a id="line-433" name="line-433"></a><span class="p">}</span>
-<a id="line-434" name="line-434"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">pipe_get_max_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-435" name="line-435"></a><span class="cp">#ifndef HOST_TEST</span>
-<a id="line-436" name="line-436"></a><span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-437" name="line-437"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
-<a id="line-438" name="line-438"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-439" name="line-439"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-440" name="line-440"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-441" name="line-441"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<a id="line-442" name="line-442"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">pipe_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_PIPE_GET_MAX_COUNT</span><span class="p">)</span>
-<a id="line-443" name="line-443"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
-<a id="line-444" name="line-444"></a><span class="w">    </span><span class="p">);</span>
-<a id="line-445" name="line-445"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-446" name="line-446"></a><span class="cp">#else</span>
-<a id="line-447" name="line-447"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_get_max_count</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">);</span>
-<a id="line-448" name="line-448"></a><span class="cp">#endif</span>
-<a id="line-449" name="line-449"></a><span class="p">}</span>
-<a id="line-450" name="line-450"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_init</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">semaphore_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-451" name="line-451"></a><span class="cp">#ifndef HOST_TEST</span>
-<a id="line-452" name="line-452"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-453" name="line-453"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
-<a id="line-454" name="line-454"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-455" name="line-455"></a><span class="w">        </span><span class="s">&quot;mov r1, %2</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-456" name="line-456"></a><span class="w">        </span><span class="s">&quot;svc %3</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-457" name="line-457"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-458" name="line-458"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<a id="line-459" name="line-459"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">semaphore_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_count</span><span class="p">),</span>
-<a id="line-460" name="line-460"></a><span class="w">          </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_SEMAPHORE_INIT</span><span class="p">)</span>
-<a id="line-461" name="line-461"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r1&quot;</span>
-<a id="line-462" name="line-462"></a><span class="w">    </span><span class="p">);</span>
-<a id="line-463" name="line-463"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">bool</span><span class="p">)</span><span class="n">result</span><span class="p">;</span>
-<a id="line-464" name="line-464"></a><span class="cp">#else</span>
-<a id="line-465" name="line-465"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_init</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">,</span><span class="w"> </span><span class="n">semaphore_count</span><span class="p">);</span>
-<a id="line-466" name="line-466"></a><span class="cp">#endif</span>
-<a id="line-467" name="line-467"></a><span class="p">}</span>
-<a id="line-468" name="line-468"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_feed</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-469" name="line-469"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_feed</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
-<a id="line-470" name="line-470"></a><span class="p">}</span>
-<a id="line-471" name="line-471"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_consume</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-472" name="line-472"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_consume</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
-<a id="line-473" name="line-473"></a><span class="p">}</span>
-<a id="line-474" name="line-474"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="nf">semaphore_get_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-475" name="line-475"></a><span class="cp">#ifndef HOST_TEST</span>
-<a id="line-476" name="line-476"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-477" name="line-477"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
-<a id="line-478" name="line-478"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-479" name="line-479"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-480" name="line-480"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-481" name="line-481"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<a id="line-482" name="line-482"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">semaphore_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_SEMAPHORE_GET_COUNT</span><span class="p">)</span>
-<a id="line-483" name="line-483"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
-<a id="line-484" name="line-484"></a><span class="w">    </span><span class="p">);</span>
-<a id="line-485" name="line-485"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-486" name="line-486"></a><span class="cp">#else</span>
-<a id="line-487" name="line-487"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_get_count</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
-<a id="line-488" name="line-488"></a><span class="cp">#endif</span>
-<a id="line-489" name="line-489"></a><span class="p">}</span>
-<a id="line-490" name="line-490"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="nf">semaphore_get_max_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="line-491" name="line-491"></a><span class="cp">#ifndef HOST_TEST</span>
-<a id="line-492" name="line-492"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-493" name="line-493"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
-<a id="line-494" name="line-494"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-495" name="line-495"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-496" name="line-496"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
-<a id="line-497" name="line-497"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<a id="line-498" name="line-498"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">semaphore_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_SEMAPHORE_GET_MAX_COUNT</span><span class="p">)</span>
-<a id="line-499" name="line-499"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
-<a id="line-500" name="line-500"></a><span class="w">    </span><span class="p">);</span>
-<a id="line-501" name="line-501"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-502" name="line-502"></a><span class="cp">#else</span>
-<a id="line-503" name="line-503"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_get_max_count</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
-<a id="line-504" name="line-504"></a><span class="cp">#endif</span>
-<a id="line-505" name="line-505"></a><span class="p">}</span>
+<a id="line-413" name="line-413"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-414" name="line-414"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pipe_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ICARUS_MAX_MESSAGE_QUEUES</span><span class="w"> </span><span class="o">||</span>
+<a id="line-415" name="line-415"></a><span class="w">        </span><span class="o">!</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="w"> </span><span class="o">||</span>
+<a id="line-416" name="line-416"></a><span class="w">        </span><span class="n">message_bytes</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-417" name="line-417"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="line-418" name="line-418"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-419" name="line-419"></a>
+<a id="line-420" name="line-420"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="w"> </span><span class="o">-</span>
+<a id="line-421" name="line-421"></a><span class="w">            </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-422" name="line-422"></a><span class="w">        </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<a id="line-423" name="line-423"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-424" name="line-424"></a>
+<a id="line-425" name="line-425"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-426" name="line-426"></a>
+<a id="line-427" name="line-427"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-428" name="line-428"></a><span class="w">        </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span>
+<a id="line-429" name="line-429"></a><span class="w">            </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">enqueue_idx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">message</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<a id="line-430" name="line-430"></a><span class="w">        </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">enqueue_idx</span><span class="w"> </span><span class="o">=</span>
+<a id="line-431" name="line-431"></a><span class="w">            </span><span class="p">(</span><span class="kt">uint8_t</span><span class="p">)(</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">enqueue_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span>
+<a id="line-432" name="line-432"></a><span class="w">            </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="p">;</span>
+<a id="line-433" name="line-433"></a><span class="w">        </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="o">++</span><span class="p">;</span>
+<a id="line-434" name="line-434"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-435" name="line-435"></a>
+<a id="line-436" name="line-436"></a><span class="w">    </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">tick_updated_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
+<a id="line-437" name="line-437"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-438" name="line-438"></a>
+<a id="line-439" name="line-439"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="line-440" name="line-440"></a><span class="cp">#else</span>
+<a id="line-441" name="line-441"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_enqueue</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">);</span>
+<a id="line-442" name="line-442"></a><span class="cp">#endif</span>
+<a id="line-443" name="line-443"></a><span class="p">}</span>
+<a id="line-444" name="line-444"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">pipe_dequeue</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-445" name="line-445"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-446" name="line-446"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pipe_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ICARUS_MAX_MESSAGE_QUEUES</span><span class="w"> </span><span class="o">||</span>
+<a id="line-447" name="line-447"></a><span class="w">        </span><span class="o">!</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="w"> </span><span class="o">||</span>
+<a id="line-448" name="line-448"></a><span class="w">        </span><span class="n">message_bytes</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-449" name="line-449"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="line-450" name="line-450"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-451" name="line-451"></a>
+<a id="line-452" name="line-452"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-453" name="line-453"></a><span class="w">        </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<a id="line-454" name="line-454"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-455" name="line-455"></a>
+<a id="line-456" name="line-456"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-457" name="line-457"></a>
+<a id="line-458" name="line-458"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-459" name="line-459"></a><span class="w">        </span><span class="n">message</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">buffer</span><span class="p">[</span>
+<a id="line-460" name="line-460"></a><span class="w">            </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">dequeue_idx</span><span class="p">];</span>
+<a id="line-461" name="line-461"></a><span class="w">        </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">dequeue_idx</span><span class="w"> </span><span class="o">=</span>
+<a id="line-462" name="line-462"></a><span class="w">            </span><span class="p">(</span><span class="kt">uint8_t</span><span class="p">)(</span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">dequeue_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span>
+<a id="line-463" name="line-463"></a><span class="w">            </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="p">;</span>
+<a id="line-464" name="line-464"></a><span class="w">        </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="o">--</span><span class="p">;</span>
+<a id="line-465" name="line-465"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-466" name="line-466"></a>
+<a id="line-467" name="line-467"></a><span class="w">    </span><span class="n">message_pipe_list</span><span class="p">[</span><span class="n">pipe_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">tick_updated_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
+<a id="line-468" name="line-468"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-469" name="line-469"></a>
+<a id="line-470" name="line-470"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="line-471" name="line-471"></a><span class="cp">#else</span>
+<a id="line-472" name="line-472"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_dequeue</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">message_bytes</span><span class="p">);</span>
+<a id="line-473" name="line-473"></a><span class="cp">#endif</span>
+<a id="line-474" name="line-474"></a><span class="p">}</span>
+<a id="line-475" name="line-475"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">pipe_get_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-476" name="line-476"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-477" name="line-477"></a><span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-478" name="line-478"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
+<a id="line-479" name="line-479"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-480" name="line-480"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-481" name="line-481"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-482" name="line-482"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="line-483" name="line-483"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">pipe_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_PIPE_GET_COUNT</span><span class="p">)</span>
+<a id="line-484" name="line-484"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
+<a id="line-485" name="line-485"></a><span class="w">    </span><span class="p">);</span>
+<a id="line-486" name="line-486"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-487" name="line-487"></a><span class="cp">#else</span>
+<a id="line-488" name="line-488"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_get_count</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">);</span>
+<a id="line-489" name="line-489"></a><span class="cp">#endif</span>
+<a id="line-490" name="line-490"></a><span class="p">}</span>
+<a id="line-491" name="line-491"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">pipe_get_max_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">pipe_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-492" name="line-492"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-493" name="line-493"></a><span class="w">    </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-494" name="line-494"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
+<a id="line-495" name="line-495"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-496" name="line-496"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-497" name="line-497"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-498" name="line-498"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="line-499" name="line-499"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">pipe_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_PIPE_GET_MAX_COUNT</span><span class="p">)</span>
+<a id="line-500" name="line-500"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
+<a id="line-501" name="line-501"></a><span class="w">    </span><span class="p">);</span>
+<a id="line-502" name="line-502"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-503" name="line-503"></a><span class="cp">#else</span>
+<a id="line-504" name="line-504"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__pipe_get_max_count</span><span class="p">(</span><span class="n">pipe_idx</span><span class="p">);</span>
+<a id="line-505" name="line-505"></a><span class="cp">#endif</span>
+<a id="line-506" name="line-506"></a><span class="p">}</span>
+<a id="line-507" name="line-507"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_init</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">semaphore_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-508" name="line-508"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-509" name="line-509"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-510" name="line-510"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
+<a id="line-511" name="line-511"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-512" name="line-512"></a><span class="w">        </span><span class="s">&quot;mov r1, %2</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-513" name="line-513"></a><span class="w">        </span><span class="s">&quot;svc %3</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-514" name="line-514"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-515" name="line-515"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="line-516" name="line-516"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">semaphore_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_count</span><span class="p">),</span>
+<a id="line-517" name="line-517"></a><span class="w">          </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_SEMAPHORE_INIT</span><span class="p">)</span>
+<a id="line-518" name="line-518"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r1&quot;</span>
+<a id="line-519" name="line-519"></a><span class="w">    </span><span class="p">);</span>
+<a id="line-520" name="line-520"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">bool</span><span class="p">)</span><span class="n">result</span><span class="p">;</span>
+<a id="line-521" name="line-521"></a><span class="cp">#else</span>
+<a id="line-522" name="line-522"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_init</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">,</span><span class="w"> </span><span class="n">semaphore_count</span><span class="p">);</span>
+<a id="line-523" name="line-523"></a><span class="cp">#endif</span>
+<a id="line-524" name="line-524"></a><span class="p">}</span>
+<a id="line-525" name="line-525"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_feed</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-526" name="line-526"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-527" name="line-527"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ICARUS_MAX_SEMAPHORES</span><span class="w"> </span><span class="o">||</span>
+<a id="line-528" name="line-528"></a><span class="w">        </span><span class="o">!</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-529" name="line-529"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="line-530" name="line-530"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-531" name="line-531"></a>
+<a id="line-532" name="line-532"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="w"> </span><span class="o">&gt;=</span>
+<a id="line-533" name="line-533"></a><span class="w">           </span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-534" name="line-534"></a><span class="w">        </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<a id="line-535" name="line-535"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-536" name="line-536"></a>
+<a id="line-537" name="line-537"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-538" name="line-538"></a><span class="w">    </span><span class="o">++</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">;</span>
+<a id="line-539" name="line-539"></a><span class="w">    </span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">tick_updated_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
+<a id="line-540" name="line-540"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-541" name="line-541"></a>
+<a id="line-542" name="line-542"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="line-543" name="line-543"></a><span class="cp">#else</span>
+<a id="line-544" name="line-544"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_feed</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
+<a id="line-545" name="line-545"></a><span class="cp">#endif</span>
+<a id="line-546" name="line-546"></a><span class="p">}</span>
+<a id="line-547" name="line-547"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">semaphore_consume</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-548" name="line-548"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-549" name="line-549"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_idx</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ICARUS_MAX_SEMAPHORES</span><span class="w"> </span><span class="o">||</span>
+<a id="line-550" name="line-550"></a><span class="w">        </span><span class="o">!</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">engaged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-551" name="line-551"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="line-552" name="line-552"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-553" name="line-553"></a>
+<a id="line-554" name="line-554"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-555" name="line-555"></a><span class="w">        </span><span class="n">task_active_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<a id="line-556" name="line-556"></a><span class="w">    </span><span class="p">}</span>
+<a id="line-557" name="line-557"></a>
+<a id="line-558" name="line-558"></a><span class="w">    </span><span class="n">enter_critical</span><span class="p">();</span>
+<a id="line-559" name="line-559"></a><span class="w">    </span><span class="o">--</span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">;</span>
+<a id="line-560" name="line-560"></a><span class="w">    </span><span class="n">semaphore_list</span><span class="p">[</span><span class="n">semaphore_idx</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">tick_updated_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os_tick_count</span><span class="p">;</span>
+<a id="line-561" name="line-561"></a><span class="w">    </span><span class="n">exit_critical</span><span class="p">();</span>
+<a id="line-562" name="line-562"></a>
+<a id="line-563" name="line-563"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="line-564" name="line-564"></a><span class="cp">#else</span>
+<a id="line-565" name="line-565"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_consume</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
+<a id="line-566" name="line-566"></a><span class="cp">#endif</span>
+<a id="line-567" name="line-567"></a><span class="p">}</span>
+<a id="line-568" name="line-568"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="nf">semaphore_get_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-569" name="line-569"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-570" name="line-570"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-571" name="line-571"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
+<a id="line-572" name="line-572"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-573" name="line-573"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-574" name="line-574"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-575" name="line-575"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="line-576" name="line-576"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">semaphore_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_SEMAPHORE_GET_COUNT</span><span class="p">)</span>
+<a id="line-577" name="line-577"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
+<a id="line-578" name="line-578"></a><span class="w">    </span><span class="p">);</span>
+<a id="line-579" name="line-579"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-580" name="line-580"></a><span class="cp">#else</span>
+<a id="line-581" name="line-581"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_get_count</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
+<a id="line-582" name="line-582"></a><span class="cp">#endif</span>
+<a id="line-583" name="line-583"></a><span class="p">}</span>
+<a id="line-584" name="line-584"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="nf">semaphore_get_max_count</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">semaphore_idx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-585" name="line-585"></a><span class="cp">#ifndef HOST_TEST</span>
+<a id="line-586" name="line-586"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-587" name="line-587"></a><span class="w">    </span><span class="n">__asm__</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
+<a id="line-588" name="line-588"></a><span class="w">        </span><span class="s">&quot;mov r0, %1</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-589" name="line-589"></a><span class="w">        </span><span class="s">&quot;svc %2</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-590" name="line-590"></a><span class="w">        </span><span class="s">&quot;mov %0, r0</span><span class="se">\n</span><span class="s">&quot;</span>
+<a id="line-591" name="line-591"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;=r&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<a id="line-592" name="line-592"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="w"> </span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">semaphore_idx</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;I&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">SVC_SEMAPHORE_GET_MAX_COUNT</span><span class="p">)</span>
+<a id="line-593" name="line-593"></a><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;r0&quot;</span>
+<a id="line-594" name="line-594"></a><span class="w">    </span><span class="p">);</span>
+<a id="line-595" name="line-595"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-596" name="line-596"></a><span class="cp">#else</span>
+<a id="line-597" name="line-597"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__semaphore_get_max_count</span><span class="p">(</span><span class="n">semaphore_idx</span><span class="p">);</span>
+<a id="line-598" name="line-598"></a><span class="cp">#endif</span>
+<a id="line-599" name="line-599"></a><span class="p">}</span>
 </pre></div></td></tr></table></div>
 
     </div>

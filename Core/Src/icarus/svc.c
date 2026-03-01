@@ -410,10 +410,67 @@ bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
 #endif
 }
 bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+#ifndef HOST_TEST
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged ||
+        message_bytes > message_pipe_list[pipe_idx]->max_count) {
+        return false;
+    }
+
+    while ((message_pipe_list[pipe_idx]->max_count -
+            message_pipe_list[pipe_idx]->count) < message_bytes) {
+        task_active_sleep(1);
+    }
+
+    enter_critical();
+
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message_pipe_list[pipe_idx]->buffer[
+            message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
+        message_pipe_list[pipe_idx]->enqueue_idx =
+            (uint8_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count++;
+    }
+
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+
+    return true;
+#else
     return __pipe_enqueue(pipe_idx, message, message_bytes);
+#endif
 }
 bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
+#ifndef HOST_TEST
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged ||
+        message_bytes > message_pipe_list[pipe_idx]->max_count) {
+        return false;
+    }
+
+    while (message_pipe_list[pipe_idx]->count < message_bytes) {
+        task_active_sleep(1);
+    }
+
+    enter_critical();
+
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message[i] = message_pipe_list[pipe_idx]->buffer[
+            message_pipe_list[pipe_idx]->dequeue_idx];
+        message_pipe_list[pipe_idx]->dequeue_idx =
+            (uint8_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count--;
+    }
+
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+
+    return true;
+#else
     return __pipe_dequeue(pipe_idx, message, message_bytes);
+#endif
 }
 uint8_t pipe_get_count(uint8_t pipe_idx) {
 #ifndef HOST_TEST
@@ -466,10 +523,47 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
 #endif
 }
 bool semaphore_feed(uint8_t semaphore_idx) {
+#ifndef HOST_TEST
+    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
+        !semaphore_list[semaphore_idx]->engaged) {
+        return false;
+    }
+
+    while (semaphore_list[semaphore_idx]->count >=
+           semaphore_list[semaphore_idx]->max_count) {
+        task_active_sleep(1);
+    }
+
+    enter_critical();
+    ++semaphore_list[semaphore_idx]->count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+
+    return true;
+#else
     return __semaphore_feed(semaphore_idx);
+#endif
 }
 bool semaphore_consume(uint8_t semaphore_idx) {
+#ifndef HOST_TEST
+    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
+        !semaphore_list[semaphore_idx]->engaged) {
+        return false;
+    }
+
+    while (semaphore_list[semaphore_idx]->count == 0) {
+        task_active_sleep(1);
+    }
+
+    enter_critical();
+    --semaphore_list[semaphore_idx]->count;
+    semaphore_list[semaphore_idx]->tick_updated_at = os_tick_count;
+    exit_critical();
+
+    return true;
+#else
     return __semaphore_consume(semaphore_idx);
+#endif
 }
 uint32_t semaphore_get_count(uint8_t semaphore_idx) {
 #ifndef HOST_TEST
