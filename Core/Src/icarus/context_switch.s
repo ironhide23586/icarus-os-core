@@ -212,7 +212,7 @@ start_cold_task:
     msr     psp, r1                     /* Set Process Stack Pointer */
 
     /* Switch to PSP for thread mode */
-    mov     r1, #0x02                   /* SPSEL = 1 (use PSP) */
+    mov     r1, #0x02                   /* SPSEL = 1 (use PSP), nPRIV = 0 (privileged) */
     msr     control, r1
     isb                                 /* Instruction barrier */
 

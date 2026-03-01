@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
 #include "icarus/config.h"
+#include "icarus/svc.h"
 #ifdef HOST_TEST
 // For host testing, include mock header for os_yield_pendsv
 #include "mock_asm.h"
@@ -153,10 +154,23 @@ void UsageFault_Handler(void)
 /**
   * @brief This function handles System service call via SWI instruction.
   */
-ITCM_FUNC void SVC_Handler(void)
+#ifdef HOST_TEST
+void SVC_Handler(void)
 {
-  /* SVC dispatch temporarily disabled - all wrappers are direct calls */
+  /* Empty for host testing */
 }
+#else
+ITCM_FUNC __attribute__((naked)) void SVC_Handler(void)
+{
+  __asm__ volatile (
+    "tst lr, #4\n"
+    "ite eq\n"
+    "mrseq r0, msp\n"
+    "mrsne r0, psp\n"
+    "b SVC_Handler_C\n"
+  );
+}
+#endif
 
 /**
   * @brief This function handles Debug monitor.
