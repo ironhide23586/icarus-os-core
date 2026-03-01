@@ -169,7 +169,11 @@ bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
     return __pipe_dequeue(pipe_idx, message, message_bytes);
 }
 
-uint8_t pipe_get_count(uint8_t pipe_idx)
+/**
+ * @brief Privileged implementation of pipe_get_count
+ * @note  Internal function - use pipe_get_count() wrapper
+ */
+uint8_t __pipe_get_count(uint8_t pipe_idx)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
@@ -178,11 +182,33 @@ uint8_t pipe_get_count(uint8_t pipe_idx)
     return message_pipe_list[pipe_idx]->count;
 }
 
-uint8_t pipe_get_max_count(uint8_t pipe_idx)
+/**
+ * @brief Public API for getting pipe byte count
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint8_t pipe_get_count(uint8_t pipe_idx)
+{
+    return __pipe_get_count(pipe_idx);
+}
+
+/**
+ * @brief Privileged implementation of pipe_get_max_count
+ * @note  Internal function - use pipe_get_max_count() wrapper
+ */
+uint8_t __pipe_get_max_count(uint8_t pipe_idx)
 {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
     }
     return message_pipe_list[pipe_idx]->max_count;
+}
+
+/**
+ * @brief Public API for getting pipe capacity
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint8_t pipe_get_max_count(uint8_t pipe_idx)
+{
+    return __pipe_get_max_count(pipe_idx);
 }

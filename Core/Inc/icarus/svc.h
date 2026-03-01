@@ -7,6 +7,11 @@
  *          These functions execute in privileged mode with controlled
  *          access to protected kernel data structures.
  *
+ *          Organization:
+ *          - This header defines SVC numbers
+ *          - svc.c contains all SVC wrapper implementations
+ *          - Implementation files contain __prefixed privileged functions
+ *
  * @author  Souham Biswas
  * @date    2025
  *
@@ -38,12 +43,42 @@ extern "C" {
 #define SVC_OS_REGISTER_TASK            10
 #define SVC_OS_GET_CURRENT_TASK_NAME    11
 #define SVC_OS_GET_TICK_COUNT           12
+#define SVC_OS_EXIT_TASK                13
+#define SVC_OS_KILL_PROCESS             14
+#define SVC_OS_TASK_SUICIDE             15
 
-#define SVC_SEMAPHORE_INIT              13
-#define SVC_SEMAPHORE_CONSUME           14
-#define SVC_SEMAPHORE_FEED              15
+#define SVC_SEMAPHORE_INIT              16
+#define SVC_SEMAPHORE_CONSUME           17
+#define SVC_SEMAPHORE_FEED              18
+#define SVC_SEMAPHORE_GET_COUNT         19
+#define SVC_SEMAPHORE_GET_MAX_COUNT     20
 
-#define SVC_KERNEL_PROTECTED_DATA       16
+#define SVC_PIPE_GET_COUNT              21
+#define SVC_PIPE_GET_MAX_COUNT          22
+
+#define SVC_TASK_BUSY_WAIT              23
+#define SVC_OS_GET_RUNNING_TASK_COUNT   24
+#define SVC_OS_GET_TASK_TICKS_REMAINING 25
+
+#define SVC_KERNEL_GET_STACK            26
+#define SVC_KERNEL_GET_DATA             27
+#define SVC_KERNEL_PROTECTED_DATA       28
+
+/* ============================================================================
+ * COMPILE-TIME SVC VALIDATION
+ * ========================================================================= */
+
+/* SVC instruction encodes number in 1 byte (0-255) */
+_Static_assert(SVC_KERNEL_PROTECTED_DATA <= 255,
+               "Highest SVC number must fit in 8-bit immediate");
+
+/* Ensure SVC_KERNEL_PROTECTED_DATA is the highest defined SVC number */
+_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_TASK_ACTIVE_SLEEP,
+               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_KERNEL_GET_DATA,
+               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_OS_GET_TASK_TICKS_REMAINING,
+               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
 
 #ifdef __cplusplus
 }

@@ -63,6 +63,21 @@
             <location file="../USB_DEVICE/Target/usbd_conf.c" line="643" column="19"/>
             <symbol>mem</symbol>
         </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/demo_tasks.c">
+            <location file="../Core/Src/demo_tasks.c" line="746" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/demo_tasks.c">
+            <location file="../Core/Src/demo_tasks.c" line="804" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/demo_tasks.c">
+            <location file="../Core/Src/demo_tasks.c" line="867" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/demo_tasks.c">
+            <location file="../Core/Src/demo_tasks.c" line="928" column="13"/>
+        </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="0" column="0"/>
+        </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="798" column="9"/>
         </error>
@@ -104,6 +119,59 @@
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 4) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 4) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="826" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="928" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="928" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="932" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1053" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1053" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1053" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1057" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1057" column="13"/>
+        </error>
+        <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data1==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data1." verbose="Either the condition &apos;mpu_data1==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data1." cwe="476" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="889" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="874" column="19" info="Assuming that condition &apos;mpu_data1==NULL&apos; is not redundant"/>
+            <symbol>mpu_data1</symbol>
+        </error>
+        <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data2==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data2." verbose="Either the condition &apos;mpu_data2==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data2." cwe="476" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="890" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="874" column="40" info="Assuming that condition &apos;mpu_data2==NULL&apos; is not redundant"/>
+            <symbol>mpu_data2</symbol>
+        </error>
+        <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data3==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data3." verbose="Either the condition &apos;mpu_data3==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data3." cwe="476" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="893" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="874" column="61" info="Assuming that condition &apos;mpu_data3==NULL&apos; is not redundant"/>
+            <symbol>mpu_data3</symbol>
+        </error>
+        <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." verbose="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." cwe="476" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1008" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="1002" column="18" info="Assuming that condition &apos;own_data==NULL&apos; is not redundant"/>
+            <symbol>own_data</symbol>
+        </error>
+        <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." verbose="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." cwe="476" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1041" column="17" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="1002" column="18" info="Assuming that condition &apos;own_data==NULL&apos; is not redundant"/>
+            <symbol>own_data</symbol>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="The comparison &apos;successful_attacks &gt; 0&apos; is always false." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1051" column="32"/>
+            <location file="../Core/Src/stress_test.c" line="993" column="35" info="&apos;successful_attacks&apos; is assigned value &apos;0&apos; here."/>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;send_tick&apos; can be reduced." verbose="The scope of the variable &apos;send_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="392" column="14"/>
@@ -178,12 +246,12 @@
         </error>
         <error id="shadowVariable" severity="style" msg="Local variable &apos;task_list&apos; shadows outer variable" verbose="Local variable &apos;task_list&apos; shadows outer variable" cwe="398" file0="../Core/Src/bsp/display.c">
             <location file="../Core/Src/bsp/display.c" line="688" column="27" info="Shadow variable"/>
-            <location file="../Core/Inc/icarus/kernel.h" line="34" column="23" info="Shadowed declaration"/>
+            <location file="../Core/Inc/icarus/kernel.h" line="35" column="23" info="Shadowed declaration"/>
             <symbol>task_list</symbol>
         </error>
         <error id="shadowVariable" severity="style" msg="Local variable &apos;num_created_tasks&apos; shadows outer variable" verbose="Local variable &apos;num_created_tasks&apos; shadows outer variable" cwe="398" file0="../Core/Src/bsp/display.c">
             <location file="../Core/Src/bsp/display.c" line="689" column="20" info="Shadow variable"/>
-            <location file="../Core/Inc/icarus/kernel.h" line="49" column="16" info="Shadowed declaration"/>
+            <location file="../Core/Inc/icarus/kernel.h" line="50" column="16" info="Shadowed declaration"/>
             <symbol>num_created_tasks</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;entry&apos; can be declared as pointer to const" verbose="Variable &apos;entry&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/display.c">
@@ -191,13 +259,13 @@
             <symbol>entry</symbol>
         </error>
         <error id="duplicateExpression" severity="style" msg="Same expression on both sides of &apos;-&apos; because &apos;os_tick_count&apos; and &apos;st&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/icarus/scheduler.c">
-            <location file="../Core/Src/icarus/scheduler.c" line="101" column="31"/>
-            <location file="../Core/Src/icarus/scheduler.c" line="94" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <location file="../Core/Src/icarus/scheduler.c" line="196" column="31"/>
+            <location file="../Core/Src/icarus/scheduler.c" line="189" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
         </error>
         <error id="unsignedLessThanZero" severity="style" msg="Checking if unsigned expression &apos;ticks&apos; is less than zero." verbose="The unsigned expression &apos;ticks&apos; will never be negative so it is either pointless or an error to check if it is." cwe="570" file0="../Core/Src/icarus/scheduler.c">
-            <location file="../Core/Src/icarus/scheduler.c" line="102" column="19" info="Unsigned less than zero"/>
-            <location file="../Core/Src/icarus/scheduler.c" line="101" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
-            <location file="../Core/Src/icarus/scheduler.c" line="94" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
+            <location file="../Core/Src/icarus/scheduler.c" line="197" column="19" info="Unsigned less than zero"/>
+            <location file="../Core/Src/icarus/scheduler.c" line="196" column="31" info="Assignment &apos;delta=os_tick_count-st&apos;, assigned value is 0"/>
+            <location file="../Core/Src/icarus/scheduler.c" line="189" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
             <symbol>ticks</symbol>
         </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>

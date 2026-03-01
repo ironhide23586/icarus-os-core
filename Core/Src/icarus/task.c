@@ -90,7 +90,11 @@ void os_register_task(void (*function)(void), const char *name)
  * TASK LIFECYCLE
  * ========================================================================= */
 
-void os_exit_task(void)
+/**
+ * @brief Privileged implementation of os_exit_task
+ * @note  Internal function - use os_exit_task() wrapper
+ */
+void __os_exit_task(void)
 {
     task_list[current_task_index]->task_state = TASK_STATE_FINISHED;
 
@@ -98,13 +102,31 @@ void os_exit_task(void)
         running_task_count--;
     }
 
-    os_yield();
+    /* Add to cleanup queue */
+    if (current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
+        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)current_task_index;
+    }
+
+    __os_yield();
 }
 
-void os_kill_process(uint8_t task_index)
+/**
+ * @brief Public API for exiting current task
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_exit_task(void)
 {
-    if (task_index >= num_created_tasks || task_index < 2) {
-        return;  /* Cannot kill system tasks */
+    __os_exit_task();
+}
+
+/**
+ * @brief Privileged implementation of os_kill_process
+ * @note  Internal function - use os_kill_process() wrapper
+ */
+void __os_kill_process(uint8_t task_index)
+{
+    if (task_index >= num_created_tasks || task_index == 0) {
+        return;  /* Cannot kill task 0 (idle task) or invalid indices */
     }
 
     task_list[task_index]->task_state = TASK_STATE_KILLED;
@@ -113,14 +135,41 @@ void os_kill_process(uint8_t task_index)
         running_task_count--;
     }
 
+    /* Add to cleanup queue */
+    if (current_cleanup_task_idx < (ICARUS_MAX_TASKS - 1)) {
+        cleanup_task_idx[++current_cleanup_task_idx] = (int8_t)task_index;
+    }
+
     if (task_index == current_task_index) {
-        os_yield();
+        __os_yield();
     }
 }
 
-void os_task_suicide(void)
+/**
+ * @brief Public API for killing a task by index
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_kill_process(uint8_t task_index)
+{
+    __os_kill_process(task_index);
+}
+
+/**
+ * @brief Privileged implementation of os_task_suicide
+ * @note  Internal function - use os_task_suicide() wrapper
+ */
+void __os_task_suicide(void)
 {
     printf("[INFO] %s committed suicide\r\n",
            task_list[current_task_index]->name);
-    os_kill_process(current_task_index);
+    __os_kill_process(current_task_index);
+}
+
+/**
+ * @brief Public API for task self-termination
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_task_suicide(void)
+{
+    __os_task_suicide();
 }

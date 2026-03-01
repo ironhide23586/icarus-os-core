@@ -56,9 +56,22 @@ uint32_t os_get_tick_count(void)
     return __os_get_tick_count();
 }
 
-uint8_t os_get_running_task_count(void)
+/**
+ * @brief Privileged implementation of os_get_running_task_count
+ * @note  Internal function - use os_get_running_task_count() wrapper
+ */
+uint8_t __os_get_running_task_count(void)
 {
     return running_task_count;
+}
+
+/**
+ * @brief Public API for getting running task count
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint8_t os_get_running_task_count(void)
+{
+    return __os_get_running_task_count();
 }
 
 /**
@@ -83,9 +96,22 @@ const char* os_get_current_task_name(void)
     return __os_get_current_task_name();
 }
 
-uint32_t os_get_task_ticks_remaining(void)
+/**
+ * @brief Privileged implementation of os_get_task_ticks_remaining
+ * @note  Internal function - use os_get_task_ticks_remaining() wrapper
+ */
+uint32_t __os_get_task_ticks_remaining(void)
 {
     return current_task_ticks_remaining;
+}
+
+/**
+ * @brief Public API for getting remaining ticks in time slice
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint32_t os_get_task_ticks_remaining(void)
+{
+    return __os_get_task_ticks_remaining();
 }
 
 /* ============================================================================
@@ -140,7 +166,7 @@ uint32_t task_active_sleep(uint32_t ticks)
 uint32_t __task_blocking_sleep(uint32_t ticks)
 {
     __enter_critical();
-    uint32_t delta = task_busy_wait(ticks);
+    uint32_t delta = __task_busy_wait(ticks);
     __exit_critical();
     return delta;
 }
@@ -154,7 +180,11 @@ uint32_t task_blocking_sleep(uint32_t ticks)
     return __task_blocking_sleep(ticks);
 }
 
-uint32_t task_busy_wait(uint32_t ticks)
+/**
+ * @brief Privileged implementation of task_busy_wait
+ * @note  Internal function - use task_busy_wait() wrapper
+ */
+uint32_t __task_busy_wait(uint32_t ticks)
 {
     uint32_t st = os_tick_count;
     uint32_t delta;
@@ -169,4 +199,13 @@ uint32_t task_busy_wait(uint32_t ticks)
         }
     }
     return delta;
+}
+
+/**
+ * @brief Public API for busy-wait
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint32_t task_busy_wait(uint32_t ticks)
+{
+    return __task_busy_wait(ticks);
 }

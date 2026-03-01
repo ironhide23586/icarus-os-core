@@ -64,6 +64,12 @@ extern volatile uint8_t os_running;
 /** @brief Scheduler enable flag */
 extern volatile bool scheduler_enabled;
 
+/** @brief Cleanup task index queue */
+extern int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
+
+/** @brief Current cleanup queue write index */
+extern int8_t current_cleanup_task_idx;
+
 /* ============================================================================
  * KERNEL INITIALIZATION
  * ========================================================================= */
@@ -140,6 +146,8 @@ void __exit_critical(void);
 void __os_init(void);
 void __os_start(void);
 void* __kernel_protected_data(uint16_t num_words);
+uint32_t* __kernel_get_stack(uint8_t task_idx);
+uint32_t* __kernel_get_data(uint8_t task_idx);
 
 #ifdef __cplusplus
 }

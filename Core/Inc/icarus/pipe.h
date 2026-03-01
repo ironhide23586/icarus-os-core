@@ -78,6 +78,8 @@ uint8_t pipe_get_max_count(uint8_t pipe_idx);
 bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
 bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
 bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
+uint8_t __pipe_get_count(uint8_t pipe_idx);
+uint8_t __pipe_get_max_count(uint8_t pipe_idx);
 
 #ifdef __cplusplus
 }

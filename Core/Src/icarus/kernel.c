@@ -59,7 +59,7 @@ DTCM_DATA icarus_pipe_t* message_pipe_list[ICARUS_MAX_MESSAGE_QUEUES];
 DTCM_DATA static icarus_task_t task_pool[ICARUS_MAX_TASKS];
 DTCM_DATA static icarus_semaphore_t semaphore_pool[ICARUS_MAX_SEMAPHORES];
 DTCM_DATA static icarus_pipe_t message_pipe_pool[ICARUS_MAX_MESSAGE_QUEUES];
-DTCM_DATA static int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
+DTCM_DATA int8_t cleanup_task_idx[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * SCHEDULER STATE (DTCM - Zero Wait State)
@@ -288,9 +288,22 @@ void os_start(void)
  * STACK POOL ACCESS (for task.c)
  * ========================================================================= */
 
-uint32_t* kernel_get_stack(uint8_t task_idx)
+/**
+ * @brief Privileged implementation of kernel_get_stack
+ * @note  Internal function - use kernel_get_stack() wrapper
+ */
+uint32_t* __kernel_get_stack(uint8_t task_idx)
 {
     return stack_pool[task_idx];
+}
+
+/**
+ * @brief Public API for getting task stack pointer
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint32_t* kernel_get_stack(uint8_t task_idx)
+{
+    return __kernel_get_stack(task_idx);
 }
 
 
@@ -298,9 +311,22 @@ uint32_t* kernel_get_stack(uint8_t task_idx)
  * DATA POOL ACCESS (for task.c)
  * ========================================================================= */
 
-uint32_t* kernel_get_data(uint8_t task_idx)
+/**
+ * @brief Privileged implementation of kernel_get_data
+ * @note  Internal function - use kernel_get_data() wrapper
+ */
+uint32_t* __kernel_get_data(uint8_t task_idx)
 {
     return data_pool[task_idx];
+}
+
+/**
+ * @brief Public API for getting task data pointer
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint32_t* kernel_get_data(uint8_t task_idx)
+{
+    return __kernel_get_data(task_idx);
 }
 
 

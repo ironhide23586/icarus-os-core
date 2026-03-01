@@ -128,7 +128,11 @@ bool semaphore_consume(uint8_t semaphore_idx)
     return __semaphore_consume(semaphore_idx);
 }
 
-uint32_t semaphore_get_count(uint8_t semaphore_idx)
+/**
+ * @brief Privileged implementation of semaphore_get_count
+ * @note  Internal function - use semaphore_get_count() wrapper
+ */
+uint32_t __semaphore_get_count(uint8_t semaphore_idx)
 {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
@@ -137,11 +141,33 @@ uint32_t semaphore_get_count(uint8_t semaphore_idx)
     return semaphore_list[semaphore_idx]->count;
 }
 
-uint32_t semaphore_get_max_count(uint8_t semaphore_idx)
+/**
+ * @brief Public API for getting semaphore count
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint32_t semaphore_get_count(uint8_t semaphore_idx)
+{
+    return __semaphore_get_count(semaphore_idx);
+}
+
+/**
+ * @brief Privileged implementation of semaphore_get_max_count
+ * @note  Internal function - use semaphore_get_max_count() wrapper
+ */
+uint32_t __semaphore_get_max_count(uint8_t semaphore_idx)
 {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
         return 0;
     }
     return semaphore_list[semaphore_idx]->max_count;
+}
+
+/**
+ * @brief Public API for getting semaphore max count
+ * @note  Will become SVC wrapper in privileged mode
+ */
+uint32_t semaphore_get_max_count(uint8_t semaphore_idx)
+{
+    return __semaphore_get_max_count(semaphore_idx);
 }
