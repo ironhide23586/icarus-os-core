@@ -209,6 +209,13 @@ void hal_init(void) {
   MPU_Config();
   CPU_CACHE_Enable();
 
+#ifndef HOST_TEST
+  /* Enable individual fault handlers (otherwise escalate to HardFault) */
+  SCB->SHCSR |= (1UL << 18) |  /* USGFAULTENA */
+                (1UL << 17) |  /* BUSFAULTENA */
+                (1UL << 16);   /* MEMFAULTENA */
+#endif
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 

@@ -94,62 +94,126 @@ void NMI_Handler(void)
 /**
   * @brief This function handles Hard fault interrupt.
   */
+#ifndef HOST_TEST
 void HardFault_Handler(void)
 {
-  /* USER CODE BEGIN HardFault_IRQn 0 */
+  /* Capture fault info from SCB */
+  volatile uint32_t cfsr  = SCB->CFSR;
+  volatile uint32_t hfsr  = SCB->HFSR;
+  volatile uint32_t mmfar = SCB->MMFAR;
+  volatile uint32_t bfar  = SCB->BFAR;
+  (void)cfsr; (void)hfsr; (void)mmfar; (void)bfar;
 
-  /* USER CODE END HardFault_IRQn 0 */
+  /* Extract stacked PC via PSP or MSP */
+  uint32_t *sp;
+  __asm__ volatile ("tst lr, #4\n"
+                    "ite eq\n"
+                    "mrseq %0, msp\n"
+                    "mrsne %0, psp\n"
+                    : "=r" (sp));
+  volatile uint32_t stacked_r0  = sp[0];
+  volatile uint32_t stacked_r1  = sp[1];
+  volatile uint32_t stacked_r2  = sp[2];
+  volatile uint32_t stacked_r3  = sp[3];
+  volatile uint32_t stacked_r12 = sp[4];
+  volatile uint32_t stacked_lr  = sp[5];
+  volatile uint32_t stacked_pc  = sp[6];
+  volatile uint32_t stacked_psr = sp[7];
+  (void)stacked_r0; (void)stacked_r1; (void)stacked_r2; (void)stacked_r3;
+  (void)stacked_r12; (void)stacked_lr; (void)stacked_pc; (void)stacked_psr;
+
+  /* Fast LED blink = HardFault (3 fast blinks, pause, repeat) */
   while (1)
   {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
+    for (int i = 0; i < 3; i++) {
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_SET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_RESET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+    }
+    for (volatile int d = 0; d < 160000000; d++) {}
   }
 }
+#else
+void HardFault_Handler(void) { while (1) {} }
+#endif
 
 /**
   * @brief This function handles Memory management fault.
   */
+#ifndef HOST_TEST
 void MemManage_Handler(void)
 {
-  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
+  volatile uint32_t cfsr = SCB->CFSR;
+  volatile uint32_t mmfar = SCB->MMFAR;
+  (void)cfsr; (void)mmfar;
 
-  /* USER CODE END MemoryManagement_IRQn 0 */
+  /* 4 fast blinks = MemManage */
   while (1)
   {
-    /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
-    /* USER CODE END W1_MemoryManagement_IRQn 0 */
+    for (int i = 0; i < 4; i++) {
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_SET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_RESET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+    }
+    for (volatile int d = 0; d < 160000000; d++) {}
   }
 }
+#else
+void MemManage_Handler(void) { while (1) {} }
+#endif
 
 /**
   * @brief This function handles Pre-fetch fault, memory access fault.
   */
+#ifndef HOST_TEST
 void BusFault_Handler(void)
 {
-  /* USER CODE BEGIN BusFault_IRQn 0 */
+  volatile uint32_t cfsr = SCB->CFSR;
+  volatile uint32_t bfar = SCB->BFAR;
+  (void)cfsr; (void)bfar;
 
-  /* USER CODE END BusFault_IRQn 0 */
+  /* 5 fast blinks = BusFault */
   while (1)
   {
-    /* USER CODE BEGIN W1_BusFault_IRQn 0 */
-    /* USER CODE END W1_BusFault_IRQn 0 */
+    for (int i = 0; i < 5; i++) {
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_SET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_RESET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+    }
+    for (volatile int d = 0; d < 160000000; d++) {}
   }
 }
+#else
+void BusFault_Handler(void) { while (1) {} }
+#endif
 
 /**
   * @brief This function handles Undefined instruction or illegal state.
   */
+#ifndef HOST_TEST
 void UsageFault_Handler(void)
 {
-  /* USER CODE BEGIN UsageFault_IRQn 0 */
+  volatile uint32_t cfsr = SCB->CFSR;
+  (void)cfsr;
 
-  /* USER CODE END UsageFault_IRQn 0 */
+  /* 6 fast blinks = UsageFault */
   while (1)
   {
-    /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
-    /* USER CODE END W1_UsageFault_IRQn 0 */
+    for (int i = 0; i < 6; i++) {
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_SET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+      HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_RESET);
+      for (volatile int d = 0; d < 16000000; d++) {}
+    }
+    for (volatile int d = 0; d < 160000000; d++) {}
   }
 }
+#else
+void UsageFault_Handler(void) { while (1) {} }
+#endif
 
 /**
   * @brief This function handles System service call via SWI instruction.

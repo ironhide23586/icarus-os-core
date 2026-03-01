@@ -258,6 +258,13 @@
             <location file="../Core/Src/bsp/display.c" line="190" column="34" info="Variable &apos;entry&apos; can be declared as pointer to const"/>
             <symbol>entry</symbol>
         </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/bsp/stm32h7xx_it.c">
+            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="0" column="0"/>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;sp&apos; can be declared as pointer to const" verbose="Variable &apos;sp&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/stm32h7xx_it.c">
+            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="108" column="13" info="Variable &apos;sp&apos; can be declared as pointer to const"/>
+            <symbol>sp</symbol>
+        </error>
         <error id="duplicateExpression" severity="style" msg="Same expression on both sides of &apos;-&apos; because &apos;os_tick_count&apos; and &apos;st&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/icarus/scheduler.c">
             <location file="../Core/Src/icarus/scheduler.c" line="133" column="31"/>
             <location file="../Core/Src/icarus/scheduler.c" line="126" column="19" info="&apos;st&apos; is assigned value &apos;os_tick_count&apos; here."/>
