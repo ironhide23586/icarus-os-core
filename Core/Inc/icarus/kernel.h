@@ -23,6 +23,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "bsp/retarget_hal.h"
 #include "icarus/config.h"
 #include "icarus/types.h"
 

@@ -845,8 +845,13 @@ static void stats_display_task(void) {
 // ============================================================================
 
 // Shared pointer for red team attack testing (intentionally global)
+// This pointer will point to victim's data_pool[victim_task_idx][...] region
+// When red team tries to access it, MPU should block (different task's region)
 static volatile uint32_t *g_victim_data_ptr = NULL;
 static volatile uint32_t g_mpu_fault_count = 0;
+
+// Set to 1 to enable actual MPU attack (will trigger hard fault if MPU works)
+#define MPU_ENABLE_ATTACK_TEST 0
 
 /**
  * @brief   MPU data protection verification task (victim)
@@ -1004,24 +1009,28 @@ static void mpu_redteam_task(void) {
     }
     
     while (1) {
-        // RED TEAM ATTACK: Try to write to victim's data
-        // This SHOULD trigger MPU fault and be blocked
+        // RED TEAM ATTACK: Try to access victim's data region
+        // g_victim_data_ptr points to data_pool[victim_task_idx][...]
+        // Current task can only access data_pool[redteam_task_idx][...]
+        // MPU should block this cross-task access
         attack_attempts++;
         
-        // Attempt 1: Direct write to victim's first word
-        // If MPU is working, this will fault and not execute
-        // If MPU fails, this will corrupt victim's data
+#if MPU_ENABLE_ATTACK_TEST
+        // ACTUAL ATTACK: Uncomment by setting MPU_ENABLE_ATTACK_TEST to 1
+        // This WILL trigger MPU fault if protection is working correctly
+        volatile uint32_t *victim = (volatile uint32_t*)g_victim_data_ptr;
+        volatile uint32_t read_attempt = victim[0];  // Cross-task read - should fault
+        (void)read_attempt;  // Use the value to avoid warning
         
-        // Try to read victim's data (should fault)
-        volatile uint32_t read_attempt = 0;
+        // If we reach here, MPU failed to block the access
+        successful_attacks++;
+        g_stress_stats.data_errors++;
         
-        // NOTE: Actual write attempt commented out to prevent hard fault during testing
-        // Uncomment to test MPU fault handling:
-        // volatile uint32_t *victim = (volatile uint32_t*)g_victim_data_ptr;
-        // read_attempt = victim[0];  // Should trigger MPU fault
-        // victim[0] = 0xDEADDEAD;    // Should trigger MPU fault
-        
-        (void)read_attempt;  // Suppress unused warning
+        // Try write attack too
+        victim[0] = 0xDEADDEAD;  // Cross-task write - should fault
+        successful_attacks++;
+        g_stress_stats.data_errors++;
+#endif
         
         // If we reach here without fault, MPU might not be working
         // (or fault handler recovered gracefully)
