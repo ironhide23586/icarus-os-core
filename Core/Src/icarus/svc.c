@@ -3,11 +3,12 @@
  * @brief   ICARUS Supervisor Call (SVC) Implementation
  * @version 0.1.0
  *
- * @details SVC handler and wrapper functions for MPU-protected kernel calls.
- *
- *          TEMPORARY: All wrappers are direct calls to __func for debugging.
- *          SVC inline assembly and SVC_Handler_C dispatcher are preserved
- *          but disabled behind ENABLE_SVC_DISPATCH (not yet defined).
+ * @details SVC handler and public wrapper functions for MPU-protected kernel
+ *          calls. Non-spinning wrappers issue SVC instructions to execute in
+ *          privileged handler mode. Spinning wrappers (semaphore_feed/consume,
+ *          pipe_enqueue/dequeue, task_blocking_sleep/busy_wait) call __func
+ *          directly in thread mode — they cannot run inside the SVC handler
+ *          because PendSV is lower priority and cannot preempt it.
  *
  * @author  Souham Biswas
  * @date    2025
@@ -37,15 +38,14 @@
  * @note SVC number is extracted from the SVC instruction encoding:
  *       The SVC instruction is at [PC - 2], and the immediate is the low byte.
  */
-void SVC_Handler_C(uint32_t *stack_frame)
-{
+void SVC_Handler_C(uint32_t *stack_frame) {
     uint8_t svc_number = ((uint8_t *)(uintptr_t)stack_frame[6])[-2];
     uint32_t arg0 = stack_frame[0];
     uint32_t arg1 = stack_frame[1];
-    uint32_t arg2 = stack_frame[2];
-    (void)arg2;
 
     switch (svc_number) {
+
+        /* Critical section */
         case SVC_ENTER_CRITICAL:
             __enter_critical();
             break;
@@ -53,18 +53,12 @@ void SVC_Handler_C(uint32_t *stack_frame)
             __exit_critical();
             break;
 
-        /* Scheduler group */
+        /* Scheduler */
         case SVC_OS_YIELD:
             __os_yield();
             break;
         case SVC_TASK_ACTIVE_SLEEP:
             stack_frame[0] = __task_active_sleep(arg0);
-            break;
-        case SVC_TASK_BUSY_WAIT:
-            /* Not dispatched via SVC — spin-loop runs in thread mode */
-            break;
-        case SVC_TASK_BLOCKING_SLEEP:
-            /* Not dispatched via SVC — uses enter_critical + busy_wait */
             break;
         case SVC_OS_GET_TICK_COUNT:
             stack_frame[0] = __os_get_tick_count();
@@ -81,7 +75,7 @@ void SVC_Handler_C(uint32_t *stack_frame)
             stack_frame[0] = __os_get_task_ticks_remaining();
             break;
 
-        /* Task lifecycle group */
+        /* Task lifecycle */
         case SVC_OS_REGISTER_TASK:
             __os_register_task((void (*)(void))(uintptr_t)arg0,
                                (const char *)(uintptr_t)arg1);
@@ -96,7 +90,7 @@ void SVC_Handler_C(uint32_t *stack_frame)
             __os_task_suicide();
             break;
 
-        /* Kernel data group */
+        /* Kernel data */
         case SVC_KERNEL_GET_STACK: {
             uint32_t *ptr = __kernel_get_stack((uint8_t)arg0);
             stack_frame[0] = (uint32_t)(uintptr_t)ptr;
@@ -113,7 +107,7 @@ void SVC_Handler_C(uint32_t *stack_frame)
             break;
         }
 
-        /* Semaphore group (non-spinning) */
+        /* Semaphore (non-spinning) */
         case SVC_SEMAPHORE_INIT: {
             bool ret = __semaphore_init((uint8_t)arg0, arg1);
             stack_frame[0] = (uint32_t)ret;
@@ -126,7 +120,7 @@ void SVC_Handler_C(uint32_t *stack_frame)
             stack_frame[0] = __semaphore_get_max_count((uint8_t)arg0);
             break;
 
-        /* Pipe group (non-spinning) */
+        /* Pipe (non-spinning) */
         case SVC_PIPE_INIT: {
             bool ret = __pipe_init((uint8_t)arg0, (uint8_t)arg1);
             stack_frame[0] = (uint32_t)ret;
@@ -139,11 +133,13 @@ void SVC_Handler_C(uint32_t *stack_frame)
             stack_frame[0] = (uint32_t)__pipe_get_max_count((uint8_t)arg0);
             break;
 
-        /* Spinning functions — dispatched from thread mode wrappers */
+        /* Spinning functions — not dispatched via SVC, run in thread mode */
         case SVC_SEMAPHORE_FEED:
         case SVC_SEMAPHORE_CONSUME:
         case SVC_PIPE_ENQUEUE:
         case SVC_PIPE_DEQUEUE:
+        case SVC_TASK_BUSY_WAIT:
+        case SVC_TASK_BLOCKING_SLEEP:
             break;
 
         default:
@@ -154,38 +150,46 @@ void SVC_Handler_C(uint32_t *stack_frame)
 #endif /* HOST_TEST */
 
 /* ============================================================================
- * ALL WRAPPERS - Direct calls (SVC dispatch disabled for debugging)
+ * CRITICAL SECTION WRAPPERS
  * ========================================================================= */
 
-void enter_critical(void)
-{
+/**
+ * @brief Enter critical section (disable scheduler)
+ */
+void enter_critical(void) {
 #ifndef HOST_TEST
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_ENTER_CRITICAL)
-    );
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_ENTER_CRITICAL));
 #else
     __enter_critical();
 #endif
 }
 
-void exit_critical(void)
-{
+/**
+ * @brief Exit critical section (re-enable scheduler if outermost)
+ */
+void exit_critical(void) {
 #ifndef HOST_TEST
-    __asm__ volatile (
-        "svc %0\n"
-        :
-        : "I" (SVC_EXIT_CRITICAL)
-    );
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_EXIT_CRITICAL));
 #else
     __exit_critical();
 #endif
 }
-void os_init(void)                     { __os_init(); }
-void os_start(void)                    { __os_start(); }
-void os_yield(void)
-{
+
+/* ============================================================================
+ * KERNEL INIT / START WRAPPERS
+ * ========================================================================= */
+
+void os_init(void)  { __os_init(); }
+void os_start(void) { __os_start(); }
+
+/* ============================================================================
+ * SCHEDULER WRAPPERS
+ * ========================================================================= */
+
+/**
+ * @brief Voluntarily yield CPU to scheduler
+ */
+void os_yield(void) {
 #ifndef HOST_TEST
     __asm__ volatile ("svc %0\n" : : "I" (SVC_OS_YIELD));
 #else
@@ -193,102 +197,9 @@ void os_yield(void)
 #endif
 }
 
-void os_exit_task(void)
-{
-#ifndef HOST_TEST
-    __asm__ volatile ("svc %0\n" : : "I" (SVC_OS_EXIT_TASK));
-#else
-    __os_exit_task();
-#endif
-}
-void os_task_suicide(void)
-{
-#ifndef HOST_TEST
-    __asm__ volatile ("svc %0\n" : : "I" (SVC_OS_TASK_SUICIDE));
-#else
-    __os_task_suicide();
-#endif
-}
-
-void* kernel_protected_data(uint16_t num_words) {
-#ifndef HOST_TEST
-    void *result;
-    __asm__ volatile (
-        "mov r0, %1\n"
-        "svc %2\n"
-        "mov %0, r0\n"
-        : "=r" (result)
-        : "r" ((uint32_t)num_words), "I" (SVC_KERNEL_PROTECTED_DATA)
-        : "r0"
-    );
-    return result;
-#else
-    return __kernel_protected_data(num_words);
-#endif
-}
-
-uint32_t* kernel_get_stack(uint8_t task_idx) {
-#ifndef HOST_TEST
-    uint32_t *result;
-    __asm__ volatile (
-        "mov r0, %1\n"
-        "svc %2\n"
-        "mov %0, r0\n"
-        : "=r" (result)
-        : "r" ((uint32_t)task_idx), "I" (SVC_KERNEL_GET_STACK)
-        : "r0"
-    );
-    return result;
-#else
-    return __kernel_get_stack(task_idx);
-#endif
-}
-uint32_t* kernel_get_data(uint8_t task_idx) {
-#ifndef HOST_TEST
-    uint32_t *result;
-    __asm__ volatile (
-        "mov r0, %1\n"
-        "svc %2\n"
-        "mov %0, r0\n"
-        : "=r" (result)
-        : "r" ((uint32_t)task_idx), "I" (SVC_KERNEL_GET_DATA)
-        : "r0"
-    );
-    return result;
-#else
-    return __kernel_get_data(task_idx);
-#endif
-}
-uint32_t os_get_tick_count(void) {
-#ifndef HOST_TEST
-    uint32_t result;
-    __asm__ volatile (
-        "svc %1\n"
-        "mov %0, r0\n"
-        : "=r" (result)
-        : "I" (SVC_OS_GET_TICK_COUNT)
-        : "r0"
-    );
-    return result;
-#else
-    return __os_get_tick_count();
-#endif
-}
-const char* os_get_current_task_name(void) {
-#ifndef HOST_TEST
-    const char *result;
-    __asm__ volatile (
-        "svc %1\n"
-        "mov %0, r0\n"
-        : "=r" (result)
-        : "I" (SVC_OS_GET_CURRENT_TASK_NAME)
-        : "r0"
-    );
-    return result;
-#else
-    return __os_get_current_task_name();
-#endif
-}
+/**
+ * @brief Sleep for specified ticks (cooperative, via SVC)
+ */
 uint32_t task_active_sleep(uint32_t ticks) {
 #ifndef HOST_TEST
     uint32_t result;
@@ -305,12 +216,62 @@ uint32_t task_active_sleep(uint32_t ticks) {
     return __task_active_sleep(ticks);
 #endif
 }
+
+/**
+ * @brief Blocking sleep — spin-wait in thread mode (cannot run in SVC handler)
+ */
 uint32_t task_blocking_sleep(uint32_t ticks) {
     return __task_blocking_sleep(ticks);
 }
+
+/**
+ * @brief Busy-wait for specified ticks — spin in thread mode
+ */
 uint32_t task_busy_wait(uint32_t ticks) {
     return __task_busy_wait(ticks);
 }
+
+/**
+ * @brief Get current system tick count
+ */
+uint32_t os_get_tick_count(void) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_OS_GET_TICK_COUNT)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_get_tick_count();
+#endif
+}
+
+/**
+ * @brief Get name of currently executing task
+ */
+const char *os_get_current_task_name(void) {
+#ifndef HOST_TEST
+    const char *result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_OS_GET_CURRENT_TASK_NAME)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_get_current_task_name();
+#endif
+}
+
+/**
+ * @brief Get number of active tasks
+ */
 uint8_t os_get_running_task_count(void) {
 #ifndef HOST_TEST
     uint8_t result;
@@ -326,6 +287,10 @@ uint8_t os_get_running_task_count(void) {
     return __os_get_running_task_count();
 #endif
 }
+
+/**
+ * @brief Get remaining ticks in current time slice
+ */
 uint32_t os_get_task_ticks_remaining(void) {
 #ifndef HOST_TEST
     uint32_t result;
@@ -341,6 +306,36 @@ uint32_t os_get_task_ticks_remaining(void) {
     return __os_get_task_ticks_remaining();
 #endif
 }
+
+/* ============================================================================
+ * TASK LIFECYCLE WRAPPERS
+ * ========================================================================= */
+
+/**
+ * @brief Exit current task
+ */
+void os_exit_task(void) {
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_OS_EXIT_TASK));
+#else
+    __os_exit_task();
+#endif
+}
+
+/**
+ * @brief Terminate current task (suicide)
+ */
+void os_task_suicide(void) {
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_OS_TASK_SUICIDE));
+#else
+    __os_task_suicide();
+#endif
+}
+
+/**
+ * @brief Register a task with the scheduler
+ */
 void os_register_task(void (*function)(void), const char *name) {
 #ifndef HOST_TEST
     __asm__ volatile (
@@ -355,6 +350,10 @@ void os_register_task(void (*function)(void), const char *name) {
     __os_register_task(function, name);
 #endif
 }
+
+/**
+ * @brief Kill a task by index
+ */
 void os_kill_process(uint8_t task_index) {
 #ifndef HOST_TEST
     __asm__ volatile (
@@ -368,62 +367,78 @@ void os_kill_process(uint8_t task_index) {
     __os_kill_process(task_index);
 #endif
 }
-bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
+
+/* ============================================================================
+ * KERNEL DATA WRAPPERS
+ * ========================================================================= */
+
+/**
+ * @brief Get stack pointer for task index
+ */
+uint32_t *kernel_get_stack(uint8_t task_idx) {
 #ifndef HOST_TEST
-    uint32_t result;
-    __asm__ volatile (
-        "mov r0, %1\n"
-        "mov r1, %2\n"
-        "svc %3\n"
-        "mov %0, r0\n"
-        : "=r" (result)
-        : "r" ((uint32_t)pipe_idx), "r" ((uint32_t)pipe_capacity_bytes),
-          "I" (SVC_PIPE_INIT)
-        : "r0", "r1"
-    );
-    return (bool)result;
-#else
-    return __pipe_init(pipe_idx, pipe_capacity_bytes);
-#endif
-}
-bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
-    return __pipe_enqueue(pipe_idx, message, message_bytes);
-}
-bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes) {
-    return __pipe_dequeue(pipe_idx, message, message_bytes);
-}
-uint8_t pipe_get_count(uint8_t pipe_idx) {
-#ifndef HOST_TEST
-    uint8_t result;
+    uint32_t *result;
     __asm__ volatile (
         "mov r0, %1\n"
         "svc %2\n"
         "mov %0, r0\n"
         : "=r" (result)
-        : "r" ((uint32_t)pipe_idx), "I" (SVC_PIPE_GET_COUNT)
+        : "r" ((uint32_t)task_idx), "I" (SVC_KERNEL_GET_STACK)
         : "r0"
     );
     return result;
 #else
-    return __pipe_get_count(pipe_idx);
+    return __kernel_get_stack(task_idx);
 #endif
 }
-uint8_t pipe_get_max_count(uint8_t pipe_idx) {
+
+/**
+ * @brief Get data pointer for task index
+ */
+uint32_t *kernel_get_data(uint8_t task_idx) {
 #ifndef HOST_TEST
-    uint8_t result;
+    uint32_t *result;
     __asm__ volatile (
         "mov r0, %1\n"
         "svc %2\n"
         "mov %0, r0\n"
         : "=r" (result)
-        : "r" ((uint32_t)pipe_idx), "I" (SVC_PIPE_GET_MAX_COUNT)
+        : "r" ((uint32_t)task_idx), "I" (SVC_KERNEL_GET_DATA)
         : "r0"
     );
     return result;
 #else
-    return __pipe_get_max_count(pipe_idx);
+    return __kernel_get_data(task_idx);
 #endif
 }
+
+/**
+ * @brief Allocate protected data words for current task
+ */
+void *kernel_protected_data(uint16_t num_words) {
+#ifndef HOST_TEST
+    void *result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)num_words), "I" (SVC_KERNEL_PROTECTED_DATA)
+        : "r0"
+    );
+    return result;
+#else
+    return __kernel_protected_data(num_words);
+#endif
+}
+
+/* ============================================================================
+ * SEMAPHORE WRAPPERS
+ * ========================================================================= */
+
+/**
+ * @brief Initialize a counting semaphore
+ */
 bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
 #ifndef HOST_TEST
     uint32_t result;
@@ -442,12 +457,24 @@ bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
     return __semaphore_init(semaphore_idx, semaphore_count);
 #endif
 }
+
+/**
+ * @brief Increment semaphore count — spin-wait in thread mode
+ */
 bool semaphore_feed(uint8_t semaphore_idx) {
     return __semaphore_feed(semaphore_idx);
 }
+
+/**
+ * @brief Decrement semaphore count — spin-wait in thread mode
+ */
 bool semaphore_consume(uint8_t semaphore_idx) {
     return __semaphore_consume(semaphore_idx);
 }
+
+/**
+ * @brief Get current semaphore count
+ */
 uint32_t semaphore_get_count(uint8_t semaphore_idx) {
 #ifndef HOST_TEST
     uint32_t result;
@@ -464,6 +491,10 @@ uint32_t semaphore_get_count(uint8_t semaphore_idx) {
     return __semaphore_get_count(semaphore_idx);
 #endif
 }
+
+/**
+ * @brief Get semaphore maximum count
+ */
 uint32_t semaphore_get_max_count(uint8_t semaphore_idx) {
 #ifndef HOST_TEST
     uint32_t result;
@@ -478,5 +509,85 @@ uint32_t semaphore_get_max_count(uint8_t semaphore_idx) {
     return result;
 #else
     return __semaphore_get_max_count(semaphore_idx);
+#endif
+}
+
+/* ============================================================================
+ * PIPE WRAPPERS
+ * ========================================================================= */
+
+/**
+ * @brief Initialize a message pipe
+ */
+bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)pipe_idx), "r" ((uint32_t)pipe_capacity_bytes),
+          "I" (SVC_PIPE_INIT)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __pipe_init(pipe_idx, pipe_capacity_bytes);
+#endif
+}
+
+/**
+ * @brief Enqueue bytes to pipe — spin-wait in thread mode
+ */
+bool pipe_enqueue(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
+    return __pipe_enqueue(pipe_idx, message, message_bytes);
+}
+
+/**
+ * @brief Dequeue bytes from pipe — spin-wait in thread mode
+ */
+bool pipe_dequeue(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
+    return __pipe_dequeue(pipe_idx, message, message_bytes);
+}
+
+/**
+ * @brief Get current byte count in pipe
+ */
+uint8_t pipe_get_count(uint8_t pipe_idx) {
+#ifndef HOST_TEST
+    uint8_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)pipe_idx), "I" (SVC_PIPE_GET_COUNT)
+        : "r0"
+    );
+    return result;
+#else
+    return __pipe_get_count(pipe_idx);
+#endif
+}
+
+/**
+ * @brief Get pipe capacity
+ */
+uint8_t pipe_get_max_count(uint8_t pipe_idx) {
+#ifndef HOST_TEST
+    uint8_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)pipe_idx), "I" (SVC_PIPE_GET_MAX_COUNT)
+        : "r0"
+    );
+    return result;
+#else
+    return __pipe_get_max_count(pipe_idx);
 #endif
 }

@@ -35,8 +35,7 @@
  * @brief Privileged implementation of semaphore_init
  * @note  Internal function - use semaphore_init() wrapper
  */
-bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
-{
+bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
     __enter_critical();
 
     if (semaphore_idx < ICARUS_MAX_SEMAPHORES && semaphore_count > 0) {
@@ -57,9 +56,9 @@ bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
 /**
  * @brief Privileged implementation of semaphore_feed
  * @note  Internal function - use semaphore_feed() wrapper
+ * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
-ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
-{
+ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx) {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
         return false;
@@ -81,9 +80,9 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
 /**
  * @brief Privileged implementation of semaphore_consume
  * @note  Internal function - use semaphore_consume() wrapper
+ * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
-ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
-{
+ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx) {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
         return false;
@@ -105,8 +104,7 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
  * @brief Privileged implementation of semaphore_get_count
  * @note  Internal function - use semaphore_get_count() wrapper
  */
-uint32_t __semaphore_get_count(uint8_t semaphore_idx)
-{
+uint32_t __semaphore_get_count(uint8_t semaphore_idx) {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
         return 0;
@@ -118,8 +116,7 @@ uint32_t __semaphore_get_count(uint8_t semaphore_idx)
  * @brief Privileged implementation of semaphore_get_max_count
  * @note  Internal function - use semaphore_get_max_count() wrapper
  */
-uint32_t __semaphore_get_max_count(uint8_t semaphore_idx)
-{
+uint32_t __semaphore_get_max_count(uint8_t semaphore_idx) {
     if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
         !semaphore_list[semaphore_idx]->engaged) {
         return 0;

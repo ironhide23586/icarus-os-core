@@ -35,8 +35,7 @@
  * @brief Privileged implementation of pipe_init
  * @note  Internal function - use pipe_init() wrapper
  */
-bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
-{
+bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
     __enter_critical();
 
     if (pipe_idx < ICARUS_MAX_MESSAGE_QUEUES &&
@@ -67,10 +66,10 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 /**
  * @brief Privileged implementation of pipe_enqueue
  * @note  Internal function - use pipe_enqueue() wrapper
+ * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
-ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
-                            uint8_t message_bytes)
-{
+ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t *message,
+                              uint8_t message_bytes) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged ||
         message_bytes > message_pipe_list[pipe_idx]->max_count) {
@@ -106,10 +105,10 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
 /**
  * @brief Privileged implementation of pipe_dequeue
  * @note  Internal function - use pipe_dequeue() wrapper
+ * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
-ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
-                            uint8_t message_bytes)
-{
+ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
+                              uint8_t message_bytes) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged ||
         message_bytes > message_pipe_list[pipe_idx]->max_count) {
@@ -144,8 +143,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
  * @brief Privileged implementation of pipe_get_count
  * @note  Internal function - use pipe_get_count() wrapper
  */
-uint8_t __pipe_get_count(uint8_t pipe_idx)
-{
+uint8_t __pipe_get_count(uint8_t pipe_idx) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
@@ -157,8 +155,7 @@ uint8_t __pipe_get_count(uint8_t pipe_idx)
  * @brief Privileged implementation of pipe_get_max_count
  * @note  Internal function - use pipe_get_max_count() wrapper
  */
-uint8_t __pipe_get_max_count(uint8_t pipe_idx)
-{
+uint8_t __pipe_get_max_count(uint8_t pipe_idx) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
