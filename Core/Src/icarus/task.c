@@ -21,12 +21,6 @@
 #include <stdio.h>
 
 /* ============================================================================
- * EXTERNAL FUNCTIONS
- * ========================================================================= */
-
-extern uint32_t* kernel_get_stack(uint8_t task_idx);
-
-/* ============================================================================
  * TASK CREATION
  * ========================================================================= */
 
@@ -77,15 +71,6 @@ void __os_register_task(void (*function)(void), const char *name)
                    kernel_get_data(num_created_tasks), name);
 }
 
-/**
- * @brief Public API for registering a task
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_register_task(void (*function)(void), const char *name)
-{
-    __os_register_task(function, name);
-}
-
 /* ============================================================================
  * TASK LIFECYCLE
  * ========================================================================= */
@@ -108,15 +93,6 @@ void __os_exit_task(void)
     }
 
     __os_yield();
-}
-
-/**
- * @brief Public API for exiting current task
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_exit_task(void)
-{
-    __os_exit_task();
 }
 
 /**
@@ -146,15 +122,6 @@ void __os_kill_process(uint8_t task_index)
 }
 
 /**
- * @brief Public API for killing a task by index
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_kill_process(uint8_t task_index)
-{
-    __os_kill_process(task_index);
-}
-
-/**
  * @brief Privileged implementation of os_task_suicide
  * @note  Internal function - use os_task_suicide() wrapper
  */
@@ -163,13 +130,4 @@ void __os_task_suicide(void)
     printf("[INFO] %s committed suicide\r\n",
            task_list[current_task_index]->name);
     __os_kill_process(current_task_index);
-}
-
-/**
- * @brief Public API for task self-termination
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_task_suicide(void)
-{
-    __os_task_suicide();
 }

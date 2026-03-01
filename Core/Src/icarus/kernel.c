@@ -112,15 +112,6 @@ void __enter_critical(void)
 }
 
 /**
- * @brief Public API for entering critical section
- * @note  Will become SVC wrapper in privileged mode
- */
-void enter_critical(void)
-{
-    __enter_critical();
-}
-
-/**
  * @brief Privileged implementation of exit_critical
  * @note  Internal function - use exit_critical() wrapper
  */
@@ -129,15 +120,6 @@ void __exit_critical(void)
     if (--critical_stack_depth == 0) {
         scheduler_enabled = true;
     }
-}
-
-/**
- * @brief Public API for exiting critical section
- * @note  Will become SVC wrapper in privileged mode
- */
-void exit_critical(void)
-{
-    __exit_critical();
 }
 
 /* ============================================================================
@@ -255,15 +237,6 @@ void __os_init(void)
 }
 
 /**
- * @brief Public API for kernel initialization
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_init(void)
-{
-    __os_init();
-}
-
-/**
  * @brief Privileged implementation of os_start
  * @note  Internal function - use os_start() wrapper
  */
@@ -273,15 +246,6 @@ void __os_start(void)
         return;
     }
     start_cold_task(task_list[current_task_index]);
-}
-
-/**
- * @brief Public API for starting the scheduler
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_start(void)
-{
-    __os_start();
 }
 
 /* ============================================================================
@@ -297,16 +261,6 @@ uint32_t* __kernel_get_stack(uint8_t task_idx)
     return stack_pool[task_idx];
 }
 
-/**
- * @brief Public API for getting task stack pointer
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t* kernel_get_stack(uint8_t task_idx)
-{
-    return __kernel_get_stack(task_idx);
-}
-
-
 /* ============================================================================
  * DATA POOL ACCESS (for task.c)
  * ========================================================================= */
@@ -320,14 +274,6 @@ uint32_t* __kernel_get_data(uint8_t task_idx)
     return data_pool[task_idx];
 }
 
-/**
- * @brief Public API for getting task data pointer
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t* kernel_get_data(uint8_t task_idx)
-{
-    return __kernel_get_data(task_idx);
-}
 
 
 
@@ -344,12 +290,4 @@ void* __kernel_protected_data(uint16_t num_words) {
     uint32_t *ret_ptr = &data_pool[current_task_index][current_offset];
     __exit_critical();
     return (void*) ret_ptr;
-}
-
-/**
- * @brief Public API for allocating protected task data
- * @note  Will become SVC wrapper in privileged mode
- */
-void* kernel_protected_data(uint16_t num_words) {
-    return __kernel_protected_data(num_words);
 }

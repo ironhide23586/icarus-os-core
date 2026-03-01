@@ -55,15 +55,6 @@ bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
 }
 
 /**
- * @brief Public API for initializing a semaphore
- * @note  Will become SVC wrapper in privileged mode
- */
-bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
-{
-    return __semaphore_init(semaphore_idx, semaphore_count);
-}
-
-/**
  * @brief Privileged implementation of semaphore_feed
  * @note  Internal function - use semaphore_feed() wrapper
  */
@@ -85,15 +76,6 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx)
     __exit_critical();
 
     return true;
-}
-
-/**
- * @brief Public API for feeding (incrementing) a semaphore
- * @note  Will become SVC wrapper in privileged mode
- */
-bool semaphore_feed(uint8_t semaphore_idx)
-{
-    return __semaphore_feed(semaphore_idx);
 }
 
 /**
@@ -120,15 +102,6 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx)
 }
 
 /**
- * @brief Public API for consuming (decrementing) a semaphore
- * @note  Will become SVC wrapper in privileged mode
- */
-bool semaphore_consume(uint8_t semaphore_idx)
-{
-    return __semaphore_consume(semaphore_idx);
-}
-
-/**
  * @brief Privileged implementation of semaphore_get_count
  * @note  Internal function - use semaphore_get_count() wrapper
  */
@@ -142,15 +115,6 @@ uint32_t __semaphore_get_count(uint8_t semaphore_idx)
 }
 
 /**
- * @brief Public API for getting semaphore count
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t semaphore_get_count(uint8_t semaphore_idx)
-{
-    return __semaphore_get_count(semaphore_idx);
-}
-
-/**
  * @brief Privileged implementation of semaphore_get_max_count
  * @note  Internal function - use semaphore_get_max_count() wrapper
  */
@@ -161,13 +125,4 @@ uint32_t __semaphore_get_max_count(uint8_t semaphore_idx)
         return 0;
     }
     return semaphore_list[semaphore_idx]->max_count;
-}
-
-/**
- * @brief Public API for getting semaphore max count
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t semaphore_get_max_count(uint8_t semaphore_idx)
-{
-    return __semaphore_get_max_count(semaphore_idx);
 }

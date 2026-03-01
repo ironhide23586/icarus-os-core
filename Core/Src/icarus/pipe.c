@@ -65,15 +65,6 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
 }
 
 /**
- * @brief Public API for initializing a message pipe
- * @note  Will become SVC wrapper in privileged mode
- */
-bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes)
-{
-    return __pipe_init(pipe_idx, pipe_capacity_bytes);
-}
-
-/**
  * @brief Privileged implementation of pipe_enqueue
  * @note  Internal function - use pipe_enqueue() wrapper
  */
@@ -110,16 +101,6 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
     __exit_critical();
 
     return true;
-}
-
-/**
- * @brief Public API for enqueueing data to a message pipe
- * @note  Will become SVC wrapper in privileged mode
- */
-bool pipe_enqueue(uint8_t pipe_idx, uint8_t* message,
-                            uint8_t message_bytes)
-{
-    return __pipe_enqueue(pipe_idx, message, message_bytes);
 }
 
 /**
@@ -160,16 +141,6 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
 }
 
 /**
- * @brief Public API for dequeueing data from a message pipe
- * @note  Will become SVC wrapper in privileged mode
- */
-bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message,
-                            uint8_t message_bytes)
-{
-    return __pipe_dequeue(pipe_idx, message, message_bytes);
-}
-
-/**
  * @brief Privileged implementation of pipe_get_count
  * @note  Internal function - use pipe_get_count() wrapper
  */
@@ -183,15 +154,6 @@ uint8_t __pipe_get_count(uint8_t pipe_idx)
 }
 
 /**
- * @brief Public API for getting pipe byte count
- * @note  Will become SVC wrapper in privileged mode
- */
-uint8_t pipe_get_count(uint8_t pipe_idx)
-{
-    return __pipe_get_count(pipe_idx);
-}
-
-/**
  * @brief Privileged implementation of pipe_get_max_count
  * @note  Internal function - use pipe_get_max_count() wrapper
  */
@@ -202,13 +164,4 @@ uint8_t __pipe_get_max_count(uint8_t pipe_idx)
         return 0;
     }
     return message_pipe_list[pipe_idx]->max_count;
-}
-
-/**
- * @brief Public API for getting pipe capacity
- * @note  Will become SVC wrapper in privileged mode
- */
-uint8_t pipe_get_max_count(uint8_t pipe_idx)
-{
-    return __pipe_get_max_count(pipe_idx);
 }

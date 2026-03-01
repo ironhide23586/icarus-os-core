@@ -48,30 +48,12 @@ ITCM_FUNC uint32_t __os_get_tick_count(void)
 }
 
 /**
- * @brief Public API for getting tick count
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t os_get_tick_count(void)
-{
-    return __os_get_tick_count();
-}
-
-/**
  * @brief Privileged implementation of os_get_running_task_count
  * @note  Internal function - use os_get_running_task_count() wrapper
  */
 uint8_t __os_get_running_task_count(void)
 {
     return running_task_count;
-}
-
-/**
- * @brief Public API for getting running task count
- * @note  Will become SVC wrapper in privileged mode
- */
-uint8_t os_get_running_task_count(void)
-{
-    return __os_get_running_task_count();
 }
 
 /**
@@ -88,30 +70,12 @@ const char* __os_get_current_task_name(void)
 }
 
 /**
- * @brief Public API for getting current task name
- * @note  Will become SVC wrapper in privileged mode
- */
-const char* os_get_current_task_name(void)
-{
-    return __os_get_current_task_name();
-}
-
-/**
  * @brief Privileged implementation of os_get_task_ticks_remaining
  * @note  Internal function - use os_get_task_ticks_remaining() wrapper
  */
 uint32_t __os_get_task_ticks_remaining(void)
 {
     return current_task_ticks_remaining;
-}
-
-/**
- * @brief Public API for getting remaining ticks in time slice
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t os_get_task_ticks_remaining(void)
-{
-    return __os_get_task_ticks_remaining();
 }
 
 /* ============================================================================
@@ -129,15 +93,6 @@ ITCM_FUNC void __os_yield(void)
 }
 
 /**
- * @brief Public API for yielding CPU
- * @note  Will become SVC wrapper in privileged mode
- */
-void os_yield(void)
-{
-    __os_yield();
-}
-
-/**
  * @brief Privileged implementation of task_active_sleep
  * @note  Internal function - use task_active_sleep() wrapper
  */
@@ -151,15 +106,6 @@ ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks)
 }
 
 /**
- * @brief Public API for active sleep (with context switch)
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t task_active_sleep(uint32_t ticks)
-{
-    return __task_active_sleep(ticks);
-}
-
-/**
  * @brief Privileged implementation of task_blocking_sleep
  * @note  Internal function - use task_blocking_sleep() wrapper
  */
@@ -169,15 +115,6 @@ uint32_t __task_blocking_sleep(uint32_t ticks)
     uint32_t delta = __task_busy_wait(ticks);
     __exit_critical();
     return delta;
-}
-
-/**
- * @brief Public API for blocking sleep (busy-wait)
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t task_blocking_sleep(uint32_t ticks)
-{
-    return __task_blocking_sleep(ticks);
 }
 
 /**
@@ -199,13 +136,4 @@ uint32_t __task_busy_wait(uint32_t ticks)
         }
     }
     return delta;
-}
-
-/**
- * @brief Public API for busy-wait
- * @note  Will become SVC wrapper in privileged mode
- */
-uint32_t task_busy_wait(uint32_t ticks)
-{
-    return __task_busy_wait(ticks);
 }
