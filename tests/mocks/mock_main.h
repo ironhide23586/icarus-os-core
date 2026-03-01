@@ -10,12 +10,13 @@
 #include "mock_gpio.h"
 
 // Include icarus config for ICARUS_TICKS_PER_TASK
+// This also includes bsp/config.h which defines E3_Pin and E3_GPIO_Port
 #include "icarus/config.h"
 
-// GPIO pin definitions
-#define E3_Pin GPIO_PIN_3
+// GPIO definitions are now provided by bsp/config.h
+// No need to redefine them here
+
 extern GPIO_TypeDef GPIOE;
-#define E3_GPIO_Port (&GPIOE)
 
 // Error handler (mock)
 void Error_Handler(void);

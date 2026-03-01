@@ -27,6 +27,13 @@ int32_t platform_read(void* handle, uint8_t reg, uint8_t *bufp, uint16_t len);
 #define IMU_ADDRESS 0x6B
 #define BSP_FLASH_BASE 0x08000000UL
 
+// LED pin definitions for tests
+#define BSP_LED_PIN             GPIO_PIN_3
+extern GPIO_TypeDef GPIOE;
+#define BSP_LED_PORT            (&GPIOE)
+#define E3_Pin                  BSP_LED_PIN
+#define E3_GPIO_Port            BSP_LED_PORT
+
 // Forward declarations for MX init functions
 void MX_GPIO_Init(void);
 void MX_RTC_Init(void);

@@ -131,6 +131,15 @@ uint32_t* kernel_get_data(uint8_t task_idx);
 
 void* kernel_protected_data(uint16_t num_words);
 
+/* ============================================================================
+ * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
+ * ========================================================================= */
+
+void __enter_critical(void);
+void __exit_critical(void);
+void __os_init(void);
+void __os_start(void);
+void* __kernel_protected_data(uint16_t num_words);
 
 #ifdef __cplusplus
 }

@@ -101,17 +101,43 @@ extern void start_cold_task(icarus_task_t *task);
  * CRITICAL SECTION MANAGEMENT
  * ========================================================================= */
 
-void enter_critical(void)
+/**
+ * @brief Privileged implementation of enter_critical
+ * @note  Internal function - use enter_critical() wrapper
+ */
+void __enter_critical(void)
 {
     scheduler_enabled = false;
     critical_stack_depth++;
 }
 
-void exit_critical(void)
+/**
+ * @brief Public API for entering critical section
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void enter_critical(void)
+{
+    __enter_critical();
+}
+
+/**
+ * @brief Privileged implementation of exit_critical
+ * @note  Internal function - use exit_critical() wrapper
+ */
+void __exit_critical(void)
 {
     if (--critical_stack_depth == 0) {
         scheduler_enabled = true;
     }
+}
+
+/**
+ * @brief Public API for exiting critical section
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void exit_critical(void)
+{
+    __exit_critical();
 }
 
 /* ============================================================================
@@ -187,7 +213,11 @@ static void os_heartbeat_task(void)
  * KERNEL INITIALIZATION
  * ========================================================================= */
 
-void os_init(void)
+/**
+ * @brief Privileged implementation of os_init
+ * @note  Internal function - use os_init() wrapper
+ */
+void __os_init(void)
 {
     uint8_t i;
 
@@ -224,12 +254,34 @@ void os_init(void)
     scheduler_enabled = true;
 }
 
-void os_start(void)
+/**
+ * @brief Public API for kernel initialization
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_init(void)
+{
+    __os_init();
+}
+
+/**
+ * @brief Privileged implementation of os_start
+ * @note  Internal function - use os_start() wrapper
+ */
+void __os_start(void)
 {
     if (num_created_tasks == 0 || num_created_tasks > ICARUS_MAX_TASKS) {
         return;
     }
     start_cold_task(task_list[current_task_index]);
+}
+
+/**
+ * @brief Public API for starting the scheduler
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void os_start(void)
+{
+    __os_start();
 }
 
 /* ============================================================================
@@ -253,13 +305,25 @@ uint32_t* kernel_get_data(uint8_t task_idx)
 
 
 
-void* kernel_protected_data(uint16_t num_words) {
+/**
+ * @brief Privileged implementation of kernel_protected_data
+ * @note  Internal function - use kernel_protected_data() wrapper
+ */
+void* __kernel_protected_data(uint16_t num_words) {
     if (data_pool_word_offsets[current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
         return NULL;
-    enter_critical();
+    __enter_critical();
     uint16_t current_offset = data_pool_word_offsets[current_task_index];
     data_pool_word_offsets[current_task_index] += num_words;
     uint32_t *ret_ptr = &data_pool[current_task_index][current_offset];
-    exit_critical();
+    __exit_critical();
     return (void*) ret_ptr;
+}
+
+/**
+ * @brief Public API for allocating protected task data
+ * @note  Will become SVC wrapper in privileged mode
+ */
+void* kernel_protected_data(uint16_t num_words) {
+    return __kernel_protected_data(num_words);
 }
