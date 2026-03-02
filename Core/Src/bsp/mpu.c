@@ -8,14 +8,20 @@
  *          Region map:
  *          | # | Name          | Base       | Size  | Access              |
  *          |---|---------------|------------|-------|---------------------|
- *          | 0 | ITCM_PRIV     | 0x00000000 | 256B  | Priv RO+exec only   |
+ *          | 0 | ITCM base     | 0x00000000 | 64KB  | Priv+User RO+exec   |
  *          | 1 | QSPI flash    | 0x90000000 | 8MB   | Priv+User RO+exec   |
  *          | 2 | Internal Flash| 0x08000000 | 128KB | Priv+User RO+exec   |
- *          | 3 | ITCM_USER     | 0x00000400 | 1KB   | Priv+User RO+exec   |
+ *          | 3 | ITCM_PRIV     | 0x00000000 | 1KB*  | Priv-only RO+exec   |
  *          | 4 | Task data     | dynamic    | 2KB   | Priv+User RW        |
  *          | 5 | DTCM          | 0x20000000 | 128KB | Priv+User Full      |
  *          | 6 | RAM_D1        | 0x24000000 | 512KB | Priv+User Full      |
  *          | 7 | Peripherals   | 0x40000000 | 512MB | Priv+User Device    |
+ *
+ *          * Region 3 uses subregion disable (0xFC) to only protect the first
+ *            256 bytes (subregions 0-1: 0x000–0x1FF) where kernel handlers
+ *            live. Subregions 2-7 (0x200–0x3FF) fall back to region 0
+ *            (PRIV_RO_URO) because C library code may read from the linker
+ *            padding area in unprivileged mode.
  *
  *          DTCM is currently full access because spinning functions
  *          (__semaphore_feed/consume, __pipe_enqueue/dequeue, __task_busy_wait)
@@ -35,33 +41,22 @@
 #include "stm32h7xx.h"
 
 /* ============================================================================
- * LINKER SYMBOLS — ITCM SECTION BOUNDARIES
- * ========================================================================= */
-
-/* Provided by STM32H750VBTX_FLASH.ld */
-extern uint32_t _sitcm_priv;   /* start of .itcm_priv in ITCM */
-extern uint32_t _eitcm_priv;   /* end   of .itcm_priv in ITCM */
-extern uint32_t _sitcm_user;   /* start of .itcm_user in ITCM */
-extern uint32_t _eitcm_user;   /* end   of .itcm_user in ITCM */
-
-/* ============================================================================
  * MPU CONFIGURATION
  * ========================================================================= */
 
-void MPU_Config(void) {
+void MPU_Config(void)
+{
     MPU_Region_InitTypeDef r = {0};
 
     HAL_MPU_Disable();
 
-    /* ---- Region 0: ITCM_PRIV 256B — Priv-only RO+exec ---- */
-    /* SVC_Handler, PendSV_Handler, __os_yield, __task_active_sleep.        */
-    /* Unprivileged code cannot read or execute this region.                */
-    /* Size fixed at 256B (next power-of-2 above actual 160B content).      */
+    /* ---- Region 0: ITCM 64KB base — Priv+User RO+exec ---- */
+    /* Covers all of ITCM. Region 3 overlays 0x000–0x1FF as priv-only.     */
     r.Enable           = MPU_REGION_ENABLE;
-    r.Number           = MPU_REGION_ITCM_PRIV;
-    r.BaseAddress      = (uint32_t)&_sitcm_priv;
-    r.Size             = MPU_REGION_SIZE_256B;
-    r.AccessPermission = MPU_REGION_PRIV_RO;
+    r.Number           = MPU_REGION_ITCM_BASE;
+    r.BaseAddress      = BSP_ITCM_BASE;
+    r.Size             = MPU_REGION_SIZE_64KB;
+    r.AccessPermission = MPU_REGION_PRIV_RO_URO;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
@@ -98,21 +93,23 @@ void MPU_Config(void) {
     r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
-    /* ---- Region 3: ITCM_USER 1KB — Priv+User RO+exec ---- */
-    /* Spinning wrappers, context switch (os_yield_pendsv).                 */
-    /* Linker script pads .itcm_priv to 1KB so _sitcm_user = 0x00000400.   */
-    /* MPU requires base address to be a multiple of region size (1KB).     */
+    /* ---- Region 3: ITCM_PRIV 1KB overlay — Priv-only RO+exec ---- */
+    /* Higher region number overrides region 0 for active subregions.       */
+    /* SVC_Handler, PendSV_Handler, __os_yield, __task_active_sleep live    */
+    /* in 0x000–0x097.  Only subregions 0-1 (0x000–0x1FF) are active;      */
+    /* subregions 2-7 (0x200–0x3FF) are disabled so they fall back to       */
+    /* region 0 (PRIV_RO_URO) — C library code reads from the padding area. */
     r.Enable           = MPU_REGION_ENABLE;
-    r.Number           = MPU_REGION_ITCM_USER;
-    r.BaseAddress      = (uint32_t)&_sitcm_user;
+    r.Number           = MPU_REGION_ITCM_PRIV;
+    r.BaseAddress      = BSP_ITCM_BASE;
     r.Size             = MPU_REGION_SIZE_1KB;
-    r.AccessPermission = MPU_REGION_PRIV_RO_URO;
+    r.AccessPermission = MPU_REGION_PRIV_RO;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
     r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
     r.TypeExtField     = MPU_TEX_LEVEL1;
-    r.SubRegionDisable = 0x00;
+    r.SubRegionDisable = 0xFC;  /* Only subregions 0-1 active (0x000–0x1FF) */
     HAL_MPU_ConfigRegion(&r);
 
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */
@@ -179,7 +176,8 @@ void MPU_Config(void) {
  * @param task_data_base Base address of the task's data pool
  * @note  Called from assembly context switch handler (os_yield_pendsv)
  */
-void MPU_ConfigureTaskData(uint32_t task_data_base) {
+void MPU_ConfigureTaskData(uint32_t task_data_base)
+{
     MPU_Region_InitTypeDef r = {0};
 
     r.Enable           = MPU_REGION_ENABLE;
