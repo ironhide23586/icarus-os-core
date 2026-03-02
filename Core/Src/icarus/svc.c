@@ -142,6 +142,28 @@ void SVC_Handler_C(uint32_t *stack_frame) {
         case SVC_TASK_BLOCKING_SLEEP:
             break;
 
+        /* Call gates for spinning functions — read kernel state atomically */
+        case SVC_SEM_CAN_FEED: {
+            bool r = __sem_can_feed((uint8_t)arg0);
+            stack_frame[0] = r ? 1u : 0u;
+            break;
+        }
+        case SVC_SEM_CAN_CONSUME: {
+            bool r = __sem_can_consume((uint8_t)arg0);
+            stack_frame[0] = r ? 1u : 0u;
+            break;
+        }
+        case SVC_PIPE_CAN_ENQUEUE: {
+            bool r = __pipe_can_enqueue((uint8_t)arg0, (uint8_t)arg1);
+            stack_frame[0] = r ? 1u : 0u;
+            break;
+        }
+        case SVC_PIPE_CAN_DEQUEUE: {
+            bool r = __pipe_can_dequeue((uint8_t)arg0, (uint8_t)arg1);
+            stack_frame[0] = r ? 1u : 0u;
+            break;
+        }
+
         default:
             break;
     }
@@ -589,5 +611,97 @@ uint8_t pipe_get_max_count(uint8_t pipe_idx) {
     return result;
 #else
     return __pipe_get_max_count(pipe_idx);
+#endif
+}
+
+/* ============================================================================
+ * CALL GATE WRAPPERS (for spinning functions — read kernel state via SVC)
+ * ========================================================================= */
+
+/**
+ * @brief Check if semaphore can accept a feed (count < max && engaged)
+ * @note  Runs in privileged mode — safe once DTCM is priv-only
+ */
+bool sem_can_feed(uint8_t semaphore_idx) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)semaphore_idx), "I" (SVC_SEM_CAN_FEED)
+        : "r0"
+    );
+    return (bool)result;
+#else
+    return __sem_can_feed(semaphore_idx);
+#endif
+}
+
+/**
+ * @brief Check if semaphore can be consumed (count > 0 && engaged)
+ * @note  Runs in privileged mode — safe once DTCM is priv-only
+ */
+bool sem_can_consume(uint8_t semaphore_idx) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)semaphore_idx), "I" (SVC_SEM_CAN_CONSUME)
+        : "r0"
+    );
+    return (bool)result;
+#else
+    return __sem_can_consume(semaphore_idx);
+#endif
+}
+
+/**
+ * @brief Check if pipe has room for message_bytes (free >= bytes && engaged)
+ * @note  Runs in privileged mode — safe once DTCM is priv-only
+ */
+bool pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)pipe_idx), "r" ((uint32_t)message_bytes),
+          "I" (SVC_PIPE_CAN_ENQUEUE)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __pipe_can_enqueue(pipe_idx, message_bytes);
+#endif
+}
+
+/**
+ * @brief Check if pipe has message_bytes available (count >= bytes && engaged)
+ * @note  Runs in privileged mode — safe once DTCM is priv-only
+ */
+bool pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)pipe_idx), "r" ((uint32_t)message_bytes),
+          "I" (SVC_PIPE_CAN_DEQUEUE)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __pipe_can_dequeue(pipe_idx, message_bytes);
 #endif
 }

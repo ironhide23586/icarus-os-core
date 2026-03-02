@@ -62,23 +62,27 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
 /**
  * @brief Privileged implementation of pipe_enqueue
  * @note  Internal function - use pipe_enqueue() wrapper
- * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
+ * @note  Spin-wait uses pipe_can_enqueue() SVC gate — safe with DTCM priv-only
  */
 ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t *message,
                               uint8_t message_bytes) {
+#ifdef HOST_TEST
+    /* In host tests, check validity directly (no MPU) */
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged ||
         message_bytes > message_pipe_list[pipe_idx]->max_count) {
         return false;
     }
+#else
+    /* On target, index check only — gate checks engaged+size via SVC */
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES) {
+        return false;
+    }
+#endif
 
-    while ((message_pipe_list[pipe_idx]->max_count -
-            message_pipe_list[pipe_idx]->count) < message_bytes) {
+    /* pipe_can_enqueue checks engaged + free space via SVC (priv-safe) */
+    while (!pipe_can_enqueue(pipe_idx, message_bytes)) {
         task_active_sleep(1);
-        if ((message_pipe_list[pipe_idx]->max_count -
-             message_pipe_list[pipe_idx]->count) >= message_bytes) {
-            scheduler_enabled = false;
-        }
     }
 
     enter_critical();
@@ -101,21 +105,27 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t *message,
 /**
  * @brief Privileged implementation of pipe_dequeue
  * @note  Internal function - use pipe_dequeue() wrapper
- * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
+ * @note  Spin-wait uses pipe_can_dequeue() SVC gate — safe with DTCM priv-only
  */
 ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
                               uint8_t message_bytes) {
+#ifdef HOST_TEST
+    /* In host tests, check validity directly (no MPU) */
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged ||
         message_bytes > message_pipe_list[pipe_idx]->max_count) {
         return false;
     }
+#else
+    /* On target, index check only — gate checks engaged+size via SVC */
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES) {
+        return false;
+    }
+#endif
 
-    while (message_pipe_list[pipe_idx]->count < message_bytes) {
+    /* pipe_can_dequeue checks engaged + available bytes via SVC (priv-safe) */
+    while (!pipe_can_dequeue(pipe_idx, message_bytes)) {
         task_active_sleep(1);
-        if (message_pipe_list[pipe_idx]->count >= message_bytes) {
-            scheduler_enabled = false;
-        }
     }
 
     enter_critical();
@@ -157,4 +167,32 @@ uint8_t __pipe_get_max_count(uint8_t pipe_idx) {
         return 0;
     }
     return message_pipe_list[pipe_idx]->max_count;
+}
+
+/**
+ * @brief Privileged call gate: can pipe accept message_bytes bytes?
+ * @note  Returns true if engaged and free space >= message_bytes
+ *        Used by __pipe_enqueue spin loop to avoid direct DTCM reads
+ *        from unprivileged thread mode once DTCM is priv-only.
+ */
+bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged) {
+        return false;
+    }
+    return (message_pipe_list[pipe_idx]->max_count -
+            message_pipe_list[pipe_idx]->count) >= message_bytes;
+}
+
+/**
+ * @brief Privileged call gate: can pipe deliver message_bytes bytes?
+ * @note  Returns true if engaged and count >= message_bytes
+ *        Used by __pipe_dequeue spin loop.
+ */
+bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged) {
+        return false;
+    }
+    return message_pipe_list[pipe_idx]->count >= message_bytes;
 }

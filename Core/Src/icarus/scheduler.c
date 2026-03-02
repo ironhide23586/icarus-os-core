@@ -110,16 +110,17 @@ uint32_t __task_blocking_sleep(uint32_t ticks) {
 /**
  * @brief Privileged implementation of task_busy_wait
  * @note  Internal function - use task_busy_wait() wrapper
+ * @note  Uses os_get_tick_count() SVC gate — safe with DTCM priv-only
  */
 uint32_t __task_busy_wait(uint32_t ticks) {
-    uint32_t st = os_tick_count;
+    uint32_t st = os_get_tick_count();
     uint32_t delta;
 
     while (1) {
 #ifdef HOST_TEST
         os_tick_count++;
 #endif
-        delta = os_tick_count - st;
+        delta = os_get_tick_count() - st;
         if (delta >= ticks) {
             break;
         }

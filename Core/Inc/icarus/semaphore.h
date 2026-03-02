@@ -67,6 +67,10 @@ uint32_t semaphore_get_count(uint8_t semaphore_idx);
  */
 uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
 
+/* Call gate wrappers — check spin condition via SVC (safe with DTCM priv-only) */
+bool sem_can_feed(uint8_t semaphore_idx);
+bool sem_can_consume(uint8_t semaphore_idx);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -76,6 +80,8 @@ bool __semaphore_feed(uint8_t semaphore_idx);
 bool __semaphore_consume(uint8_t semaphore_idx);
 uint32_t __semaphore_get_count(uint8_t semaphore_idx);
 uint32_t __semaphore_get_max_count(uint8_t semaphore_idx);
+bool __sem_can_feed(uint8_t semaphore_idx);
+bool __sem_can_consume(uint8_t semaphore_idx);
 
 #ifdef __cplusplus
 }

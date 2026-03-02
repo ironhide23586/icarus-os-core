@@ -66,21 +66,23 @@ extern "C" {
 #define SVC_KERNEL_GET_DATA             27
 #define SVC_KERNEL_PROTECTED_DATA       28
 
+/* Call gates for spinning functions — read kernel state from priv mode      */
+/* so DTCM can be made priv-only without faulting the spin loops             */
+#define SVC_SEM_CAN_FEED                29  /* bool: count < max && engaged  */
+#define SVC_SEM_CAN_CONSUME             30  /* bool: count > 0  && engaged   */
+#define SVC_PIPE_CAN_ENQUEUE            31  /* bool: free >= bytes && engaged */
+#define SVC_PIPE_CAN_DEQUEUE            32  /* bool: count >= bytes && engaged*/
+
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_KERNEL_PROTECTED_DATA <= 255,
+_Static_assert(SVC_PIPE_CAN_DEQUEUE <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-/* Ensure SVC_KERNEL_PROTECTED_DATA is the highest defined SVC number */
-_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_TASK_ACTIVE_SLEEP,
-               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
-_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_KERNEL_GET_DATA,
-               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
-_Static_assert(SVC_KERNEL_PROTECTED_DATA >= SVC_OS_GET_TASK_TICKS_REMAINING,
-               "SVC_KERNEL_PROTECTED_DATA must be >= all other SVC numbers");
+_Static_assert(SVC_PIPE_CAN_DEQUEUE >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_PIPE_CAN_DEQUEUE must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)
