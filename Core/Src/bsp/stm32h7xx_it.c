@@ -133,17 +133,50 @@ void HardFault_Handler(void)
 void HardFault_Handler(void) { while (1) {} }
 #endif
 
+/* Incremented by recoverable MemManage faults (ITCM priv attack test) */
+volatile uint32_t g_memmanage_fault_count = 0;
+
 /**
   * @brief This function handles Memory management fault.
+  *
+  * @details If the fault is a recoverable data access violation (DACCVIOL)
+  *          from unprivileged thread mode (PSP), we advance the stacked PC
+  *          by 2 bytes (Thumb instruction) and return so the task continues.
+  *          The task can then check g_memmanage_fault_count to detect it.
+  *
+  *          If the fault is not recoverable (instruction fetch, or from MSP),
+  *          fall through to the 4-blink halt.
   */
 #ifndef HOST_TEST
 void MemManage_Handler(void)
 {
-  volatile uint32_t cfsr = SCB->CFSR;
-  volatile uint32_t mmfar = SCB->MMFAR;
-  (void)cfsr; (void)mmfar;
+  uint32_t cfsr  = SCB->CFSR;
+  uint32_t mmfar = SCB->MMFAR;
+  (void)mmfar;
 
-  /* 4 fast blinks = MemManage */
+  /* DACCVIOL (bit 1) = data access violation */
+  /* IACCVIOL (bit 0) = instruction fetch violation — not recoverable here */
+  bool is_daccviol = (cfsr & SCB_CFSR_DACCVIOL_Msk) != 0;
+
+  /* Check if fault came from thread mode (PSP) vs kernel (MSP) */
+  uint32_t lr_val;
+  __asm__ volatile ("mov %0, lr" : "=r" (lr_val));
+  bool from_psp = (lr_val & 0x4) != 0;
+
+  if (is_daccviol && from_psp) {
+    /* Recoverable: advance stacked PC past the faulting Thumb instruction */
+    uint32_t *sp;
+    __asm__ volatile ("mrs %0, psp" : "=r" (sp));
+    sp[6] += 2;  /* stacked PC is at offset 6 in the exception frame */
+
+    /* Clear the fault status bits so we can return cleanly */
+    SCB->CFSR = cfsr;
+
+    g_memmanage_fault_count++;
+    return;
+  }
+
+  /* Non-recoverable: 4 fast blinks = MemManage */
   while (1)
   {
     for (int i = 0; i < 4; i++) {

@@ -1067,6 +1067,68 @@ static void mpu_redteam_task(void) {
 }
 
 // ============================================================================
+// MPU ITCM PROTECTION ATTACK TASK
+// ============================================================================
+
+/* Declared in stm32h7xx_it.c — incremented on each recoverable MemManage */
+extern volatile uint32_t g_memmanage_fault_count;
+
+/**
+ * @brief   ITCM priv-region attack task
+ *
+ * @details Attempts a data read from 0x00000100 (inside the ITCM priv region
+ *          0x000–0x1FF, which is PRIV_RO — no unprivileged data access).
+ *          The MemManage handler recovers by advancing the stacked PC +2 and
+ *          incrementing g_memmanage_fault_count.
+ *
+ *          Expected result: fault count rises each iteration → [ITCM PROTECTED]
+ *          Failure result:  read succeeds, fault count unchanged → [ITCM BREACH]
+ */
+static void mpu_itcm_attack_task(void) {
+    uint32_t attempts = 0;
+    uint32_t last_fault_count = 0;
+
+    while (1) {
+        attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+
+        /* Attempt unprivileged data read from ITCM priv range.
+         * Region 3 subregions 0-1 cover 0x000–0x0FF as PRIV_RO.
+         * 0x50 is inside subregion 0 (0x000–0x07F) — always protected.
+         * If MPU is working this triggers DACCVIOL → MemManage_Handler
+         * recovers by skipping this instruction (+2 bytes). */
+        volatile uint32_t dummy;
+        __asm__ volatile (
+            "ldr %0, [%1]"
+            : "=r" (dummy)
+            : "r" ((volatile uint32_t *)0x00000050)
+        );
+        (void)dummy;
+
+        uint32_t fault_after = g_memmanage_fault_count;
+        bool protected = (fault_after > fault_before);
+        last_fault_count = fault_after;
+
+        ANSI_GOTO(STRESS_ROW_STATS2 + 4, 1);
+        if (protected) {
+            printf("\033[1;32m");  /* Bold green */
+            printf("MPU_ITCM: attempts=%lu faults=%lu [ITCM PROTECTED]",
+                   attempts, last_fault_count);
+        } else {
+            printf("\033[1;31m");  /* Bold red */
+            printf("MPU_ITCM: attempts=%lu faults=%lu [ITCM BREACH]",
+                   attempts, last_fault_count);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+
+        task_active_sleep(500);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
+// ============================================================================
 // HEADER DISPLAY
 // ============================================================================
 
@@ -1207,4 +1269,5 @@ void stress_test_init(void) {
     // Register MPU data protection verification tasks (2 tasks)
     os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations
     os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
+    os_register_task(mpu_itcm_attack_task, "mpu_itcm"); // ITCM priv attack test
 }
