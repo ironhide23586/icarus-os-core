@@ -135,6 +135,10 @@ void HardFault_Handler(void) { while (1) {} }
 
 /* Incremented by recoverable MemManage faults (ITCM priv attack test) */
 volatile uint32_t g_memmanage_fault_count = 0;
+volatile uint32_t g_last_fault_pc = 0;
+volatile uint32_t g_last_fault_addr = 0;
+volatile uint32_t g_fault_pc_history[10] = {0};  /* Last 10 fault PCs */
+volatile uint8_t g_fault_pc_idx = 0;
 
 /**
   * @brief This function handles Memory management fault.
@@ -152,11 +156,11 @@ void MemManage_Handler(void)
 {
   uint32_t cfsr  = SCB->CFSR;
   uint32_t mmfar = SCB->MMFAR;
-  (void)mmfar;
 
   /* DACCVIOL (bit 1) = data access violation */
   /* IACCVIOL (bit 0) = instruction fetch violation — not recoverable here */
   bool is_daccviol = (cfsr & SCB_CFSR_DACCVIOL_Msk) != 0;
+  bool mmfar_valid = (cfsr & SCB_CFSR_MMARVALID_Msk) != 0;
 
   /* Check if fault came from thread mode (PSP) vs kernel (MSP) */
   uint32_t lr_val;
@@ -167,12 +171,38 @@ void MemManage_Handler(void)
     /* Recoverable: advance stacked PC past the faulting Thumb instruction */
     uint32_t *sp;
     __asm__ volatile ("mrs %0, psp" : "=r" (sp));
+    
+    /* Save diagnostic info */
+    g_last_fault_pc = sp[6];
+    g_last_fault_addr = mmfar_valid ? mmfar : 0xFFFFFFFF;
+    
+    /* Record in history buffer */
+    g_fault_pc_history[g_fault_pc_idx] = sp[6];
+    g_fault_pc_idx = (uint8_t)((g_fault_pc_idx + 1u) % 10u);
+    
     sp[6] += 2;  /* stacked PC is at offset 6 in the exception frame */
 
     /* Clear the fault status bits so we can return cleanly */
     SCB->CFSR = cfsr;
 
     g_memmanage_fault_count++;
+    
+    /* Limit fault recovery to prevent infinite loops */
+    /* Increased limit to 1000 to allow attack test tasks to run */
+    if (g_memmanage_fault_count > 1000) {
+      /* Too many faults - halt with rapid 4 blinks */
+      /* g_fault_pc_history contains last 10 faulting PCs for debugging */
+      while (1) {
+        for (int i = 0; i < 4; i++) {
+          HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_SET);
+          for (volatile int d = 0; d < 8000000; d++) {}
+          HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_RESET);
+          for (volatile int d = 0; d < 8000000; d++) {}
+        }
+        for (volatile int d = 0; d < 80000000; d++) {}
+      }
+    }
+    
     return;
   }
 
@@ -308,8 +338,9 @@ ITCM_FUNC_PRIV __attribute__ ((naked)) void PendSV_Handler(void)
 
 /**
   * @brief This function handles System tick timer.
+  * @note  Must run in privileged mode to write to os_tick_count in DTCM
   */
-ITCM_FUNC void SysTick_Handler(void)
+ITCM_FUNC_PRIV void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
   extern volatile uint32_t os_tick_count;

@@ -164,6 +164,32 @@ void SVC_Handler_C(uint32_t *stack_frame) {
             break;
         }
 
+        /* Write gates for spinning functions — modify kernel state atomically */
+        case SVC_SEM_INCREMENT:
+            __sem_increment((uint8_t)arg0);
+            break;
+        case SVC_SEM_DECREMENT:
+            __sem_decrement((uint8_t)arg0);
+            break;
+        case SVC_PIPE_WRITE_BYTES:
+            __pipe_write_bytes((uint8_t)arg0, (uint8_t *)(uintptr_t)arg1,
+                               (uint8_t)stack_frame[2]);
+            break;
+        case SVC_PIPE_READ_BYTES:
+            __pipe_read_bytes((uint8_t)arg0, (uint8_t *)(uintptr_t)arg1,
+                              (uint8_t)stack_frame[2]);
+            break;
+
+        /* Task metadata read gates — for display/diagnostics from unprivileged mode */
+        case SVC_GET_TASK_NAME: {
+            const char *name = __os_get_task_name((uint8_t)arg0);
+            stack_frame[0] = (uint32_t)(uintptr_t)name;
+            break;
+        }
+        case SVC_GET_NUM_TASKS:
+            stack_frame[0] = (uint32_t)__os_get_num_created_tasks();
+            break;
+
         default:
             break;
     }
@@ -703,5 +729,136 @@ bool pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
     return (bool)result;
 #else
     return __pipe_can_dequeue(pipe_idx, message_bytes);
+#endif
+}
+
+/* ============================================================================
+ * WRITE GATE WRAPPERS (for spinning functions — modify kernel state via SVC)
+ * ========================================================================= */
+
+/**
+ * @brief Increment semaphore count atomically in privileged mode
+ * @note  Called after sem_can_feed() spin loop exits
+ */
+void sem_increment(uint8_t semaphore_idx) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "svc %1\n"
+        :
+        : "r" ((uint32_t)semaphore_idx), "I" (SVC_SEM_INCREMENT)
+        : "r0"
+    );
+#else
+    __sem_increment(semaphore_idx);
+#endif
+}
+
+/**
+ * @brief Decrement semaphore count atomically in privileged mode
+ * @note  Called after sem_can_consume() spin loop exits
+ */
+void sem_decrement(uint8_t semaphore_idx) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "svc %1\n"
+        :
+        : "r" ((uint32_t)semaphore_idx), "I" (SVC_SEM_DECREMENT)
+        : "r0"
+    );
+#else
+    __sem_decrement(semaphore_idx);
+#endif
+}
+
+/**
+ * @brief Write bytes to pipe buffer atomically in privileged mode
+ * @note  Called after pipe_can_enqueue() spin loop exits
+ */
+void pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "mov r1, %1\n"
+        "mov r2, %2\n"
+        "svc %3\n"
+        :
+        : "r" ((uint32_t)pipe_idx), "r" (message), "r" ((uint32_t)message_bytes),
+          "I" (SVC_PIPE_WRITE_BYTES)
+        : "r0", "r1", "r2"
+    );
+#else
+    __pipe_write_bytes(pipe_idx, message, message_bytes);
+#endif
+}
+
+/**
+ * @brief Read bytes from pipe buffer atomically in privileged mode
+ * @note  Called after pipe_can_dequeue() spin loop exits
+ */
+void pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "mov r1, %1\n"
+        "mov r2, %2\n"
+        "svc %3\n"
+        :
+        : "r" ((uint32_t)pipe_idx), "r" (message), "r" ((uint32_t)message_bytes),
+          "I" (SVC_PIPE_READ_BYTES)
+        : "r0", "r1", "r2"
+    );
+#else
+    __pipe_read_bytes(pipe_idx, message, message_bytes);
+#endif
+}
+
+
+/* ============================================================================
+ * TASK METADATA READ GATES (for display/diagnostics from unprivileged mode)
+ * ========================================================================= */
+
+/**
+ * @brief Get task name by index (read from task_list in privileged mode)
+ * @param task_idx Task index (0 to num_created_tasks-1)
+ * @return Pointer to task name string, or NULL if invalid index
+ * @note  Safe to call from unprivileged mode once DTCM is priv-only
+ */
+const char *os_get_task_name(uint8_t task_idx) {
+#ifndef HOST_TEST
+    const char *result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)task_idx), "I" (SVC_GET_TASK_NAME)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_get_task_name(task_idx);
+#endif
+}
+
+/**
+ * @brief Get number of created tasks (read num_created_tasks in privileged mode)
+ * @return Number of tasks registered with os_register_task()
+ * @note  Safe to call from unprivileged mode once DTCM is priv-only
+ */
+uint8_t os_get_num_created_tasks(void) {
+#ifndef HOST_TEST
+    uint8_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_GET_NUM_TASKS)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_get_num_created_tasks();
 #endif
 }

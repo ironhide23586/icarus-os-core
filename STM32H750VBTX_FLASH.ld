@@ -65,26 +65,26 @@ SECTIONS
   /* ITCM sections for hot path code (zero wait states)              */
   /* Both sections are copied from FLASH to ITCM at startup          */
 
-  /* Privileged-only kernel code: SVC_Handler, PendSV_Handler,       */
-  /* __os_yield, __task_active_sleep, __os_get_tick_count             */
-  /* Padded to 1KB so .itcm_user starts at a 1KB-aligned boundary    */
-  /* (MPU requires base address == multiple of region size).          */
+  /* Privileged-only kernel code: SVC_Handler, PendSV_Handler, SysTick_Handler, */
+  /* all __* functions that access DTCM                                         */
+  /* Padded to 4KB so .itcm_user starts at a 4KB-aligned boundary               */
+  /* (MPU requires base address == multiple of region size).                    */
   .itcm_priv :
   {
     . = ALIGN(4);
     _sitcm_priv = .;
     *(.itcm_priv)
     *(.itcm_priv*)
-    . = ALIGN(1024);          /* pad to 1KB — ensures _sitcm_user = 0x400 */
+    . = ALIGN(4096);          /* pad to 4KB — ensures _sitcm_user = 0x1000 */
     _eitcm_priv = .;
   } >ITCMRAM AT> FLASH
   _siitcm_priv = LOADADDR(.itcm_priv);
 
   /* User-executable hot-path code: spinning wrappers, context switch */
-  /* Base address must be 1KB-aligned for MPU region 3 (1KB size).   */
+  /* Base address must be 4KB-aligned for MPU region 3 (4KB size).   */
   .itcm_user :
   {
-    . = ALIGN(1024);
+    . = ALIGN(4096);
     _sitcm_user = .;
     *(.itcm)
     . = ALIGN(4);

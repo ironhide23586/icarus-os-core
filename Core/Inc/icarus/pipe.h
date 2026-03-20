@@ -75,6 +75,10 @@ uint8_t pipe_get_max_count(uint8_t pipe_idx);
 bool pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes);
 bool pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes);
 
+/* Write gate wrappers — modify kernel state via SVC (safe with DTCM priv-only) */
+void pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
+void pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -86,6 +90,8 @@ uint8_t __pipe_get_count(uint8_t pipe_idx);
 uint8_t __pipe_get_max_count(uint8_t pipe_idx);
 bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes);
 bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes);
+void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
+void __pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
 
 #ifdef __cplusplus
 }

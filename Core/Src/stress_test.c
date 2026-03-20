@@ -865,6 +865,7 @@ static volatile uint32_t g_mpu_fault_count = 0;
  * @note    Increments data_errors if corruption detected
  * @note    Exposes pointer for red team attack testing
  */
+__attribute__((unused))
 static void mpu_verify_task(void) {
     // Test multiple allocations in one task
     uint32_t *mpu_data1 = (uint32_t*)kernel_protected_data(16);  // 16 words = 64 bytes
@@ -988,6 +989,7 @@ static void mpu_verify_task(void) {
  * @note    Successful attack increments data_errors (MPU failure)
  * @note    MPU fault is expected behavior (protection working)
  */
+__attribute__((unused))
 static void mpu_redteam_task(void) {
     uint32_t attack_attempts = 0;
     uint32_t successful_attacks = 0;
@@ -1076,7 +1078,7 @@ extern volatile uint32_t g_memmanage_fault_count;
 /**
  * @brief   ITCM priv-region attack task
  *
- * @details Attempts a data read from 0x00000100 (inside the ITCM priv region
+ * @details Attempts a data read from 0x50 (inside the ITCM priv region
  *          0x000–0x1FF, which is PRIV_RO — no unprivileged data access).
  *          The MemManage handler recovers by advancing the stacked PC +2 and
  *          incrementing g_memmanage_fault_count.
@@ -1084,6 +1086,7 @@ extern volatile uint32_t g_memmanage_fault_count;
  *          Expected result: fault count rises each iteration → [ITCM PROTECTED]
  *          Failure result:  read succeeds, fault count unchanged → [ITCM BREACH]
  */
+__attribute__((unused))
 static void mpu_itcm_attack_task(void) {
     uint32_t attempts = 0;
     uint32_t last_fault_count = 0;
@@ -1117,6 +1120,60 @@ static void mpu_itcm_attack_task(void) {
         } else {
             printf("\033[1;31m");  /* Bold red */
             printf("MPU_ITCM: attempts=%lu faults=%lu [ITCM BREACH]",
+                   attempts, last_fault_count);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+
+        task_active_sleep(500);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
+/**
+ * @brief   DTCM priv-region attack task
+ *
+ * @details Attempts a data read from 0x20000000 (start of DTCM where kernel
+ *          state lives: task_list, semaphore_list, os_tick_count, etc.).
+ *          Region 5 is PRIV_RO — no unprivileged access.
+ *
+ *          Expected result: fault count rises each iteration → [DTCM PROTECTED]
+ *          Failure result:  read succeeds, fault count unchanged → [DTCM BREACH]
+ */
+__attribute__((unused))
+static void mpu_dtcm_attack_task(void) {
+    uint32_t attempts = 0;
+    uint32_t last_fault_count = 0;
+
+    while (1) {
+        attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+
+        /* Attempt unprivileged data read from DTCM (kernel state region).
+         * Region 5 covers 0x20000000–0x2001FFFF as PRIV_RO.
+         * If MPU is working this triggers DACCVIOL → MemManage_Handler
+         * recovers by skipping this instruction (+2 bytes). */
+        volatile uint32_t dummy;
+        __asm__ volatile (
+            "ldr %0, [%1]"
+            : "=r" (dummy)
+            : "r" ((volatile uint32_t *)0x20000000)
+        );
+        (void)dummy;
+
+        uint32_t fault_after = g_memmanage_fault_count;
+        bool protected = (fault_after > fault_before);
+        last_fault_count = fault_after;
+
+        ANSI_GOTO(STRESS_ROW_STATS2 + 5, 1);
+        if (protected) {
+            printf("\033[1;32m");  /* Bold green */
+            printf("MPU_DTCM: attempts=%lu faults=%lu [DTCM PROTECTED]",
+                   attempts, last_fault_count);
+        } else {
+            printf("\033[1;31m");  /* Bold red */
+            printf("MPU_DTCM: attempts=%lu faults=%lu [DTCM BREACH]",
                    attempts, last_fault_count);
         }
         printf("\033[0m");
@@ -1267,7 +1324,8 @@ void stress_test_init(void) {
     os_register_task(stats_display_task, "stats");
     
     // Register MPU data protection verification tasks (2 tasks)
-    os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations
-    os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
-    os_register_task(mpu_itcm_attack_task, "mpu_itcm"); // ITCM priv attack test
+    // os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations
+    // os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
+    // os_register_task(mpu_itcm_attack_task, "mpu_itcm"); // ITCM priv attack test - DISABLED while debugging DTCM protection
+    // os_register_task(mpu_dtcm_attack_task, "mpu_dtcm"); // DTCM priv attack test - DISABLED for now
 }

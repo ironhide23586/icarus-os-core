@@ -30,10 +30,9 @@
 /**
  * @brief Privileged implementation of pipe_init
  * @note  Internal function - use pipe_init() wrapper
+ * @note  Runs in SVC handler — already atomic, no critical section needed
  */
-bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
-    __enter_critical();
-
+ITCM_FUNC_PRIV bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
     if (pipe_idx < ICARUS_MAX_MESSAGE_QUEUES &&
         pipe_capacity_bytes > 0 &&
         pipe_capacity_bytes <= ICARUS_MAX_MESSAGE_BYTES) {
@@ -50,12 +49,10 @@ bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
                 message_pipe_list[pipe_idx]->buffer[i] = 0;
             }
 
-            __exit_critical();
             return true;
         }
     }
 
-    __exit_critical();
     return false;
 }
 
@@ -85,20 +82,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t *message,
         task_active_sleep(1);
     }
 
-    enter_critical();
-
-    for (uint8_t i = 0; i < message_bytes; i++) {
-        message_pipe_list[pipe_idx]->buffer[
-            message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
-        message_pipe_list[pipe_idx]->enqueue_idx =
-            (uint8_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1) %
-            message_pipe_list[pipe_idx]->max_count;
-        message_pipe_list[pipe_idx]->count++;
-    }
-
-    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
-
+    pipe_write_bytes(pipe_idx, message, message_bytes);
     return true;
 }
 
@@ -128,20 +112,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
         task_active_sleep(1);
     }
 
-    enter_critical();
-
-    for (uint8_t i = 0; i < message_bytes; i++) {
-        message[i] = message_pipe_list[pipe_idx]->buffer[
-            message_pipe_list[pipe_idx]->dequeue_idx];
-        message_pipe_list[pipe_idx]->dequeue_idx =
-            (uint8_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1) %
-            message_pipe_list[pipe_idx]->max_count;
-        message_pipe_list[pipe_idx]->count--;
-    }
-
-    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
-    exit_critical();
-
+    pipe_read_bytes(pipe_idx, message, message_bytes);
     return true;
 }
 
@@ -149,7 +120,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
  * @brief Privileged implementation of pipe_get_count
  * @note  Internal function - use pipe_get_count() wrapper
  */
-uint8_t __pipe_get_count(uint8_t pipe_idx) {
+ITCM_FUNC_PRIV uint8_t __pipe_get_count(uint8_t pipe_idx) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
@@ -161,7 +132,7 @@ uint8_t __pipe_get_count(uint8_t pipe_idx) {
  * @brief Privileged implementation of pipe_get_max_count
  * @note  Internal function - use pipe_get_max_count() wrapper
  */
-uint8_t __pipe_get_max_count(uint8_t pipe_idx) {
+ITCM_FUNC_PRIV uint8_t __pipe_get_max_count(uint8_t pipe_idx) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
@@ -175,7 +146,7 @@ uint8_t __pipe_get_max_count(uint8_t pipe_idx) {
  *        Used by __pipe_enqueue spin loop to avoid direct DTCM reads
  *        from unprivileged thread mode once DTCM is priv-only.
  */
-bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
+ITCM_FUNC_PRIV bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return false;
@@ -189,10 +160,56 @@ bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
  * @note  Returns true if engaged and count >= message_bytes
  *        Used by __pipe_dequeue spin loop.
  */
-bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
+ITCM_FUNC_PRIV bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return false;
     }
     return message_pipe_list[pipe_idx]->count >= message_bytes;
+}
+
+/**
+ * @brief Privileged write gate: write bytes to pipe buffer
+ * @note  Called after pipe_can_enqueue() spin loop exits
+ *        Runs in privileged SVC handler — already atomic, no critical section needed
+ */
+ITCM_FUNC_PRIV void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged) {
+        return;
+    }
+
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message_pipe_list[pipe_idx]->buffer[
+            message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
+        message_pipe_list[pipe_idx]->enqueue_idx =
+            (uint8_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count++;
+    }
+
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
+}
+
+/**
+ * @brief Privileged write gate: read bytes from pipe buffer
+ * @note  Called after pipe_can_dequeue() spin loop exits
+ *        Runs in privileged SVC handler — already atomic, no critical section needed
+ */
+ITCM_FUNC_PRIV void __pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
+    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
+        !message_pipe_list[pipe_idx]->engaged) {
+        return;
+    }
+
+    for (uint8_t i = 0; i < message_bytes; i++) {
+        message[i] = message_pipe_list[pipe_idx]->buffer[
+            message_pipe_list[pipe_idx]->dequeue_idx];
+        message_pipe_list[pipe_idx]->dequeue_idx =
+            (uint8_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count;
+        message_pipe_list[pipe_idx]->count--;
+    }
+
+    message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
 }

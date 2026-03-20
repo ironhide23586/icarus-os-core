@@ -84,6 +84,21 @@ const char* os_get_current_task_name(void);
  */
 uint32_t os_get_task_ticks_remaining(void);
 
+/**
+ * @brief Get task name by index (safe from unprivileged mode)
+ * @param task_idx Task index (0 to num_created_tasks-1)
+ * @return Pointer to task name string, or NULL if invalid index
+ * @note  Uses SVC to read task_list from DTCM in privileged mode
+ */
+const char* os_get_task_name(uint8_t task_idx);
+
+/**
+ * @brief Get number of created tasks (safe from unprivileged mode)
+ * @return Number of tasks registered with os_register_task()
+ * @note  Uses SVC to read num_created_tasks from DTCM in privileged mode
+ */
+uint8_t os_get_num_created_tasks(void);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -96,6 +111,8 @@ uint32_t __os_get_tick_count(void);
 uint8_t __os_get_running_task_count(void);
 const char* __os_get_current_task_name(void);
 uint32_t __os_get_task_ticks_remaining(void);
+const char* __os_get_task_name(uint8_t task_idx);
+uint8_t __os_get_num_created_tasks(void);
 
 #ifdef __cplusplus
 }

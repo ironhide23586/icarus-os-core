@@ -71,6 +71,10 @@ uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
 bool sem_can_feed(uint8_t semaphore_idx);
 bool sem_can_consume(uint8_t semaphore_idx);
 
+/* Write gate wrappers — modify kernel state via SVC (safe with DTCM priv-only) */
+void sem_increment(uint8_t semaphore_idx);
+void sem_decrement(uint8_t semaphore_idx);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -82,6 +86,8 @@ uint32_t __semaphore_get_count(uint8_t semaphore_idx);
 uint32_t __semaphore_get_max_count(uint8_t semaphore_idx);
 bool __sem_can_feed(uint8_t semaphore_idx);
 bool __sem_can_consume(uint8_t semaphore_idx);
+void __sem_increment(uint8_t semaphore_idx);
+void __sem_decrement(uint8_t semaphore_idx);
 
 #ifdef __cplusplus
 }

@@ -83,7 +83,9 @@ static uint32_t stack_pool[ICARUS_MAX_TASKS][ICARUS_STACK_WORDS];
  * ========================================================================= */
 
 static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS];
-static uint16_t data_pool_word_offsets[ICARUS_MAX_TASKS];
+
+/* Data pool allocation offsets — kernel metadata, protected in DTCM */
+DTCM_DATA_PRIV static uint16_t data_pool_word_offsets[ICARUS_MAX_TASKS];
 
 /* ============================================================================
  * EXTERNAL ASSEMBLY FUNCTIONS
@@ -99,7 +101,7 @@ extern void start_cold_task(icarus_task_t *task);
  * @brief Privileged implementation of enter_critical
  * @note  Internal function - use enter_critical() wrapper
  */
-void __enter_critical(void)
+ITCM_FUNC_PRIV void __enter_critical(void)
 {
     scheduler_enabled = false;
     critical_stack_depth++;
@@ -109,7 +111,7 @@ void __enter_critical(void)
  * @brief Privileged implementation of exit_critical
  * @note  Internal function - use exit_critical() wrapper
  */
-void __exit_critical(void)
+ITCM_FUNC_PRIV void __exit_critical(void)
 {
     if (--critical_stack_depth == 0) {
         scheduler_enabled = true;
@@ -120,7 +122,7 @@ void __exit_critical(void)
  * INTERNAL HELPER FUNCTIONS
  * ========================================================================= */
 
-static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
+static inline ITCM_FUNC_PRIV void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
                               bool should_engage)
 {
     semaphore_list[semaphore_idx]->count = semaphore_count;
@@ -129,7 +131,7 @@ static inline void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
     semaphore_list[semaphore_idx]->engaged = should_engage;
 }
 
-static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
+static inline ITCM_FUNC_PRIV void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
                                bool should_engage)
 {
     message_pipe_list[message_pipe_idx]->count = 0;
@@ -150,7 +152,10 @@ static inline void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
 
 static void os_idle_task(void)
 {
-    display_init();
+    // Simplified display_init for DTCM protection testing
+    printf("ICARUS OS - DTCM Protection Test\r\n");
+    fflush(stdout);
+    
     while (1) {
         os_yield();
     }
@@ -193,7 +198,7 @@ static void os_heartbeat_task(void)
  * @brief Privileged implementation of os_init
  * @note  Internal function - use os_init() wrapper
  */
-void __os_init(void)
+ITCM_FUNC_PRIV void __os_init(void)
 {
     uint8_t i;
 
@@ -234,7 +239,7 @@ void __os_init(void)
  * @brief Privileged implementation of os_start
  * @note  Internal function - use os_start() wrapper
  */
-void __os_start(void)
+ITCM_FUNC_PRIV void __os_start(void)
 {
     if (num_created_tasks == 0 || num_created_tasks > ICARUS_MAX_TASKS) {
         return;
@@ -250,7 +255,7 @@ void __os_start(void)
  * @brief Privileged implementation of kernel_get_stack
  * @note  Internal function - use kernel_get_stack() wrapper
  */
-uint32_t* __kernel_get_stack(uint8_t task_idx)
+ITCM_FUNC_PRIV uint32_t* __kernel_get_stack(uint8_t task_idx)
 {
     return stack_pool[task_idx];
 }
@@ -263,7 +268,7 @@ uint32_t* __kernel_get_stack(uint8_t task_idx)
  * @brief Privileged implementation of kernel_get_data
  * @note  Internal function - use kernel_get_data() wrapper
  */
-uint32_t* __kernel_get_data(uint8_t task_idx)
+ITCM_FUNC_PRIV uint32_t* __kernel_get_data(uint8_t task_idx)
 {
     return data_pool[task_idx];
 }
@@ -274,14 +279,38 @@ uint32_t* __kernel_get_data(uint8_t task_idx)
 /**
  * @brief Privileged implementation of kernel_protected_data
  * @note  Internal function - use kernel_protected_data() wrapper
+ * @note  Runs in SVC handler — already atomic, no critical section needed
  */
-void* __kernel_protected_data(uint16_t num_words) {
+ITCM_FUNC_PRIV void* __kernel_protected_data(uint16_t num_words) {
     if (data_pool_word_offsets[current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
         return NULL;
-    __enter_critical();
     uint16_t current_offset = data_pool_word_offsets[current_task_index];
     data_pool_word_offsets[current_task_index] += num_words;
     uint32_t *ret_ptr = &data_pool[current_task_index][current_offset];
-    __exit_critical();
     return (void*) ret_ptr;
+}
+
+/* ============================================================================
+ * TASK METADATA READ GATES (for display/diagnostics)
+ * ========================================================================= */
+
+/**
+ * @brief Privileged implementation of os_get_task_name
+ * @note  Internal function - use os_get_task_name() wrapper
+ * @note  Runs in SVC handler — reads task_list from DTCM in privileged mode
+ */
+ITCM_FUNC_PRIV const char* __os_get_task_name(uint8_t task_idx) {
+    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+        return NULL;
+    }
+    return task_list[task_idx]->name;
+}
+
+/**
+ * @brief Privileged implementation of os_get_num_created_tasks
+ * @note  Internal function - use os_get_num_created_tasks() wrapper
+ * @note  Runs in SVC handler — reads num_created_tasks from DTCM in privileged mode
+ */
+ITCM_FUNC_PRIV uint8_t __os_get_num_created_tasks(void) {
+    return num_created_tasks;
 }

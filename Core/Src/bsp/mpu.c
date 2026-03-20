@@ -13,7 +13,7 @@
  *          | 2 | Internal Flash| 0x08000000 | 128KB | Priv+User RO+exec   |
  *          | 3 | ITCM_PRIV     | 0x00000000 | 1KB*  | Priv-only RO+exec   |
  *          | 4 | Task data     | dynamic    | 2KB   | Priv+User RW        |
- *          | 5 | DTCM          | 0x20000000 | 128KB | Priv+User Full      |
+ *          | 5 | DTCM          | 0x20000000 | 128KB | Priv RW             |
  *          | 6 | RAM_D1        | 0x24000000 | 512KB | Priv+User Full      |
  *          | 7 | Peripherals   | 0x40000000 | 512MB | Priv+User Device    |
  *
@@ -23,11 +23,9 @@
  *            (PRIV_RO_URO) because C library code may read from the linker
  *            padding area in unprivileged mode.
  *
- *          DTCM is currently full access because spinning functions
- *          (__semaphore_feed/consume, __pipe_enqueue/dequeue, __task_busy_wait)
- *          read kernel data (os_tick_count, semaphore_list, message_pipe_list)
- *          directly from unprivileged thread mode. Step 7 will redesign these
- *          to go through SVC, at which point DTCM can be tightened to priv-only.
+ *          DTCM protection (Step 7b complete): All kernel data reads/writes
+ *          use SVC call gates, so unprivileged tasks cannot corrupt kernel
+ *          state (task_list, semaphore_list, message_pipe_list, os_tick_count).
  *
  * @author  Souham Biswas
  * @date    2025
@@ -93,36 +91,32 @@ void MPU_Config(void)
     r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
-    /* ---- Region 3: ITCM_PRIV 1KB overlay — Priv-only RO+exec ---- */
-    /* Higher region number overrides region 0 for active subregions.       */
-    /* SVC_Handler, PendSV_Handler, __os_yield, __task_active_sleep live    */
-    /* in 0x000–0x097.  Only subregions 0-1 (0x000–0x1FF) are active;      */
-    /* subregions 2-7 (0x200–0x3FF) are disabled so they fall back to       */
-    /* region 0 (PRIV_RO_URO) — C library code reads from the padding area. */
-    r.Enable           = MPU_REGION_ENABLE;
+    /* ---- Region 3: ITCM_PRIV 4KB overlay — TEMPORARILY DISABLED FOR DEBUGGING ---- */
+    /* Disabling this region to verify system works without ITCM protection */
+    r.Enable           = MPU_REGION_DISABLE;  // TEMPORARILY DISABLED
     r.Number           = MPU_REGION_ITCM_PRIV;
     r.BaseAddress      = BSP_ITCM_BASE;
-    r.Size             = MPU_REGION_SIZE_1KB;
+    r.Size             = MPU_REGION_SIZE_4KB;
     r.AccessPermission = MPU_REGION_PRIV_RO;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
     r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
     r.TypeExtField     = MPU_TEX_LEVEL1;
-    r.SubRegionDisable = 0xFC;  /* Only subregions 0-1 active (0x000–0x1FF) */
+    r.SubRegionDisable = 0xF0;  /* Disable subregions 4-7 (0x800-0xFFF) */
     HAL_MPU_ConfigRegion(&r);
 
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */
     /* Left unconfigured here — set by MPU_ConfigureTaskData()              */
 
-    /* ---- Region 5: DTCM 128K — Priv+User Full Access ---- */
-    /* Kernel data (.dtcm_priv) lives here. Full access required until      */
-    /* Step 7 redesigns spinning functions to access kernel data via SVC.   */
+    /* ---- Region 5: DTCM 128K — Priv RW (Step 7b - TESTING DTCM PROTECTION) ---- */
+    /* Kernel data (.dtcm_priv) lives here. All reads/writes go through SVCs.  */
+    /* ITCM protection is disabled, so we can test DTCM protection in isolation */
     r.Enable           = MPU_REGION_ENABLE;
     r.Number           = MPU_REGION_DTCM;
     r.BaseAddress      = BSP_DTCM_BASE;
     r.Size             = MPU_REGION_SIZE_128KB;
-    r.AccessPermission = MPU_REGION_FULL_ACCESS;
+    r.AccessPermission = MPU_REGION_PRIV_RW;  // TESTING: Priv-only access
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;

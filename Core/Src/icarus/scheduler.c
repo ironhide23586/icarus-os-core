@@ -46,7 +46,7 @@ ITCM_FUNC_PRIV uint32_t __os_get_tick_count(void) {
  * @brief Privileged implementation of os_get_running_task_count
  * @note  Internal function - use os_get_running_task_count() wrapper
  */
-uint8_t __os_get_running_task_count(void) {
+ITCM_FUNC_PRIV uint8_t __os_get_running_task_count(void) {
     return running_task_count;
 }
 
@@ -54,7 +54,7 @@ uint8_t __os_get_running_task_count(void) {
  * @brief Privileged implementation of os_get_current_task_name
  * @note  Internal function - use os_get_current_task_name() wrapper
  */
-const char *__os_get_current_task_name(void) {
+ITCM_FUNC_PRIV const char *__os_get_current_task_name(void) {
     if (current_task_index < num_created_tasks &&
         task_list[current_task_index] != NULL) {
         return task_list[current_task_index]->name;
@@ -66,7 +66,7 @@ const char *__os_get_current_task_name(void) {
  * @brief Privileged implementation of os_get_task_ticks_remaining
  * @note  Internal function - use os_get_task_ticks_remaining() wrapper
  */
-uint32_t __os_get_task_ticks_remaining(void) {
+ITCM_FUNC_PRIV uint32_t __os_get_task_ticks_remaining(void) {
     return current_task_ticks_remaining;
 }
 
@@ -100,7 +100,7 @@ ITCM_FUNC_PRIV uint32_t __task_active_sleep(uint32_t ticks) {
  * @note  Internal function - use task_blocking_sleep() wrapper
  * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
-uint32_t __task_blocking_sleep(uint32_t ticks) {
+ITCM_FUNC_PRIV uint32_t __task_blocking_sleep(uint32_t ticks) {
     enter_critical();
     uint32_t delta = task_busy_wait(ticks);
     exit_critical();
@@ -112,7 +112,7 @@ uint32_t __task_blocking_sleep(uint32_t ticks) {
  * @note  Internal function - use task_busy_wait() wrapper
  * @note  Uses os_get_tick_count() SVC gate — safe with DTCM priv-only
  */
-uint32_t __task_busy_wait(uint32_t ticks) {
+ITCM_FUNC_PRIV uint32_t __task_busy_wait(uint32_t ticks) {
     uint32_t st = os_get_tick_count();
     uint32_t delta;
 

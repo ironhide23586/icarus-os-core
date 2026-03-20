@@ -73,16 +73,26 @@ extern "C" {
 #define SVC_PIPE_CAN_ENQUEUE            31  /* bool: free >= bytes && engaged */
 #define SVC_PIPE_CAN_DEQUEUE            32  /* bool: count >= bytes && engaged*/
 
+/* Write gates for spinning functions — modify kernel state from priv mode   */
+#define SVC_SEM_INCREMENT               33  /* ++count, update tick          */
+#define SVC_SEM_DECREMENT               34  /* --count, update tick          */
+#define SVC_PIPE_WRITE_BYTES            35  /* write to buffer, update tick  */
+#define SVC_PIPE_READ_BYTES             36  /* read from buffer, update tick */
+
+/* Read gates for display/diagnostics — read task metadata from priv mode    */
+#define SVC_GET_TASK_NAME               37  /* const char*: task_list[i]->name */
+#define SVC_GET_NUM_TASKS               38  /* uint8_t: num_created_tasks    */
+
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_PIPE_CAN_DEQUEUE <= 255,
+_Static_assert(SVC_GET_NUM_TASKS <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-_Static_assert(SVC_PIPE_CAN_DEQUEUE >= SVC_KERNEL_PROTECTED_DATA,
-               "SVC_PIPE_CAN_DEQUEUE must be >= all other SVC numbers");
+_Static_assert(SVC_GET_NUM_TASKS >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_GET_NUM_TASKS must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)
