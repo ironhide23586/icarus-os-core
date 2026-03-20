@@ -15,6 +15,7 @@
 
 #include "icarus/kernel.h"
 #include "icarus/task.h"
+#include "icarus/scheduler.h"
 #include "bsp/display.h"
 #include "bsp/led.h"
 
@@ -168,7 +169,7 @@ static void os_heartbeat_task(void)
 #endif
 
     while (1) {
-        if (os_running) {
+        if (os_is_running()) {  // Use SVC wrapper instead of direct DTCM access
 #if ICARUS_ENABLE_HEARTBEAT_VIS
             display_render_banner(ROW_HEARTBEAT, task_name, true);
             task_active_sleep(8);
@@ -326,4 +327,13 @@ ITCM_FUNC_PRIV const char* __os_get_task_name(uint8_t task_idx) {
  */
 ITCM_FUNC_PRIV uint8_t __os_get_num_created_tasks(void) {
     return num_created_tasks;
+}
+
+/**
+ * @brief Privileged implementation of os_is_running
+ * @note  Internal function - use os_is_running() wrapper
+ * @note  Runs in SVC handler — reads os_running from DTCM in privileged mode
+ */
+ITCM_FUNC_PRIV uint8_t __os_is_running(void) {
+    return os_running;
 }

@@ -82,6 +82,7 @@ extern "C" {
 /* Read gates for display/diagnostics — read task metadata from priv mode    */
 #define SVC_GET_TASK_NAME               37  /* const char*: task_list[i]->name */
 #define SVC_GET_NUM_TASKS               38  /* uint8_t: num_created_tasks    */
+#define SVC_OS_IS_RUNNING               39  /* uint8_t: os_running flag      */
 
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION

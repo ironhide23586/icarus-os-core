@@ -79,220 +79,220 @@
             <location file="../Core/Src/stress_test.c" line="0" column="0"/>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;protected&apos; is always false" verbose="Condition &apos;protected&apos; is always false" cwe="570" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1116" column="13" info="Condition &apos;protected&apos; is always false"/>
-            <location file="../Core/Src/stress_test.c" line="1112" column="39" info="Assignment &apos;protected=fault_after&gt;fault_before&apos;, assigned value is 0"/>
-            <location file="../Core/Src/stress_test.c" line="1096" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
-            <location file="../Core/Src/stress_test.c" line="1111" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1135" column="13" info="Condition &apos;protected&apos; is always false"/>
+            <location file="../Core/Src/stress_test.c" line="1131" column="39" info="Assignment &apos;protected=fault_after&gt;fault_before&apos;, assigned value is 0"/>
+            <location file="../Core/Src/stress_test.c" line="1115" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1130" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;protected&apos; is always false" verbose="Condition &apos;protected&apos; is always false" cwe="570" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1170" column="13" info="Condition &apos;protected&apos; is always false"/>
-            <location file="../Core/Src/stress_test.c" line="1166" column="39" info="Assignment &apos;protected=fault_after&gt;fault_before&apos;, assigned value is 0"/>
-            <location file="../Core/Src/stress_test.c" line="1151" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
-            <location file="../Core/Src/stress_test.c" line="1165" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1189" column="13" info="Condition &apos;protected&apos; is always false"/>
+            <location file="../Core/Src/stress_test.c" line="1185" column="39" info="Assignment &apos;protected=fault_after&gt;fault_before&apos;, assigned value is 0"/>
+            <location file="../Core/Src/stress_test.c" line="1170" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1184" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="798" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="817" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="798" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="817" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="800" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="819" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="800" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="819" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="802" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="821" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="802" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="821" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="811" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="830" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="811" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="830" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="811" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="830" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 4) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 4) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="811" column="9"/>
+            <location file="../Core/Src/stress_test.c" line="830" column="9"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="826" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="845" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="826" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="845" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="826" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="845" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 4) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 4) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="826" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="845" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="929" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="948" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="929" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="948" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="933" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="952" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1055" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1074" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1055" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1074" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1055" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1074" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1059" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1078" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1059" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1078" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1118" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1137" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1118" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1137" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1122" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1141" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1122" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1141" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1172" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1191" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1172" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1191" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1176" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1195" column="13"/>
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1176" column="13"/>
+            <location file="../Core/Src/stress_test.c" line="1195" column="13"/>
         </error>
         <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data1==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data1." verbose="Either the condition &apos;mpu_data1==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data1." cwe="476" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="890" column="9" info="Null pointer dereference"/>
-            <location file="../Core/Src/stress_test.c" line="875" column="19" info="Assuming that condition &apos;mpu_data1==NULL&apos; is not redundant"/>
+            <location file="../Core/Src/stress_test.c" line="909" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="894" column="19" info="Assuming that condition &apos;mpu_data1==NULL&apos; is not redundant"/>
             <symbol>mpu_data1</symbol>
         </error>
         <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data2==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data2." verbose="Either the condition &apos;mpu_data2==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data2." cwe="476" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="891" column="9" info="Null pointer dereference"/>
-            <location file="../Core/Src/stress_test.c" line="875" column="40" info="Assuming that condition &apos;mpu_data2==NULL&apos; is not redundant"/>
+            <location file="../Core/Src/stress_test.c" line="910" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="894" column="40" info="Assuming that condition &apos;mpu_data2==NULL&apos; is not redundant"/>
             <symbol>mpu_data2</symbol>
         </error>
         <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data3==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data3." verbose="Either the condition &apos;mpu_data3==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data3." cwe="476" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="894" column="9" info="Null pointer dereference"/>
-            <location file="../Core/Src/stress_test.c" line="875" column="61" info="Assuming that condition &apos;mpu_data3==NULL&apos; is not redundant"/>
+            <location file="../Core/Src/stress_test.c" line="913" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="894" column="61" info="Assuming that condition &apos;mpu_data3==NULL&apos; is not redundant"/>
             <symbol>mpu_data3</symbol>
         </error>
         <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." verbose="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." cwe="476" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1010" column="9" info="Null pointer dereference"/>
-            <location file="../Core/Src/stress_test.c" line="1004" column="18" info="Assuming that condition &apos;own_data==NULL&apos; is not redundant"/>
+            <location file="../Core/Src/stress_test.c" line="1029" column="9" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="1023" column="18" info="Assuming that condition &apos;own_data==NULL&apos; is not redundant"/>
             <symbol>own_data</symbol>
         </error>
         <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." verbose="Either the condition &apos;own_data==NULL&apos; is redundant or there is possible null pointer dereference: own_data." cwe="476" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1043" column="17" info="Null pointer dereference"/>
-            <location file="../Core/Src/stress_test.c" line="1004" column="18" info="Assuming that condition &apos;own_data==NULL&apos; is not redundant"/>
+            <location file="../Core/Src/stress_test.c" line="1062" column="17" info="Null pointer dereference"/>
+            <location file="../Core/Src/stress_test.c" line="1023" column="18" info="Assuming that condition &apos;own_data==NULL&apos; is not redundant"/>
             <symbol>own_data</symbol>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="The comparison &apos;successful_attacks &gt; 0&apos; is always false." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1053" column="32"/>
-            <location file="../Core/Src/stress_test.c" line="995" column="35" info="&apos;successful_attacks&apos; is assigned value &apos;0&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1072" column="32"/>
+            <location file="../Core/Src/stress_test.c" line="1014" column="35" info="&apos;successful_attacks&apos; is assigned value &apos;0&apos; here."/>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="The comparison &apos;fault_after &gt; fault_before&apos; is always false because &apos;fault_after&apos; and &apos;fault_before&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1112" column="39"/>
-            <location file="../Core/Src/stress_test.c" line="1096" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
-            <location file="../Core/Src/stress_test.c" line="1111" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1131" column="39"/>
+            <location file="../Core/Src/stress_test.c" line="1115" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1130" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="The comparison &apos;fault_after &gt; fault_before&apos; is always false because &apos;fault_after&apos; and &apos;fault_before&apos; represent the same value." verbose="Finding the same expression on both sides of an operator is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1166" column="39"/>
-            <location file="../Core/Src/stress_test.c" line="1151" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
-            <location file="../Core/Src/stress_test.c" line="1165" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1185" column="39"/>
+            <location file="../Core/Src/stress_test.c" line="1170" column="33" info="&apos;fault_before&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
+            <location file="../Core/Src/stress_test.c" line="1184" column="32" info="&apos;fault_after&apos; is assigned value &apos;g_memmanage_fault_count&apos; here."/>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;send_tick&apos; can be reduced." verbose="The scope of the variable &apos;send_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="392" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="400" column="14"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;recv_tick&apos; can be reduced." verbose="The scope of the variable &apos;recv_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="441" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="450" column="14"/>
             <symbol>recv_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;send_tick&apos; can be reduced." verbose="The scope of the variable &apos;send_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="488" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="498" column="14"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;send_tick&apos; can be reduced." verbose="The scope of the variable &apos;send_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="517" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="528" column="14"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;send_tick&apos; can be reduced." verbose="The scope of the variable &apos;send_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="546" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="558" column="14"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;recv_tick&apos; can be reduced." verbose="The scope of the variable &apos;recv_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="580" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="593" column="14"/>
             <symbol>recv_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;send_tick&apos; can be reduced." verbose="The scope of the variable &apos;send_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="622" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="636" column="14"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;recv_tick&apos; can be reduced." verbose="The scope of the variable &apos;recv_tick&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="662" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="677" column="14"/>
             <symbol>recv_tick</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;last_fault_count&apos; can be reduced." verbose="The scope of the variable &apos;last_fault_count&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1092" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="1111" column="14"/>
             <symbol>last_fault_count</symbol>
         </error>
         <error id="variableScope" severity="style" msg="The scope of the variable &apos;last_fault_count&apos; can be reduced." verbose="The scope of the variable &apos;last_fault_count&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="1147" column="14"/>
+            <location file="../Core/Src/stress_test.c" line="1166" column="14"/>
             <symbol>last_fault_count</symbol>
         </error>
         <error id="constVariable" severity="style" msg="Variable &apos;sleep_times&apos; can be declared as const array" verbose="Variable &apos;sleep_times&apos; can be declared as const array" cwe="398" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="736" column="14" info="Variable &apos;sleep_times&apos; can be declared as const array"/>
+            <location file="../Core/Src/stress_test.c" line="753" column="14" info="Variable &apos;sleep_times&apos; can be declared as const array"/>
             <symbol>sleep_times</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;send_tick&apos; is assigned a value that is never used." verbose="Variable &apos;send_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="392" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="400" column="24"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;recv_tick&apos; is assigned a value that is never used." verbose="Variable &apos;recv_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="441" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="450" column="24"/>
             <symbol>recv_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;send_tick&apos; is assigned a value that is never used." verbose="Variable &apos;send_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="488" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="498" column="24"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;send_tick&apos; is assigned a value that is never used." verbose="Variable &apos;send_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="517" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="528" column="24"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;send_tick&apos; is assigned a value that is never used." verbose="Variable &apos;send_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="546" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="558" column="24"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;recv_tick&apos; is assigned a value that is never used." verbose="Variable &apos;recv_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="580" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="593" column="24"/>
             <symbol>recv_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;send_tick&apos; is assigned a value that is never used." verbose="Variable &apos;send_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="622" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="636" column="24"/>
             <symbol>send_tick</symbol>
         </error>
         <error id="unreadVariable" severity="style" msg="Variable &apos;recv_tick&apos; is assigned a value that is never used." verbose="Variable &apos;recv_tick&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
-            <location file="../Core/Src/stress_test.c" line="662" column="24"/>
+            <location file="../Core/Src/stress_test.c" line="677" column="24"/>
             <symbol>recv_tick</symbol>
         </error>
         <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/bsp/display.c">

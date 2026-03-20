@@ -99,6 +99,13 @@ const char* os_get_task_name(uint8_t task_idx);
  */
 uint8_t os_get_num_created_tasks(void);
 
+/**
+ * @brief Check if OS is running (safe from unprivileged mode)
+ * @return 1 if OS is running, 0 otherwise
+ * @note  Uses SVC to read os_running from DTCM in privileged mode
+ */
+uint8_t os_is_running(void);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -113,6 +120,7 @@ const char* __os_get_current_task_name(void);
 uint32_t __os_get_task_ticks_remaining(void);
 const char* __os_get_task_name(uint8_t task_idx);
 uint8_t __os_get_num_created_tasks(void);
+uint8_t __os_is_running(void);
 
 #ifdef __cplusplus
 }

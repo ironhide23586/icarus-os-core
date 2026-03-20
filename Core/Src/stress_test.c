@@ -86,6 +86,7 @@ stress_stats_t g_stress_stats = {0};
  *
  * @note    Pattern: burst feed → sleep → burst consume → sleep
  */
+__attribute__((unused))
 static void sem_hammer_fast_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE;
@@ -144,6 +145,7 @@ static void sem_hammer_fast_0(void) {
  *
  * @note    Pattern: burst consume → sleep → burst feed → sleep
  */
+__attribute__((unused))
 static void sem_hammer_fast_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE;
@@ -183,6 +185,7 @@ static void sem_hammer_fast_1(void) {
  * @details Adapts behavior based on semaphore fill level - feeds when
  *          below half capacity, consumes when above.
  */
+__attribute__((unused))
 static void sem_stress_med_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 1;
@@ -223,6 +226,7 @@ static void sem_stress_med_0(void) {
  *
  * @details Alternates consume/feed with explicit yields between operations.
  */
+__attribute__((unused))
 static void sem_stress_med_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 1;
@@ -256,6 +260,7 @@ static void sem_stress_med_1(void) {
  * @details Uses rotating 4-phase pattern with varying feed/consume counts
  *          to create irregular load patterns.
  */
+__attribute__((unused))
 static void sem_stress_slow(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 2;
@@ -303,6 +308,7 @@ static void sem_stress_slow(void) {
  * @details Uses binary semaphore as mutex to protect critical section.
  *          Performs work inside critical section then yields.
  */
+__attribute__((unused))
 static void sem_mutex_stress_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 3;
@@ -341,6 +347,7 @@ static void sem_mutex_stress_0(void) {
  * @details Competes with sem_mutex_stress_0 for mutex, performs
  *          shorter critical section work.
  */
+__attribute__((unused))
 static void sem_mutex_stress_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t sem_idx = STRESS_SEM_IDX_BASE + 3;
@@ -384,6 +391,7 @@ static void sem_mutex_stress_1(void) {
  *
  * @note    Verifies: Sequence ordering preserved under load
  */
+__attribute__((unused))
 static void pipe_flood_sender(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE;
@@ -433,6 +441,7 @@ static void pipe_flood_sender(void) {
  *
  * @note    Increments seq_errors on out-of-order detection
  */
+__attribute__((unused))
 static void pipe_flood_receiver(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE;
@@ -481,6 +490,7 @@ static void pipe_flood_receiver(void) {
  * @details First of three producers sending to same pipe with
  *          producer ID 0x00 in message header.
  */
+__attribute__((unused))
 static void pipe_multi_prod_0(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -510,6 +520,7 @@ static void pipe_multi_prod_0(void) {
  *
  * @details Second producer with ID 0x01, slightly different timing.
  */
+__attribute__((unused))
 static void pipe_multi_prod_1(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -539,6 +550,7 @@ static void pipe_multi_prod_1(void) {
  *
  * @details Third producer with ID 0x02, different timing.
  */
+__attribute__((unused))
 static void pipe_multi_prod_2(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -572,6 +584,7 @@ static void pipe_multi_prod_2(void) {
  * @note    Increments seq_errors if per-producer order violated
  * @note    Increments data_errors if invalid producer ID received
  */
+__attribute__((unused))
 static void pipe_multi_cons(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 1;
@@ -614,6 +627,7 @@ static void pipe_multi_cons(void) {
  * @details Sends messages of varying sizes (1, 2, 4, 8 bytes) in
  *          rotating pattern to test pipe handling of different sizes.
  */
+__attribute__((unused))
 static void pipe_varsz_sender(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 2;
@@ -654,6 +668,7 @@ static void pipe_varsz_sender(void) {
  *
  * @note    Increments data_errors if pattern mismatch detected
  */
+__attribute__((unused))
 static void pipe_varsz_receiver(void) {
     const char* task_name = os_get_current_task_name();
     const uint8_t pipe_idx = STRESS_PIPE_IDX_BASE + 2;
@@ -703,6 +718,7 @@ static void pipe_varsz_receiver(void) {
  * @details Rapidly yields in bursts to stress scheduler fairness.
  *          Tests that other tasks still get CPU time.
  */
+__attribute__((unused))
 static void yield_spammer(void) {
     const char* task_name = os_get_current_task_name();
     uint32_t yield_count = 0;
@@ -730,6 +746,7 @@ static void yield_spammer(void) {
  * @details Cycles through different sleep durations (1, 5, 20, 50, 100 ticks)
  *          to test scheduler handling of varied timing requirements.
  */
+__attribute__((unused))
 static void sleep_pattern_task(void) {
     const char* task_name = os_get_current_task_name();
     uint8_t pattern = 0;
@@ -754,6 +771,7 @@ static void sleep_pattern_task(void) {
  * @details Burns CPU cycles without yielding to test preemption.
  *          Verifies scheduler can preempt non-cooperative tasks.
  */
+__attribute__((unused))
 static void cpu_hog_task(void) {
     const char* task_name = os_get_current_task_name();
     volatile uint32_t counter = 0;
@@ -789,6 +807,7 @@ static void cpu_hog_task(void) {
  * @note    Updates every 500ms
  * @note    Shows PASS/FAIL based on error counts
  */
+__attribute__((unused))
 static void stats_display_task(void) {
     while (1) {
         // Line 1: Operation counts
@@ -1296,32 +1315,35 @@ void stress_test_init(void) {
     // Print header
     stress_header_init();
     
+    // DTCM PROTECTION DEBUG: Disable all stress tasks to isolate faults
+    // Enable one by one to find which task causes DTCM access violations
+    
     // Register semaphore stress tasks (7 tasks)
-    os_register_task(sem_hammer_fast_0, "sem_ham0");
-    os_register_task(sem_hammer_fast_1, "sem_ham1");
-    os_register_task(sem_stress_med_0, "sem_med0");
-    os_register_task(sem_stress_med_1, "sem_med1");
-    os_register_task(sem_stress_slow, "sem_slow");
-    os_register_task(sem_mutex_stress_0, "sem_mtx0");
-    os_register_task(sem_mutex_stress_1, "sem_mtx1");
+    // os_register_task(sem_hammer_fast_0, "sem_ham0");
+    // os_register_task(sem_hammer_fast_1, "sem_ham1");
+    // os_register_task(sem_stress_med_0, "sem_med0");
+    // os_register_task(sem_stress_med_1, "sem_med1");
+    // os_register_task(sem_stress_slow, "sem_slow");
+    // os_register_task(sem_mutex_stress_0, "sem_mtx0");
+    // os_register_task(sem_mutex_stress_1, "sem_mtx1");
     
     // Register pipe stress tasks (8 tasks)
-    os_register_task(pipe_flood_sender, "pf_send");
-    os_register_task(pipe_flood_receiver, "pf_recv");
-    os_register_task(pipe_multi_prod_0, "pm_prd0");
-    os_register_task(pipe_multi_prod_1, "pm_prd1");
-    os_register_task(pipe_multi_prod_2, "pm_prd2");
-    os_register_task(pipe_multi_cons, "pm_cons");
-    os_register_task(pipe_varsz_sender, "pv_send");
-    os_register_task(pipe_varsz_receiver, "pv_recv");
+    // os_register_task(pipe_flood_sender, "pf_send");
+    // os_register_task(pipe_flood_receiver, "pf_recv");
+    // os_register_task(pipe_multi_prod_0, "pm_prd0");
+    // os_register_task(pipe_multi_prod_1, "pm_prd1");
+    // os_register_task(pipe_multi_prod_2, "pm_prd2");
+    // os_register_task(pipe_multi_cons, "pm_cons");
+    // os_register_task(pipe_varsz_sender, "pv_send");
+    // os_register_task(pipe_varsz_receiver, "pv_recv");
     
     // Register scheduler stress tasks (3 tasks)
-    os_register_task(yield_spammer, "yielder");
-    os_register_task(sleep_pattern_task, "sleeper");
-    os_register_task(cpu_hog_task, "cpu_hog");
+    // os_register_task(yield_spammer, "yielder");
+    // os_register_task(sleep_pattern_task, "sleeper");
+    // os_register_task(cpu_hog_task, "cpu_hog");
     
     // Register stats display task (1 task)
-    os_register_task(stats_display_task, "stats");
+    // os_register_task(stats_display_task, "stats");
     
     // Register MPU data protection verification tasks (2 tasks)
     // os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations

@@ -189,6 +189,9 @@ void SVC_Handler_C(uint32_t *stack_frame) {
         case SVC_GET_NUM_TASKS:
             stack_frame[0] = (uint32_t)__os_get_num_created_tasks();
             break;
+        case SVC_OS_IS_RUNNING:
+            stack_frame[0] = (uint32_t)__os_is_running();
+            break;
 
         default:
             break;
@@ -860,5 +863,26 @@ uint8_t os_get_num_created_tasks(void) {
     return result;
 #else
     return __os_get_num_created_tasks();
+#endif
+}
+
+/**
+ * @brief Check if OS is running (safe from unprivileged mode)
+ * @return 1 if OS is running, 0 otherwise
+ * @note  Safe to call from unprivileged mode once DTCM is priv-only
+ */
+uint8_t os_is_running(void) {
+#ifndef HOST_TEST
+    uint8_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_OS_IS_RUNNING)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_is_running();
 #endif
 }
