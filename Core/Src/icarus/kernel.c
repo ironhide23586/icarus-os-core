@@ -153,9 +153,9 @@ static inline ITCM_FUNC_PRIV void __init_pipe(uint8_t message_pipe_idx, uint8_t 
 static void os_idle_task(void)
 {
     // Simplified display_init for DTCM protection testing
-    printf("ICARUS OS - DTCM Protection Test\r\n");
-    fflush(stdout);
-    
+    // printf("ICARUS OS - DTCM Protection Test\r\n");
+    // fflush(stdout);
+    display_init();
     while (1) {
         os_yield();
     }
@@ -298,12 +298,25 @@ ITCM_FUNC_PRIV void* __kernel_protected_data(uint16_t num_words) {
  * @brief Privileged implementation of os_get_task_name
  * @note  Internal function - use os_get_task_name() wrapper
  * @note  Runs in SVC handler — reads task_list from DTCM in privileged mode
+ * @note  Copies name to RAM_D1 buffer to allow unprivileged access
  */
 ITCM_FUNC_PRIV const char* __os_get_task_name(uint8_t task_idx) {
+    /* Static buffer in RAM_D1 (not DTCM) for unprivileged access */
+    static char name_buffer[ICARUS_MAX_TASK_NAME_LEN];
+    
     if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
         return NULL;
     }
-    return task_list[task_idx]->name;
+    
+    /* Copy name from DTCM to RAM_D1 buffer */
+    const char* src = task_list[task_idx]->name;
+    for (uint8_t i = 0; i < ICARUS_MAX_TASK_NAME_LEN; i++) {
+        name_buffer[i] = src[i];
+        if (src[i] == '\0') break;
+    }
+    name_buffer[ICARUS_MAX_TASK_NAME_LEN - 1] = '\0';  /* Ensure null termination */
+    
+    return name_buffer;
 }
 
 /**

@@ -180,7 +180,14 @@ void MemManage_Handler(void)
     g_fault_pc_history[g_fault_pc_idx] = sp[6];
     g_fault_pc_idx = (uint8_t)((g_fault_pc_idx + 1u) % 10u);
     
-    sp[6] += 2;  /* stacked PC is at offset 6 in the exception frame */
+    /* Determine instruction length: Thumb-2 (32-bit) vs Thumb (16-bit)
+     * Thumb-2 instructions have bits [15:11] >= 0b11101 (0x1D)
+     * See ARMv7-M Architecture Reference Manual A6.3 */
+    uint16_t *pc_ptr = (uint16_t *)sp[6];
+    uint16_t instr = *pc_ptr;
+    uint8_t instr_len = ((instr & 0xF800) >= 0xE800) ? 4 : 2;
+    
+    sp[6] += instr_len;  /* stacked PC is at offset 6 in the exception frame */
 
     /* Clear the fault status bits so we can return cleanly */
     SCB->CFSR = cfsr;
