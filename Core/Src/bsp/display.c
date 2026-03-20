@@ -674,6 +674,9 @@ void display_init(void) {
     printf("\033[2K");
     printf("└──────────────────────────────────────────────────────────────┘");
 
+    // TEST: Simple message after header
+    printf("\r\nDTCM Protection Active - System Running\r\n");
+    return;  // TEMPORARY: Skip task iteration to isolate issue
 
     
     // Initialize heartbeat row (if enabled)
