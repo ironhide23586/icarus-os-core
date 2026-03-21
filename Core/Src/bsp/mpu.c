@@ -91,9 +91,9 @@ void MPU_Config(void)
     r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
-    /* ---- Region 3: ITCM_PRIV 4KB overlay — TEMPORARILY DISABLED FOR DEBUGGING ---- */
-    /* Disabling this region to verify system works without ITCM protection */
-    r.Enable           = MPU_REGION_DISABLE;  // TEMPORARILY DISABLED
+    /* ---- Region 3: ITCM_PRIV 4KB overlay — DISABLED (testing DTCM only) ---- */
+    /* Temporarily disabled to isolate DTCM protection testing */
+    r.Enable           = MPU_REGION_DISABLE;
     r.Number           = MPU_REGION_ITCM_PRIV;
     r.BaseAddress      = BSP_ITCM_BASE;
     r.Size             = MPU_REGION_SIZE_4KB;
@@ -109,14 +109,14 @@ void MPU_Config(void)
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */
     /* Left unconfigured here — set by MPU_ConfigureTaskData()              */
 
-    /* ---- Region 5: DTCM 128K — FULL ACCESS (DTCM protection disabled) ---- */
+    /* ---- Region 5: DTCM 128K — PRIV_RW (DTCM protection enabled) ---- */
     /* Kernel data (.dtcm_priv) lives here.  */
-    /* DTCM protection disabled - Step 7 work in progress */
+    /* Step 7: DTCM protection enabled - unprivileged tasks cannot access kernel data */
     r.Enable           = MPU_REGION_ENABLE;
     r.Number           = MPU_REGION_DTCM;
     r.BaseAddress      = BSP_DTCM_BASE;
     r.Size             = MPU_REGION_SIZE_128KB;
-    r.AccessPermission = MPU_REGION_FULL_ACCESS;
+    r.AccessPermission = MPU_REGION_PRIV_RW;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;

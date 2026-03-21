@@ -34,6 +34,13 @@
  * TASK INFORMATION
  * ========================================================================= */
 
+/* Task name buffer in RAM_D1 for unprivileged access (DTCM protection) */
+#ifndef HOST_TEST
+static char task_name_buffer[ICARUS_MAX_TASK_NAME_LEN] __attribute__((section(".ram_d1")));
+#else
+static char task_name_buffer[ICARUS_MAX_TASK_NAME_LEN];
+#endif
+
 /**
  * @brief Privileged implementation of os_get_tick_count
  * @note  Internal function - use os_get_tick_count() wrapper
@@ -53,11 +60,21 @@ ITCM_FUNC_PRIV uint8_t __os_get_running_task_count(void) {
 /**
  * @brief Privileged implementation of os_get_current_task_name
  * @note  Internal function - use os_get_current_task_name() wrapper
+ * @note  Copies name from DTCM to RAM_D1 buffer for unprivileged access
  */
 ITCM_FUNC_PRIV const char *__os_get_current_task_name(void) {
     if (current_task_index < num_created_tasks &&
         task_list[current_task_index] != NULL) {
-        return task_list[current_task_index]->name;
+        /* Copy name from DTCM to RAM_D1 buffer so unprivileged code can read it */
+        const char *src = task_list[current_task_index]->name;
+        char *dst = task_name_buffer;
+        uint8_t i = 0;
+        while (i < (ICARUS_MAX_TASK_NAME_LEN - 1) && src[i] != '\0') {
+            dst[i] = src[i];
+            i++;
+        }
+        dst[i] = '\0';
+        return task_name_buffer;
     }
     return "unknown";
 }

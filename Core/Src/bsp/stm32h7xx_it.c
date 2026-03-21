@@ -181,7 +181,7 @@ void MemManage_Handler(void)
     g_memmanage_fault_count++;
     
     /* Limit fault recovery to prevent infinite loops */
-    if (g_memmanage_fault_count > 10) {
+    if (g_memmanage_fault_count > 100) {
       /* Halt with rapid 4 blinks */
       while (1) {
         for (int i = 0; i < 4; i++) {
