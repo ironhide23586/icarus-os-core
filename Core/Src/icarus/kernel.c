@@ -303,7 +303,11 @@ ITCM_FUNC_PRIV void* __kernel_protected_data(uint16_t num_words) {
  */
 ITCM_FUNC_PRIV const char* __os_get_task_name(uint8_t task_idx) {
     /* Static buffer in RAM_D1 (not DTCM) for unprivileged access */
+#ifndef HOST_TEST
+    static char name_buffer[ICARUS_MAX_TASK_NAME_LEN] __attribute__((section(".ram_d1")));
+#else
     static char name_buffer[ICARUS_MAX_TASK_NAME_LEN];
+#endif
     
     if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
         return NULL;

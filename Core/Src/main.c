@@ -37,7 +37,7 @@
  * @brief Enable stress testing mode
  * @note  Set to 1 to enable stress test tasks, 0 for demo mode only
  */
-#define ENABLE_STRESS_TEST  1
+#define ENABLE_STRESS_TEST  0
 
 /** @brief ANSI escape code to show cursor (used in error path) */
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
@@ -68,6 +68,7 @@
 int main(void)
 {
     hal_init();
+    
     os_init();
 
     demo_tasks_init();

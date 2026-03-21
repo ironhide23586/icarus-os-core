@@ -25,8 +25,14 @@ int __io_putchar(int ch);
 //
 // Change your __io_putchar implementation
 int __io_putchar(int ch) {
+  /* Static variables must be in RAM_D1, not DTCM, for unprivileged access */
+#ifndef HOST_TEST
+  static uint8_t buf[64] __attribute__((section(".ram_d1")));
+  static uint8_t i __attribute__((section(".ram_d1"))) = 0;
+#else
   static uint8_t buf[64];
   static uint8_t i = 0;
+#endif
 
   buf[i++] = (uint8_t)ch;
 

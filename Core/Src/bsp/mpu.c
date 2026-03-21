@@ -109,14 +109,14 @@ void MPU_Config(void)
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */
     /* Left unconfigured here — set by MPU_ConfigureTaskData()              */
 
-    /* ---- Region 5: DTCM 128K — Priv RW (Step 7b - TESTING DTCM PROTECTION) ---- */
-    /* Kernel data (.dtcm_priv) lives here. All reads/writes go through SVCs.  */
-    /* ITCM protection is disabled, so we can test DTCM protection in isolation */
+    /* ---- Region 5: DTCM 128K — FULL ACCESS (DTCM protection disabled) ---- */
+    /* Kernel data (.dtcm_priv) lives here.  */
+    /* DTCM protection disabled - Step 7 work in progress */
     r.Enable           = MPU_REGION_ENABLE;
     r.Number           = MPU_REGION_DTCM;
     r.BaseAddress      = BSP_DTCM_BASE;
     r.Size             = MPU_REGION_SIZE_128KB;
-    r.AccessPermission = MPU_REGION_PRIV_RW;  // TESTING: Priv-only access
+    r.AccessPermission = MPU_REGION_FULL_ACCESS;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;

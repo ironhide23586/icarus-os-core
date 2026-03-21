@@ -310,7 +310,7 @@
             <symbol>sp</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;pc_ptr&apos; can be declared as pointer to const" verbose="Variable &apos;pc_ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/stm32h7xx_it.c">
-            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="186" column="15" info="Variable &apos;pc_ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="172" column="15" info="Variable &apos;pc_ptr&apos; can be declared as pointer to const"/>
             <symbol>pc_ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
