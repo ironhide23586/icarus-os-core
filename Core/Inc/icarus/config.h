@@ -128,35 +128,27 @@ extern "C" {
 /* ============================================================================
  * SECTION PLACEMENT MACROS
  *
- * These macros annotate functions and data with their intended privilege level
- * and memory region. The priv/user split is enforced by the MPU; the linker
- * script split (Step 5) will place them in separate sub-sections.
+ * These macros annotate functions and data with their intended memory region.
  *
- * Current mapping (Step 4 — annotation only, no linker split yet):
- *   ITCM_FUNC      → .itcm   (user-executable hot-path: spinning wrappers,
- *                              context switch helpers)
- *   ITCM_FUNC_PRIV → .itcm   (privileged-only hot-path: SVC handler,
- *                              __os_yield, __task_active_sleep)
- *   DTCM_DATA      → .dtcm   (kernel data, zero wait-state)
- *   DTCM_DATA_PRIV → .dtcm   (privileged-only kernel data: task_list,
- *                              semaphore_list, scheduler state)
+ * Memory region mapping:
+ *   ITCM_FUNC      → .itcm        (hot-path code: handlers, wrappers, context switch)
+ *   DTCM_DATA_PRIV → .dtcm_priv   (privileged-only kernel data: task_list,
+ *                                   semaphore_list, scheduler state)
  *
- * After Step 5 (linker split):
- *   ITCM_FUNC      → .itcm_user   (MPU: Priv+User RO+exec)
- *   ITCM_FUNC_PRIV → .itcm_priv   (MPU: Priv-only RO+exec)
- *   DTCM_DATA      → .dtcm        (MPU: Priv+User RW — task data)
- *   DTCM_DATA_PRIV → .dtcm_priv   (MPU: Priv-only RW — kernel state)
+ * MPU protection:
+ *   - ITCM (.itcm): Read-only + Execute for all (Region 0)
+ *     * Prevents code modification attacks
+ *     * Kernel handlers protected by ARM exception architecture
+ *   - DTCM (.dtcm_priv): Privileged-only RW (Region 5)
+ *     * Kernel data isolated from unprivileged tasks
+ *     * Access via SVC call gates only
  * ========================================================================= */
 
 #ifndef HOST_TEST
 #  define ITCM_FUNC       __attribute__((section(".itcm")))
-#  define ITCM_FUNC_PRIV  __attribute__((section(".itcm_priv")))
-#  define DTCM_DATA       __attribute__((section(".dtcm")))
 #  define DTCM_DATA_PRIV  __attribute__((section(".dtcm_priv")))
 #else
 #  define ITCM_FUNC
-#  define ITCM_FUNC_PRIV
-#  define DTCM_DATA
 #  define DTCM_DATA_PRIV
 #endif
 

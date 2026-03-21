@@ -39,7 +39,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/* ITCM_FUNC and ITCM_FUNC_PRIV are defined in icarus/config.h */
+/* ITCM_FUNC and ITCM_FUNC are defined in icarus/config.h */
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -136,6 +136,10 @@ void HardFault_Handler(void) { while (1) {} }
 /* Incremented by recoverable MemManage faults */
 volatile uint32_t g_memmanage_fault_count = 0;
 
+/* Debug: capture last fault address */
+volatile uint32_t g_last_fault_addr = 0;
+volatile uint32_t g_last_fault_pc = 0;
+
 /**
   * @brief This function handles Memory management fault.
   *
@@ -165,6 +169,10 @@ void MemManage_Handler(void)
     /* Recoverable: advance stacked PC past the faulting Thumb instruction */
     uint32_t *sp;
     __asm__ volatile ("mrs %0, psp" : "=r" (sp));
+    
+    /* Capture fault address for debugging */
+    g_last_fault_addr = SCB->MMFAR;
+    g_last_fault_pc = sp[6];
     
     /* Determine instruction length: Thumb-2 (32-bit) vs Thumb (16-bit)
      * Thumb-2 instructions have bits [15:11] >= 0b11101 (0x1D)
@@ -273,7 +281,7 @@ void SVC_Handler(void)
   /* Empty for host testing */
 }
 #else
-ITCM_FUNC_PRIV __attribute__((naked)) void SVC_Handler(void)
+ITCM_FUNC __attribute__((naked)) void SVC_Handler(void)
 {
   __asm__ volatile (
     "tst lr, #4\n"
@@ -313,7 +321,7 @@ void PendSV_Handler(void)
   /* USER CODE END PendSV_IRQn 1 */
 }
 #else
-ITCM_FUNC_PRIV __attribute__ ((naked)) void PendSV_Handler(void)
+ITCM_FUNC __attribute__ ((naked)) void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
   __asm__ volatile (
@@ -331,7 +339,7 @@ ITCM_FUNC_PRIV __attribute__ ((naked)) void PendSV_Handler(void)
   * @brief This function handles System tick timer.
   * @note  Must run in privileged mode to write to os_tick_count in DTCM
   */
-ITCM_FUNC_PRIV void SysTick_Handler(void)
+ITCM_FUNC void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
   extern volatile uint32_t os_tick_count;

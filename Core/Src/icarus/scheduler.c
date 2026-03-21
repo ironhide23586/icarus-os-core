@@ -45,7 +45,7 @@ static char task_name_buffer[ICARUS_MAX_TASK_NAME_LEN];
  * @brief Privileged implementation of os_get_tick_count
  * @note  Internal function - use os_get_tick_count() wrapper
  */
-ITCM_FUNC_PRIV uint32_t __os_get_tick_count(void) {
+ITCM_FUNC uint32_t __os_get_tick_count(void) {
     return os_tick_count;
 }
 
@@ -53,7 +53,7 @@ ITCM_FUNC_PRIV uint32_t __os_get_tick_count(void) {
  * @brief Privileged implementation of os_get_running_task_count
  * @note  Internal function - use os_get_running_task_count() wrapper
  */
-ITCM_FUNC_PRIV uint8_t __os_get_running_task_count(void) {
+ITCM_FUNC uint8_t __os_get_running_task_count(void) {
     return running_task_count;
 }
 
@@ -62,7 +62,7 @@ ITCM_FUNC_PRIV uint8_t __os_get_running_task_count(void) {
  * @note  Internal function - use os_get_current_task_name() wrapper
  * @note  Copies name from DTCM to RAM_D1 buffer for unprivileged access
  */
-ITCM_FUNC_PRIV const char *__os_get_current_task_name(void) {
+ITCM_FUNC const char *__os_get_current_task_name(void) {
     if (current_task_index < num_created_tasks &&
         task_list[current_task_index] != NULL) {
         /* Copy name from DTCM to RAM_D1 buffer so unprivileged code can read it */
@@ -83,7 +83,7 @@ ITCM_FUNC_PRIV const char *__os_get_current_task_name(void) {
  * @brief Privileged implementation of os_get_task_ticks_remaining
  * @note  Internal function - use os_get_task_ticks_remaining() wrapper
  */
-ITCM_FUNC_PRIV uint32_t __os_get_task_ticks_remaining(void) {
+ITCM_FUNC uint32_t __os_get_task_ticks_remaining(void) {
     return current_task_ticks_remaining;
 }
 
@@ -95,7 +95,7 @@ ITCM_FUNC_PRIV uint32_t __os_get_task_ticks_remaining(void) {
  * @brief Privileged implementation of os_yield
  * @note  Internal function - use os_yield() wrapper
  */
-ITCM_FUNC_PRIV void __os_yield(void) {
+ITCM_FUNC void __os_yield(void) {
     current_task_ticks_remaining = ticks_per_task;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
@@ -104,7 +104,7 @@ ITCM_FUNC_PRIV void __os_yield(void) {
  * @brief Privileged implementation of task_active_sleep
  * @note  Internal function - use task_active_sleep() wrapper
  */
-ITCM_FUNC_PRIV uint32_t __task_active_sleep(uint32_t ticks) {
+ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks) {
     task_list[current_task_index]->global_tick_paused = os_tick_count;
     task_list[current_task_index]->ticks_to_pause = ticks;
     task_list[current_task_index]->task_state = TASK_STATE_BLOCKED;
@@ -117,7 +117,7 @@ ITCM_FUNC_PRIV uint32_t __task_active_sleep(uint32_t ticks) {
  * @note  Internal function - use task_blocking_sleep() wrapper
  * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
-ITCM_FUNC_PRIV uint32_t __task_blocking_sleep(uint32_t ticks) {
+ITCM_FUNC uint32_t __task_blocking_sleep(uint32_t ticks) {
     enter_critical();
     uint32_t delta = task_busy_wait(ticks);
     exit_critical();
@@ -129,7 +129,7 @@ ITCM_FUNC_PRIV uint32_t __task_blocking_sleep(uint32_t ticks) {
  * @note  Internal function - use task_busy_wait() wrapper
  * @note  Uses os_get_tick_count() SVC gate — safe with DTCM priv-only
  */
-ITCM_FUNC_PRIV uint32_t __task_busy_wait(uint32_t ticks) {
+ITCM_FUNC uint32_t __task_busy_wait(uint32_t ticks) {
     uint32_t st = os_get_tick_count();
     uint32_t delta;
 

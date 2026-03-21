@@ -111,7 +111,7 @@ extern void start_cold_task(icarus_task_t *task);
  * @brief Privileged implementation of enter_critical
  * @note  Internal function - use enter_critical() wrapper
  */
-ITCM_FUNC_PRIV void __enter_critical(void)
+ITCM_FUNC void __enter_critical(void)
 {
     scheduler_enabled = false;
     critical_stack_depth++;
@@ -121,7 +121,7 @@ ITCM_FUNC_PRIV void __enter_critical(void)
  * @brief Privileged implementation of exit_critical
  * @note  Internal function - use exit_critical() wrapper
  */
-ITCM_FUNC_PRIV void __exit_critical(void)
+ITCM_FUNC void __exit_critical(void)
 {
     if (--critical_stack_depth == 0) {
         scheduler_enabled = true;
@@ -132,7 +132,7 @@ ITCM_FUNC_PRIV void __exit_critical(void)
  * INTERNAL HELPER FUNCTIONS
  * ========================================================================= */
 
-static inline ITCM_FUNC_PRIV void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
+static inline ITCM_FUNC void __init_sem(uint8_t semaphore_idx, uint32_t semaphore_count,
                               bool should_engage)
 {
     semaphore_list[semaphore_idx]->count = semaphore_count;
@@ -141,7 +141,7 @@ static inline ITCM_FUNC_PRIV void __init_sem(uint8_t semaphore_idx, uint32_t sem
     semaphore_list[semaphore_idx]->engaged = should_engage;
 }
 
-static inline ITCM_FUNC_PRIV void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
+static inline ITCM_FUNC void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
                                bool should_engage)
 {
     message_pipe_list[message_pipe_idx]->count = 0;
@@ -208,7 +208,7 @@ static void os_heartbeat_task(void)
  * @brief Privileged implementation of os_init
  * @note  Internal function - use os_init() wrapper
  */
-ITCM_FUNC_PRIV void __os_init(void)
+ITCM_FUNC void __os_init(void)
 {
     uint8_t i;
 
@@ -249,7 +249,7 @@ ITCM_FUNC_PRIV void __os_init(void)
  * @brief Privileged implementation of os_start
  * @note  Internal function - use os_start() wrapper
  */
-ITCM_FUNC_PRIV void __os_start(void)
+ITCM_FUNC void __os_start(void)
 {
     if (num_created_tasks == 0 || num_created_tasks > ICARUS_MAX_TASKS) {
         return;
@@ -265,7 +265,7 @@ ITCM_FUNC_PRIV void __os_start(void)
  * @brief Privileged implementation of kernel_get_stack
  * @note  Internal function - use kernel_get_stack() wrapper
  */
-ITCM_FUNC_PRIV uint32_t* __kernel_get_stack(uint8_t task_idx)
+ITCM_FUNC uint32_t* __kernel_get_stack(uint8_t task_idx)
 {
     return stack_pool[task_idx];
 }
@@ -278,7 +278,7 @@ ITCM_FUNC_PRIV uint32_t* __kernel_get_stack(uint8_t task_idx)
  * @brief Privileged implementation of kernel_get_data
  * @note  Internal function - use kernel_get_data() wrapper
  */
-ITCM_FUNC_PRIV uint32_t* __kernel_get_data(uint8_t task_idx)
+ITCM_FUNC uint32_t* __kernel_get_data(uint8_t task_idx)
 {
     return data_pool[task_idx];
 }
@@ -291,7 +291,7 @@ ITCM_FUNC_PRIV uint32_t* __kernel_get_data(uint8_t task_idx)
  * @note  Internal function - use kernel_protected_data() wrapper
  * @note  Runs in SVC handler — already atomic, no critical section needed
  */
-ITCM_FUNC_PRIV void* __kernel_protected_data(uint16_t num_words) {
+ITCM_FUNC void* __kernel_protected_data(uint16_t num_words) {
     if (data_pool_word_offsets[current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
         return NULL;
     uint16_t current_offset = data_pool_word_offsets[current_task_index];
@@ -310,7 +310,7 @@ ITCM_FUNC_PRIV void* __kernel_protected_data(uint16_t num_words) {
  * @note  Runs in SVC handler — reads task_list from DTCM in privileged mode
  * @note  Copies name to RAM_D1 buffer to allow unprivileged access
  */
-ITCM_FUNC_PRIV const char* __os_get_task_name(uint8_t task_idx) {
+ITCM_FUNC const char* __os_get_task_name(uint8_t task_idx) {
     /* Static buffer in RAM_D1 (not DTCM) for unprivileged access */
 #ifndef HOST_TEST
     static char name_buffer[ICARUS_MAX_TASK_NAME_LEN] __attribute__((section(".ram_d1")));
@@ -338,7 +338,7 @@ ITCM_FUNC_PRIV const char* __os_get_task_name(uint8_t task_idx) {
  * @note  Internal function - use os_get_num_created_tasks() wrapper
  * @note  Runs in SVC handler — reads num_created_tasks from DTCM in privileged mode
  */
-ITCM_FUNC_PRIV uint8_t __os_get_num_created_tasks(void) {
+ITCM_FUNC uint8_t __os_get_num_created_tasks(void) {
     return num_created_tasks;
 }
 
@@ -347,6 +347,6 @@ ITCM_FUNC_PRIV uint8_t __os_get_num_created_tasks(void) {
  * @note  Internal function - use os_is_running() wrapper
  * @note  Runs in SVC handler — reads os_running from DTCM in privileged mode
  */
-ITCM_FUNC_PRIV uint8_t __os_is_running(void) {
+ITCM_FUNC uint8_t __os_is_running(void) {
     return os_running;
 }

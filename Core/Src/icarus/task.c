@@ -24,7 +24,7 @@
  * TASK CREATION
  * ========================================================================= */
 
-ITCM_FUNC_PRIV void os_create_task(icarus_task_t *task, void (*function)(void),
+ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
                     uint32_t *stack, uint32_t stack_size,
                     uint32_t *data, const char *name)
 {
@@ -63,7 +63,7 @@ ITCM_FUNC_PRIV void os_create_task(icarus_task_t *task, void (*function)(void),
  * @brief Privileged implementation of os_register_task
  * @note  Internal function - use os_register_task() wrapper
  */
-ITCM_FUNC_PRIV void __os_register_task(void (*function)(void), const char *name)
+ITCM_FUNC void __os_register_task(void (*function)(void), const char *name)
 {
     os_create_task(task_list[num_created_tasks], function,
                    __kernel_get_stack(num_created_tasks), 
@@ -79,7 +79,7 @@ ITCM_FUNC_PRIV void __os_register_task(void (*function)(void), const char *name)
  * @brief Privileged implementation of os_exit_task
  * @note  Internal function - use os_exit_task() wrapper
  */
-ITCM_FUNC_PRIV void __os_exit_task(void)
+ITCM_FUNC void __os_exit_task(void)
 {
     task_list[current_task_index]->task_state = TASK_STATE_FINISHED;
 
@@ -99,7 +99,7 @@ ITCM_FUNC_PRIV void __os_exit_task(void)
  * @brief Privileged implementation of os_kill_process
  * @note  Internal function - use os_kill_process() wrapper
  */
-ITCM_FUNC_PRIV void __os_kill_process(uint8_t task_index)
+ITCM_FUNC void __os_kill_process(uint8_t task_index)
 {
     if (task_index >= num_created_tasks || task_index == 0) {
         return;  /* Cannot kill task 0 (idle task) or invalid indices */
@@ -125,7 +125,7 @@ ITCM_FUNC_PRIV void __os_kill_process(uint8_t task_index)
  * @brief Privileged implementation of os_task_suicide
  * @note  Internal function - use os_task_suicide() wrapper
  */
-ITCM_FUNC_PRIV void __os_task_suicide(void)
+ITCM_FUNC void __os_task_suicide(void)
 {
     printf("[INFO] %s committed suicide\r\n",
            task_list[current_task_index]->name);

@@ -65,39 +65,22 @@ Reset_Handler:
 /* Call the clock system initialization function.*/
   bl  SystemInit
 
-/* Copy the ITCM_PRIV (privileged kernel code) from flash to ITCM RAM */
-  ldr r0, =_sitcm_priv
-  ldr r1, =_eitcm_priv
-  ldr r2, =_siitcm_priv
+/* Copy the ITCM (hot-path code) from flash to ITCM RAM */
+  ldr r0, =_sitcm
+  ldr r1, =_eitcm
+  ldr r2, =_siitcm
   movs r3, #0
-  b LoopCopyItcmPrivInit
+  b LoopCopyItcmInit
 
-CopyItcmPrivInit:
+CopyItcmInit:
   ldr r4, [r2, r3]
   str r4, [r0, r3]
   adds r3, r3, #4
 
-LoopCopyItcmPrivInit:
+LoopCopyItcmInit:
   adds r4, r0, r3
   cmp r4, r1
-  bcc CopyItcmPrivInit
-
-/* Copy the ITCM_USER (user-executable hot-path code) from flash to ITCM RAM */
-  ldr r0, =_sitcm_user
-  ldr r1, =_eitcm_user
-  ldr r2, =_siitcm_user
-  movs r3, #0
-  b LoopCopyItcmUserInit
-
-CopyItcmUserInit:
-  ldr r4, [r2, r3]
-  str r4, [r0, r3]
-  adds r3, r3, #4
-
-LoopCopyItcmUserInit:
-  adds r4, r0, r3
-  cmp r4, r1
-  bcc CopyItcmUserInit
+  bcc CopyItcmInit
 
 /* Copy the data segment initializers from flash to SRAM */
   ldr r0, =_sdata

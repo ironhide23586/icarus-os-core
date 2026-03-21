@@ -91,20 +91,24 @@ void MPU_Config(void)
     r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
-    /* ---- Region 3: ITCM_PRIV 4KB overlay — DISABLED (DTCM priority) ---- */
-    /* Temporarily disabled - DTCM protection is working, will fix ITCM separately */
-    /* Issue: C library or unprivileged code accessing protected ITCM region */
+    /* ---- Region 3: ITCM_PRIV — DISABLED (no additional protection) ---- */
+    /* Region 0 already provides RO+exec for all ITCM                       */
+    /* Kernel handlers (SVC, PendSV, SysTick) are protected by ARM arch:    */
+    /*   - SVC_Handler only invoked via 'svc' instruction                   */
+    /*   - PendSV_Handler only invoked via PENDSVSET (privileged)           */
+    /*   - SysTick_Handler only invoked via SysTick interrupt               */
+    /* Unprivileged code cannot directly call these handlers                */
     r.Enable           = MPU_REGION_DISABLE;
     r.Number           = MPU_REGION_ITCM_PRIV;
     r.BaseAddress      = BSP_ITCM_BASE;
     r.Size             = MPU_REGION_SIZE_4KB;
-    r.AccessPermission = MPU_REGION_PRIV_RO;
+    r.AccessPermission = MPU_REGION_PRIV_RO_URO;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
     r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
     r.TypeExtField     = MPU_TEX_LEVEL1;
-    r.SubRegionDisable = 0xE0;  /* Disable subregions 5-7 (0xA00-0xFFF), protect 0-4 */
+    r.SubRegionDisable = 0xE0;
     HAL_MPU_ConfigRegion(&r);
 
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */

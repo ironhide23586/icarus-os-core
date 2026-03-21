@@ -1086,6 +1086,10 @@ __attribute__((unused))
 static void mpu_itcm_attack_task(void) {
     uint32_t attempts = 0;
     uint32_t last_fault_count = 0;
+    
+    /* Debug: display last fault address from MemManage handler */
+    extern volatile uint32_t g_last_fault_addr;
+    extern volatile uint32_t g_last_fault_pc;
 
     while (1) {
         attempts++;
@@ -1111,12 +1115,12 @@ static void mpu_itcm_attack_task(void) {
         ANSI_GOTO(STRESS_ROW_STATS2 + 4, 1);
         if (protected) {
             printf("\033[1;32m");  /* Bold green */
-            printf("MPU_ITCM: attempts=%lu faults=%lu [ITCM PROTECTED]",
-                   attempts, last_fault_count);
+            printf("MPU_ITCM: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [PROTECTED]",
+                   attempts, last_fault_count, g_last_fault_addr, g_last_fault_pc);
         } else {
             printf("\033[1;31m");  /* Bold red */
-            printf("MPU_ITCM: attempts=%lu faults=%lu [ITCM BREACH]",
-                   attempts, last_fault_count);
+            printf("MPU_ITCM: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [BREACH]",
+                   attempts, last_fault_count, g_last_fault_addr, g_last_fault_pc);
         }
         printf("\033[0m");
         ANSI_CLEAR_LINE();
@@ -1321,6 +1325,6 @@ void stress_test_init(void) {
     // Register MPU data protection verification tasks (2 tasks)
     os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations
     os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
-    // os_register_task(mpu_itcm_attack_task, "mpu_itcm"); // ITCM priv attack test - keep disabled (ITCM_PRIV disabled)
+    os_register_task(mpu_itcm_attack_task, "mpu_itcm"); // ITCM priv attack test - will show fault addresses
     os_register_task(mpu_dtcm_attack_task, "mpu_dtcm"); // DTCM priv attack test - should fail with protection enabled
 }
