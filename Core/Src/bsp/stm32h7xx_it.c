@@ -156,22 +156,30 @@ void MemManage_Handler(void)
 {
   uint32_t cfsr  = SCB->CFSR;
 
-  /* DACCVIOL (bit 1) = data access violation */
-  /* IACCVIOL (bit 0) = instruction fetch violation — not recoverable here */
+  /* MemManage fault types:
+   * DACCVIOL (bit 1) = data access violation (read or write)
+   * IACCVIOL (bit 0) = instruction fetch violation — not recoverable here
+   * MMARVALID (bit 7) = MMFAR holds valid fault address */
   bool is_daccviol = (cfsr & SCB_CFSR_DACCVIOL_Msk) != 0;
+  bool is_iaccviol = (cfsr & SCB_CFSR_IACCVIOL_Msk) != 0;
 
   /* Check if fault came from thread mode (PSP) vs kernel (MSP) */
   uint32_t lr_val;
   __asm__ volatile ("mov %0, lr" : "=r" (lr_val));
   bool from_psp = (lr_val & 0x4) != 0;
 
-  if (is_daccviol && from_psp) {
+  /* Recover from data access violations (read or write) from unprivileged tasks */
+  if (is_daccviol && !is_iaccviol && from_psp) {
     /* Recoverable: advance stacked PC past the faulting Thumb instruction */
     uint32_t *sp;
     __asm__ volatile ("mrs %0, psp" : "=r" (sp));
     
     /* Capture fault address for debugging */
-    g_last_fault_addr = SCB->MMFAR;
+    if (cfsr & SCB_CFSR_MMARVALID_Msk) {
+      g_last_fault_addr = SCB->MMFAR;
+    } else {
+      g_last_fault_addr = 0xFFFFFFFF;  /* Invalid */
+    }
     g_last_fault_pc = sp[6];
     
     /* Determine instruction length: Thumb-2 (32-bit) vs Thumb (16-bit)

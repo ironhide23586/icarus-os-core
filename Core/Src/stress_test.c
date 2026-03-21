@@ -1072,18 +1072,16 @@ static void mpu_redteam_task(void) {
 extern volatile uint32_t g_memmanage_fault_count;
 
 /**
- * @brief   ITCM priv-region attack task
+ * @brief   ITCM write protection test
  *
- * @details Attempts a data read from 0x50 (inside the ITCM priv region
- *          0x000–0x1FF, which is PRIV_RO — no unprivileged data access).
- *          The MemManage handler recovers by advancing the stacked PC +2 and
- *          incrementing g_memmanage_fault_count.
+ * @details Attempts to write to ITCM code region (0x50).
+ *          ITCM is configured as read-only (Region 0: PRIV_RO_URO).
+ *          Write attempts should trigger MemManage fault.
  *
- *          Expected result: fault count rises each iteration → [ITCM PROTECTED]
- *          Failure result:  read succeeds, fault count unchanged → [ITCM BREACH]
+ *          Expected result: fault count rises → [ITCM WRITE PROTECTED]
+ *          Failure result: write succeeds → [ITCM WRITE BREACH]
  */
-__attribute__((unused))
-static void mpu_itcm_attack_task(void) {
+static void mpu_itcm_write_test(void) {
     uint32_t attempts = 0;
     uint32_t last_fault_count = 0;
     
@@ -1095,18 +1093,15 @@ static void mpu_itcm_attack_task(void) {
         attempts++;
         uint32_t fault_before = g_memmanage_fault_count;
 
-        /* Attempt unprivileged data read from ITCM priv range.
-         * Region 3 subregions 0-1 cover 0x000–0x0FF as PRIV_RO.
-         * 0x50 is inside subregion 0 (0x000–0x07F) — always protected.
-         * If MPU is working this triggers DACCVIOL → MemManage_Handler
-         * recovers by skipping this instruction (+2 bytes). */
-        volatile uint32_t dummy;
+        /* Attempt to write to ITCM (should be read-only)
+         * Region 0 covers all ITCM as PRIV_RO_URO (read-only for all)
+         * Any write attempt should trigger MemManage fault */
+        uint32_t test_value = 0xDEADBEEF;
         __asm__ volatile (
-            "ldr %0, [%1]"
-            : "=r" (dummy)
-            : "r" ((volatile uint32_t *)0x00000050)
+            "str %0, [%1]\n"
+            :
+            : "r" (test_value), "r" ((volatile uint32_t *)0x00000050)
         );
-        (void)dummy;
 
         uint32_t fault_after = g_memmanage_fault_count;
         bool protected = (fault_after > fault_before);
@@ -1115,11 +1110,11 @@ static void mpu_itcm_attack_task(void) {
         ANSI_GOTO(STRESS_ROW_STATS2 + 4, 1);
         if (protected) {
             printf("\033[1;32m");  /* Bold green */
-            printf("MPU_ITCM: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [PROTECTED]",
+            printf("MPU_ITCM_WR: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [WRITE PROTECTED]",
                    attempts, last_fault_count, g_last_fault_addr, g_last_fault_pc);
         } else {
             printf("\033[1;31m");  /* Bold red */
-            printf("MPU_ITCM: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [BREACH]",
+            printf("MPU_ITCM_WR: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [WRITE BREACH!]",
                    attempts, last_fault_count, g_last_fault_addr, g_last_fault_pc);
         }
         printf("\033[0m");
@@ -1325,6 +1320,6 @@ void stress_test_init(void) {
     // Register MPU data protection verification tasks (2 tasks)
     os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations
     os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
-    os_register_task(mpu_itcm_attack_task, "mpu_itcm"); // ITCM priv attack test - will show fault addresses
-    os_register_task(mpu_dtcm_attack_task, "mpu_dtcm"); // DTCM priv attack test - should fail with protection enabled
+    os_register_task(mpu_itcm_write_test, "mpu_itcm"); // ITCM write protection test
+    os_register_task(mpu_dtcm_attack_task, "mpu_dtcm"); // DTCM priv attack test
 }
