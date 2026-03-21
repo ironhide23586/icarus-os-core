@@ -91,8 +91,9 @@ void MPU_Config(void)
     r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
-    /* ---- Region 3: ITCM_PRIV 4KB overlay — DISABLED (testing DTCM only) ---- */
-    /* Temporarily disabled to isolate DTCM protection testing */
+    /* ---- Region 3: ITCM_PRIV 4KB overlay — DISABLED (DTCM priority) ---- */
+    /* Temporarily disabled - DTCM protection is working, will fix ITCM separately */
+    /* Issue: C library or unprivileged code accessing protected ITCM region */
     r.Enable           = MPU_REGION_DISABLE;
     r.Number           = MPU_REGION_ITCM_PRIV;
     r.BaseAddress      = BSP_ITCM_BASE;
@@ -103,7 +104,7 @@ void MPU_Config(void)
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
     r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
     r.TypeExtField     = MPU_TEX_LEVEL1;
-    r.SubRegionDisable = 0xF0;  /* Disable subregions 4-7 (0x800-0xFFF) */
+    r.SubRegionDisable = 0xE0;  /* Disable subregions 5-7 (0xA00-0xFFF), protect 0-4 */
     HAL_MPU_ConfigRegion(&r);
 
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */
