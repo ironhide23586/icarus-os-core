@@ -196,6 +196,17 @@ SECTIONS
     . = ALIGN(8);
   } >RAM_D1
 
+  /* RAM_D2 section for task data pools (MPU-protected per-task regions) */
+  .ram_d2 (NOLOAD) :
+  {
+    . = ALIGN(2048);  /* Align to 2KB for MPU region requirements */
+    _sram_d2 = .;
+    *(.ram_d2)
+    *(.ram_d2*)
+    . = ALIGN(4);
+    _eram_d2 = .;
+  } >RAM_D2
+
   /* DTCM section for fast kernel data (zero wait states) */
   .dtcm (NOLOAD) :
   {

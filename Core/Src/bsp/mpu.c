@@ -160,6 +160,12 @@ void MPU_Config(void)
     /* MPU_PRIVILEGED_DEFAULT blocks unprivileged access to SCS (0xE000E000)*/
     /* — NVIC, SCB, SysTick, MPU registers — forcing SVC for those writes.  */
     HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+    
+    /* Memory barriers required after MPU configuration (ARM Cortex-M7)
+     * DSB: Ensure all memory accesses complete before MPU change takes effect
+     * ISB: Flush instruction pipeline to ensure new MPU config is used */
+    __DSB();
+    __ISB();
 }
 
 /* ============================================================================
@@ -188,4 +194,10 @@ void MPU_ConfigureTaskData(uint32_t task_data_base)
     r.SubRegionDisable = 0x00;
 
     HAL_MPU_ConfigRegion(&r);
+    
+    /* Memory barriers required after MPU reconfiguration (ARM Cortex-M7)
+     * DSB: Ensure all memory accesses complete before MPU change takes effect
+     * ISB: Flush instruction pipeline to ensure new MPU config is used */
+    __DSB();
+    __ISB();
 }

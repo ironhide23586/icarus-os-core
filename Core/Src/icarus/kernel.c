@@ -80,10 +80,19 @@ static uint32_t stack_pool[ICARUS_MAX_TASKS][ICARUS_STACK_WORDS];
 
 
 /* ============================================================================
- * DATA POOL (RAM_D1)
+ * DATA POOL (RAM_D2 - isolated from RAM_D1 for MPU protection)
  * ========================================================================= */
 
-static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS];
+/* Each task's data pool must be aligned to 2KB (MPU region size requirement) */
+/* Placed in RAM_D2 so Region 6 (RAM_D1) doesn't grant default access */
+#ifndef HOST_TEST
+static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS] 
+    __attribute__((aligned(2048))) 
+    __attribute__((section(".ram_d2")));
+#else
+static uint32_t data_pool[ICARUS_MAX_TASKS][ICARUS_DATA_WORDS] 
+    __attribute__((aligned(2048)));
+#endif
 
 /* Data pool allocation offsets — kernel metadata, protected in DTCM */
 DTCM_DATA_PRIV static uint16_t data_pool_word_offsets[ICARUS_MAX_TASKS];

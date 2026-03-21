@@ -848,10 +848,12 @@ static void stats_display_task(void) {
 // This pointer will point to victim's data_pool[victim_task_idx][...] region
 // When red team tries to access it, MPU should block (different task's region)
 static volatile uint32_t *g_victim_data_ptr = NULL;
-static volatile uint32_t g_mpu_fault_count = 0;
+
+/* Use the actual fault counter from stm32h7xx_it.c */
+extern volatile uint32_t g_memmanage_fault_count;
 
 // Set to 1 to enable actual MPU attack (will trigger hard fault if MPU works)
-#define MPU_ENABLE_ATTACK_TEST 0
+#define MPU_ENABLE_ATTACK_TEST 1
 
 /**
  * @brief   MPU data protection verification task (victim)
@@ -990,7 +992,7 @@ static void mpu_verify_task(void) {
  */
 static void mpu_redteam_task(void) {
     uint32_t attack_attempts = 0;
-    uint32_t successful_attacks = 0;
+    uint32_t last_fault_count = 0;
     
     // Wait for victim to initialize
     while (g_victim_data_ptr == NULL) {
@@ -1014,26 +1016,21 @@ static void mpu_redteam_task(void) {
         // Current task can only access data_pool[redteam_task_idx][...]
         // MPU should block this cross-task access
         attack_attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
         
 #if MPU_ENABLE_ATTACK_TEST
-        // ACTUAL ATTACK: Uncomment by setting MPU_ENABLE_ATTACK_TEST to 1
-        // This WILL trigger MPU fault if protection is working correctly
+        // ACTUAL ATTACK: This WILL trigger MPU fault if protection is working
         volatile uint32_t *victim = (volatile uint32_t*)g_victim_data_ptr;
         volatile uint32_t read_attempt = victim[0];  // Cross-task read - should fault
         (void)read_attempt;  // Use the value to avoid warning
         
-        // If we reach here, MPU failed to block the access
-        successful_attacks++;
-        g_stress_stats.data_errors++;
-        
         // Try write attack too
         victim[0] = 0xDEADDEAD;  // Cross-task write - should fault
-        successful_attacks++;
-        g_stress_stats.data_errors++;
 #endif
         
-        // If we reach here without fault, MPU might not be working
-        // (or fault handler recovered gracefully)
+        uint32_t fault_after = g_memmanage_fault_count;
+        uint32_t faults_this_iteration = fault_after - fault_before;
+        last_fault_count = fault_after;
         
         // Verify our own data is still intact
         bool own_data_ok = true;
@@ -1048,14 +1045,15 @@ static void mpu_redteam_task(void) {
         // Display attack status
         ANSI_GOTO(STRESS_ROW_STATS2 + 3, 1);
         
-        if (successful_attacks > 0) {
-            printf("\033[1;31m");  // Bold red - MPU FAILED
-            printf("MPU_REDTEAM: attacks=%lu breaches=%lu faults=%lu [MPU FAILED!]",
-                   attack_attempts, successful_attacks, g_mpu_fault_count);
-        } else {
+        // MPU is working if faults are being triggered
+        if (faults_this_iteration > 0) {
             printf("\033[1;32m");  // Bold green - MPU working
-            printf("MPU_REDTEAM: attacks=%lu breaches=0 faults=%lu own_data=%s [MPU OK]",
-                   attack_attempts, g_mpu_fault_count, own_data_ok ? "OK" : "CORRUPT");
+            printf("MPU_REDTEAM: attacks=%lu faults=%lu own_data=%s [PROTECTED]",
+                   attack_attempts, last_fault_count, own_data_ok ? "OK" : "CORRUPT");
+        } else {
+            printf("\033[1;31m");  // Bold red - MPU FAILED
+            printf("MPU_REDTEAM: attacks=%lu faults=%lu own_data=%s [BREACH!]",
+                   attack_attempts, last_fault_count, own_data_ok ? "OK" : "CORRUPT");
         }
         printf("\033[0m");
         ANSI_CLEAR_LINE();
