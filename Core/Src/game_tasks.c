@@ -17,6 +17,16 @@
 #include "bsp/config.h"
 #include "bsp/gpio.h"
 #include "lcd.h"
+#include "st7735.h"
+#include <stdio.h>
+
+/* ============================================================================
+ * LCD GLOBALS (from lcd.c)
+ * ========================================================================= */
+
+extern ST7735_Object_t st7735_pObj;
+extern ST7735_Ctx_t ST7735Ctx;
+extern uint32_t st7735_id;
 
 /* ============================================================================
  * GAME STATE
@@ -107,30 +117,35 @@ static void game_input_task(void)
 static void game_render_task(void)
 {
     /* Display header */
-    LCD_ShowString(10, 10, (uint8_t*)"ICARUS GAME DEMO", BLUE, WHITE, 16, 0);
-    LCD_ShowString(10, 30, (uint8_t*)"Press K1 button", BLACK, WHITE, 12, 0);
+    uint8_t text[40];
+    
+    sprintf((char*)text, "ICARUS GAME DEMO");
+    LCD_ShowString(10, 10, ST7735Ctx.Width, 16, 16, text);
+    
+    sprintf((char*)text, "Press K1 button");
+    LCD_ShowString(10, 30, ST7735Ctx.Width, 12, 12, text);
     
     while (1) {
         /* Clear stats area */
-        LCD_Fill(10, 60, 118, 100, WHITE);
+        ST7735_LCD_Driver.FillRect(&st7735_pObj, 10, 60, 140, 60, BLACK);
         
         /* Display frame count */
-        char frame_str[32];
-        snprintf(frame_str, sizeof(frame_str), "Frames: %lu", g_game_state.frame_count);
-        LCD_ShowString(10, 60, (uint8_t*)frame_str, BLACK, WHITE, 12, 0);
+        sprintf((char*)text, "Frames: %lu", g_game_state.frame_count);
+        LCD_ShowString(10, 60, ST7735Ctx.Width, 12, 12, text);
         
         /* Display button press count */
-        char press_str[32];
-        snprintf(press_str, sizeof(press_str), "Presses: %lu", g_game_state.button_presses);
-        LCD_ShowString(10, 75, (uint8_t*)press_str, BLACK, WHITE, 12, 0);
+        sprintf((char*)text, "Presses: %lu", g_game_state.button_presses);
+        LCD_ShowString(10, 75, ST7735Ctx.Width, 12, 12, text);
         
         /* Display button state indicator */
         if (g_game_state.button_pressed) {
-            LCD_Fill(10, 95, 30, 115, GREEN);  /* Green square when pressed */
-            LCD_ShowString(35, 100, (uint8_t*)"PRESSED", GREEN, WHITE, 12, 0);
+            ST7735_LCD_Driver.FillRect(&st7735_pObj, 10, 95, 20, 20, GREEN);
+            sprintf((char*)text, "PRESSED");
+            LCD_ShowString(35, 100, ST7735Ctx.Width, 12, 12, text);
         } else {
-            LCD_Fill(10, 95, 30, 115, RED);    /* Red square when released */
-            LCD_ShowString(35, 100, (uint8_t*)"RELEASED", RED, WHITE, 12, 0);
+            ST7735_LCD_Driver.FillRect(&st7735_pObj, 10, 95, 20, 20, RED);
+            sprintf((char*)text, "RELEASED");
+            LCD_ShowString(35, 100, ST7735Ctx.Width, 12, 12, text);
         }
         
         /* Increment frame counter */
@@ -142,6 +157,35 @@ static void game_render_task(void)
 }
 
 /* ============================================================================
+ * LCD INITIALIZATION
+ * ========================================================================= */
+
+/**
+ * @brief   Initialize LCD display
+ *
+ * @details Configures ST7735 LCD in landscape mode and clears screen.
+ */
+static void init_lcd(void)
+{
+    /* Configure LCD context */
+    ST7735Ctx.Orientation = ST7735_ORIENTATION_LANDSCAPE_ROT180;
+    ST7735Ctx.Panel = HannStar_Panel;
+    ST7735Ctx.Type = ST7735_0_9_inch_screen;
+    
+    /* Initialize LCD driver */
+    extern ST7735_IO_t st7735_pIO;
+    ST7735_RegisterBusIO(&st7735_pObj, &st7735_pIO);
+    ST7735_LCD_Driver.Init(&st7735_pObj, ST7735_FORMAT_RBG565, &ST7735Ctx);
+    ST7735_LCD_Driver.ReadID(&st7735_pObj, &st7735_id);
+    
+    /* Set brightness to 100% */
+    LCD_SetBrightness(100);
+    
+    /* Clear screen to black */
+    ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width, ST7735Ctx.Height, BLACK);
+}
+
+/* ============================================================================
  * INITIALIZATION
  * ========================================================================= */
 
@@ -150,6 +194,9 @@ static void game_render_task(void)
  */
 void game_tasks_init(void)
 {
+    /* Initialize LCD display */
+    init_lcd();
+    
     /* Initialize game state */
     g_game_state.button_pressed = false;
     g_game_state.button_prev = false;
