@@ -195,6 +195,21 @@
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="1170" column="13"/>
         </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1216" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1216" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1220" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1220" column="13"/>
+        </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 3) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1220" column="13"/>
+        </error>
         <error id="nullPointerRedundantCheck" severity="warning" msg="Either the condition &apos;mpu_data1==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data1." verbose="Either the condition &apos;mpu_data1==NULL&apos; is redundant or there is possible null pointer dereference: mpu_data1." cwe="476" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="891" column="9" info="Null pointer dereference"/>
             <location file="../Core/Src/stress_test.c" line="876" column="19" info="Assuming that condition &apos;mpu_data1==NULL&apos; is not redundant"/>
@@ -275,6 +290,15 @@
             <location file="../Core/Src/stress_test.c" line="1141" column="14"/>
             <symbol>last_fault_count</symbol>
         </error>
+        <error id="variableScope" severity="style" msg="The scope of the variable &apos;last_fault_count&apos; can be reduced." verbose="The scope of the variable &apos;last_fault_count&apos; can be reduced. Warning: Be careful when fixing this message, especially when there are inner loops. Here is an example where cppcheck will write that the scope for &apos;i&apos; can be reduced:\012void f(int x)\012{\012    int i = 0;\012    if (x) {\012        // it&apos;s safe to move &apos;int i = 0;&apos; here\012        for (int n = 0; n &lt; 10; ++n) {\012            // it is possible but not safe to move &apos;int i = 0;&apos; here\012            do_something(&amp;i);\012        }\012    }\012}\012When you see this message it is always safe to reduce the variable scope 1 level." cwe="398" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1194" column="14"/>
+            <symbol>last_fault_count</symbol>
+        </error>
+        <error id="shadowFunction" severity="style" msg="Local variable &apos;__semaphore_get_count&apos; shadows outer function" verbose="Local variable &apos;__semaphore_get_count&apos; shadows outer function" cwe="398" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1197" column="21" info="Shadow variable"/>
+            <location file="../Core/Inc/icarus/semaphore.h" line="113" column="10" info="Shadowed declaration"/>
+            <symbol>__semaphore_get_count</symbol>
+        </error>
         <error id="constVariable" severity="style" msg="Variable &apos;sleep_times&apos; can be declared as const array" verbose="Variable &apos;sleep_times&apos; can be declared as const array" cwe="398" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="736" column="14" info="Variable &apos;sleep_times&apos; can be declared as const array"/>
             <symbol>sleep_times</symbol>
@@ -315,6 +339,10 @@
             <location file="../Core/Src/stress_test.c" line="995" column="31"/>
             <symbol>last_fault_count</symbol>
         </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;last_fault_count&apos; is assigned a value that is never used." verbose="Variable &apos;last_fault_count&apos; is assigned a value that is never used." cwe="563" file0="../Core/Src/stress_test.c">
+            <location file="../Core/Src/stress_test.c" line="1194" column="31"/>
+            <symbol>last_fault_count</symbol>
+        </error>
         <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/bsp/display.c">
             <location file="../Core/Src/bsp/display.c" line="0" column="0"/>
         </error>
@@ -326,11 +354,11 @@
             <location file="../Core/Src/bsp/stm32h7xx_it.c" line="0" column="0"/>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;sp&apos; can be declared as pointer to const" verbose="Variable &apos;sp&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/stm32h7xx_it.c">
-            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="103" column="13" info="Variable &apos;sp&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="107" column="13" info="Variable &apos;sp&apos; can be declared as pointer to const"/>
             <symbol>sp</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;pc_ptr&apos; can be declared as pointer to const" verbose="Variable &apos;pc_ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/stm32h7xx_it.c">
-            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="188" column="15" info="Variable &apos;pc_ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/bsp/stm32h7xx_it.c" line="192" column="15" info="Variable &apos;pc_ptr&apos; can be declared as pointer to const"/>
             <symbol>pc_ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
