@@ -28,6 +28,7 @@
  */
 
 #include "main.h"
+#include "interactive_tasks.h"
 
 /* ============================================================================
  * CONFIGURATION
@@ -37,7 +38,19 @@
  * @brief Enable stress testing mode
  * @note  Set to 1 to enable stress test tasks, 0 for demo mode only
  */
-#define ENABLE_STRESS_TEST  1
+#define ENABLE_STRESS_TEST  0
+
+/**
+ * @brief Enable demo tasks mode
+ * @note  Set to 1 to enable demo producer/consumer tasks, 0 to disable
+ */
+#define ENABLE_DEMO_TASKS   0
+
+/**
+ * @brief Enable interactive input demo
+ * @note  Set to 1 to enable interactive button/keyboard demo, 0 to disable
+ */
+#define ENABLE_INTERACTIVE  1
 
 /** @brief ANSI escape code to show cursor (used in error path) */
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
@@ -71,10 +84,16 @@ int main(void)
     
     os_init();
 
+#if ENABLE_DEMO_TASKS
     demo_tasks_init();
+#endif
 
 #if ENABLE_STRESS_TEST
     stress_test_init();
+#endif
+
+#if ENABLE_INTERACTIVE
+    interactive_tasks_init();
 #endif
 
     os_start();

@@ -171,6 +171,7 @@ static void os_idle_task(void)
     }
 }
 
+static void os_heartbeat_task(void) __attribute__((unused));
 static void os_heartbeat_task(void)
 {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
@@ -240,7 +241,7 @@ ITCM_FUNC void __os_init(void)
     }
 
     __os_register_task(os_idle_task, "ICARUS_KEEPALIVE_TASK");
-    __os_register_task(os_heartbeat_task, ">ICARUS_HEARTBEAT<");
+    // __os_register_task(os_heartbeat_task, ">ICARUS_HEARTBEAT<");  // Disabled for interactive demo
 
     scheduler_enabled = true;
 }
