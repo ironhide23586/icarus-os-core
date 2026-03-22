@@ -220,6 +220,40 @@ void test_ai_inference_simple_model(void);
 | Invalid priority | Out of range | Clamp or reject |
 | Corrupted model | Bad CRC | Reject, fallback |
 
+### 4.5 Memory Protection Tests
+
+**Scope:** MPU configuration and fault handling
+
+**Purpose:** Verify memory protection mechanisms prevent unauthorized access
+
+| Test | Attack Vector | Expected Behavior | Verifies |
+|------|---------------|-------------------|----------|
+| `mpu_redteam_task` | Write to another task's data region | MemManage fault, task continues | HLR-KRN-071 |
+| `mpu_itcm_write_test` | Write to ITCM (code region) | MemManage fault, task continues | HLR-KRN-066 |
+| `mpu_dtcm_attack_task` | Read from DTCM (kernel data) | MemManage fault, task continues | HLR-KRN-070 |
+| `mpu_kernel_bypass_test` | Direct call to `__os_*` function | MemManage fault when accessing DTCM | HLR-KRN-070 |
+
+**Test Execution:**
+- Tests run continuously as stress test tasks
+- Real-time status displayed via USB CDC terminal
+- Fault count monitored to verify protection active
+- Pass criteria: Fault count increases on each attack attempt
+
+**Verification Evidence:**
+```
+MPU_VICTIM: allocs=3 verifies=7 corruptions=0 [PASS]
+MPU_REDTEAM: attacks=26 own_data=OK [PROTECTED]
+MPU_ITCM_WR: attempts=4 faults=27 [WRITE PROTECTED]
+MPU_DTCM: attempts=4 faults=28 [DTCM PROTECTED]
+MPU_BYPASS: attempts=4 faults=30 [DTCM PROTECTED]
+```
+
+**Fault Recovery Verification:**
+- MemManage handler advances PC past faulting instruction
+- Task continues execution after fault
+- Fault address and PC captured for analysis
+- System remains stable after multiple faults
+
 
 ---
 

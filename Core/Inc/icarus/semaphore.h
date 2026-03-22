@@ -67,12 +67,40 @@ uint32_t semaphore_get_count(uint8_t semaphore_idx);
  */
 uint32_t semaphore_get_max_count(uint8_t semaphore_idx);
 
-/* Call gate wrappers — check spin condition via SVC (safe with DTCM priv-only) */
+/* ============================================================================
+ * SVC CALL GATES (MPU Protection)
+ * ========================================================================= */
+
+/**
+ * @brief Check if semaphore can accept a feed (SVC call gate)
+ * @param semaphore_idx Semaphore index
+ * @return true if count < max_count and engaged
+ * @note  Uses SVC to read semaphore_list from DTCM in privileged mode
+ */
 bool sem_can_feed(uint8_t semaphore_idx);
+
+/**
+ * @brief Check if semaphore can be consumed (SVC call gate)
+ * @param semaphore_idx Semaphore index
+ * @return true if count > 0 and engaged
+ * @note  Uses SVC to read semaphore_list from DTCM in privileged mode
+ */
 bool sem_can_consume(uint8_t semaphore_idx);
 
-/* Write gate wrappers — modify kernel state via SVC (safe with DTCM priv-only) */
+/**
+ * @brief Increment semaphore count (SVC call gate)
+ * @param semaphore_idx Semaphore index
+ * @note  Uses SVC to write semaphore_list in DTCM from privileged mode
+ * @note  Called after sem_can_feed() spin loop exits
+ */
 void sem_increment(uint8_t semaphore_idx);
+
+/**
+ * @brief Decrement semaphore count (SVC call gate)
+ * @param semaphore_idx Semaphore index
+ * @note  Uses SVC to write semaphore_list in DTCM from privileged mode
+ * @note  Called after sem_can_consume() spin loop exits
+ */
 void sem_decrement(uint8_t semaphore_idx);
 
 /* ============================================================================

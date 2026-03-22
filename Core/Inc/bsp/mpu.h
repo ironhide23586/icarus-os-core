@@ -97,20 +97,33 @@ extern "C" {
 #define TASK_DATA_SIZE_MPU   BYTES_TO_MPU_SIZE(TASK_DATA_SIZE_BYTES)
 
 /**
- * @brief   Configure Memory Protection Unit for QSPI flash access
+ * @brief   Configure Memory Protection Unit regions
  *
- * @details Sets up two MPU regions for QSPI memory-mapped flash:
- *          - Region 0: 256MB background region with no access (catches stray accesses)
- *          - Region 1: 8MB overlay for actual flash with read-only, cacheable access
+ * @details Sets up 8 MPU regions for memory protection:
+ *          - Region 0: ITCM (read-only for all, prevents code modification)
+ *          - Region 1: QSPI Flash (read-only, cacheable)
+ *          - Region 2: Internal Flash (read-only, cacheable)
+ *          - Region 3: DISABLED (consolidated with Region 0)
+ *          - Region 4: Task Data (dynamic, configured per context switch)
+ *          - Region 5: DTCM (privileged-only, protects kernel data)
+ *          - Region 6: RAM_D1 (shared buffers, full access)
+ *          - Region 7: Peripherals (device memory, full access)
  *
  * @par Region Configuration:
- *      | Region | Base       | Size  | Access    | Cache     | Execute |
- *      |--------|------------|-------|-----------|-----------|---------|
- *      | 0      | 0x90000000 | 256MB | No Access | None      | No      |
- *      | 1      | 0x90000000 | 8MB   | Priv RO   | WT Cache  | Yes     |
+ *      | Region | Base       | Size  | Access         | Purpose                |
+ *      |--------|------------|-------|----------------|------------------------|
+ *      | 0      | 0x00000000 | 64KB  | Priv+User RO   | ITCM code protection   |
+ *      | 1      | 0x90000000 | 8MB   | Priv+User RO   | QSPI Flash             |
+ *      | 2      | 0x08000000 | 128KB | Priv+User RO   | Internal Flash         |
+ *      | 3      | DISABLED   | -     | -              | Reserved               |
+ *      | 4      | Dynamic    | 2KB   | Priv+User RW   | Task data isolation    |
+ *      | 5      | 0x20000000 | 128KB | Priv RW        | DTCM kernel data       |
+ *      | 6      | 0x24000000 | 512KB | Full Access    | RAM_D1 shared buffers  |
+ *      | 7      | 0x40000000 | 512MB | Full Access    | Peripherals            |
  *
- * @note    Must be called before enabling caches
- * @note    Uses privileged default memory map for non-configured regions
+ * @note    Called once during system initialization before tasks start
+ * @note    Enables MPU with privileged default background map
+ * @note    Memory barriers (DSB/ISB) ensure MPU changes take effect
  *
  * @see     ARMv7-M Architecture Reference Manual, Section B3.5 (MPU)
  * @see     STM32H750 Reference Manual RM0433, Section 2.3.4
@@ -118,9 +131,19 @@ extern "C" {
 void MPU_Config(void);
 
 /**
- * @brief Configure MPU for current task's data region
- * @param task_id Task identifier
- * @note Called from assembly context switch handler
+ * @brief   Configure MPU Region 4 for current task's data region
+ *
+ * @param   task_data_base Base address of task's 2KB data region (must be 2KB-aligned)
+ *
+ * @details Reconfigures MPU Region 4 to grant the current task exclusive access
+ *          to its data region. This provides task data isolation - each task can
+ *          only access its own 2KB data region, preventing cross-task corruption.
+ *
+ * @note    Called from assembly context switch handler (os_yield_pendsv)
+ * @note    Memory barriers (DSB/ISB) ensure MPU changes take effect before task runs
+ * @note    Task data regions are allocated from data_pool in RAM_D2 (0x30000000)
+ *
+ * @see     MPU_Config() for initial MPU setup
  */
 void MPU_ConfigureTaskData(uint32_t task_data_base);
 

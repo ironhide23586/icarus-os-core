@@ -26,6 +26,10 @@
 #include <stdbool.h>
 #include "icarus/config.h"
 #include "icarus/svc.h"
+#ifndef HOST_TEST
+#include "st7735.h"
+#include "lcd.h"
+#endif
 #ifdef HOST_TEST
 // For host testing, include mock header for os_yield_pendsv
 #include "mock_asm.h"
@@ -196,21 +200,13 @@ void MemManage_Handler(void)
 
     g_memmanage_fault_count++;
     
-    /* Limit fault recovery to prevent infinite loops */
-    if (g_memmanage_fault_count > 100) {
-      /* Halt with rapid 4 blinks */
-      while (1) {
-        for (int i = 0; i < 4; i++) {
-          HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_SET);
-          for (volatile int d = 0; d < 8000000; d++) {}
-          HAL_GPIO_WritePin(E3_GPIO_Port, E3_Pin, GPIO_PIN_RESET);
-          for (volatile int d = 0; d < 8000000; d++) {}
-        }
-        for (volatile int d = 0; d < 80000000; d++) {}
-      }
+    /* Lower limit for ITCM protection debugging - fail fast after 3 faults */
+    if (g_memmanage_fault_count > 30) {
+      /* Fault info captured in g_last_fault_addr and g_last_fault_pc */
+      /* Fall through to halt with 4 blinks */
+    } else {
+      return;
     }
-    
-    return;
   }
 
   /* Non-recoverable: 4 fast blinks = MemManage */

@@ -1179,6 +1179,56 @@ static void mpu_dtcm_attack_task(void) {
     }
 }
 
+/**
+ * @brief   Direct kernel call bypass test
+ *
+ * @details Attempts to call __semaphore_get_count() directly instead of
+ *          using the SVC wrapper semaphore_get_count(). This should fault
+ *          when the function tries to access semaphore_list[] in DTCM.
+ *
+ *          Expected result: fault count rises → [DTCM PROTECTED]
+ *          Failure result: call succeeds → [BYPASS BREACH]
+ */
+static void mpu_kernel_bypass_test(void) {
+    uint32_t attempts = 0;
+    uint32_t last_fault_count = 0;
+    
+    /* Declare external kernel function */
+    extern uint32_t __semaphore_get_count(uint8_t semaphore_idx);
+
+    while (1) {
+        attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+
+        /* Try to call kernel function directly (bypassing SVC wrapper)
+         * This will attempt to read semaphore_list[0]->count from DTCM
+         * which should trigger a MemManage fault */
+        volatile uint32_t result = __semaphore_get_count(0);
+        (void)result;
+
+        uint32_t fault_after = g_memmanage_fault_count;
+        bool protected = (fault_after > fault_before);
+        last_fault_count = fault_after;
+
+        ANSI_GOTO(STRESS_ROW_STATS2 + 6, 1);
+        if (protected) {
+            printf("\033[1;32m");  /* Bold green */
+            printf("MPU_BYPASS: attempts=%lu faults=%lu [DTCM PROTECTED]",
+                   attempts, last_fault_count);
+        } else {
+            printf("\033[1;31m");  /* Bold red */
+            printf("MPU_BYPASS: attempts=%lu faults=%lu result=%lu [BYPASS BREACH]",
+                   attempts, last_fault_count, result);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+
+        task_active_sleep(500);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
 // ============================================================================
 // HEADER DISPLAY
 // ============================================================================
@@ -1322,4 +1372,5 @@ void stress_test_init(void) {
     os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
     os_register_task(mpu_itcm_write_test, "mpu_itcm"); // ITCM write protection test
     os_register_task(mpu_dtcm_attack_task, "mpu_dtcm"); // DTCM priv attack test
+    os_register_task(mpu_kernel_bypass_test, "mpu_byps"); // Kernel bypass test
 }

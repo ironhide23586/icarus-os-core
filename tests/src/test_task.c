@@ -1903,6 +1903,110 @@ void test_display_render_msg_history_basic(void) {
 	TEST_PASS();
 }
 
+// ============================================================================
+// MPU and Privilege Tests
+// ============================================================================
+
+// Test: sem_can_feed - valid semaphore
+void test_svc_sem_can_feed_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	bool result = sem_can_feed(0);
+	TEST_ASSERT_TRUE(result);  // count < max_count
+}
+
+// Test: sem_can_feed - invalid index
+void test_svc_sem_can_feed_invalid(void) {
+	bool result = sem_can_feed(ICARUS_MAX_SEMAPHORES);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: sem_can_consume - valid semaphore
+void test_svc_sem_can_consume_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	bool result = sem_can_consume(0);
+	TEST_ASSERT_TRUE(result);  // count > 0
+}
+
+// Test: sem_can_consume - invalid index
+void test_svc_sem_can_consume_invalid(void) {
+	bool result = sem_can_consume(ICARUS_MAX_SEMAPHORES);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: sem_increment - valid semaphore
+void test_svc_sem_increment_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	sem_increment(0);
+	TEST_ASSERT_EQUAL(4, semaphore_list[0]->count);
+}
+
+// Test: sem_decrement - valid semaphore
+void test_svc_sem_decrement_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	sem_decrement(0);
+	TEST_ASSERT_EQUAL(2, semaphore_list[0]->count);
+}
+
+// Test: pipe_can_enqueue - valid pipe
+void test_svc_pipe_can_send_valid(void) {
+	test_init_task_list();
+	pipe_init(0, 64);
+	message_pipe_list[0]->count = 32;
+	
+	bool result = pipe_can_enqueue(0, 10);
+	TEST_ASSERT_TRUE(result);  // has space for 10 bytes
+}
+
+// Test: pipe_can_dequeue - valid pipe
+void test_svc_pipe_can_receive_valid(void) {
+	test_init_task_list();
+	pipe_init(0, 64);
+	message_pipe_list[0]->count = 10;
+	
+	bool result = pipe_can_dequeue(0, 5);
+	TEST_ASSERT_TRUE(result);  // has at least 5 bytes
+}
+
+// Test: os_get_task_name - SVC wrapper
+void test_os_get_task_name_svc(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "test_task");
+	
+	const char* name = os_get_task_name(0);
+	TEST_ASSERT_EQUAL_STRING("test_task", name);
+}
+
+// Test: os_get_num_created_tasks - SVC wrapper
+void test_os_get_num_created_tasks_svc(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	os_register_task(test_task_2, "task2");
+	
+	uint8_t count = os_get_num_created_tasks();
+	TEST_ASSERT_EQUAL(2, count);
+}
+
+// Test: os_is_running - SVC wrapper
+void test_os_is_running_svc(void) {
+	os_running = 0;
+	TEST_ASSERT_FALSE(os_is_running());
+	
+	os_running = 1;
+	TEST_ASSERT_TRUE(os_is_running());
+}
+
 // Test runner
 int main(void) {
 	UNITY_BEGIN();
@@ -2083,6 +2187,19 @@ int main(void) {
 	RUN_TEST(test_msg_history_add_clamp_len);
 	RUN_TEST(test_display_render_msg_history_null);
 	RUN_TEST(test_display_render_msg_history_basic);
+	
+	// MPU and Privilege Tests
+	RUN_TEST(test_svc_sem_can_feed_valid);
+	RUN_TEST(test_svc_sem_can_feed_invalid);
+	RUN_TEST(test_svc_sem_can_consume_valid);
+	RUN_TEST(test_svc_sem_can_consume_invalid);
+	RUN_TEST(test_svc_sem_increment_valid);
+	RUN_TEST(test_svc_sem_decrement_valid);
+	RUN_TEST(test_svc_pipe_can_send_valid);
+	RUN_TEST(test_svc_pipe_can_receive_valid);
+	RUN_TEST(test_os_get_task_name_svc);
+	RUN_TEST(test_os_get_num_created_tasks_svc);
+	RUN_TEST(test_os_is_running_svc);
 	
 	return UNITY_END();
 }

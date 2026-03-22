@@ -71,12 +71,46 @@ uint8_t pipe_get_count(uint8_t pipe_idx);
  */
 uint8_t pipe_get_max_count(uint8_t pipe_idx);
 
-/* Call gate wrappers — check spin condition via SVC (safe with DTCM priv-only) */
+/* ============================================================================
+ * SVC CALL GATES (MPU Protection)
+ * ========================================================================= */
+
+/**
+ * @brief Check if pipe can accept data (SVC call gate)
+ * @param pipe_idx Pipe index
+ * @param message_bytes Number of bytes to enqueue
+ * @return true if free space >= message_bytes and engaged
+ * @note  Uses SVC to read message_pipe_list from DTCM in privileged mode
+ */
 bool pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes);
+
+/**
+ * @brief Check if pipe has data available (SVC call gate)
+ * @param pipe_idx Pipe index
+ * @param message_bytes Number of bytes to dequeue
+ * @return true if count >= message_bytes and engaged
+ * @note  Uses SVC to read message_pipe_list from DTCM in privileged mode
+ */
 bool pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes);
 
-/* Write gate wrappers — modify kernel state via SVC (safe with DTCM priv-only) */
+/**
+ * @brief Write bytes to pipe (SVC call gate)
+ * @param pipe_idx Pipe index
+ * @param message Pointer to message data
+ * @param message_bytes Number of bytes to write
+ * @note  Uses SVC to write message_pipe_list in DTCM from privileged mode
+ * @note  Called after pipe_can_enqueue() spin loop exits
+ */
 void pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
+
+/**
+ * @brief Read bytes from pipe (SVC call gate)
+ * @param pipe_idx Pipe index
+ * @param message Pointer to buffer for message data
+ * @param message_bytes Number of bytes to read
+ * @note  Uses SVC to read message_pipe_list in DTCM from privileged mode
+ * @note  Called after pipe_can_dequeue() spin loop exits
+ */
 void pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
 
 /* ============================================================================

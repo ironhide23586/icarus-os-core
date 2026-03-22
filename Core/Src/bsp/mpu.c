@@ -42,19 +42,40 @@
  * MPU CONFIGURATION
  * ========================================================================= */
 
+/**
+ * @brief   Configure Memory Protection Unit regions
+ *
+ * @details Sets up 8 MPU regions for memory protection:
+ *          - Region 0: ITCM (read-only for all, prevents code modification)
+ *          - Region 1: QSPI Flash (read-only, cacheable)
+ *          - Region 2: Internal Flash (read-only, cacheable)
+ *          - Region 3: DISABLED (consolidated with Region 0)
+ *          - Region 4: Task Data (dynamic, configured per context switch)
+ *          - Region 5: DTCM (privileged-only, protects kernel data)
+ *          - Region 6: RAM_D1 (shared buffers, full access)
+ *          - Region 7: Peripherals (device memory, full access)
+ *
+ *          Enables MPU with privileged default background map to block
+ *          unprivileged access to system control space (NVIC, SCB, etc.)
+ *
+ * @note    Called once during system initialization before tasks start
+ * @note    Memory barriers (DSB/ISB) ensure MPU changes take effect
+ */
 void MPU_Config(void)
 {
     MPU_Region_InitTypeDef r = {0};
 
     HAL_MPU_Disable();
 
-    /* ---- Region 0: ITCM 64KB base — Priv+User RO+exec ---- */
-    /* Covers all of ITCM. Region 3 overlays 0x000–0x1FF as priv-only.     */
+    /* ---- Region 0: ITCM 64KB base — RO+exec for all ---- */
+    /* Kernel functions in ITCM - read-only prevents code modification */
+    /* Note: ARM MPU cannot prevent unprivileged EXECUTION of privileged code */
+    /* Protection relies on exception mechanism (SVC/PendSV only via instructions) */
     r.Enable           = MPU_REGION_ENABLE;
     r.Number           = MPU_REGION_ITCM_BASE;
     r.BaseAddress      = BSP_ITCM_BASE;
     r.Size             = MPU_REGION_SIZE_64KB;
-    r.AccessPermission = MPU_REGION_PRIV_RO_URO;
+    r.AccessPermission = MPU_REGION_PRIV_RO_URO;  /* Read-only for all */
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
