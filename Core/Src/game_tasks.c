@@ -118,12 +118,13 @@ static void game_render_task(void)
 {
     /* Display header */
     uint8_t text[40];
+    uint16_t lcd_width = (uint16_t)ST7735Ctx.Width;
     
     sprintf((char*)text, "ICARUS GAME DEMO");
-    LCD_ShowString(10, 10, ST7735Ctx.Width, 16, 16, text);
+    LCD_ShowString(10, 10, lcd_width, 16, 16, text);
     
     sprintf((char*)text, "Press K1 button");
-    LCD_ShowString(10, 30, ST7735Ctx.Width, 12, 12, text);
+    LCD_ShowString(10, 30, lcd_width, 12, 12, text);
     
     while (1) {
         /* Clear stats area */
@@ -131,21 +132,21 @@ static void game_render_task(void)
         
         /* Display frame count */
         sprintf((char*)text, "Frames: %lu", g_game_state.frame_count);
-        LCD_ShowString(10, 60, ST7735Ctx.Width, 12, 12, text);
+        LCD_ShowString(10, 60, lcd_width, 12, 12, text);
         
         /* Display button press count */
         sprintf((char*)text, "Presses: %lu", g_game_state.button_presses);
-        LCD_ShowString(10, 75, ST7735Ctx.Width, 12, 12, text);
+        LCD_ShowString(10, 75, lcd_width, 12, 12, text);
         
         /* Display button state indicator */
         if (g_game_state.button_pressed) {
             ST7735_LCD_Driver.FillRect(&st7735_pObj, 10, 95, 20, 20, GREEN);
             sprintf((char*)text, "PRESSED");
-            LCD_ShowString(35, 100, ST7735Ctx.Width, 12, 12, text);
+            LCD_ShowString(35, 100, lcd_width, 12, 12, text);
         } else {
             ST7735_LCD_Driver.FillRect(&st7735_pObj, 10, 95, 20, 20, RED);
             sprintf((char*)text, "RELEASED");
-            LCD_ShowString(35, 100, ST7735Ctx.Width, 12, 12, text);
+            LCD_ShowString(35, 100, lcd_width, 12, 12, text);
         }
         
         /* Increment frame counter */
