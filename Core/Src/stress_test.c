@@ -42,7 +42,7 @@
  */
 
 #include "stress_test.h"
-#include "icarus/icarus_task.h"
+#include "icarus/icarus.h"
 #include "bsp/display.h"
 
 // Global statistics
@@ -841,6 +841,395 @@ static void stats_display_task(void) {
 }
 
 // ============================================================================
+// MPU DATA PROTECTION VERIFICATION TASK
+// ============================================================================
+
+// Shared pointer for red team attack testing (intentionally global)
+// This pointer will point to victim's data_pool[victim_task_idx][...] region
+// When red team tries to access it, MPU should block (different task's region)
+static volatile uint32_t *g_victim_data_ptr = NULL;
+
+/* Use the actual fault counter from stm32h7xx_it.c */
+extern volatile uint32_t g_memmanage_fault_count;
+
+// Set to 1 to enable actual MPU attack (will trigger hard fault if MPU works)
+#define MPU_ENABLE_ATTACK_TEST 1
+
+/**
+ * @brief   MPU data protection verification task (victim)
+ *
+ * @details Allocates multiple MPU-protected data regions and continuously
+ *          verifies data integrity. Tests:
+ *          - Multiple allocations within same task
+ *          - Data isolation from other tasks
+ *          - Pattern integrity under stress
+ *
+ * @note    Increments data_errors if corruption detected
+ * @note    Exposes pointer for red team attack testing
+ */
+static void mpu_verify_task(void) {
+    // Test multiple allocations in one task
+    uint32_t *mpu_data1 = (uint32_t*)kernel_protected_data(16);  // 16 words = 64 bytes
+    uint32_t *mpu_data2 = (uint32_t*)kernel_protected_data(16);  // Another 16 words
+    uint32_t *mpu_data3 = (uint32_t*)kernel_protected_data(32);  // 32 words = 128 bytes
+    
+    if (mpu_data1 == NULL || mpu_data2 == NULL || mpu_data3 == NULL) {
+        // Allocation failed
+        g_stress_stats.data_errors++;
+        while(1) { task_active_sleep(1000); }
+    }
+    
+    // Expose first allocation for red team attack
+    g_victim_data_ptr = mpu_data1;
+    
+    // Initialize with known patterns
+    const uint32_t PATTERN1 = 0x5A5A5A5A;
+    const uint32_t PATTERN2 = 0xA5A5A5A5;
+    const uint32_t PATTERN3 = 0xDEADBEEF;
+    
+    for (uint8_t i = 0; i < 16; i++) {
+        mpu_data1[i] = PATTERN1 + i;
+        mpu_data2[i] = PATTERN2 + i;
+    }
+    for (uint8_t i = 0; i < 32; i++) {
+        mpu_data3[i] = PATTERN3 + i;
+    }
+    
+    uint32_t verify_count = 0;
+    uint32_t corruption_detected = 0;
+    
+    while (1) {
+        // VERIFY: Check all three allocations for integrity
+        for (uint8_t i = 0; i < 16; i++) {
+            if (mpu_data1[i] != PATTERN1 + i) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+                mpu_data1[i] = PATTERN1 + i;  // Restore
+            }
+            if (mpu_data2[i] != PATTERN2 + i) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+                mpu_data2[i] = PATTERN2 + i;  // Restore
+            }
+        }
+        for (uint8_t i = 0; i < 32; i++) {
+            if (mpu_data3[i] != PATTERN3 + i) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+                mpu_data3[i] = PATTERN3 + i;  // Restore
+            }
+        }
+        
+        verify_count++;
+        
+        // Display verification status
+        ANSI_GOTO(STRESS_ROW_STATS2 + 2, 1);
+        
+        if (corruption_detected > 0) {
+            printf("\033[1;31m");  // Bold red for corruption
+            printf("MPU_VICTIM: allocs=3 verifies=%lu corruptions=%lu [FAIL]",
+                   verify_count, corruption_detected);
+        } else {
+            printf("\033[1;32m");  // Bold green for pass
+            printf("MPU_VICTIM: allocs=3 verifies=%lu corruptions=0 [PASS]",
+                   verify_count);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+        
+        // Update patterns to test write protection
+        for (uint8_t i = 0; i < 16; i++) {
+            mpu_data1[i] = PATTERN1 + i + (verify_count & 0xFF);
+            mpu_data2[i] = PATTERN2 + i + (verify_count & 0xFF);
+        }
+        for (uint8_t i = 0; i < 32; i++) {
+            mpu_data3[i] = PATTERN3 + i + (verify_count & 0xFF);
+        }
+        
+        task_active_sleep(200);
+        g_stress_stats.task_sleeps++;
+        
+        // Verify the updated patterns
+        for (uint8_t i = 0; i < 16; i++) {
+            if (mpu_data1[i] != PATTERN1 + i + (verify_count & 0xFF)) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+            }
+            if (mpu_data2[i] != PATTERN2 + i + (verify_count & 0xFF)) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+            }
+        }
+        for (uint8_t i = 0; i < 32; i++) {
+            if (mpu_data3[i] != PATTERN3 + i + (verify_count & 0xFF)) {
+                g_stress_stats.data_errors++;
+                corruption_detected++;
+            }
+        }
+        
+        // Restore original patterns for next iteration
+        for (uint8_t i = 0; i < 16; i++) {
+            mpu_data1[i] = PATTERN1 + i;
+            mpu_data2[i] = PATTERN2 + i;
+        }
+        for (uint8_t i = 0; i < 32; i++) {
+            mpu_data3[i] = PATTERN3 + i;
+        }
+    }
+}
+
+/**
+ * @brief   MPU red team attack task
+ *
+ * @details Attempts to write to another task's MPU-protected data region.
+ *          This SHOULD trigger an MPU fault and be blocked by hardware.
+ *          If the write succeeds, MPU protection has failed.
+ *
+ * @note    Tests hardware enforcement of memory isolation
+ * @note    Successful attack increments data_errors (MPU failure)
+ * @note    MPU fault is expected behavior (protection working)
+ */
+static void mpu_redteam_task(void) {
+    uint32_t attack_attempts = 0;
+    uint32_t last_fault_count = 0;
+    
+    // Wait for victim to initialize
+    while (g_victim_data_ptr == NULL) {
+        task_active_sleep(100);
+    }
+    
+    // Allocate own data to verify we have working MPU region
+    uint32_t *own_data = (uint32_t*)kernel_protected_data(16);
+    if (own_data == NULL) {
+        while(1) { task_active_sleep(1000); }
+    }
+    
+    // Initialize own data
+    for (uint8_t i = 0; i < 16; i++) {
+        own_data[i] = 0xBADC0DE0 + i;
+    }
+    
+    while (1) {
+        // RED TEAM ATTACK: Try to access victim's data region
+        // g_victim_data_ptr points to data_pool[victim_task_idx][...]
+        // Current task can only access data_pool[redteam_task_idx][...]
+        // MPU should block this cross-task access
+        attack_attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+        
+#if MPU_ENABLE_ATTACK_TEST
+        // ACTUAL ATTACK: This WILL trigger MPU fault if protection is working
+        volatile uint32_t *victim = (volatile uint32_t*)g_victim_data_ptr;
+        volatile uint32_t read_attempt = victim[0];  // Cross-task read - should fault
+        (void)read_attempt;  // Use the value to avoid warning
+        
+        // Try write attack too
+        victim[0] = 0xDEADDEAD;  // Cross-task write - should fault
+#endif
+        
+        uint32_t fault_after = g_memmanage_fault_count;
+        uint32_t faults_this_iteration = fault_after - fault_before;
+        last_fault_count = fault_after;
+        
+        // Verify our own data is still intact
+        bool own_data_ok = true;
+        for (uint8_t i = 0; i < 16; i++) {
+            if (own_data[i] != 0xBADC0DE0 + i) {
+                own_data_ok = false;
+                g_stress_stats.data_errors++;
+                own_data[i] = 0xBADC0DE0 + i;  // Restore
+            }
+        }
+        
+        // Display attack status
+        ANSI_GOTO(STRESS_ROW_STATS2 + 3, 1);
+        
+        // MPU is working if faults are being triggered
+        if (faults_this_iteration > 0) {
+            printf("\033[1;32m");  // Bold green - MPU working
+            printf("MPU_REDTEAM: attacks=%lu faults=%lu own_data=%s [PROTECTED]",
+                   attack_attempts, last_fault_count, own_data_ok ? "OK" : "CORRUPT");
+        } else {
+            printf("\033[1;31m");  // Bold red - MPU FAILED
+            printf("MPU_REDTEAM: attacks=%lu faults=%lu own_data=%s [BREACH!]",
+                   attack_attempts, last_fault_count, own_data_ok ? "OK" : "CORRUPT");
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+        
+        task_active_sleep(250);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
+// ============================================================================
+// MPU ITCM PROTECTION ATTACK TASK
+// ============================================================================
+
+/* Declared in stm32h7xx_it.c — incremented on each recoverable MemManage */
+extern volatile uint32_t g_memmanage_fault_count;
+
+/**
+ * @brief   ITCM write protection test
+ *
+ * @details Attempts to write to ITCM code region (0x50).
+ *          ITCM is configured as read-only (Region 0: PRIV_RO_URO).
+ *          Write attempts should trigger MemManage fault.
+ *
+ *          Expected result: fault count rises → [ITCM WRITE PROTECTED]
+ *          Failure result: write succeeds → [ITCM WRITE BREACH]
+ */
+static void mpu_itcm_write_test(void) {
+    uint32_t attempts = 0;
+    uint32_t last_fault_count = 0;
+    
+    /* Debug: display last fault address from MemManage handler */
+    extern volatile uint32_t g_last_fault_addr;
+    extern volatile uint32_t g_last_fault_pc;
+
+    while (1) {
+        attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+
+        /* Attempt to write to ITCM (should be read-only)
+         * Region 0 covers all ITCM as PRIV_RO_URO (read-only for all)
+         * Any write attempt should trigger MemManage fault */
+        uint32_t test_value = 0xDEADBEEF;
+        __asm__ volatile (
+            "str %0, [%1]\n"
+            :
+            : "r" (test_value), "r" ((volatile uint32_t *)0x00000050)
+        );
+
+        uint32_t fault_after = g_memmanage_fault_count;
+        bool protected = (fault_after > fault_before);
+        last_fault_count = fault_after;
+
+        ANSI_GOTO(STRESS_ROW_STATS2 + 4, 1);
+        if (protected) {
+            printf("\033[1;32m");  /* Bold green */
+            printf("MPU_ITCM_WR: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [WRITE PROTECTED]",
+                   attempts, last_fault_count, g_last_fault_addr, g_last_fault_pc);
+        } else {
+            printf("\033[1;31m");  /* Bold red */
+            printf("MPU_ITCM_WR: attempts=%lu faults=%lu addr=0x%08lX pc=0x%08lX [WRITE BREACH!]",
+                   attempts, last_fault_count, g_last_fault_addr, g_last_fault_pc);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+
+        task_active_sleep(500);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
+/**
+ * @brief   DTCM priv-region attack task
+ *
+ * @details Attempts a data read from 0x20000000 (start of DTCM where kernel
+ *          state lives: task_list, semaphore_list, os_tick_count, etc.).
+ *          Region 5 is PRIV_RO — no unprivileged access.
+ *
+ *          Expected result: fault count rises each iteration → [DTCM PROTECTED]
+ *          Failure result:  read succeeds, fault count unchanged → [DTCM BREACH]
+ */
+static void mpu_dtcm_attack_task(void) {
+    uint32_t attempts = 0;
+    uint32_t last_fault_count = 0;
+
+    while (1) {
+        attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+
+        /* Attempt unprivileged data read from DTCM (kernel state region).
+         * Region 5 covers 0x20000000–0x2001FFFF as PRIV_RO.
+         * If MPU is working this triggers DACCVIOL → MemManage_Handler
+         * recovers by skipping this instruction (+2 bytes). */
+        volatile uint32_t dummy;
+        __asm__ volatile (
+            "ldr %0, [%1]"
+            : "=r" (dummy)
+            : "r" ((volatile uint32_t *)0x20000000)
+        );
+        (void)dummy;
+
+        uint32_t fault_after = g_memmanage_fault_count;
+        bool protected = (fault_after > fault_before);
+        last_fault_count = fault_after;
+
+        ANSI_GOTO(STRESS_ROW_STATS2 + 5, 1);
+        if (protected) {
+            printf("\033[1;32m");  /* Bold green */
+            printf("MPU_DTCM: attempts=%lu faults=%lu [DTCM PROTECTED]",
+                   attempts, last_fault_count);
+        } else {
+            printf("\033[1;31m");  /* Bold red */
+            printf("MPU_DTCM: attempts=%lu faults=%lu [DTCM BREACH]",
+                   attempts, last_fault_count);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+
+        task_active_sleep(500);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
+/**
+ * @brief   Direct kernel call bypass test
+ *
+ * @details Attempts to call __semaphore_get_count() directly instead of
+ *          using the SVC wrapper semaphore_get_count(). This should fault
+ *          when the function tries to access semaphore_list[] in DTCM.
+ *
+ *          Expected result: fault count rises → [DTCM PROTECTED]
+ *          Failure result: call succeeds → [BYPASS BREACH]
+ */
+static void mpu_kernel_bypass_test(void) {
+    uint32_t attempts = 0;
+    uint32_t last_fault_count = 0;
+    
+    /* Declare external kernel function */
+    extern uint32_t __semaphore_get_count(uint8_t semaphore_idx);
+
+    while (1) {
+        attempts++;
+        uint32_t fault_before = g_memmanage_fault_count;
+
+        /* Try to call kernel function directly (bypassing SVC wrapper)
+         * This will attempt to read semaphore_list[0]->count from DTCM
+         * which should trigger a MemManage fault */
+        volatile uint32_t result = __semaphore_get_count(0);
+        (void)result;
+
+        uint32_t fault_after = g_memmanage_fault_count;
+        bool protected = (fault_after > fault_before);
+        last_fault_count = fault_after;
+
+        ANSI_GOTO(STRESS_ROW_STATS2 + 6, 1);
+        if (protected) {
+            printf("\033[1;32m");  /* Bold green */
+            printf("MPU_BYPASS: attempts=%lu faults=%lu [DTCM PROTECTED]",
+                   attempts, last_fault_count);
+        } else {
+            printf("\033[1;31m");  /* Bold red */
+            printf("MPU_BYPASS: attempts=%lu faults=%lu result=%lu [BYPASS BREACH]",
+                   attempts, last_fault_count, result);
+        }
+        printf("\033[0m");
+        ANSI_CLEAR_LINE();
+        fflush(stdout);
+
+        task_active_sleep(500);
+        g_stress_stats.task_sleeps++;
+    }
+}
+
+// ============================================================================
 // HEADER DISPLAY
 // ============================================================================
 
@@ -977,4 +1366,11 @@ void stress_test_init(void) {
     
     // Register stats display task (1 task)
     os_register_task(stats_display_task, "stats");
+    
+    // Register MPU data protection verification tasks (2 tasks)
+    os_register_task(mpu_verify_task, "mpu_vic");   // Victim with multiple allocations
+    os_register_task(mpu_redteam_task, "mpu_atk");  // Red team attacker
+    os_register_task(mpu_itcm_write_test, "mpu_itcm"); // ITCM write protection test
+    os_register_task(mpu_dtcm_attack_task, "mpu_dtcm"); // DTCM priv attack test
+    os_register_task(mpu_kernel_bypass_test, "mpu_byps"); // Kernel bypass test
 }

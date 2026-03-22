@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-#include "bsp_config.h"
+#include "bsp/config.h"
 
 /** @brief TIM1 handle (PWM output) */
 extern TIM_HandleTypeDef htim1;

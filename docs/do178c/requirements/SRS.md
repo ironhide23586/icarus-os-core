@@ -137,18 +137,31 @@ The following system-level requirements are allocated to ICARUS OS:
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | HLR-KRN-060 | The kernel shall use static memory allocation only | Must | ✅ Implemented |
-| HLR-KRN-061 | The kernel shall detect stack overflow | Should | Planned |
-| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Should | Planned |
-| HLR-KRN-063 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
+| HLR-KRN-061 | The kernel shall detect stack overflow | Should | ✅ Implemented |
+| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Must | ✅ Implemented |
+| HLR-KRN-063 | The kernel shall isolate kernel code in privileged ITCM region | Must | ✅ Implemented |
+| HLR-KRN-064 | The kernel shall isolate kernel data in privileged DTCM region | Must | ✅ Implemented |
+| HLR-KRN-065 | The kernel shall isolate task data regions from each other | Must | ✅ Implemented |
+| HLR-KRN-066 | The kernel shall enforce read-only protection on code regions | Must | ✅ Implemented |
+| HLR-KRN-067 | The kernel shall provide SVC call gates for kernel services | Must | ✅ Implemented |
+| HLR-KRN-068 | The kernel shall execute tasks in unprivileged mode | Must | ✅ Implemented |
+| HLR-KRN-069 | The kernel shall execute kernel functions in privileged mode | Must | ✅ Implemented |
+| HLR-KRN-070 | The kernel shall prevent unprivileged access to kernel data | Must | ✅ Implemented |
+| HLR-KRN-071 | The kernel shall prevent cross-task memory access | Must | ✅ Implemented |
+| HLR-KRN-072 | The kernel shall recover from recoverable memory faults | Must | ✅ Implemented |
+| HLR-KRN-073 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
 
 #### 3.1.7 Fault Handling
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| HLR-KRN-070 | The kernel shall handle processor faults gracefully | Must | ✅ Implemented |
-| HLR-KRN-071 | The kernel shall support watchdog integration | Should | Planned |
-| HLR-KRN-072 | The kernel shall log fault information for diagnostics | Should | Planned |
-| HLR-KRN-073 | The kernel shall support fault recovery (task restart) | Could | Planned |
+| HLR-KRN-080 | The kernel shall handle processor faults gracefully | Must | ✅ Implemented |
+| HLR-KRN-081 | The kernel shall handle MemManage faults from unprivileged tasks | Must | ✅ Implemented |
+| HLR-KRN-082 | The kernel shall recover from data access violations | Must | ✅ Implemented |
+| HLR-KRN-083 | The kernel shall halt on instruction fetch violations | Must | ✅ Implemented |
+| HLR-KRN-084 | The kernel shall support watchdog integration | Should | Planned |
+| HLR-KRN-085 | The kernel shall log fault information for diagnostics | Should | ✅ Implemented |
+| HLR-KRN-086 | The kernel shall support fault recovery (task restart) | Could | Planned |
 
 ---
 

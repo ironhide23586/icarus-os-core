@@ -1,5 +1,5 @@
 /**
- * @file    icarus_config.h
+ * @file    config.h
  * @brief   ICARUS OS Configuration Header
  * @version 0.1.0
  *
@@ -74,10 +74,17 @@ extern "C" {
 
 /**
  * @brief Stack size per task in 32-bit words
+ * @note  256 words = 1KB per task
+ *        Must be even for 8-byte alignment (ARM ABI requirement)
+ */
+#define ICARUS_STACK_WORDS          256
+
+/**
+ * @brief Data region size per task in 32-bit words
  * @note  512 words = 2KB per task
  *        Must be even for 8-byte alignment (ARM ABI requirement)
  */
-#define ICARUS_STACK_WORDS          512
+#define ICARUS_DATA_WORDS           512 
 
 /**
  * @brief Number of SysTick interrupts per task time slice
@@ -117,6 +124,33 @@ extern "C" {
 #define ICARUS_USE_ITCM             1
 
 /** @} */ /* End of MEMORY_CONFIG */
+
+/* ============================================================================
+ * SECTION PLACEMENT MACROS
+ *
+ * These macros annotate functions and data with their intended memory region.
+ *
+ * Memory region mapping:
+ *   ITCM_FUNC      → .itcm        (hot-path code: handlers, wrappers, context switch)
+ *   DTCM_DATA_PRIV → .dtcm_priv   (privileged-only kernel data: task_list,
+ *                                   semaphore_list, scheduler state)
+ *
+ * MPU protection:
+ *   - ITCM (.itcm): Read-only + Execute for all (Region 0)
+ *     * Prevents code modification attacks
+ *     * Kernel handlers protected by ARM exception architecture
+ *   - DTCM (.dtcm_priv): Privileged-only RW (Region 5)
+ *     * Kernel data isolated from unprivileged tasks
+ *     * Access via SVC call gates only
+ * ========================================================================= */
+
+#ifndef HOST_TEST
+#  define ITCM_FUNC       __attribute__((section(".itcm")))
+#  define DTCM_DATA_PRIV  __attribute__((section(".dtcm_priv")))
+#else
+#  define ITCM_FUNC
+#  define DTCM_DATA_PRIV
+#endif
 
 /* ============================================================================
  * DEBUG CONFIGURATION

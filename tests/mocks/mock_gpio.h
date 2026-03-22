@@ -13,6 +13,9 @@ typedef struct {
 	uint32_t Instance;
 } GPIO_TypeDef;
 
+// GPIO port instances
+extern GPIO_TypeDef GPIOE;
+
 // GPIO pins
 #define GPIO_PIN_0  0x0001U
 #define GPIO_PIN_1  0x0002U
@@ -27,11 +30,13 @@ typedef struct {
 #define GPIO_PIN_10 0x0400U
 
 // GPIO states
-#define GPIO_PIN_RESET 0U
-#define GPIO_PIN_SET   1U
+typedef enum {
+    GPIO_PIN_RESET = 0,
+    GPIO_PIN_SET = 1
+} GPIO_PinState;
 
 // Functions
-void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint32_t PinState);
+void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState);
 void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
 
 #endif /* GPIO_H */

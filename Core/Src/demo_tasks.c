@@ -30,8 +30,8 @@
  */
 
 #include "demo_tasks.h"
-#include "icarus/icarus_task.h"
-#include "display.h"
+#include "icarus/icarus.h"
+#include "bsp/display.h"
 
 // Semaphore demo configuration
 #define SEM_IDX           0      // Semaphore index to use
@@ -66,6 +66,13 @@
 #define ROW_PIPE_MM_C1    24     // Multi-Multi consumer 1
 #define ROW_PIPE_MM_C2    25     // Multi-Multi consumer 2
 
+// Display rows for MPU data protection demo
+#define ROW_MPU_HEADER    27     // MPU demo section header
+#define ROW_MPU_WRITER1   28     // MPU writer task 1
+#define ROW_MPU_WRITER2   29     // MPU writer task 2
+#define ROW_MPU_READER1   30     // MPU reader task 1
+#define ROW_MPU_READER2   31     // MPU reader task 2
+
 // History display column positions (right side of screen)
 #define HIST_COL_SS       78
 #define HIST_COL_SM       92
@@ -79,11 +86,23 @@
 // Message flash duration (ticks to show the sent/received value)
 #define MSG_FLASH_TICKS   150
 
+// MPU data protection demo configuration
+#define MPU_WRITE_DELAY   300    // Ticks between write operations
+#define MPU_READ_DELAY    250    // Ticks between read operations
+#define MPU_DATA_SIZE     64     // Number of uint32_t words to allocate per task
+
 // Global message history buffers (one per pipe)
 static msg_history_t hist_ss;
 static msg_history_t hist_sm;
 static msg_history_t hist_ms;
 static msg_history_t hist_mm;
+
+// MPU demo: Each task gets its own protected data array
+// These pointers will be set during task initialization via kernel_protected_data()
+static uint32_t *mpu_writer1_data = NULL;
+static uint32_t *mpu_writer2_data = NULL;
+static uint32_t *mpu_reader1_data = NULL;
+static uint32_t *mpu_reader2_data = NULL;
 
 
 // ============================================================================
@@ -682,6 +701,257 @@ static void pipe_mm_consumer2(void) {
 
 
 // ============================================================================
+// MPU DATA PROTECTION DEMO TASKS
+// Demonstrates: Hardware-enforced per-task data isolation via MPU
+// Each task allocates its own protected data region that other tasks cannot access
+// ============================================================================
+
+/**
+ * @brief   MPU Writer Task 1
+ *
+ * @details Allocates MPU-protected data region and writes incrementing counter.
+ *          Demonstrates that each task has isolated data that cannot be
+ *          corrupted by other tasks due to hardware MPU enforcement.
+ *
+ * @note    Data is allocated once via kernel_protected_data() and persists
+ *          across context switches with MPU protection.
+ */
+static void mpu_writer1_task(void) {
+    const char* task_name = os_get_current_task_name();
+    
+    // Allocate protected data region (one-time allocation)
+    if (mpu_writer1_data == NULL) {
+        mpu_writer1_data = (uint32_t*)kernel_protected_data(MPU_DATA_SIZE);
+        if (mpu_writer1_data == NULL) {
+            // Allocation failed - should not happen with proper config
+            while(1) { os_yield(); }
+        }
+        // Initialize data
+        for (uint16_t i = 0; i < MPU_DATA_SIZE; i++) {
+            mpu_writer1_data[i] = 0;
+        }
+    }
+    
+    uint32_t write_count = 0;
+    
+    while (1) {
+        uint32_t period_start = os_get_tick_count();
+        uint32_t elapsed;
+        
+        do {
+            elapsed = os_get_tick_count() - period_start;
+            
+            // Display: [W1] ████████░░░░░░░░ [0x00001234] ✓MPU
+            char status_buf[64];
+            snprintf(status_buf, sizeof(status_buf), 
+                    "[W1] %s [0x%08lX] ✓MPU", 
+                    task_name, mpu_writer1_data[0]);
+            
+            // Simple progress bar
+            uint32_t bar_fill_calc = (elapsed * BAR_WIDTH) / MPU_WRITE_DELAY;
+            uint8_t bar_fill = (bar_fill_calc > BAR_WIDTH) ? BAR_WIDTH : (uint8_t)bar_fill_calc;
+            printf("\033[%d;1H%s ", ROW_MPU_WRITER1, status_buf);
+            for (uint8_t i = 0; i < BAR_WIDTH; i++) {
+                printf("%s", i < bar_fill ? "█" : "░");
+            }
+            printf("\033[K");  // Clear to end of line
+            fflush(stdout);
+            
+            if (elapsed < MPU_WRITE_DELAY) {
+                task_active_sleep(RENDER_INTERVAL_TICKS);
+            }
+            elapsed = os_get_tick_count() - period_start;
+        } while (elapsed < MPU_WRITE_DELAY);
+        
+        // Write to protected data
+        mpu_writer1_data[0] = write_count;
+        mpu_writer1_data[write_count % MPU_DATA_SIZE] = write_count;
+        write_count++;
+    }
+}
+
+/**
+ * @brief   MPU Writer Task 2
+ *
+ * @details Second writer task with its own isolated data region.
+ *          Writes different pattern (0xA0000000 + counter) to demonstrate
+ *          complete isolation from Writer 1.
+ */
+static void mpu_writer2_task(void) {
+    const char* task_name = os_get_current_task_name();
+    
+    // Allocate protected data region
+    if (mpu_writer2_data == NULL) {
+        mpu_writer2_data = (uint32_t*)kernel_protected_data(MPU_DATA_SIZE);
+        if (mpu_writer2_data == NULL) {
+            while(1) { os_yield(); }
+        }
+        for (uint16_t i = 0; i < MPU_DATA_SIZE; i++) {
+            mpu_writer2_data[i] = 0xA0000000;
+        }
+    }
+    
+    uint32_t write_count = 0;
+    
+    while (1) {
+        uint32_t period_start = os_get_tick_count();
+        uint32_t elapsed;
+        
+        do {
+            elapsed = os_get_tick_count() - period_start;
+            
+            char status_buf[64];
+            snprintf(status_buf, sizeof(status_buf), 
+                    "[W2] %s [0x%08lX] ✓MPU", 
+                    task_name, mpu_writer2_data[0]);
+            
+            uint32_t bar_fill_calc = (elapsed * BAR_WIDTH) / (MPU_WRITE_DELAY + 100);
+            uint8_t bar_fill = (bar_fill_calc > BAR_WIDTH) ? BAR_WIDTH : (uint8_t)bar_fill_calc;
+            printf("\033[%d;1H%s ", ROW_MPU_WRITER2, status_buf);
+            for (uint8_t i = 0; i < BAR_WIDTH; i++) {
+                printf("%s", i < bar_fill ? "█" : "░");
+            }
+            printf("\033[K");
+            fflush(stdout);
+            
+            if (elapsed < MPU_WRITE_DELAY + 100) {
+                task_active_sleep(RENDER_INTERVAL_TICKS);
+            }
+            elapsed = os_get_tick_count() - period_start;
+        } while (elapsed < MPU_WRITE_DELAY + 100);
+        
+        // Write different pattern
+        mpu_writer2_data[0] = 0xA0000000 + write_count;
+        mpu_writer2_data[write_count % MPU_DATA_SIZE] = 0xA0000000 + write_count;
+        write_count++;
+    }
+}
+
+/**
+ * @brief   MPU Reader Task 1
+ *
+ * @details Allocates its own data and reads from it, demonstrating that
+ *          each task can only access its own MPU-protected region.
+ *          Attempts to read from other tasks' data would trigger MPU fault.
+ */
+static void mpu_reader1_task(void) {
+    const char* task_name = os_get_current_task_name();
+    
+    // Allocate protected data region
+    if (mpu_reader1_data == NULL) {
+        mpu_reader1_data = (uint32_t*)kernel_protected_data(MPU_DATA_SIZE);
+        if (mpu_reader1_data == NULL) {
+            while(1) { os_yield(); }
+        }
+        for (uint16_t i = 0; i < MPU_DATA_SIZE; i++) {
+            mpu_reader1_data[i] = 0xDEADBEEF;
+        }
+    }
+    
+    uint32_t read_count = 0;
+    
+    while (1) {
+        uint32_t period_start = os_get_tick_count();
+        uint32_t elapsed;
+        
+        do {
+            elapsed = os_get_tick_count() - period_start;
+            
+            // Read and verify own data
+            uint32_t checksum = 0;
+            for (uint16_t i = 0; i < 8; i++) {
+                checksum += mpu_reader1_data[i];
+            }
+            
+            char status_buf[64];
+            snprintf(status_buf, sizeof(status_buf), 
+                    "[R1] %s [CHK:0x%08lX] ✓MPU", 
+                    task_name, checksum);
+            
+            uint32_t bar_fill_calc = (elapsed * BAR_WIDTH) / MPU_READ_DELAY;
+            uint8_t bar_fill = (bar_fill_calc > BAR_WIDTH) ? BAR_WIDTH : (uint8_t)bar_fill_calc;
+            printf("\033[%d;1H%s ", ROW_MPU_READER1, status_buf);
+            for (uint8_t i = 0; i < BAR_WIDTH; i++) {
+                printf("%s", i < bar_fill ? "█" : "░");
+            }
+            printf("\033[K");
+            fflush(stdout);
+            
+            if (elapsed < MPU_READ_DELAY) {
+                task_active_sleep(RENDER_INTERVAL_TICKS);
+            }
+            elapsed = os_get_tick_count() - period_start;
+        } while (elapsed < MPU_READ_DELAY);
+        
+        // Update own data
+        mpu_reader1_data[read_count % MPU_DATA_SIZE] = read_count;
+        read_count++;
+    }
+}
+
+/**
+ * @brief   MPU Reader Task 2
+ *
+ * @details Second reader with isolated data region, running at different
+ *          rate to show independent operation with MPU protection.
+ */
+static void mpu_reader2_task(void) {
+    const char* task_name = os_get_current_task_name();
+    
+    // Allocate protected data region
+    if (mpu_reader2_data == NULL) {
+        mpu_reader2_data = (uint32_t*)kernel_protected_data(MPU_DATA_SIZE);
+        if (mpu_reader2_data == NULL) {
+            while(1) { os_yield(); }
+        }
+        for (uint16_t i = 0; i < MPU_DATA_SIZE; i++) {
+            mpu_reader2_data[i] = 0xCAFEBABE;
+        }
+    }
+    
+    uint32_t read_count = 0;
+    
+    while (1) {
+        uint32_t period_start = os_get_tick_count();
+        uint32_t elapsed;
+        
+        do {
+            elapsed = os_get_tick_count() - period_start;
+            
+            // Read and verify own data
+            uint32_t checksum = 0;
+            for (uint16_t i = 0; i < 8; i++) {
+                checksum += mpu_reader2_data[i];
+            }
+            
+            char status_buf[64];
+            snprintf(status_buf, sizeof(status_buf), 
+                    "[R2] %s [CHK:0x%08lX] ✓MPU", 
+                    task_name, checksum);
+            
+            uint32_t bar_fill_calc = (elapsed * BAR_WIDTH) / (MPU_READ_DELAY + 80);
+            uint8_t bar_fill = (bar_fill_calc > BAR_WIDTH) ? BAR_WIDTH : (uint8_t)bar_fill_calc;
+            printf("\033[%d;1H%s ", ROW_MPU_READER2, status_buf);
+            for (uint8_t i = 0; i < BAR_WIDTH; i++) {
+                printf("%s", i < bar_fill ? "█" : "░");
+            }
+            printf("\033[K");
+            fflush(stdout);
+            
+            if (elapsed < MPU_READ_DELAY + 80) {
+                task_active_sleep(RENDER_INTERVAL_TICKS);
+            }
+            elapsed = os_get_tick_count() - period_start;
+        } while (elapsed < MPU_READ_DELAY + 80);
+        
+        // Update own data
+        mpu_reader2_data[read_count % MPU_DATA_SIZE] = 0xCAFE0000 + read_count;
+        read_count++;
+    }
+}
+
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
@@ -759,4 +1029,17 @@ void demo_tasks_init(void) {
     os_register_task(pipe_mm_producer2, "mm_prd2");
     os_register_task(pipe_mm_consumer1, "mm_con1");
     os_register_task(pipe_mm_consumer2, "mm_con2");
+    
+    // Print MPU demo header
+    printf("\033[%d;1H", ROW_MPU_HEADER);
+    printf("═══════════════════════════════════════════════════════════════════════════════\n");
+    printf("  MPU DATA PROTECTION DEMO - Hardware-Enforced Task Isolation\n");
+    printf("═══════════════════════════════════════════════════════════════════════════════\033[K");
+    fflush(stdout);
+    
+    // MPU data protection demo tasks
+    os_register_task(mpu_writer1_task, "mpu_wr1");
+    os_register_task(mpu_writer2_task, "mpu_wr2");
+    os_register_task(mpu_reader1_task, "mpu_rd1");
+    os_register_task(mpu_reader2_task, "mpu_rd2");
 }

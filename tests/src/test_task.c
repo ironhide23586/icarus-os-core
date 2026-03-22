@@ -5,7 +5,7 @@
  */
 
 #include "unity.h"
-#include "icarus/icarus_task.h"
+#include "icarus/icarus.h"
 #include "bsp/display.h"
 #include "bsp/error.h"
 #include "retarget_hal.h"
@@ -535,7 +535,7 @@ void test_os_create_task_max_tasks(void) {
 	// Try to create another task (should fail)
 	icarus_task_t dummy_task;
 	uint32_t dummy_stack[100];
-	os_create_task(&dummy_task, test_task_1, dummy_stack, 100, "overflow");
+	os_create_task(&dummy_task, test_task_1, dummy_stack, 100, NULL, "overflow");
 	
 	// Should not increment num_created_tasks
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
@@ -547,7 +547,7 @@ void test_os_create_task_normal(void) {
 	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "created_task");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "created_task");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
 	TEST_ASSERT_EQUAL(TASK_STATE_COLD, test_task.task_state);
@@ -568,7 +568,7 @@ void test_os_create_task_long_name(void) {
 	memset(long_name, 'A', 99);
 	long_name[99] = '\0';
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, long_name);
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, long_name);
 	
 	// Name should be truncated to ICARUS_MAX_TASK_NAME_LEN - 1
 	TEST_ASSERT_EQUAL('\0', test_task.name[ICARUS_MAX_TASK_NAME_LEN - 1]);
@@ -775,7 +775,7 @@ void test_os_create_task_boundary_max_minus_one(void) {
 	uint32_t test_stack[ICARUS_STACK_WORDS];
 	uint8_t initial_count = num_created_tasks;
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "boundary");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "boundary");
 	
 	TEST_ASSERT_EQUAL(initial_count + 1, num_created_tasks);
 }
@@ -787,7 +787,7 @@ void test_os_create_task_max_running_tasks(void) {
 	uint8_t initial_count = num_created_tasks;
 	running_task_count = ICARUS_MAX_TASKS; // At max, should return early
 	
-	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, "max_running");
+	os_create_task(&test_task, test_task_1, test_stack, ICARUS_STACK_WORDS, NULL, "max_running");
 	
 	// Should not increment num_created_tasks (early return)
 	TEST_ASSERT_EQUAL(initial_count, num_created_tasks);
@@ -1903,6 +1903,110 @@ void test_display_render_msg_history_basic(void) {
 	TEST_PASS();
 }
 
+// ============================================================================
+// MPU and Privilege Tests
+// ============================================================================
+
+// Test: sem_can_feed - valid semaphore
+void test_svc_sem_can_feed_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	bool result = sem_can_feed(0);
+	TEST_ASSERT_TRUE(result);  // count < max_count
+}
+
+// Test: sem_can_feed - invalid index
+void test_svc_sem_can_feed_invalid(void) {
+	bool result = sem_can_feed(ICARUS_MAX_SEMAPHORES);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: sem_can_consume - valid semaphore
+void test_svc_sem_can_consume_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	bool result = sem_can_consume(0);
+	TEST_ASSERT_TRUE(result);  // count > 0
+}
+
+// Test: sem_can_consume - invalid index
+void test_svc_sem_can_consume_invalid(void) {
+	bool result = sem_can_consume(ICARUS_MAX_SEMAPHORES);
+	TEST_ASSERT_FALSE(result);
+}
+
+// Test: sem_increment - valid semaphore
+void test_svc_sem_increment_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	sem_increment(0);
+	TEST_ASSERT_EQUAL(4, semaphore_list[0]->count);
+}
+
+// Test: sem_decrement - valid semaphore
+void test_svc_sem_decrement_valid(void) {
+	test_init_task_list();
+	semaphore_init(0, 5);
+	semaphore_list[0]->count = 3;
+	
+	sem_decrement(0);
+	TEST_ASSERT_EQUAL(2, semaphore_list[0]->count);
+}
+
+// Test: pipe_can_enqueue - valid pipe
+void test_svc_pipe_can_send_valid(void) {
+	test_init_task_list();
+	pipe_init(0, 64);
+	message_pipe_list[0]->count = 32;
+	
+	bool result = pipe_can_enqueue(0, 10);
+	TEST_ASSERT_TRUE(result);  // has space for 10 bytes
+}
+
+// Test: pipe_can_dequeue - valid pipe
+void test_svc_pipe_can_receive_valid(void) {
+	test_init_task_list();
+	pipe_init(0, 64);
+	message_pipe_list[0]->count = 10;
+	
+	bool result = pipe_can_dequeue(0, 5);
+	TEST_ASSERT_TRUE(result);  // has at least 5 bytes
+}
+
+// Test: os_get_task_name - SVC wrapper
+void test_os_get_task_name_svc(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "test_task");
+	
+	const char* name = os_get_task_name(0);
+	TEST_ASSERT_EQUAL_STRING("test_task", name);
+}
+
+// Test: os_get_num_created_tasks - SVC wrapper
+void test_os_get_num_created_tasks_svc(void) {
+	test_init_task_list();
+	os_register_task(test_task_1, "task1");
+	os_register_task(test_task_2, "task2");
+	
+	uint8_t count = os_get_num_created_tasks();
+	TEST_ASSERT_EQUAL(2, count);
+}
+
+// Test: os_is_running - SVC wrapper
+void test_os_is_running_svc(void) {
+	os_running = 0;
+	TEST_ASSERT_FALSE(os_is_running());
+	
+	os_running = 1;
+	TEST_ASSERT_TRUE(os_is_running());
+}
+
 // Test runner
 int main(void) {
 	UNITY_BEGIN();
@@ -2083,6 +2187,19 @@ int main(void) {
 	RUN_TEST(test_msg_history_add_clamp_len);
 	RUN_TEST(test_display_render_msg_history_null);
 	RUN_TEST(test_display_render_msg_history_basic);
+	
+	// MPU and Privilege Tests
+	RUN_TEST(test_svc_sem_can_feed_valid);
+	RUN_TEST(test_svc_sem_can_feed_invalid);
+	RUN_TEST(test_svc_sem_can_consume_valid);
+	RUN_TEST(test_svc_sem_can_consume_invalid);
+	RUN_TEST(test_svc_sem_increment_valid);
+	RUN_TEST(test_svc_sem_decrement_valid);
+	RUN_TEST(test_svc_pipe_can_send_valid);
+	RUN_TEST(test_svc_pipe_can_receive_valid);
+	RUN_TEST(test_os_get_task_name_svc);
+	RUN_TEST(test_os_get_num_created_tasks_svc);
+	RUN_TEST(test_os_is_running_svc);
 	
 	return UNITY_END();
 }

@@ -18,7 +18,8 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "bsp/tim.h"
+#include "bsp/timer.h"
+#include "bsp/error.h"
 
 /* USER CODE BEGIN 0 */
 

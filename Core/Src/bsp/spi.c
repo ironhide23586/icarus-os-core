@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "bsp/spi.h"
+#include "bsp/error.h"
 
 /* USER CODE BEGIN 0 */
 

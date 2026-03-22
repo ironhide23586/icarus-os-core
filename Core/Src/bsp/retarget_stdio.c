@@ -7,7 +7,8 @@
  */
 
 
-#include "icarus/icarus_task.h"
+#include "icarus/kernel.h"
+#include "icarus/scheduler.h"
 
 #include "usbd_cdc_if.h"
 #include "usbd_def.h"
@@ -24,8 +25,14 @@ int __io_putchar(int ch);
 //
 // Change your __io_putchar implementation
 int __io_putchar(int ch) {
+  /* Static variables must be in RAM_D1, not DTCM, for unprivileged access */
+#ifndef HOST_TEST
+  static uint8_t buf[64] __attribute__((section(".ram_d1")));
+  static uint8_t i __attribute__((section(".ram_d1"))) = 0;
+#else
   static uint8_t buf[64];
   static uint8_t i = 0;
+#endif
 
   buf[i++] = (uint8_t)ch;
 
@@ -43,5 +50,6 @@ int __io_putchar(int ch) {
     i = 0;
     // task_blocking_sleep(10);
   }
+  
   return ch;
 }
