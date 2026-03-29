@@ -75,9 +75,10 @@ extern "C" {
 /**
  * @brief Stack size per task in 32-bit words
  * @note  256 words = 1KB per task
+ *        512 words = 2KB per task (increased for printf with floats)
  *        Must be even for 8-byte alignment (ARM ABI requirement)
  */
-#define ICARUS_STACK_WORDS          256
+#define ICARUS_STACK_WORDS          512
 
 /**
  * @brief Data region size per task in 32-bit words

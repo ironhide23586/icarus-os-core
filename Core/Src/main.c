@@ -29,6 +29,7 @@
 
 #include "main.h"
 #include "interactive_tasks.h"
+#include "game/game.h"
 
 /* ============================================================================
  * CONFIGURATION
@@ -50,7 +51,13 @@
  * @brief Enable interactive input demo
  * @note  Set to 1 to enable interactive button/keyboard demo, 0 to disable
  */
-#define ENABLE_INTERACTIVE  1
+#define ENABLE_INTERACTIVE  0
+
+/**
+ * @brief Enable ICARUS Runner game
+ * @note  Set to 1 to enable the game, 0 to disable
+ */
+#define ENABLE_GAME         1
 
 /** @brief ANSI escape code to show cursor (used in error path) */
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
@@ -94,6 +101,10 @@ int main(void)
 
 #if ENABLE_INTERACTIVE
     interactive_tasks_init();
+#endif
+
+#if ENABLE_GAME
+    game_init();
 #endif
 
     os_start();

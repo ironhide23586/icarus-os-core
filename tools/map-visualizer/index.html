@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICARUS Memory Map Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ICARUS Memory Map Visualizer</h1>
+            <p class="subtitle">STM32H750 Memory Layout Analysis</p>
+        </header>
+
+        <div class="controls">
+            <button id="loadBtn" class="btn-primary">Load Map File</button>
+            <input type="file" id="fileInput" accept=".map" style="display: none;">
+            <div class="stats" id="stats"></div>
+        </div>
+
+        <div class="content">
+            <div class="memory-regions">
+                <h2>Memory Regions</h2>
+                <div id="regionsList"></div>
+            </div>
+
+            <div class="visualization">
+                <h2>Memory Layout</h2>
+                <div class="filter-indicator" id="filterIndicator">
+                    <span id="filterText">Filtering: All Sections</span>
+                    <button class="filter-clear" onclick="clearFilter()">Clear Filter</button>
+                </div>
+                <div id="memoryMap"></div>
+            </div>
+
+            <div class="symbols">
+                <h2>Symbol Table</h2>
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchBox" placeholder="Search symbols...">
+                </div>
+                <div class="filter-indicator" id="symbolFilterIndicator">
+                    <span id="symbolFilterText">Showing all symbols</span>
+                    <button class="filter-clear" onclick="clearSymbolFilter()">Clear</button>
+                </div>
+                <div id="symbolTable"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for detailed information -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <script src="parser.js"></script>
+    <script src="visualizer.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
