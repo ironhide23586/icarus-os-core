@@ -46,7 +46,32 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 
 The default firmware boots straight into **ICARUS Runner**, a Chrome-dino-style endless runner that demonstrates multitasking, IPC, and real-time rendering on the RTOS.
 
-Connect via USB CDC at 115200 baud (see [Connecting to the Terminal](#connecting-to-the-terminal) below) and you'll see an 80×24 ANSI terminal game:
+Connect via USB CDC at 115200 baud (see [Connecting to the Terminal](#connecting-to-the-terminal) below) and you'll see an 80×24 ANSI terminal game.
+
+### Game Screen
+
+```
+ICARUS RUNNER          HI: 00350    SCORE: 00120
+DEBUG: y=0x41880000 vel=0x00000000 grnd=1
+
+              Player Grounded
+
+
+
+                                                            XX
+                                          XXX               XX
+               ###                        XXX               XX
+               ###                        XXX               XX
+               ###
+================================================================================
+
+
+
+   Press K1 to jump!
+
+```
+
+The player (`###`) runs left-to-right on the ground line; obstacles (`X` blocks) scroll in from the right. Jump with K1 to dodge them.
 
 - **4 concurrent RTOS tasks**: Input (10 ms), Physics (20 ms), Logic (50 ms), Render (50 ms)
 - **IPC in action**: Semaphore-protected shared game state, pipe-based command passing between tasks
