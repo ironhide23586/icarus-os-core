@@ -100,174 +100,160 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2coverage__analysis.html
   <div class="headertitle"><div class="title">Structural Coverage Analysis Report</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md477"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md528"></a></p>
 <p><b>Document ID:</b> ICARUS-VER-001 <br  />
- <b>Version:</b> 0.1 <br  />
- <b>Date:</b> 2025-01-26 <br  />
+ <b>Version:</b> 0.2 <br  />
+ <b>Date:</b> 2026-04-01 <br  />
  <b>Status:</b> Draft <br  />
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
-<h1><a class="anchor" id="autotoc_md478"></a>
+<h1><a class="anchor" id="autotoc_md529"></a>
 1. Purpose</h1>
 <p>This document provides structural coverage analysis for the ICARUS OS kernel and BSP software in accordance with DO-178C objectives A-7 (Structural Coverage Analysis).</p>
-<h1><a class="anchor" id="autotoc_md479"></a>
+<h1><a class="anchor" id="autotoc_md530"></a>
 2. Scope</h1>
-<p>This analysis covers host-based unit testing of the following software components:</p>
+<p>This analysis covers host-based unit testing of kernel and BSP sources under <code>Core/Src/</code>, driven by the <code>tests/</code> Unity suite.</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Component   </th><th class="markdownTableHeadNone">Source File   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<th class="markdownTableHeadNone">Component   </th><th class="markdownTableHeadNone">Source path   </th><th class="markdownTableHeadNone">Description    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Kernel   </td><td class="markdownTableBodyNone"><code>Core/Src/kernel/task.c</code>   </td><td class="markdownTableBodyNone">Task scheduler and management    </td></tr>
+<td class="markdownTableBodyNone">Kernel core   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8c.html" title="ICARUS Kernel Core Implementation.">Core/Src/icarus/kernel.c</a></code>   </td><td class="markdownTableBodyNone">Initialization, critical sections, lifecycle    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Display BSP   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8c.html" title="ICARUS OS Terminal Display Implementation.">Core/Src/bsp/display.c</a></code>   </td><td class="markdownTableBodyNone">LCD display driver    </td></tr>
+<td class="markdownTableBodyNone">Scheduler   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8c.html" title="ICARUS Scheduler Implementation.">Core/Src/icarus/scheduler.c</a></code>   </td><td class="markdownTableBodyNone">Preemption and scheduling    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">I/O BSP   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__stdio_8c.html">Core/Src/bsp/retarget_stdio.c</a></code>   </td><td class="markdownTableBodyNone">Standard I/O retargeting    </td></tr>
+<td class="markdownTableBodyNone">Tasks   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8c.html" title="ICARUS Task Management Implementation.">Core/Src/icarus/task.c</a></code>   </td><td class="markdownTableBodyNone">Task control blocks, yields, sleep    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">HAL BSP   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html" title="ICARUS OS Hardware Abstraction Layer Implementation.">Core/Src/bsp/retarget_hal.c</a></code>   </td><td class="markdownTableBodyNone">Hardware abstraction    </td></tr>
+<td class="markdownTableBodyNone">SVC   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8c.html" title="ICARUS Supervisor Call (SVC) Implementation.">Core/Src/icarus/svc.c</a></code>   </td><td class="markdownTableBodyNone">Supervisor call dispatch    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Interrupts   </td><td class="markdownTableBodyNone"><code><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">Core/Src/bsp/stm32h7xx_it.c</a></code>   </td><td class="markdownTableBodyNone">Interrupt handlers    </td></tr>
+<td class="markdownTableBodyNone">Semaphores   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8c.html" title="ICARUS Semaphore Implementation.">Core/Src/icarus/semaphore.c</a></code>   </td><td class="markdownTableBodyNone">Counting semaphores    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Error   </td><td class="markdownTableBodyNone"><code><a class="el" href="error_8c.html" title="ICARUS OS Error Handling Implementation.">Core/Src/bsp/error.c</a></code>   </td><td class="markdownTableBodyNone">Error handling   </td></tr>
+<td class="markdownTableBodyNone">Pipes   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8c.html" title="ICARUS Message Pipe Implementation.">Core/Src/icarus/pipe.c</a></code>   </td><td class="markdownTableBodyNone">Byte-stream IPC    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Display BSP   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8c.html" title="ICARUS OS Terminal Display Implementation.">Core/Src/bsp/display.c</a></code>   </td><td class="markdownTableBodyNone">Terminal / GUI helpers    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">I/O BSP   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__stdio_8c.html">Core/Src/bsp/retarget_stdio.c</a></code>   </td><td class="markdownTableBodyNone">Stdio retarget    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">HAL BSP   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html" title="ICARUS OS Hardware Abstraction Layer Implementation.">Core/Src/bsp/retarget_hal.c</a></code>   </td><td class="markdownTableBodyNone">HAL glue for tests    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Interrupts   </td><td class="markdownTableBodyNone"><code><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">Core/Src/bsp/stm32h7xx_it.c</a></code>   </td><td class="markdownTableBodyNone">Vector stubs / fault handlers    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Error   </td><td class="markdownTableBodyNone"><code><a class="el" href="error_8c.html" title="ICARUS OS Error Handling Implementation.">Core/Src/bsp/error.c</a></code>   </td><td class="markdownTableBodyNone"><code>Error_Handler</code>   </td></tr>
 </table>
-<p><b>Out of Scope:</b></p><ul>
-<li><code>Core/Src/kernel/context_switch.s</code> - ARM assembly (requires target testing)</li>
-<li>STM32 HAL drivers - Third-party vendor code</li>
-<li>USB middleware - Third-party vendor code</li>
+<p><b>Out of scope (host-unobservable or third-party):</b></p><ul>
+<li><code><a class="el" href="context__switch_8s.html">Core/Src/icarus/context_switch.s</a></code> — ARM assembly (target integration)</li>
+<li>STM32 HAL, USB stack, CMSIS — vendor or board-integration code</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md480"></a>
+<h1><a class="anchor" id="autotoc_md531"></a>
 3. Coverage Metrics</h1>
-<h2><a class="anchor" id="autotoc_md481"></a>
+<h2><a class="anchor" id="autotoc_md532"></a>
 3.1 Summary</h2>
+<p>Figures below were produced with <code>cd tests &amp;&amp; make coverage-summary</code> on 2026-04-01 (macOS, Homebrew <code>lcov</code>, after excluding mocks, <code>unity.c</code>, and <code>test_task.c</code> per the project Makefile filters).</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Metric   </th><th class="markdownTableHeadNone">Achieved   </th><th class="markdownTableHeadNone">Required (DAL C)   </th><th class="markdownTableHeadNone">Required (DAL B)   </th><th class="markdownTableHeadNone">Required (DAL A)    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Statement Coverage   </td><td class="markdownTableBodyNone">88.5%   </td><td class="markdownTableBodyNone">100%*   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<td class="markdownTableBodyNone">Statement Coverage   </td><td class="markdownTableBodyNone">91.1%   </td><td class="markdownTableBodyNone">100%*   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">100%    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Decision Coverage   </td><td class="markdownTableBodyNone">TBD   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">100%    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">MC/DC Coverage   </td><td class="markdownTableBodyNone">TBD   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">100%   </td></tr>
 </table>
 <p>*With justified deactivated/dead code exclusions</p>
-<h2><a class="anchor" id="autotoc_md482"></a>
-3.2 Per-File Coverage</h2>
+<h2><a class="anchor" id="autotoc_md533"></a>
+3.2 Per-file coverage (instrumented lines)</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">File   </th><th class="markdownTableHeadNone">Lines   </th><th class="markdownTableHeadNone">Covered   </th><th class="markdownTableHeadNone">Coverage   </th><th class="markdownTableHeadNone">Functions   </th><th class="markdownTableHeadNone">Covered   </th><th class="markdownTableHeadNone">Coverage    </th></tr>
+<th class="markdownTableHeadNone">File   </th><th class="markdownTableHeadNone">Lines hit / total   </th><th class="markdownTableHeadNone">Line %   </th><th class="markdownTableHeadNone">Function %    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">348   </td><td class="markdownTableBodyNone">308   </td><td class="markdownTableBodyNone">88.5%   </td><td class="markdownTableBodyNone">41   </td><td class="markdownTableBodyNone">38   </td><td class="markdownTableBodyNone">92.7%    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="task_8c.html" title="ICARUS Task Management Implementation.">icarus/task.c</a></code>   </td><td class="markdownTableBodyNone">59/59   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">100%    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="display_8c.html" title="ICARUS OS Terminal Display Implementation.">bsp/display.c</a></code>   </td><td class="markdownTableBodyNone">85   </td><td class="markdownTableBodyNone">71   </td><td class="markdownTableBodyNone">83.5%   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="pipe_8c.html" title="ICARUS Message Pipe Implementation.">icarus/pipe.c</a></code>   </td><td class="markdownTableBodyNone">85/91   </td><td class="markdownTableBodyNone">93.4%   </td><td class="markdownTableBodyNone">100%    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html" title="ICARUS OS Hardware Abstraction Layer Implementation.">bsp/retarget_hal.c</a></code>   </td><td class="markdownTableBodyNone">105   </td><td class="markdownTableBodyNone">101   </td><td class="markdownTableBodyNone">96.2%   </td><td class="markdownTableBodyNone">10   </td><td class="markdownTableBodyNone">10   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="svc_8c.html" title="ICARUS Supervisor Call (SVC) Implementation.">icarus/svc.c</a></code>   </td><td class="markdownTableBodyNone">83/89   </td><td class="markdownTableBodyNone">93.3%   </td><td class="markdownTableBodyNone">92.5%    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="retarget__stdio_8c.html">bsp/retarget_stdio.c</a></code>   </td><td class="markdownTableBodyNone">13   </td><td class="markdownTableBodyNone">10   </td><td class="markdownTableBodyNone">76.9%   </td><td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8c.html" title="ICARUS Semaphore Implementation.">icarus/semaphore.c</a></code>   </td><td class="markdownTableBodyNone">64/68   </td><td class="markdownTableBodyNone">94.1%   </td><td class="markdownTableBodyNone">100%    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">bsp/stm32h7xx_it.c</a></code>   </td><td class="markdownTableBodyNone">28   </td><td class="markdownTableBodyNone">15   </td><td class="markdownTableBodyNone">53.6%   </td><td class="markdownTableBodyNone">10   </td><td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">40%    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="kernel_8c.html" title="ICARUS Kernel Core Implementation.">icarus/kernel.c</a></code>   </td><td class="markdownTableBodyNone">75/88   </td><td class="markdownTableBodyNone">85.2%   </td><td class="markdownTableBodyNone">84.6%    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="error_8c.html" title="ICARUS OS Error Handling Implementation.">bsp/error.c</a></code>   </td><td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0%   </td><td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0%    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8c.html" title="ICARUS Scheduler Implementation.">icarus/scheduler.c</a></code>   </td><td class="markdownTableBodyNone">34/42   </td><td class="markdownTableBodyNone">81.0%   </td><td class="markdownTableBodyNone">100%    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><b>Total</b>   </td><td class="markdownTableBodyNone"><b>583</b>   </td><td class="markdownTableBodyNone"><b>505</b>   </td><td class="markdownTableBodyNone"><b>88.5%</b>   </td><td class="markdownTableBodyNone"><b>66</b>   </td><td class="markdownTableBodyNone"><b>56</b>   </td><td class="markdownTableBodyNone"><b>85.9%</b>   </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="display_8c.html" title="ICARUS OS Terminal Display Implementation.">bsp/display.c</a></code>   </td><td class="markdownTableBodyNone">220/233   </td><td class="markdownTableBodyNone">94.4%   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html" title="ICARUS OS Hardware Abstraction Layer Implementation.">bsp/retarget_hal.c</a></code>   </td><td class="markdownTableBodyNone">70/74   </td><td class="markdownTableBodyNone">94.6%   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code><a class="el" href="retarget__stdio_8c.html">bsp/retarget_stdio.c</a></code>   </td><td class="markdownTableBodyNone">9/12   </td><td class="markdownTableBodyNone">75.0%   </td><td class="markdownTableBodyNone">100%    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">bsp/stm32h7xx_it.c</a></code>   </td><td class="markdownTableBodyNone">15/24   </td><td class="markdownTableBodyNone">62.5%   </td><td class="markdownTableBodyNone">40.0%    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code><a class="el" href="error_8c.html" title="ICARUS OS Error Handling Implementation.">bsp/error.c</a></code>   </td><td class="markdownTableBodyNone">0/4   </td><td class="markdownTableBodyNone">0.0%   </td><td class="markdownTableBodyNone">0.0%    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><b>Total (filtered)</b>   </td><td class="markdownTableBodyNone"><b>714/784</b>   </td><td class="markdownTableBodyNone"><b>91.1%</b>   </td><td class="markdownTableBodyNone"><b>89.5%</b>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md483"></a>
-3.3 Uncovered Functions</h2>
-<p>See <code><a class="el" href="deactivated__code_8md.html">deactivated_code.md</a></code> for detailed analysis of each uncovered function.</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Function   </th><th class="markdownTableHeadNone">File   </th><th class="markdownTableHeadNone">Reason   </th><th class="markdownTableHeadNone">Justification    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Error_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="error_8c.html" title="ICARUS OS Error Handling Implementation.">error.c</a>   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Dead code - fault handler    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>NMI_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">Empty handler   </td><td class="markdownTableBodyNone">Dead code - fault handler    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>HardFault_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Dead code - fault handler    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>MemManage_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Dead code - fault handler    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>BusFault_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Dead code - fault handler    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>UsageFault_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Dead code - fault handler    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>PendSV_Handler</code>   </td><td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">Calls assembly   </td><td class="markdownTableBodyNone">Requires target testing    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>os_transmit_printf_task</code>   </td><td class="markdownTableBodyNone">task.c   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Requires target testing    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>os_idle_task</code>   </td><td class="markdownTableBodyNone">task.c   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Requires target testing    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>os_heartbeart_task</code>   </td><td class="markdownTableBodyNone">task.c   </td><td class="markdownTableBodyNone">Infinite loop   </td><td class="markdownTableBodyNone">Requires target testing    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>dequeue_print_buffer</code>   </td><td class="markdownTableBodyNone">task.c   </td><td class="markdownTableBodyNone">Static function   </td><td class="markdownTableBodyNone">Only called by untestable code   </td></tr>
-</table>
-<h1><a class="anchor" id="autotoc_md484"></a>
+<h2><a class="anchor" id="autotoc_md534"></a>
+3.3 Partially covered or deactivated areas</h2>
+<p>See <code><a class="el" href="deactivated__code_8md.html">deactivated_code.md</a></code> for fault handlers, infinite-loop tasks, and similar items. Host coverage gaps remain in <code><a class="el" href="error_8c.html" title="ICARUS OS Error Handling Implementation.">error.c</a></code> and fault-vector paths in <code><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">stm32h7xx_it.c</a></code> by design.</p>
+<h1><a class="anchor" id="autotoc_md535"></a>
 4. Test Environment</h1>
-<h2><a class="anchor" id="autotoc_md485"></a>
-4.1 Host Test Configuration</h2>
+<h2><a class="anchor" id="autotoc_md536"></a>
+4.1 Host test configuration</h2>
 <ul>
 <li><b>Host OS:</b> macOS (darwin)</li>
 <li><b>Compiler:</b> GCC (host native)</li>
-<li><b>Test Framework:</b> Unity</li>
-<li><b>Coverage Tool:</b> lcov/gcov</li>
-<li><b>Build System:</b> GNU Make</li>
+<li><b>Test framework:</b> Unity</li>
+<li><b>Coverage:</b> lcov / gcov</li>
+<li><b>Build system:</b> GNU Make (<code>tests/Makefile</code>)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md486"></a>
-4.2 Test Execution</h2>
+<h2><a class="anchor" id="autotoc_md537"></a>
+4.2 Commands</h2>
 <div class="fragment"><div class="line">cd tests</div>
 <div class="line">make clean test          # Run all tests</div>
-<div class="line">make coverage-summary    # Generate coverage report</div>
-<div class="line">make coverage-html       # Generate HTML report</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md487"></a>
-4.3 Test Results</h2>
-<ul>
-<li><b>Total Tests:</b> 131</li>
-<li><b>Passed:</b> 131</li>
-<li><b>Failed:</b> 0</li>
-<li><b>Ignored:</b> 0</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md488"></a>
-5. Coverage Gap Analysis</h1>
-<h2><a class="anchor" id="autotoc_md489"></a>
-5.1 Justified Exclusions</h2>
-<p>The following code is excluded from coverage requirements per DO-178C guidance on deactivated code:</p>
+<div class="line">make coverage-summary    # Regenerate coverage.info and print summary</div>
+<div class="line">make coverage-html       # HTML under tests/build/coverage/html/</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md538"></a>
+4.3 Test results</h2>
+<p>Re-run after changes. Example command:</p>
+<div class="fragment"><div class="line">cd tests &amp;&amp; make test</div>
+</div><!-- fragment --><p>The suite defines <b>140</b> tests; record pass/fail counts from your baseline run in verification records.</p>
+<h1><a class="anchor" id="autotoc_md539"></a>
+5. Coverage gap analysis</h1>
+<h2><a class="anchor" id="autotoc_md540"></a>
+5.1 Justified exclusions</h2>
+<p>As documented in <code><a class="el" href="deactivated__code_8md.html">deactivated_code.md</a></code>:</p>
 <ol type="1">
-<li><b>Fault Handlers (6 functions):</b> These execute only on hardware faults and contain infinite loops by design. They cannot be unit tested and are verified through code review.</li>
-<li><b>Infinite Loop Tasks (3 functions):</b> These are RTOS tasks with <code>while(1)</code> loops that run continuously. They require target integration testing.</li>
-<li><b>Assembly Interface (1 function):</b> <code>PendSV_Handler</code> calls ARM assembly context switch code that cannot execute on host.</li>
-<li><b>Static Helper (1 function):</b> <code>dequeue_print_buffer</code> is only called by <code>os_transmit_printf_task</code> which is untestable.</li>
+<li><b>Fault handlers</b> — Run only on hardware faults; infinite loops by design. <br  />
+</li>
+<li><b>Certain interrupt paths</b> — Require target or HW stubs beyond current mocks. <br  />
+</li>
+<li><b>Assembly</b> — Context switch not executed on the host. <br  />
+</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md490"></a>
-5.2 Effective Coverage</h2>
-<p>Excluding justified deactivated code:</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Metric   </th><th class="markdownTableHeadNone">Raw   </th><th class="markdownTableHeadNone">Adjusted    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Functions Covered   </td><td class="markdownTableBodyNone">56/66 (85.9%)   </td><td class="markdownTableBodyNone">56/56 (100%)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Lines Covered   </td><td class="markdownTableBodyNone">505/583 (88.5%)   </td><td class="markdownTableBodyNone">505/~505 (~100%)   </td></tr>
-</table>
-<h1><a class="anchor" id="autotoc_md491"></a>
+<h2><a class="anchor" id="autotoc_md541"></a>
+5.2 Certification follow-up</h2>
+<ul>
+<li>Maintain this report by re-running <code>make coverage-summary</code> after substantive kernel or BSP changes. <br  />
+</li>
+<li>For DAL B/A, add decision and MC/DC tooling on top of statement coverage.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md542"></a>
 6. Recommendations</h1>
-<h2><a class="anchor" id="autotoc_md492"></a>
-6.1 For DAL C Certification</h2>
+<h2><a class="anchor" id="autotoc_md543"></a>
+6.1 For DAL C certification</h2>
 <ul>
-<li>✅ Current coverage is sufficient with documented justifications</li>
-<li>⚠️ Complete formal deactivated code analysis documentation</li>
+<li>Keep deactivated-code analysis aligned with coverage exclusions. <br  />
+</li>
+<li>Archive <code>coverage.info</code> / HTML for each baseline.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md493"></a>
-6.2 For DAL B Certification</h2>
+<h2><a class="anchor" id="autotoc_md544"></a>
+6.2 For DAL B certification</h2>
 <ul>
-<li>Add decision coverage analysis tooling</li>
-<li>Implement target-based integration tests for infinite loop tasks</li>
-<li>Document decision coverage for all branches</li>
+<li>Add decision-coverage tooling and target-based tests for loop tasks.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md494"></a>
-6.3 For DAL A Certification</h2>
+<h2><a class="anchor" id="autotoc_md545"></a>
+6.3 For DAL A certification</h2>
 <ul>
-<li>Add MC/DC coverage analysis tooling</li>
-<li>Ensure all conditions independently affect decisions</li>
-<li>Complete MC/DC test cases for complex boolean expressions</li>
+<li>Plan MC/DC evidence where required by the certification authority.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md495"></a>
+<h1><a class="anchor" id="autotoc_md546"></a>
 7. Approval</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -279,13 +265,15 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2coverage__analysis.html
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">QA   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md496"></a>
-8. Revision History</h1>
+<h1><a class="anchor" id="autotoc_md547"></a>
+8. Revision history</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Version   </th><th class="markdownTableHeadNone">Date   </th><th class="markdownTableHeadNone">Author   </th><th class="markdownTableHeadNone">Changes    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
+<td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">0.2   </td><td class="markdownTableBodyNone">2026-04-01   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Paths <code>Core/Src/icarus/</code>; refreshed metrics from host <code>lcov</code>   </td></tr>
 </table>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -293,7 +281,7 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2coverage__analysis.html
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

@@ -22,17 +22,14 @@
  * @author  Souham Biswas
  * @date    2025
  *
- * @copyright Copyright 2025 Souham Biswas
+ * @copyright Copyright 2025-2026 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
  *            Licensed under the Apache License, Version 2.0
  */
 
-#include "icarus/icarus_task.h"
-#include "bsp/bsp_led.h"
-#include "bsp/retarget_hal.h"
-#include "demo_tasks.h"
-#include "stress_test.h"
-#include <stdio.h>
+#include "main.h"
+#include "interactive_tasks.h"
+#include "game/game.h"
 
 /* ============================================================================
  * CONFIGURATION
@@ -42,7 +39,25 @@
  * @brief Enable stress testing mode
  * @note  Set to 1 to enable stress test tasks, 0 for demo mode only
  */
-#define ENABLE_STRESS_TEST  1
+#define ENABLE_STRESS_TEST  0
+
+/**
+ * @brief Enable demo tasks mode
+ * @note  Set to 1 to enable demo producer/consumer tasks, 0 to disable
+ */
+#define ENABLE_DEMO_TASKS   0
+
+/**
+ * @brief Enable interactive input demo
+ * @note  Set to 1 to enable interactive button/keyboard demo, 0 to disable
+ */
+#define ENABLE_INTERACTIVE  0
+
+/**
+ * @brief Enable ICARUS Runner game
+ * @note  Set to 1 to enable the game, 0 to disable
+ */
+#define ENABLE_GAME         1
 
 /** @brief ANSI escape code to show cursor (used in error path) */
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
@@ -73,12 +88,23 @@
 int main(void)
 {
     hal_init();
+    
     os_init();
 
+#if ENABLE_DEMO_TASKS
     demo_tasks_init();
+#endif
 
 #if ENABLE_STRESS_TEST
     stress_test_init();
+#endif
+
+#if ENABLE_INTERACTIVE
+    interactive_tasks_init();
+#endif
+
+#if ENABLE_GAME
+    game_init();
 #endif
 
     os_start();

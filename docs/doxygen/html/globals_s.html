@@ -100,21 +100,66 @@ $(function(){initNavTree('globals_s.html',''); initResizable(true); });
 <div class="textblock">Here is a list of all functions, variables, defines, enums, and typedefs with links to the files they belong to:</div>
 
 <h3><a id="index_s" name="index_s"></a>- s -</h3><ul>
-<li>scheduler_enabled&#160;:&#160;<a class="el" href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">icarus_task.c</a></li>
-<li>semaphore_consume()&#160;:&#160;<a class="el" href="icarus__task_8h.html#a0778882901c150b13eaaa726639d28f4">icarus_task.h</a>, <a class="el" href="icarus__task_8c.html#a0778882901c150b13eaaa726639d28f4">icarus_task.c</a></li>
-<li>semaphore_feed()&#160;:&#160;<a class="el" href="icarus__task_8h.html#adaf4fd634aba7757c187eb339c4ca92b">icarus_task.h</a>, <a class="el" href="icarus__task_8c.html#adaf4fd634aba7757c187eb339c4ca92b">icarus_task.c</a></li>
-<li>semaphore_get_count()&#160;:&#160;<a class="el" href="icarus__task_8h.html#a1b097749f8c7f30e7cb3b3b49902beab">icarus_task.h</a>, <a class="el" href="icarus__task_8c.html#a1b097749f8c7f30e7cb3b3b49902beab">icarus_task.c</a></li>
-<li>semaphore_get_max_count()&#160;:&#160;<a class="el" href="icarus__task_8h.html#a000289a63b46d8613839bbb28bc93665">icarus_task.h</a>, <a class="el" href="icarus__task_8c.html#a000289a63b46d8613839bbb28bc93665">icarus_task.c</a></li>
-<li>semaphore_init()&#160;:&#160;<a class="el" href="icarus__task_8h.html#adf56dcf3cc0690836ab8ea00615d81b8">icarus_task.h</a>, <a class="el" href="icarus__task_8c.html#adf56dcf3cc0690836ab8ea00615d81b8">icarus_task.c</a></li>
-<li>semaphore_list&#160;:&#160;<a class="el" href="group__KERNEL__DATA.html#gab5e5984bbda98cded99ce30d836e73c5">icarus_task.c</a></li>
-<li>semaphore_pool&#160;:&#160;<a class="el" href="group__KERNEL__DATA.html#gaa26e2b8476bde5e211f76032f7f2665c">icarus_task.c</a></li>
+<li>scheduler_enabled&#160;:&#160;<a class="el" href="kernel_8h.html#af25078275f73d42cf062dbaee7ed1e88">kernel.h</a>, <a class="el" href="kernel_8c.html#af25078275f73d42cf062dbaee7ed1e88">kernel.c</a></li>
+<li>sem_can_consume()&#160;:&#160;<a class="el" href="semaphore_8h.html#acf4fde0a59cf2d02540b1f9291777a46">semaphore.h</a>, <a class="el" href="svc_8c.html#acf4fde0a59cf2d02540b1f9291777a46">svc.c</a></li>
+<li>sem_can_feed()&#160;:&#160;<a class="el" href="semaphore_8h.html#a18191128c44ae720080796d624703b1a">semaphore.h</a>, <a class="el" href="svc_8c.html#a18191128c44ae720080796d624703b1a">svc.c</a></li>
+<li>sem_decrement()&#160;:&#160;<a class="el" href="semaphore_8h.html#a466f1ae24fd5bb5a6a06fe2812d72985">semaphore.h</a>, <a class="el" href="svc_8c.html#a466f1ae24fd5bb5a6a06fe2812d72985">svc.c</a></li>
+<li>sem_increment()&#160;:&#160;<a class="el" href="semaphore_8h.html#ae1628133b43861aa63a84fbbe8cc8fb9">semaphore.h</a>, <a class="el" href="svc_8c.html#ae1628133b43861aa63a84fbbe8cc8fb9">svc.c</a></li>
+<li>semaphore_consume()&#160;:&#160;<a class="el" href="semaphore_8h.html#a0778882901c150b13eaaa726639d28f4">semaphore.h</a>, <a class="el" href="svc_8c.html#a0778882901c150b13eaaa726639d28f4">svc.c</a></li>
+<li>semaphore_feed()&#160;:&#160;<a class="el" href="semaphore_8h.html#adaf4fd634aba7757c187eb339c4ca92b">semaphore.h</a>, <a class="el" href="svc_8c.html#adaf4fd634aba7757c187eb339c4ca92b">svc.c</a></li>
+<li>semaphore_get_count()&#160;:&#160;<a class="el" href="semaphore_8h.html#a1b097749f8c7f30e7cb3b3b49902beab">semaphore.h</a>, <a class="el" href="svc_8c.html#a1b097749f8c7f30e7cb3b3b49902beab">svc.c</a></li>
+<li>semaphore_get_max_count()&#160;:&#160;<a class="el" href="semaphore_8h.html#a000289a63b46d8613839bbb28bc93665">semaphore.h</a>, <a class="el" href="svc_8c.html#a000289a63b46d8613839bbb28bc93665">svc.c</a></li>
+<li>semaphore_init()&#160;:&#160;<a class="el" href="semaphore_8h.html#adf56dcf3cc0690836ab8ea00615d81b8">semaphore.h</a>, <a class="el" href="svc_8c.html#adf56dcf3cc0690836ab8ea00615d81b8">svc.c</a></li>
+<li>semaphore_list&#160;:&#160;<a class="el" href="kernel_8h.html#ab5e5984bbda98cded99ce30d836e73c5">kernel.h</a>, <a class="el" href="kernel_8c.html#ab5e5984bbda98cded99ce30d836e73c5">kernel.c</a></li>
+<li>semaphore_pool&#160;:&#160;<a class="el" href="kernel_8c.html#aa26e2b8476bde5e211f76032f7f2665c">kernel.c</a></li>
 <li>SRC_BSP_ERROR_C_&#160;:&#160;<a class="el" href="error_8c.html#a7e9796751aef13a4b5abe4fe49ca513c">error.c</a></li>
-<li>stack_pool&#160;:&#160;<a class="el" href="icarus__task_8c.html#af4db58804ddc215c4658ab49265b263a">icarus_task.c</a></li>
-<li>start_cold_task()&#160;:&#160;<a class="el" href="icarus__task_8c.html#a0dd76cc79a6a8eff591a7900a89cb6d2">icarus_task.c</a></li>
+<li>stack_pool&#160;:&#160;<a class="el" href="kernel_8c.html#af4db58804ddc215c4658ab49265b263a">kernel.c</a></li>
+<li>start_cold_task()&#160;:&#160;<a class="el" href="kernel_8c.html#a0dd76cc79a6a8eff591a7900a89cb6d2">kernel.c</a></li>
 <li>stmdev_mdelay_ptr&#160;:&#160;<a class="el" href="group__Interfaces__Functions.html#ga0eb3d88e56077a8339829318c3d7b6ed">lsm9ds1_reg.h</a></li>
 <li>stmdev_read_ptr&#160;:&#160;<a class="el" href="group__Interfaces__Functions.html#ga4c9361a3b8f50a3ecdf2485a90fb6e59">lsm9ds1_reg.h</a></li>
 <li>stmdev_write_ptr&#160;:&#160;<a class="el" href="group__Interfaces__Functions.html#gac31b1bbcf4f05c705bb77de8a03ebfcf">lsm9ds1_reg.h</a></li>
+<li>SVC_ENTER_CRITICAL&#160;:&#160;<a class="el" href="svc_8h.html#a0931ee2edc79e4b3fcee91b8464e65f0">svc.h</a></li>
+<li>SVC_EXIT_CRITICAL&#160;:&#160;<a class="el" href="svc_8h.html#a76f6b856ce4c29c54af63a539963a855">svc.h</a></li>
+<li>SVC_GET_NUM_TASKS&#160;:&#160;<a class="el" href="svc_8h.html#a4477a5e8cfc85371b4070c9dc49b3bcf">svc.h</a></li>
+<li>SVC_GET_TASK_NAME&#160;:&#160;<a class="el" href="svc_8h.html#aae8a41cabeb4bf98fbdaa229844c1b8d">svc.h</a></li>
 <li>SVC_Handler()&#160;:&#160;<a class="el" href="stm32h7xx__it_8h.html#a3e5ddb3df0d62f2dc357e64a3f04a6ce">stm32h7xx_it.h</a>, <a class="el" href="stm32h7xx__it_8c.html#a3e5ddb3df0d62f2dc357e64a3f04a6ce">stm32h7xx_it.c</a></li>
+<li>SVC_Handler_C()&#160;:&#160;<a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b">svc.h</a>, <a class="el" href="svc_8c.html#ab9a1ab462e20c09c36397c56b51e131b">svc.c</a></li>
+<li>SVC_KERNEL_GET_DATA&#160;:&#160;<a class="el" href="svc_8h.html#a8e08167c21ca1fc8b4f62c1c67c9d4bf">svc.h</a></li>
+<li>SVC_KERNEL_GET_STACK&#160;:&#160;<a class="el" href="svc_8h.html#a50416a99355ab0ada9940e961c3738ea">svc.h</a></li>
+<li>SVC_KERNEL_PROTECTED_DATA&#160;:&#160;<a class="el" href="svc_8h.html#ac6da3ed5ef377d129c35f88b61165cd5">svc.h</a></li>
+<li>SVC_OS_EXIT_TASK&#160;:&#160;<a class="el" href="svc_8h.html#a79deca3a872f6eeab7206eb53a2dd11d">svc.h</a></li>
+<li>SVC_OS_GET_CURRENT_TASK_NAME&#160;:&#160;<a class="el" href="svc_8h.html#a21db0902a27d8e3a45e449952ccd02a9">svc.h</a></li>
+<li>SVC_OS_GET_RUNNING_TASK_COUNT&#160;:&#160;<a class="el" href="svc_8h.html#a85f9acb83da93b0de41f3c102a02d144">svc.h</a></li>
+<li>SVC_OS_GET_TASK_TICKS_REMAINING&#160;:&#160;<a class="el" href="svc_8h.html#ac0c063187259c4842d9b8c918bc2810f">svc.h</a></li>
+<li>SVC_OS_GET_TICK_COUNT&#160;:&#160;<a class="el" href="svc_8h.html#a9a047dd1678bec3cf2e033eb9dcde18d">svc.h</a></li>
+<li>SVC_OS_INIT&#160;:&#160;<a class="el" href="svc_8h.html#a5915f4e2e822f038d18115e0d90f4484">svc.h</a></li>
+<li>SVC_OS_IS_RUNNING&#160;:&#160;<a class="el" href="svc_8h.html#ab9507359ead07728fd95c3f8961e7d66">svc.h</a></li>
+<li>SVC_OS_KILL_PROCESS&#160;:&#160;<a class="el" href="svc_8h.html#aab9c3604e786224729e5029404e260e5">svc.h</a></li>
+<li>SVC_OS_REGISTER_TASK&#160;:&#160;<a class="el" href="svc_8h.html#a2f34f947a8b1eb4c393d9f2cafb55f1a">svc.h</a></li>
+<li>SVC_OS_START&#160;:&#160;<a class="el" href="svc_8h.html#aa15fbf8f5660c973119f2a6f4e5b585a">svc.h</a></li>
+<li>SVC_OS_TASK_SUICIDE&#160;:&#160;<a class="el" href="svc_8h.html#a239d669c8bdd1d5f797684fb89ba6760">svc.h</a></li>
+<li>SVC_OS_YIELD&#160;:&#160;<a class="el" href="svc_8h.html#ac411f5135fbfa4f1fef53dda97c52dc4">svc.h</a></li>
+<li>SVC_PIPE_CAN_DEQUEUE&#160;:&#160;<a class="el" href="svc_8h.html#afe2949ce5adb43b4958b759c915c3efe">svc.h</a></li>
+<li>SVC_PIPE_CAN_ENQUEUE&#160;:&#160;<a class="el" href="svc_8h.html#af37e1da791e95416c84b4c733753df62">svc.h</a></li>
+<li>SVC_PIPE_DEQUEUE&#160;:&#160;<a class="el" href="svc_8h.html#a5ce27869c67f15721f4d3ac5b482bf3b">svc.h</a></li>
+<li>SVC_PIPE_ENQUEUE&#160;:&#160;<a class="el" href="svc_8h.html#a79c44e075d716a5d31116f2952d18965">svc.h</a></li>
+<li>SVC_PIPE_GET_COUNT&#160;:&#160;<a class="el" href="svc_8h.html#ae7e8a80070e91656f8f7bd25ecdb66c0">svc.h</a></li>
+<li>SVC_PIPE_GET_MAX_COUNT&#160;:&#160;<a class="el" href="svc_8h.html#a70d97ae0f900575cf2a7b158d681dd65">svc.h</a></li>
+<li>SVC_PIPE_INIT&#160;:&#160;<a class="el" href="svc_8h.html#affa766dc56d25bf92a86b96cf58c3497">svc.h</a></li>
+<li>SVC_PIPE_READ_BYTES&#160;:&#160;<a class="el" href="svc_8h.html#ac17cf8827acd29c8dd66b4d7bef5c9fe">svc.h</a></li>
+<li>SVC_PIPE_WRITE_BYTES&#160;:&#160;<a class="el" href="svc_8h.html#a9e3a7447c6bd3ac5f7818adf181d70a9">svc.h</a></li>
+<li>SVC_SEM_CAN_CONSUME&#160;:&#160;<a class="el" href="svc_8h.html#a0e31fd7a118ef5b08a7349250c12b765">svc.h</a></li>
+<li>SVC_SEM_CAN_FEED&#160;:&#160;<a class="el" href="svc_8h.html#a6000ef7f9cece1dc75ff777c62303053">svc.h</a></li>
+<li>SVC_SEM_DECREMENT&#160;:&#160;<a class="el" href="svc_8h.html#ae0a545884d437d5fbb9d97628d9850d9">svc.h</a></li>
+<li>SVC_SEM_INCREMENT&#160;:&#160;<a class="el" href="svc_8h.html#af1e2685315832b1bf6d2ccf6e6479a32">svc.h</a></li>
+<li>SVC_SEMAPHORE_CONSUME&#160;:&#160;<a class="el" href="svc_8h.html#a3753b2e68f4eb7a30d0e4e16aaafd7f5">svc.h</a></li>
+<li>SVC_SEMAPHORE_FEED&#160;:&#160;<a class="el" href="svc_8h.html#a2905b792bb604e1eff1093c506994daf">svc.h</a></li>
+<li>SVC_SEMAPHORE_GET_COUNT&#160;:&#160;<a class="el" href="svc_8h.html#a87b75b067af2a73a259f944c26ac703d">svc.h</a></li>
+<li>SVC_SEMAPHORE_GET_MAX_COUNT&#160;:&#160;<a class="el" href="svc_8h.html#afda94f6ad16e55e3d23cfc2a97e84ec5">svc.h</a></li>
+<li>SVC_SEMAPHORE_INIT&#160;:&#160;<a class="el" href="svc_8h.html#a0d649731d78b6172c53626ae61df8174">svc.h</a></li>
+<li>SVC_TASK_ACTIVE_SLEEP&#160;:&#160;<a class="el" href="svc_8h.html#abcdfedf48a4f6be2d04cd5dd3f4bd4ca">svc.h</a></li>
+<li>SVC_TASK_BLOCKING_SLEEP&#160;:&#160;<a class="el" href="svc_8h.html#a07a8c48cb7087b2906493125d444d950">svc.h</a></li>
+<li>SVC_TASK_BUSY_WAIT&#160;:&#160;<a class="el" href="svc_8h.html#a21b4b4bb1301c9bb177d37f5667d9ad8">svc.h</a></li>
 <li>SystemClock_Config()&#160;:&#160;<a class="el" href="retarget__hal_8c.html#a70af21c671abfcc773614a9a4f63d920">retarget_hal.c</a></li>
 <li>SystemCoreClock&#160;:&#160;<a class="el" href="group__STM32H7xx__System__Private__Variables.html#gaa3cd3e43291e81e795d642b79b6088e6">system_stm32h7xx.c</a></li>
 <li>SystemCoreClockUpdate()&#160;:&#160;<a class="el" href="group__STM32H7xx__System__Private__Functions.html#gae0c36a9591fe6e9c45ecb21a794f0f0f">system_stm32h7xx.c</a></li>
@@ -127,7 +172,7 @@ $(function(){initNavTree('globals_s.html',''); initResizable(true); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

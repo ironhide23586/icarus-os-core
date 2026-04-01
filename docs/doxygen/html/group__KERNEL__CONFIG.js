@@ -1,5 +1,6 @@
 var group__KERNEL__CONFIG =
 [
+    [ "ICARUS_DATA_WORDS", "group__KERNEL__CONFIG.html#ga651ae0fffba8c4306d9eaa9554d69ab6", null ],
     [ "ICARUS_MAX_MESSAGE_BYTES", "group__KERNEL__CONFIG.html#ga2c3953277cd6f8bb3a75afd117afb551", null ],
     [ "ICARUS_MAX_MESSAGE_QUEUES", "group__KERNEL__CONFIG.html#gab180b584d54e375e600e8bf2f1bc6fe7", null ],
     [ "ICARUS_MAX_SEMAPHORES", "group__KERNEL__CONFIG.html#ga219e22abc2099bf7dc8d58e511044d23", null ],

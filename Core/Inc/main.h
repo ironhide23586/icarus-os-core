@@ -27,49 +27,19 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32h7xx_hal.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+#include "icarus/icarus.h"
+
+#include "bsp/led.h"
+
+#include "demo_tasks.h"
+#include "stress_test.h"
+
+
 #define TICKS_PER_TASK 50
-
-/* USER CODE END Includes */
-
-/* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
-
-/* USER CODE END ET */
-
-/* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
-/* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
-#define E3_Pin GPIO_PIN_3
-#define E3_GPIO_Port GPIOE
-#define KEY_Pin GPIO_PIN_13
-#define KEY_GPIO_Port GPIOC
-#define LCD_CS_Pin GPIO_PIN_11
-#define LCD_CS_GPIO_Port GPIOE
-#define LCD_WR_RS_Pin GPIO_PIN_13
-#define LCD_WR_RS_GPIO_Port GPIOE
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }

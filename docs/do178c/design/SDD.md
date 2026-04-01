@@ -98,12 +98,12 @@ This document covers:
 
 | Component | Status | Source Location | Description |
 |-----------|--------|-----------------|-------------|
-| Scheduler | ✅ Implemented | `kernel/task.c` | Preemptive round-robin |
-| Task Manager | ✅ Implemented | `kernel/task.c` | Task lifecycle management |
-| Context Switch | ✅ Implemented | `kernel/context_switch.s` | ARM assembly context save/restore |
-| Semaphores | ✅ Implemented | `kernel/task.c` | Bounded counting semaphores |
-| IPC | 🔲 Planned | `kernel/ipc.c` | Message queues, mutexes |
-| AI Runtime | 🔲 Planned | `kernel/ai_runtime.c` | Deterministic inference |
+| Scheduler | ✅ Implemented | `Core/Src/icarus/scheduler.c` | Preemptive round-robin |
+| Task Manager | ✅ Implemented | `Core/Src/icarus/task.c` | Task lifecycle management |
+| Context Switch | ✅ Implemented | `Core/Src/icarus/context_switch.s` | ARM assembly context save/restore |
+| Semaphores | ✅ Implemented | `Core/Src/icarus/semaphore.c` | Bounded counting semaphores |
+| Message pipes (IPC) | ✅ Implemented | `Core/Src/icarus/pipe.c` | FIFO byte-stream queues (see `pipe.h`) |
+| AI Runtime | 🔲 Planned | TBD | Deterministic inference |
 | BSP - GPIO | ✅ Implemented | `bsp/gpio.c` | Digital I/O |
 | BSP - I2C | ✅ Implemented | `bsp/i2c.c` | I2C communication |
 | BSP - SPI | ✅ Implemented | `bsp/spi.c` | SPI communication |
@@ -870,7 +870,174 @@ typedef struct {
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 4.2 Stack Allocation
+### 4.2 MPU Protection Architecture
+
+#### 4.2.1 Overview
+
+ICARUS OS implements hardware-enforced memory protection using the ARM Cortex-M7 Memory Protection Unit (MPU). The protection model provides:
+- **Privilege separation**: Kernel runs privileged, tasks run unprivileged
+- **Code protection**: ITCM is read-only to prevent code modification
+- **Data isolation**: DTCM is privileged-only to protect kernel data
+- **Task isolation**: Each task's data region is isolated from other tasks
+- **SVC call gates**: Controlled kernel service access via Supervisor Calls
+
+#### 4.2.2 MPU Region Configuration
+
+| Region | Base Address | Size | Access | Purpose | Implements |
+|--------|--------------|------|--------|---------|------------|
+| 0 | 0x00000000 | 64 KB | PRIV_RO_URO | ITCM code (read-only for all) | HLR-KRN-063, HLR-KRN-066 |
+| 1 | 0x90000000 | 8 MB | PRIV_RO_URO | QSPI Flash (read-only) | HLR-KRN-066 |
+| 2 | DISABLED | - | - | Reserved (was ITCM_PRIV) | - |
+| 3 | DISABLED | - | - | Reserved | - |
+| 4 | Dynamic | 2 KB | PRIV_RW_URW | Task data (reconfigured on switch) | HLR-KRN-065, HLR-KRN-071 |
+| 5 | 0x20000000 | 128 KB | PRIV_RO | DTCM kernel data (privileged-only) | HLR-KRN-064, HLR-KRN-070 |
+| 6 | 0x24000000 | 512 KB | FULL_ACCESS | RAM_D1 (shared buffers) | - |
+| 7 | 0x30000000 | 256 KB | FULL_ACCESS | RAM_D2 (DMA, display) | - |
+
+#### 4.2.3 Memory Region Details
+
+**Region 0: ITCM Code Protection**
+```c
+r.BaseAddress      = 0x00000000;
+r.Size             = MPU_REGION_SIZE_64KB;
+r.AccessPermission = MPU_REGION_PRIV_RO_URO;  // Read-only for all
+r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+```
+- Contains kernel functions marked with `ITCM_FUNC` macro
+- Read-only prevents code modification attacks
+- Executable by all (ARM MPU limitation: cannot restrict execution by privilege level)
+- Protection enforced by DTCM isolation (kernel functions fault when accessing kernel data from unprivileged mode)
+
+**Region 4: Task Data Isolation**
+```c
+// Reconfigured on every context switch
+r.BaseAddress      = task->data_base;  // 2KB-aligned
+r.Size             = MPU_REGION_SIZE_2KB;
+r.AccessPermission = MPU_REGION_PRIV_RW_URW;  // Full access for current task
+```
+- Each task has 2KB data region in `data_pool` (RAM_D2)
+- MPU reconfigured on context switch to grant access only to current task
+- Prevents cross-task memory corruption
+- Verified by MPU_REDTEAM stress test
+
+**Region 5: DTCM Kernel Data Protection**
+```c
+r.BaseAddress      = 0x20000000;
+r.Size             = MPU_REGION_SIZE_128KB;
+r.AccessPermission = MPU_REGION_PRIV_RO;  // Privileged-only
+```
+- Contains kernel data structures: `task_list`, `semaphore_list`, `pipe_list`, `os_tick_count`
+- Unprivileged tasks cannot read or write
+- Forces use of SVC call gates for kernel services
+- Prevents direct kernel function calls from working
+
+#### 4.2.4 Privilege Separation Model
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRIVILEGE ARCHITECTURE                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  PRIVILEGED MODE (Handler/SVC)                              │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  • Kernel functions (__os_* prefix)                    │ │
+│  │  • Exception handlers (SysTick, PendSV, MemManage)    │ │
+│  │  • SVC dispatcher                                      │ │
+│  │  • MPU configuration                                   │ │
+│  │  • Access to DTCM (kernel data)                       │ │
+│  │  • Access to ITCM (kernel code)                       │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                           ▲                                  │
+│                           │ SVC instruction                  │
+│                           │ (controlled transition)          │
+│  ┌────────────────────────┴───────────────────────────────┐ │
+│  │  SVC CALL GATES (os_* wrappers)                       │ │
+│  │  • os_semaphore_wait() → SVC 29                       │ │
+│  │  • os_semaphore_signal() → SVC 30                     │ │
+│  │  • os_pipe_send() → SVC 31                            │ │
+│  │  • os_pipe_receive() → SVC 32                         │ │
+│  │  • os_get_task_name() → SVC 37                        │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                           ▲                                  │
+│                           │ Function call                    │
+│                           │                                  │
+│  UNPRIVILEGED MODE (Thread)                                 │
+│  ┌────────────────────────┴───────────────────────────────┐ │
+│  │  • User task code                                      │ │
+│  │  • Task local variables (stack)                       │ │
+│  │  • Task data region (2KB, MPU Region 4)               │ │
+│  │  • Shared buffers (RAM_D1, RAM_D2)                    │ │
+│  │  • NO access to DTCM (kernel data)                    │ │
+│  │  • Read-only access to ITCM (kernel code)             │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 4.2.5 SVC Call Gates
+
+All kernel services are accessed via SVC (Supervisor Call) instructions:
+
+| SVC # | Function | Purpose | Implements |
+|-------|----------|---------|------------|
+| 29 | `sem_can_feed()` | Check if semaphore can accept feed | HLR-KRN-067 |
+| 30 | `sem_can_consume()` | Check if semaphore can be consumed | HLR-KRN-067 |
+| 31 | `sem_increment()` | Increment semaphore count | HLR-KRN-067 |
+| 32 | `sem_decrement()` | Decrement semaphore count | HLR-KRN-067 |
+| 33 | `pipe_can_send()` | Check if pipe can accept data | HLR-KRN-067 |
+| 34 | `pipe_can_receive()` | Check if pipe has data | HLR-KRN-067 |
+| 35 | `pipe_write()` | Write data to pipe | HLR-KRN-067 |
+| 36 | `pipe_read()` | Read data from pipe | HLR-KRN-067 |
+| 37 | `os_get_task_name()` | Get current task name | HLR-KRN-067 |
+| 38 | `os_get_num_created_tasks()` | Get task count | HLR-KRN-067 |
+| 39 | `os_is_running()` | Check if OS is running | HLR-KRN-067 |
+
+#### 4.2.6 Fault Handling
+
+The MemManage fault handler provides graceful recovery from memory protection violations:
+
+```c
+void MemManage_Handler(void) {
+    // Check fault type
+    bool is_daccviol = (CFSR & SCB_CFSR_DACCVIOL_Msk) != 0;  // Data access
+    bool is_iaccviol = (CFSR & SCB_CFSR_IACCVIOL_Msk) != 0;  // Instruction fetch
+    
+    // Check privilege level
+    bool from_psp = (LR & 0x4) != 0;  // From unprivileged task
+    
+    if (is_daccviol && !is_iaccviol && from_psp) {
+        // Recoverable: skip faulting instruction
+        advance_pc_by_instruction_length();
+        clear_fault_status();
+        return;  // Task continues
+    }
+    
+    // Non-recoverable: halt with LED blink code
+    halt_with_4_blinks();
+}
+```
+
+**Fault Recovery Policy:**
+- **Data access violations (DACCVIOL)** from unprivileged tasks: Recoverable, skip instruction
+- **Instruction fetch violations (IACCVIOL)**: Non-recoverable, system halt
+- **Faults from privileged code**: Non-recoverable, system halt
+
+Implements: HLR-KRN-081, HLR-KRN-082, HLR-KRN-083
+
+#### 4.2.7 Protection Verification
+
+MPU protection is verified by stress tests:
+
+| Test | Purpose | Expected Result | Implements |
+|------|---------|-----------------|------------|
+| `mpu_redteam_task` | Cross-task memory attack | Faults, shows [PROTECTED] | HLR-KRN-071 |
+| `mpu_itcm_write_test` | ITCM write attempt | Faults, shows [WRITE PROTECTED] | HLR-KRN-066 |
+| `mpu_dtcm_attack_task` | DTCM read attempt | Faults, shows [DTCM PROTECTED] | HLR-KRN-070 |
+| `mpu_kernel_bypass_test` | Direct kernel function call | Faults, shows [DTCM PROTECTED] | HLR-KRN-070 |
+
+All tests run continuously and display real-time status via USB CDC terminal.
+
+### 4.3 Stack Allocation
 
 ```c
 #define MAX_TASKS 16
@@ -888,7 +1055,7 @@ task_t* task_list[MAX_TASKS];
 | User tasks | 2 KB (configurable) | DTCM |
 | AI inference | 4 KB (planned) | DTCM |
 
-### 4.3 AI Memory Budget
+### 4.4 AI Memory Budget
 
 | Component | Size | Location |
 |-----------|------|----------|
@@ -1094,13 +1261,13 @@ This matrix traces each requirement to its design element(s).
 
 | Design Element | Source File | Function/Symbol |
 |----------------|-------------|-----------------|
-| Scheduler | `kernel/task.c` | SysTick_Handler, schedule_next_task |
-| Task Manager | `kernel/task.c` | os_create_task, os_kill_process |
-| Context Switch | `kernel/context_switch.s` | context_switch, start_cold_task |
-| Critical Section | `kernel/task.c` | enter_critical, exit_critical |
-| Semaphores | `kernel/task.c` | semaphore_init, semaphore_feed, semaphore_consume |
-| Message Pipes | `kernel/task.c` | pipe_init, pipe_enqueue, pipe_dequeue |
-| Print Buffer | `kernel/task.c` | enqueue_print_buffer, dequeue_print_buffer |
+| Scheduler | `icarus/scheduler.c` | SysTick-driven scheduling, `schedule_next_task` |
+| Task Manager | `icarus/task.c` | os_create_task, os_kill_process |
+| Context Switch | `icarus/context_switch.s` | context_switch, start_cold_task |
+| Critical Section | `icarus/kernel.c` | `__enter_critical` / `__exit_critical` (via SVC) |
+| Semaphores | `icarus/semaphore.c` | semaphore_init, semaphore_feed, semaphore_consume |
+| Message Pipes | `icarus/pipe.c` | pipe_init, pipe_enqueue, pipe_dequeue |
+| Print Buffer | `icarus/task.c` | enqueue_print_buffer, dequeue_print_buffer |
 | BSP Init | `bsp/retarget_hal.c` | hal_init |
 | GPIO | `bsp/gpio.c` | LED_On, LED_Off |
 | Display | `bsp/display.c` | display_init, display_render_*, display_render_vbar |

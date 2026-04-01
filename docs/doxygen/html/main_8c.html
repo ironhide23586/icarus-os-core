@@ -106,20 +106,26 @@ $(function(){initNavTree('main_8c.html',''); initResizable(true); });
 
 <p>ICARUS OS Application Entry Point.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="icarus__task_8h_source.html">icarus/icarus_task.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="bsp__led_8h_source.html">bsp/bsp_led.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="retarget__hal_8h_source.html">bsp/retarget_hal.h</a>&quot;</code><br />
-<code>#include &quot;demo_tasks.h&quot;</code><br />
-<code>#include &quot;stress_test.h&quot;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
+<div class="textblock"><code>#include &quot;main.h&quot;</code><br />
+<code>#include &quot;interactive_tasks.h&quot;</code><br />
+<code>#include &quot;game/game.h&quot;</code><br />
 </div>
 <p><a href="main_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a2a59075a58a93d857db83370241bd51a" id="r_a2a59075a58a93d857db83370241bd51a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a59075a58a93d857db83370241bd51a">ENABLE_STRESS_TEST</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memitem:a2a59075a58a93d857db83370241bd51a" id="r_a2a59075a58a93d857db83370241bd51a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a59075a58a93d857db83370241bd51a">ENABLE_STRESS_TEST</a>&#160;&#160;&#160;0</td></tr>
 <tr class="memdesc:a2a59075a58a93d857db83370241bd51a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable stress testing mode.  <br /></td></tr>
 <tr class="separator:a2a59075a58a93d857db83370241bd51a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4e620c5b733ae8466986ca47f087a96" id="r_af4e620c5b733ae8466986ca47f087a96"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4e620c5b733ae8466986ca47f087a96">ENABLE_DEMO_TASKS</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:af4e620c5b733ae8466986ca47f087a96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable demo tasks mode.  <br /></td></tr>
+<tr class="separator:af4e620c5b733ae8466986ca47f087a96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f79827fcbba68b9b8bb04d7c99ace11" id="r_a8f79827fcbba68b9b8bb04d7c99ace11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f79827fcbba68b9b8bb04d7c99ace11">ENABLE_INTERACTIVE</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:a8f79827fcbba68b9b8bb04d7c99ace11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable interactive input demo.  <br /></td></tr>
+<tr class="separator:a8f79827fcbba68b9b8bb04d7c99ace11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9132184b040a2adae46e8be478d3f92c" id="r_a9132184b040a2adae46e8be478d3f92c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9132184b040a2adae46e8be478d3f92c">ENABLE_GAME</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:a9132184b040a2adae46e8be478d3f92c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable ICARUS Runner game.  <br /></td></tr>
+<tr class="separator:a9132184b040a2adae46e8be478d3f92c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4319fbb8f21090c85438cb4daa3bc62a" id="r_a4319fbb8f21090c85438cb4daa3bc62a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4319fbb8f21090c85438cb4daa3bc62a">ANSI_SHOW_CURSOR</a>()</td></tr>
 <tr class="memdesc:a4319fbb8f21090c85438cb4daa3bc62a"><td class="mdescLeft">&#160;</td><td class="mdescRight">ANSI escape code to show cursor (used in error path)  <br /></td></tr>
 <tr class="separator:a4319fbb8f21090c85438cb4daa3bc62a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,10 +142,10 @@ Functions</h2></td></tr>
 <p>Main entry point for the ICARUS Real-Time Operating System. Initializes hardware, registers demo/stress test tasks, and starts the kernel scheduler.</p>
 <dl class="section user"><dt>Boot Sequence:</dt><dd><ol type="1">
 <li><a class="el" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183" title="Initialize all hardware abstraction layer components.">hal_init()</a> - Hardware initialization (clocks, peripherals)</li>
-<li><a class="el" href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a> - Kernel initialization (task pools, system tasks)</li>
+<li><a class="el" href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a> - Kernel initialization (task pools, system tasks)</li>
 <li>demo_tasks_init() - Register demo producer/consumer tasks</li>
 <li>stress_test_init() - Register stress test tasks (if enabled)</li>
-<li><a class="el" href="icarus__task_8h.html#a19c7111cf2121a69331d99dabe3e9df0" title="Start the ICARUS scheduler.">os_start()</a> - Start scheduler (never returns)</li>
+<li><a class="el" href="kernel_8h.html#a19c7111cf2121a69331d99dabe3e9df0" title="Start the ICARUS scheduler.">os_start()</a> - Start scheduler (never returns)</li>
 </ol>
 </dd></dl>
 <dl class="section user"><dt>Configuration:</dt><dd>Set ENABLE_STRESS_TEST to 1 for stress testing, 0 for demo mode only.</dd></dl>
@@ -168,9 +174,66 @@ Functions</h2></td></tr>
 </div><!-- fragment -->
 <p>ANSI escape code to show cursor (used in error path) </p>
 
+<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00063">63</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00088">main()</a>.</p>
+
+</div>
+</div>
+<a id="af4e620c5b733ae8466986ca47f087a96" name="af4e620c5b733ae8466986ca47f087a96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4e620c5b733ae8466986ca47f087a96">&#9670;&#160;</a></span>ENABLE_DEMO_TASKS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ENABLE_DEMO_TASKS&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable demo tasks mode. </p>
+<dl class="section note"><dt>Note</dt><dd>Set to 1 to enable demo producer/consumer tasks, 0 to disable </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00048">48</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>.</p>
+</div>
+</div>
+<a id="a9132184b040a2adae46e8be478d3f92c" name="a9132184b040a2adae46e8be478d3f92c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9132184b040a2adae46e8be478d3f92c">&#9670;&#160;</a></span>ENABLE_GAME</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ENABLE_GAME&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable ICARUS Runner game. </p>
+<dl class="section note"><dt>Note</dt><dd>Set to 1 to enable the game, 0 to disable </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00060">60</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
+
+</div>
+</div>
+<a id="a8f79827fcbba68b9b8bb04d7c99ace11" name="a8f79827fcbba68b9b8bb04d7c99ace11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f79827fcbba68b9b8bb04d7c99ace11">&#9670;&#160;</a></span>ENABLE_INTERACTIVE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ENABLE_INTERACTIVE&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable interactive input demo. </p>
+<dl class="section note"><dt>Note</dt><dd>Set to 1 to enable interactive button/keyboard demo, 0 to disable </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00054">54</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
 
 </div>
 </div>
@@ -181,7 +244,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ENABLE_STRESS_TEST&#160;&#160;&#160;1</td>
+          <td class="memname">#define ENABLE_STRESS_TEST&#160;&#160;&#160;0</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -189,7 +252,7 @@ Functions</h2></td></tr>
 <p>Enable stress testing mode. </p>
 <dl class="section note"><dt>Note</dt><dd>Set to 1 to enable stress test tasks, 0 for demo mode only </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00045">45</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00042">42</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
 
 </div>
 </div>
@@ -223,9 +286,9 @@ Functions</h2></td></tr>
 </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>If this function returns, a critical error has occurred. The error path blinks the LED rapidly to indicate failure. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00073">73</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="main_8c_source.html#l00088">88</a> of file <a class="el" href="main_8c_source.html">main.c</a>.</p>
 
-<p class="reference">References <a class="el" href="main_8c_source.html#l00048">ANSI_SHOW_CURSOR</a>, <a class="el" href="retarget__hal_8c_source.html#l00261">hal_init()</a>, <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00443">os_init()</a>, and <a class="el" href="icarus__task_8c_source.html#l00844">os_start()</a>.</p>
+<p class="reference">References <a class="el" href="main_8c_source.html#l00063">ANSI_SHOW_CURSOR</a>, <a class="el" href="retarget__hal_8c_source.html#l00201">hal_init()</a>, <a class="el" href="retarget__hal_8c_source.html#l00093">LED_Blink()</a>, <a class="el" href="svc_8c_source.html#l00233">os_init()</a>, and <a class="el" href="svc_8c_source.html#l00234">os_start()</a>.</p>
 
 </div>
 </div>
@@ -235,7 +298,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="main_8c.html">main.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

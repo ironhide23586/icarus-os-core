@@ -118,7 +118,7 @@ $(function(){initNavTree('gpio_8c_source.html',''); initResizable(true); });
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">/* USER CODE END 1 */</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
 <div class="foldopen" id="foldopen00043" data-start="{" data-end="}">
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="bsp__gpio_8h.html#ac724e431d2af879252de35615be2bdea">   43</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="gpio_8c.html#ac724e431d2af879252de35615be2bdea">MX_GPIO_Init</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="gpio_8h.html#ac724e431d2af879252de35615be2bdea">   43</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="gpio_8c.html#ac724e431d2af879252de35615be2bdea">MX_GPIO_Init</a>(<span class="keywordtype">void</span>)</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>{</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  GPIO_InitTypeDef GPIO_InitStruct = {0};</div>
@@ -131,26 +131,26 @@ $(function(){initNavTree('gpio_8c_source.html',''); initResizable(true); });
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  __HAL_RCC_GPIOA_CLK_ENABLE();</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="comment">/*Configure GPIO pin Output Level */</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  HAL_GPIO_WritePin(<a class="code hl_define" href="bsp__config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e">E3_GPIO_Port</a>, <a class="code hl_define" href="bsp__config_8h.html#ad16d4751f5632b34736143bbd20fa6c0">E3_Pin</a>, GPIO_PIN_RESET);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  HAL_GPIO_WritePin(<a class="code hl_define" href="bsp_2config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e">E3_GPIO_Port</a>, <a class="code hl_define" href="bsp_2config_8h.html#ad16d4751f5632b34736143bbd20fa6c0">E3_Pin</a>, GPIO_PIN_RESET);</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="comment">/*Configure GPIO pin Output Level */</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  HAL_GPIO_WritePin(GPIOE, <a class="code hl_define" href="bsp__config_8h.html#a9e8435be304f67775f7430acda62e1c2">LCD_CS_Pin</a>|<a class="code hl_define" href="bsp__config_8h.html#a83e3cbd0a77a4bb2003d235e708b3f32">LCD_WR_RS_Pin</a>, GPIO_PIN_SET);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  HAL_GPIO_WritePin(GPIOE, <a class="code hl_define" href="bsp_2config_8h.html#a9e8435be304f67775f7430acda62e1c2">LCD_CS_Pin</a>|<a class="code hl_define" href="bsp_2config_8h.html#a83e3cbd0a77a4bb2003d235e708b3f32">LCD_WR_RS_Pin</a>, GPIO_PIN_SET);</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="comment">/*Configure GPIO pin : E3_Pin */</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  GPIO_InitStruct.Pin = <a class="code hl_define" href="bsp__config_8h.html#ad16d4751f5632b34736143bbd20fa6c0">E3_Pin</a>;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  GPIO_InitStruct.Pin = <a class="code hl_define" href="bsp_2config_8h.html#ad16d4751f5632b34736143bbd20fa6c0">E3_Pin</a>;</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  GPIO_InitStruct.Pull = GPIO_NOPULL;</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  HAL_GPIO_Init(<a class="code hl_define" href="bsp__config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e">E3_GPIO_Port</a>, &amp;GPIO_InitStruct);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  HAL_GPIO_Init(<a class="code hl_define" href="bsp_2config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e">E3_GPIO_Port</a>, &amp;GPIO_InitStruct);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  <span class="comment">/*Configure GPIO pin : KEY_Pin */</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  GPIO_InitStruct.Pin = <a class="code hl_define" href="bsp__config_8h.html#a02e534986f8f5880e38b06292cb758f2">KEY_Pin</a>;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  GPIO_InitStruct.Pin = <a class="code hl_define" href="bsp_2config_8h.html#a02e534986f8f5880e38b06292cb758f2">KEY_Pin</a>;</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  GPIO_InitStruct.Pull = GPIO_PULLDOWN;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  HAL_GPIO_Init(<a class="code hl_define" href="bsp__config_8h.html#a37b002a60c5e7d8cbeff56d08425e070">KEY_GPIO_Port</a>, &amp;GPIO_InitStruct);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  HAL_GPIO_Init(<a class="code hl_define" href="bsp_2config_8h.html#a37b002a60c5e7d8cbeff56d08425e070">KEY_GPIO_Port</a>, &amp;GPIO_InitStruct);</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="comment">/*Configure GPIO pins : LCD_CS_Pin LCD_WR_RS_Pin */</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  GPIO_InitStruct.Pin = <a class="code hl_define" href="bsp__config_8h.html#a9e8435be304f67775f7430acda62e1c2">LCD_CS_Pin</a>|<a class="code hl_define" href="bsp__config_8h.html#a83e3cbd0a77a4bb2003d235e708b3f32">LCD_WR_RS_Pin</a>;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  GPIO_InitStruct.Pin = <a class="code hl_define" href="bsp_2config_8h.html#a9e8435be304f67775f7430acda62e1c2">LCD_CS_Pin</a>|<a class="code hl_define" href="bsp_2config_8h.html#a83e3cbd0a77a4bb2003d235e708b3f32">LCD_WR_RS_Pin</a>;</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  GPIO_InitStruct.Pull = GPIO_NOPULL;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;</div>
@@ -162,12 +162,12 @@ $(function(){initNavTree('gpio_8c_source.html',''); initResizable(true); });
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment">/* USER CODE BEGIN 2 */</span></div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="comment">/* USER CODE END 2 */</span></div>
-<div class="ttc" id="absp__config_8h_html_a02e534986f8f5880e38b06292cb758f2"><div class="ttname"><a href="bsp__config_8h.html#a02e534986f8f5880e38b06292cb758f2">KEY_Pin</a></div><div class="ttdeci">#define KEY_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp__config_8h_source.html#l00169">bsp_config.h:169</a></div></div>
-<div class="ttc" id="absp__config_8h_html_a37b002a60c5e7d8cbeff56d08425e070"><div class="ttname"><a href="bsp__config_8h.html#a37b002a60c5e7d8cbeff56d08425e070">KEY_GPIO_Port</a></div><div class="ttdeci">#define KEY_GPIO_Port</div><div class="ttdef"><b>Definition</b> <a href="bsp__config_8h_source.html#l00170">bsp_config.h:170</a></div></div>
-<div class="ttc" id="absp__config_8h_html_a83e3cbd0a77a4bb2003d235e708b3f32"><div class="ttname"><a href="bsp__config_8h.html#a83e3cbd0a77a4bb2003d235e708b3f32">LCD_WR_RS_Pin</a></div><div class="ttdeci">#define LCD_WR_RS_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp__config_8h_source.html#l00173">bsp_config.h:173</a></div></div>
-<div class="ttc" id="absp__config_8h_html_a9e8435be304f67775f7430acda62e1c2"><div class="ttname"><a href="bsp__config_8h.html#a9e8435be304f67775f7430acda62e1c2">LCD_CS_Pin</a></div><div class="ttdeci">#define LCD_CS_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp__config_8h_source.html#l00171">bsp_config.h:171</a></div></div>
-<div class="ttc" id="absp__config_8h_html_ad16d4751f5632b34736143bbd20fa6c0"><div class="ttname"><a href="bsp__config_8h.html#ad16d4751f5632b34736143bbd20fa6c0">E3_Pin</a></div><div class="ttdeci">#define E3_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp__config_8h_source.html#l00167">bsp_config.h:167</a></div></div>
-<div class="ttc" id="absp__config_8h_html_ade5f1ffe014f55b8a20812b702a00c8e"><div class="ttname"><a href="bsp__config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e">E3_GPIO_Port</a></div><div class="ttdeci">#define E3_GPIO_Port</div><div class="ttdef"><b>Definition</b> <a href="bsp__config_8h_source.html#l00168">bsp_config.h:168</a></div></div>
+<div class="ttc" id="absp_2config_8h_html_a02e534986f8f5880e38b06292cb758f2"><div class="ttname"><a href="bsp_2config_8h.html#a02e534986f8f5880e38b06292cb758f2">KEY_Pin</a></div><div class="ttdeci">#define KEY_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp_2config_8h_source.html#l00136">config.h:136</a></div></div>
+<div class="ttc" id="absp_2config_8h_html_a37b002a60c5e7d8cbeff56d08425e070"><div class="ttname"><a href="bsp_2config_8h.html#a37b002a60c5e7d8cbeff56d08425e070">KEY_GPIO_Port</a></div><div class="ttdeci">#define KEY_GPIO_Port</div><div class="ttdef"><b>Definition</b> <a href="bsp_2config_8h_source.html#l00137">config.h:137</a></div></div>
+<div class="ttc" id="absp_2config_8h_html_a83e3cbd0a77a4bb2003d235e708b3f32"><div class="ttname"><a href="bsp_2config_8h.html#a83e3cbd0a77a4bb2003d235e708b3f32">LCD_WR_RS_Pin</a></div><div class="ttdeci">#define LCD_WR_RS_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp_2config_8h_source.html#l00140">config.h:140</a></div></div>
+<div class="ttc" id="absp_2config_8h_html_a9e8435be304f67775f7430acda62e1c2"><div class="ttname"><a href="bsp_2config_8h.html#a9e8435be304f67775f7430acda62e1c2">LCD_CS_Pin</a></div><div class="ttdeci">#define LCD_CS_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp_2config_8h_source.html#l00138">config.h:138</a></div></div>
+<div class="ttc" id="absp_2config_8h_html_ad16d4751f5632b34736143bbd20fa6c0"><div class="ttname"><a href="bsp_2config_8h.html#ad16d4751f5632b34736143bbd20fa6c0">E3_Pin</a></div><div class="ttdeci">#define E3_Pin</div><div class="ttdef"><b>Definition</b> <a href="bsp_2config_8h_source.html#l00134">config.h:134</a></div></div>
+<div class="ttc" id="absp_2config_8h_html_ade5f1ffe014f55b8a20812b702a00c8e"><div class="ttname"><a href="bsp_2config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e">E3_GPIO_Port</a></div><div class="ttdeci">#define E3_GPIO_Port</div><div class="ttdef"><b>Definition</b> <a href="bsp_2config_8h_source.html#l00135">config.h:135</a></div></div>
 <div class="ttc" id="agpio_8c_html_ac724e431d2af879252de35615be2bdea"><div class="ttname"><a href="gpio_8c.html#ac724e431d2af879252de35615be2bdea">MX_GPIO_Init</a></div><div class="ttdeci">void MX_GPIO_Init(void)</div><div class="ttdoc">Configure pins PC14-OSC32_IN (OSC32_IN) ------&gt; RCC_OSC32_IN PC15-OSC32_OUT (OSC32_OUT) ------&gt; RCC_O...</div><div class="ttdef"><b>Definition</b> <a href="#l00043">gpio.c:43</a></div></div>
 <div class="ttc" id="agpio_8h_html"><div class="ttname"><a href="gpio_8h.html">gpio.h</a></div><div class="ttdoc">This file contains all the function prototypes for the gpio.c file.</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -176,7 +176,7 @@ $(function(){initNavTree('gpio_8c_source.html',''); initResizable(true); });
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="gpio_8c.html">gpio.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

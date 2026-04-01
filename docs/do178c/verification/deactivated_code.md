@@ -168,7 +168,7 @@ These are RTOS tasks that run continuously. They cannot be unit tested because t
 
 | Attribute | Value |
 |-----------|-------|
-| **File** | `Core/Src/kernel/task.c` |
+| **File** | `Core/Src/icarus/task.c` |
 | **Function** | `os_idle_task(void)` |
 | **Lines** | ~8 |
 | **Category** | Target-Only Code |
@@ -194,7 +194,7 @@ static void os_idle_task(void) {
 
 | Attribute | Value |
 |-----------|-------|
-| **File** | `Core/Src/kernel/task.c` |
+| **File** | `Core/Src/icarus/task.c` |
 | **Function** | `os_heartbeart_task(void)` |
 | **Lines** | ~25 |
 | **Category** | Target-Only Code |
@@ -210,7 +210,7 @@ static void os_idle_task(void) {
 
 | Attribute | Value |
 |-----------|-------|
-| **File** | `Core/Src/kernel/task.c` |
+| **File** | `Core/Src/icarus/task.c` |
 | **Function** | `os_transmit_printf_task(void)` |
 | **Lines** | ~25 |
 | **Category** | Target-Only Code |
@@ -228,7 +228,7 @@ static void os_idle_task(void) {
 
 | Attribute | Value |
 |-----------|-------|
-| **File** | `Core/Src/kernel/task.c` |
+| **File** | `Core/Src/icarus/task.c` |
 | **Function** | `dequeue_print_buffer(uint8_t *out_c)` |
 | **Lines** | ~12 |
 | **Category** | Indirectly Deactivated |

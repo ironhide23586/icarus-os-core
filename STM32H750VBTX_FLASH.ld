@@ -62,12 +62,15 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
-  /* ITCM section for hot path code (zero wait states) */
-  /* Code is copied from FLASH to ITCM at startup */
+  /* ITCM section for hot path code (zero wait states)               */
+  /* Copied from FLASH to ITCM at startup                            */
+  /* Contains: kernel handlers, wrappers, context switch             */
   .itcm :
   {
     . = ALIGN(4);
     _sitcm = .;
+    *(.itcm_priv)      /* Legacy section name, now merged */
+    *(.itcm_priv*)
     *(.itcm)
     *(.itcm*)
     . = ALIGN(4);
@@ -160,6 +163,7 @@ SECTIONS
     _sbss = .;         /* define a global symbol at bss start */
     __bss_start__ = _sbss;
     *(.bss)
+    *(.bss.0_game_state)  /* Game state first - protected from stack overflow */
     *(.bss*)
     *(COMMON)
 
@@ -179,15 +183,36 @@ SECTIONS
     . = ALIGN(8);
   } >RAM_D1
 
+  /* RAM_D2 section for task data pools (MPU-protected per-task regions) */
+  .ram_d2 (NOLOAD) :
+  {
+    . = ALIGN(2048);  /* Align to 2KB for MPU region requirements */
+    _sram_d2 = .;
+    *(.ram_d2)
+    *(.ram_d2*)
+    . = ALIGN(4);
+    _eram_d2 = .;
+  } >RAM_D2
+
   /* DTCM section for fast kernel data (zero wait states) */
   .dtcm (NOLOAD) :
   {
     . = ALIGN(4);
     _sdtcm = .;
     *(.dtcm)
-    *(.dtcm*)
     . = ALIGN(4);
     _edtcm = .;
+  } >DTCMRAM
+
+  /* DTCM privileged-only kernel state (task_list, scheduler vars, pools) */
+  .dtcm_priv (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _sdtcm_priv = .;
+    *(.dtcm_priv)
+    *(.dtcm_priv*)
+    . = ALIGN(4);
+    _edtcm_priv = .;
   } >DTCMRAM
 
   /* Remove information from the standard libraries */

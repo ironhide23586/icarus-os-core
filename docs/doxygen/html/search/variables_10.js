@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['scheduler_5fenabled_0',['scheduler_enabled',['../group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88',1,'icarus_task.c']]],
-  ['semaphore_5flist_1',['semaphore_list',['../group__KERNEL__DATA.html#gab5e5984bbda98cded99ce30d836e73c5',1,'icarus_task.c']]],
-  ['semaphore_5fpool_2',['semaphore_pool',['../group__KERNEL__DATA.html#gaa26e2b8476bde5e211f76032f7f2665c',1,'icarus_task.c']]],
+  ['scheduler_5fenabled_0',['scheduler_enabled',['../kernel_8h.html#af25078275f73d42cf062dbaee7ed1e88',1,'scheduler_enabled:&#160;kernel.c'],['../kernel_8c.html#af25078275f73d42cf062dbaee7ed1e88',1,'scheduler_enabled:&#160;kernel.c']]],
+  ['semaphore_5flist_1',['semaphore_list',['../kernel_8h.html#ab5e5984bbda98cded99ce30d836e73c5',1,'semaphore_list:&#160;kernel.c'],['../kernel_8c.html#ab5e5984bbda98cded99ce30d836e73c5',1,'semaphore_list:&#160;kernel.c']]],
+  ['semaphore_5fpool_2',['semaphore_pool',['../kernel_8c.html#aa26e2b8476bde5e211f76032f7f2665c',1,'kernel.c']]],
   ['signx_5fg_3',['signx_g',['../structlsm9ds1__orient__cfg__g__t.html#ae9805329088eaf272ced13f42c654a51',1,'lsm9ds1_orient_cfg_g_t::signx_g'],['../structlsm9ds1__gy__orient__t.html#a174824a7020479e1c10636f5c71cbda3',1,'lsm9ds1_gy_orient_t::signx_g']]],
   ['signy_5fg_4',['signy_g',['../structlsm9ds1__orient__cfg__g__t.html#a68e10dd4b73233aa6a5e823e1429a30b',1,'lsm9ds1_orient_cfg_g_t::signy_g'],['../structlsm9ds1__gy__orient__t.html#af087a1e122d49303c9f3fa57a3d0725b',1,'lsm9ds1_gy_orient_t::signy_g']]],
   ['signz_5fg_5',['signz_g',['../structlsm9ds1__orient__cfg__g__t.html#adcfcc6c3e93e8cd34f259d3e62efff0e',1,'lsm9ds1_orient_cfg_g_t::signz_g'],['../structlsm9ds1__gy__orient__t.html#af4580d730cc6e903115e1785e81f9a9d',1,'lsm9ds1_gy_orient_t::signz_g']]],
@@ -16,7 +16,7 @@ var searchData=
   ['st_5fxl_13',['st_xl',['../structlsm9ds1__ctrl__reg10__t.html#ace5d187c1e9c6f4c5cc49254088ace75',1,'lsm9ds1_ctrl_reg10_t']]],
   ['stack_5fbase_14',['stack_base',['../structicarus__task__t.html#a7e67e7d95b02de06494ca29e95983bbd',1,'icarus_task_t']]],
   ['stack_5fpointer_15',['stack_pointer',['../structicarus__task__t.html#a9eb9d70b04227a8fb7ac50f0093c955a',1,'icarus_task_t']]],
-  ['stack_5fpool_16',['stack_pool',['../icarus__task_8c.html#af4db58804ddc215c4658ab49265b263a',1,'icarus_task.c']]],
+  ['stack_5fpool_16',['stack_pool',['../kernel_8c.html#af4db58804ddc215c4658ab49265b263a',1,'kernel.c']]],
   ['stack_5fsize_17',['stack_size',['../structicarus__task__t.html#a8b0c84979e79eecf4603ac0b19610410',1,'icarus_task_t']]],
   ['status_5fimu_18',['status_imu',['../structlsm9ds1__status__t.html#ac6c3d0d9c6b3e17175649cf2545f10a3',1,'lsm9ds1_status_t']]],
   ['status_5fmag_19',['status_mag',['../structlsm9ds1__status__t.html#a9a920f5c9771d1309cf8d9a8307b6361',1,'lsm9ds1_status_t']]],

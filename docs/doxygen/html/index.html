@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems): ICARUS OS Core</title>
+<title>ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems): ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -97,11 +97,15 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">ICARUS OS Core </div></div>
+  <div class="headertitle"><div class="title">ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_README"></a></p>
+<div class="textblock"><p align="center"><a class="anchor" id="md_README"></a> </p>
+<p><img src="logo_landscape.jpeg" alt="ICARUS OS Banner" width="100%" class="inline"/> </p>
+<h1><a class="anchor" id="autotoc_md0"></a>
+ICARUS OS Core</h1>
 <p><b>Intelligent Certifiable Autonomous Real-time Unified System</b></p>
+<p><a href="https://ironhide23586.github.io/icarus-os-core/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Documentation" class="inline"/></a> <a href="https://github.com/sponsors/ironhide23586"><img src="https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ea4aaa" alt="Sponsor" class="inline"/></a> <a href="https://buymeacoffee.com/souham"><img src="https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow" alt="Buy Me A Coffee" class="inline"/></a></p>
 <p>A minimal, deterministic real-time kernel for Cortex-M designed to support DO-178C DAL C certification objectives. Built from the ground up with safety-critical aerospace and defense applications in mind.</p>
 <div class="fragment"><div class="line">┌──────────────────────────────────────────────────────────────┐</div>
 <div class="line">│   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │</div>
@@ -116,17 +120,17 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 <p>&zwj;<b>⚠️ WARNING: This is work in progress and NOT production ready.</b></p>
 <p>This kernel is under active development. It may contain bugs, incomplete features, and is not suitable for use in production systems. Use at your own risk. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md1"></a>
-</h1>
-<h1><a class="anchor" id="autotoc_md2"></a>
-Highlights</h1>
+<h2><a class="anchor" id="autotoc_md1"></a>
+</h2>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Highlights</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Metric   </th><th class="markdownTableHeadNone">Status    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><b>Test Coverage</b>   </td><td class="markdownTableBodyNone">88.5% line, 85.9% function    </td></tr>
+<td class="markdownTableBodyNone"><b>Test Coverage</b>   </td><td class="markdownTableBodyNone">91.1% line, 89.5% function (host, see <code>tests/</code>)    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><b>Unit Tests</b>   </td><td class="markdownTableBodyNone">131 tests, 0 failures    </td></tr>
+<td class="markdownTableBodyNone"><b>Unit Tests</b>   </td><td class="markdownTableBodyNone">140 Unity tests — run <code>cd tests &amp;&amp; make test</code>    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>Static Analysis</b>   </td><td class="markdownTableBodyNone">cppcheck clean    </td></tr>
 <tr class="markdownTableRowEven">
@@ -135,11 +139,12 @@ Highlights</h1>
 <td class="markdownTableBodyNone"><b>Coding Standard</b>   </td><td class="markdownTableBodyNone">MISRA C:2012 subset   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md4"></a>
-Terminal GUI</h1>
-<p>ICARUS OS features a real-time terminal-based GUI that visualizes kernel activity, IPC operations, and stress test metrics. The display uses ANSI escape codes for cursor positioning and colors.</p>
-<h2><a class="anchor" id="autotoc_md5"></a>
-GUI Layout Overview</h2>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Terminal GUI</h2>
+<p>ICARUS OS includes a real-time terminal-based GUI that visualizes kernel activity, IPC operations, and stress test metrics. The display uses ANSI escape codes for cursor positioning and colors.</p>
+<p><b>Default firmware (<code><a class="el" href="main_8c.html" title="ICARUS OS Application Entry Point.">Core/Src/main.c</a></code>):</b> <code>ENABLE_GAME</code> is on; <code>ENABLE_DEMO_TASKS</code>, <code>ENABLE_STRESS_TEST</code>, and <code>ENABLE_INTERACTIVE</code> are off. You get the full multi-section dashboard (demo bars, stress stats, and so on) only after setting those macros to <code>1</code> and rebuilding.</p>
+<h3><a class="anchor" id="autotoc_md5"></a>
+GUI Layout Overview</h3>
 <div class="fragment"><div class="line">┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                                              HEADER                                                       │</div>
 <div class="line">│  ICARUS ASCII art logo + version info                                                                    │</div>
@@ -192,17 +197,17 @@ GUI Layout Overview</h2>
 <div class="line">│  WAITS: sem_max=45 pipe_max=12 full=234 empty=156                                                        │</div>
 <div class="line">│  VERIFY: seq=0 data=0 overflow=0 underflow=0  [PASS]                                                     │</div>
 <div class="line">└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
-GUI Components Explained</h2>
-<h3><a class="anchor" id="autotoc_md7"></a>
-1. Header Section</h3>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md6"></a>
+GUI Components Explained</h3>
+<h4><a class="anchor" id="autotoc_md7"></a>
+1. Header Section</h4>
 <p>The ICARUS ASCII art logo with platform information (ARMv7E-M, STM32H750).</p>
-<h3><a class="anchor" id="autotoc_md8"></a>
-2. Heartbeat Banner</h3>
+<h4><a class="anchor" id="autotoc_md8"></a>
+2. Heartbeat Banner</h4>
 <div class="fragment"><div class="line">[&gt;ICARUS_HEARTBEAT&lt;] ★★★★★★★★★★★★★★★★★★★★ [&gt;ICARUS_HEARTBEAT&lt;]</div>
 </div><!-- fragment --><p> Flashes on/off synchronized with the onboard LED. Indicates the kernel is alive and scheduling tasks.</p>
-<h3><a class="anchor" id="autotoc_md9"></a>
-3. Task Progress Bars</h3>
+<h4><a class="anchor" id="autotoc_md9"></a>
+3. Task Progress Bars</h4>
 <div class="fragment"><div class="line">[task_name] ████████████────────────────  elapsed/period ticks</div>
 </div><!-- fragment --><ul>
 <li><b>Green bars</b> (<code>████</code>): Producers sending messages</li>
@@ -211,8 +216,8 @@ GUI Components Explained</h2>
 <li><b>Elapsed/Period</b>: Current tick count vs total period duration</li>
 <li><b>Arrow indicators</b>: <code>→[value]</code> for sent messages, <code>←[value]</code> for received</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md10"></a>
-4. Semaphore Vertical Bars</h3>
+<h4><a class="anchor" id="autotoc_md10"></a>
+4. Semaphore Vertical Bars</h4>
 <div class="fragment"><div class="line">  SEM</div>
 <div class="line">+---+</div>
 <div class="line">|###|  ← Filled portion (current count)</div>
@@ -222,8 +227,8 @@ GUI Components Explained</h2>
 <div class="line">+---+</div>
 <div class="line"> 3/10  ← current/max count</div>
 </div><!-- fragment --><p> Visual representation of semaphore fill level. Fills from bottom to top as count increases.</p>
-<h3><a class="anchor" id="autotoc_md11"></a>
-5. Message History Panels</h3>
+<h4><a class="anchor" id="autotoc_md11"></a>
+5. Message History Panels</h4>
 <div class="fragment"><div class="line">+---SS---+</div>
 <div class="line">|&gt;P0: 42|  ← Producer 0 sent value 42</div>
 <div class="line">|&lt;C0: 42|  ← Consumer 0 received value 42</div>
@@ -237,8 +242,8 @@ GUI Components Explained</h2>
 <li><b>MM</b>: Multiple Producers → Multiple Consumers</li>
 </ul>
 <p>Format: <code>&gt;Pn:</code> = Producer n sent, <code>&lt;Cn:</code> = Consumer n received</p>
-<h3><a class="anchor" id="autotoc_md12"></a>
-6. Stress Test Statistics</h3>
+<h4><a class="anchor" id="autotoc_md12"></a>
+6. Stress Test Statistics</h4>
 <p><b>STRESS line</b> - Operation counts: </p><table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Metric   </th><th class="markdownTableHeadNone">Description    </th></tr>
@@ -283,8 +288,8 @@ GUI Components Explained</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>[FAIL]</code>   </td><td class="markdownTableBodyNone">Red if any errors - bugs detected   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md13"></a>
-Color Coding</h2>
+<h3><a class="anchor" id="autotoc_md13"></a>
+Color Coding</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Color   </th><th class="markdownTableHeadNone">Meaning    </th></tr>
@@ -302,10 +307,10 @@ Color Coding</h2>
 <td class="markdownTableBodyNone"><b>White</b>   </td><td class="markdownTableBodyNone">Normal text, reference tasks   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md15"></a>
-Quick Start</h1>
-<h2><a class="anchor" id="autotoc_md16"></a>
-Prerequisites</h2>
+<h2><a class="anchor" id="autotoc_md15"></a>
+Quick Start</h2>
+<h3><a class="anchor" id="autotoc_md16"></a>
+Prerequisites</h3>
 <ul>
 <li><b>ARM GCC Toolchain</b>: arm-none-eabi-gcc 13.3+ or 14.3+</li>
 <li><b>Build Tools</b>: make, bash</li>
@@ -313,8 +318,8 @@ Prerequisites</h2>
 <li><b>Debugger</b>: ST-Link or compatible</li>
 <li><b>Terminal</b>: Any serial terminal (screen, minicom, PuTTY) or USB CDC viewer</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md17"></a>
-Building the Firmware</h2>
+<h3><a class="anchor" id="autotoc_md17"></a>
+Building the Firmware</h3>
 <p>The project uses a unified build script that handles both firmware compilation and test execution:</p>
 <div class="fragment"><div class="line"># Clean build (recommended)</div>
 <div class="line">bash build/rebuild.sh</div>
@@ -326,38 +331,77 @@ Building the Firmware</h2>
 <div class="line">ls build/icarus_os.elf</div>
 <div class="line">ls build/icarus_os.hex</div>
 <div class="line">ls build/icarus_os.map</div>
-</div><!-- fragment --><p><b>Build artifacts:</b></p><ul>
-<li><code>icarus_os.elf</code> - Executable with debug symbols (2.2 MB)</li>
-<li><code>icarus_os.hex</code> - Flash programming file (147 KB)</li>
+</div><!-- fragment --><p><b>Build artifacts (typical sizes, varies with options):</b></p><ul>
+<li><code>icarus_os.elf</code> - ELF with debug symbols (on the order of ~100 KB for a clean <code>-O2</code> build in this tree)</li>
+<li><code>icarus_os.hex</code> - Flash programming file (on the order of ~130–140 KB)</li>
 <li><code>icarus_os.map</code> - Memory map and symbol table</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md18"></a>
-Memory Layout</h2>
-<p>ICARUS OS uses optimized memory placement for maximum performance:</p>
+<h3><a class="anchor" id="autotoc_md18"></a>
+Memory Layout</h3>
+<p>ICARUS OS uses optimized memory placement for maximum performance and security:</p>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────┐</div>
 <div class="line">│ ITCM (0x00000000) - 64 KB               │</div>
 <div class="line">│   Critical kernel code (zero wait)      │</div>
 <div class="line">│   - Context switch (PendSV_Handler)     │</div>
 <div class="line">│   - Scheduler (os_yield)                │</div>
 <div class="line">│   - IPC (semaphores, pipes)             │</div>
-<div class="line">│   Used: 2.5 KB (4%) | Free: 61.5 KB     │</div>
+<div class="line">│   - SVC dispatcher                      │</div>
+<div class="line">│   Protection: Read-only for all (MPU)   │</div>
+<div class="line">│   Used: 7.5 KB (12%) | Free: 56.5 KB    │</div>
 <div class="line">├─────────────────────────────────────────┤</div>
 <div class="line">│ DTCM (0x20000000) - 128 KB              │</div>
 <div class="line">│   Fast data access (zero wait)          │</div>
-<div class="line">│   - Task stacks (64 KB)                 │</div>
 <div class="line">│   - Kernel data structures              │</div>
-<div class="line">│   Used: 64 KB (50%) | Free: 64 KB       │</div>
+<div class="line">│   - Task lists, semaphores, pipes       │</div>
+<div class="line">│   - Tick counter, scheduler state       │</div>
+<div class="line">│   Protection: Privileged-only (MPU)     │</div>
+<div class="line">│   Used: 8 KB (6%) | Free: 120 KB        │</div>
+<div class="line">├─────────────────────────────────────────┤</div>
+<div class="line">│ RAM_D1 (0x24000000) - 512 KB            │</div>
+<div class="line">│   Task stacks and shared buffers        │</div>
+<div class="line">│   - 128 task stacks (256 words each)    │</div>
+<div class="line">│   - Display buffers                     │</div>
+<div class="line">│   Protection: Full access               │</div>
+<div class="line">│   Used: 128 KB (25%) | Free: 384 KB     │</div>
+<div class="line">├─────────────────────────────────────────┤</div>
+<div class="line">│ RAM_D2 (0x30000000) - 288 KB            │</div>
+<div class="line">│   Task data regions (2KB-aligned)       │</div>
+<div class="line">│   - Per-task isolated 2KB regions       │</div>
+<div class="line">│   Protection: Dynamic MPU (Region 4)    │</div>
+<div class="line">│   Used: 256 KB (89%) | Free: 32 KB      │</div>
 <div class="line">├─────────────────────────────────────────┤</div>
 <div class="line">│ Flash (0x08000000) - 128 KB             │</div>
 <div class="line">│   Program code and constants            │</div>
-<div class="line">│   Used: ~50 KB                          │</div>
+<div class="line">│   Protection: Read-only (MPU)           │</div>
+<div class="line">│   Used: ~50 KB (39%)                    │</div>
 <div class="line">├─────────────────────────────────────────┤</div>
-<div class="line">│ AXI SRAM (0x24000000) - 512 KB          │</div>
-<div class="line">│   General purpose RAM                   │</div>
-<div class="line">│   - Heap, BSS, other data               │</div>
+<div class="line">│ QSPI (0x90000000) - 8 MB                │</div>
+<div class="line">│   External flash (future use)           │</div>
+<div class="line">│   Protection: Read-only (MPU)           │</div>
 <div class="line">└─────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md19"></a>
-Flashing the Firmware</h2>
+</div><!-- fragment --><p><b>MPU Region Configuration:</b></p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Region   </th><th class="markdownTableHeadNone">Base   </th><th class="markdownTableHeadNone">Size   </th><th class="markdownTableHeadNone">Access   </th><th class="markdownTableHeadNone">Purpose    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0x00000000   </td><td class="markdownTableBodyNone">64KB   </td><td class="markdownTableBodyNone">Priv+User RO+Exec   </td><td class="markdownTableBodyNone">ITCM code protection    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">0x90000000   </td><td class="markdownTableBodyNone">8MB   </td><td class="markdownTableBodyNone">Priv+User RO+Exec   </td><td class="markdownTableBodyNone">QSPI Flash    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">2   </td><td class="markdownTableBodyNone">0x08000000   </td><td class="markdownTableBodyNone">128KB   </td><td class="markdownTableBodyNone">Priv+User RO+Exec   </td><td class="markdownTableBodyNone">Internal Flash    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">DISABLED   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">Reserved    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">Dynamic   </td><td class="markdownTableBodyNone">2KB   </td><td class="markdownTableBodyNone">Priv+User RW   </td><td class="markdownTableBodyNone">Task data isolation    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">5   </td><td class="markdownTableBodyNone">0x20000000   </td><td class="markdownTableBodyNone">128KB   </td><td class="markdownTableBodyNone">Priv RW only   </td><td class="markdownTableBodyNone">DTCM kernel data    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">6   </td><td class="markdownTableBodyNone">0x24000000   </td><td class="markdownTableBodyNone">512KB   </td><td class="markdownTableBodyNone">Full Access   </td><td class="markdownTableBodyNone">RAM_D1 stacks    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">0x40000000   </td><td class="markdownTableBodyNone">512MB   </td><td class="markdownTableBodyNone">Full Access   </td><td class="markdownTableBodyNone">Peripherals   </td></tr>
+</table>
+<h3><a class="anchor" id="autotoc_md19"></a>
+Flashing the Firmware</h3>
 <p><b>Using ST-Link:</b> </p><div class="fragment"><div class="line"># Flash the hex file</div>
 <div class="line">st-flash --format ihex write build/icarus_os.hex</div>
 <div class="line"> </div>
@@ -366,8 +410,8 @@ Flashing the Firmware</h2>
 </div><!-- fragment --><p><b>Using OpenOCD:</b> </p><div class="fragment"><div class="line">openocd -f interface/stlink.cfg -f target/stm32h7x.cfg \</div>
 <div class="line">  -c &quot;program build/icarus_os.elf verify reset exit&quot;</div>
 </div><!-- fragment --><p><b>Using STM32CubeProgrammer:</b> </p><div class="fragment"><div class="line">STM32_Programmer_CLI -c port=SWD -w build/icarus_os.hex -v -rst</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md20"></a>
-Connecting to the Terminal</h2>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md20"></a>
+Connecting to the Terminal</h3>
 <p>ICARUS OS outputs to USB CDC (Virtual COM Port). Connect using any serial terminal:</p>
 <p><b>Using screen (macOS/Linux):</b> </p><div class="fragment"><div class="line"># Find the device</div>
 <div class="line">ls /dev/tty.usbmodem*  # macOS</div>
@@ -392,16 +436,9 @@ Connecting to the Terminal</h2>
 </ol>
 <p><b>Using the provided script (macOS):</b> </p><div class="fragment"><div class="line"># Auto-detect and connect</div>
 <div class="line">bash icarus_terminal.sh</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md21"></a>
-What You'll See</h2>
-<p>Upon successful connection, you'll see the ICARUS OS terminal GUI with:</p><ul>
-<li>ASCII art header</li>
-<li>Heartbeat banner (flashing with LED)</li>
-<li>Demo task progress bars</li>
-<li>Semaphore/pipe visualizations</li>
-<li>Message history panels</li>
-<li>Stress test statistics (if enabled)</li>
-</ul>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md21"></a>
+What You'll See</h3>
+<p>With the stock <code><a class="el" href="main_8c.html" title="ICARUS OS Application Entry Point.">main.c</a></code> flags above, expect the <b>ICARUS Runner</b> game over USB serial—not the full dashboard. When demo/stress features are enabled at compile time, you will see the terminal GUI with items such as: ASCII header, optional heartbeat banner, demo task bars, semaphore/pipe views, message history, and stress statistics.</p>
 <p><b>Example output:</b> </p><div class="fragment"><div class="line">┌──────────────────────────────────────────────────────────────┐</div>
 <div class="line">│   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │</div>
 <div class="line">│   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │</div>
@@ -416,53 +453,461 @@ What You'll See</h2>
 <div class="line">[producer] ████████████────────  160/200 ticks  →[42]</div>
 <div class="line">[consumer] ██████████──────────  100/190 ticks  ←[42]</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md23"></a>
-Overview</h1>
-<p>ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750). The kernel provides deterministic task scheduling, context switching, and a clean API for embedded real-time applications.</p>
-<h2><a class="anchor" id="autotoc_md24"></a>
-Vision</h2>
+<h2><a class="anchor" id="autotoc_md23"></a>
+Overview</h2>
+<p>ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750VBT6). The kernel provides deterministic task scheduling, hardware-enforced memory protection, and a comprehensive API for safety-critical embedded applications.</p>
+<h3><a class="anchor" id="autotoc_md24"></a>
+Vision</h3>
 <p>ICARUS is designed to be the first open-source RTOS with:</p><ul>
 <li><b>Native AI integration</b> with certifiable determinism (planned)</li>
 <li><b>DO-178C alignment by design</b> (not retrofitted)</li>
 <li><b>Hardware-agnostic portability</b> across safety-critical platforms</li>
 <li><b>Formal verification readiness</b> for DAL A applications (future)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md25"></a>
-Key Features</h2>
+<h3><a class="anchor" id="autotoc_md25"></a>
+Key Features</h3>
+<h4><a class="anchor" id="autotoc_md26"></a>
+Core Kernel</h4>
 <ul>
 <li><b>Preemptive Round-Robin Scheduling</b>: Time-sliced task execution with configurable time quantum (50ms default)</li>
-<li><b>Deterministic Context Switching</b>: Assembly-optimized context save/restore using PendSV</li>
+<li><b>Deterministic Context Switching</b>: Assembly-optimized context save/restore using PendSV with MPU reconfiguration</li>
 <li><b>Task State Management</b>: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)</li>
 <li><b>Bounded Semaphores</b>: Counting semaphores with blocking feed/consume for producer-consumer patterns</li>
-<li><b>Message Queues (Pipes)</b>: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages</li>
+<li><b>Message Queues (Pipes)</b>: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages up to 128 bytes</li>
 <li><b>Active Sleep</b>: Cooperative sleep that allows other tasks to run</li>
 <li><b>Blocking Sleep</b>: Busy-wait sleep for critical timing</li>
-<li><b>Visual Debugging</b>: Terminal-based display with progress bars, message history, semaphore/pipe visualization</li>
-<li><b>Stress Testing</b>: Built-in stress test suite with real-time verification</li>
-<li><b>USB CDC Support</b>: Serial communication via USB Virtual COM Port</li>
-<li><b>MPU Configuration</b>: Memory Protection Unit setup for QSPI flash access</li>
+<li><b>Up to 128 Tasks</b>: Configurable task pool with 2KB stack and 2KB data region per task</li>
+<li><b>64 Semaphores &amp; 64 Pipes</b>: Rich IPC primitives for complex applications</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md27"></a>
+Memory Protection (v0.1.0)</h4>
+<ul>
+<li><b>Hardware-Enforced Isolation</b>: ARM Cortex-M7 MPU with 8-region configuration</li>
+<li><b>DTCM Protection</b>: Kernel data isolated in privileged-only memory (Region 5, 128KB)</li>
+<li><b>ITCM Protection</b>: Kernel code marked read-only to prevent modification attacks (Region 0, 64KB)</li>
+<li><b>Task Data Isolation</b>: Each task gets isolated 2KB data region with MPU reconfiguration on context switch (Region 4)</li>
+<li><b>Privilege Separation</b>: Tasks run unprivileged (CONTROL.nPRIV=1), kernel runs privileged via SVC mechanism</li>
+<li><b>40 SVC Call Gates</b>: Controlled privilege transitions with atomic kernel state access</li>
+<li><b>Fault Recovery</b>: Graceful handling of MemManage faults with fault address/PC capture and LED blink decoder</li>
+<li><b>Attack Validation</b>: 5 red team test tasks validate 100% protection effectiveness</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md28"></a>
+ICARUS Runner Game</h4>
+<ul>
+<li><b>Multi-Task Demo</b>: Chrome dino-style endless runner showcasing RTOS capabilities</li>
+<li><b>4 Concurrent Tasks</b>: Input (10ms), Physics (20ms), Logic (50ms), Render (50ms)</li>
+<li><b>IPC Demonstration</b>: Semaphore-protected shared state, pipe-based command passing</li>
+<li><b>Dynamic Difficulty</b>: Speed increases with score (1.0x-4.0x multiplier based on distance)</li>
+<li><b>High Score Persistence</b>: RTC backup register storage survives power cycles</li>
+<li><b>80×24 Terminal Display</b>: ANSI escape code rendering with collision detection</li>
+<li><b>Button Control</b>: K1 button (PC13) for jump input with 50ms debouncing</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md29"></a>
+Demo &amp; Testing</h4>
+<ul>
+<li><b>Demo Tasks</b>: 12 producer/consumer tasks demonstrating semaphores and pipes (SS, SM, MS, MM patterns)</li>
+<li><b>Stress Testing</b>: 19 competing tasks with high-contention IPC operations (10+ min stability verified)</li>
+<li><b>Interactive Demo</b>: Button-controlled LED with real-time feedback</li>
+<li><b>Visual Debugging</b>: Terminal-based GUI with progress bars, message history, semaphore/pipe visualization</li>
+<li><b>USB CDC Support</b>: Serial communication via USB Virtual COM Port (115200 baud)</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md30"></a>
+Development &amp; Quality</h4>
+<ul>
 <li><b>MISRA C Compliant</b>: Follows MISRA C:2012 coding standards</li>
+<li><b>Comprehensive Unit Tests</b>: 140+ Unity tests; run <code>cd tests &amp;&amp; make coverage-summary</code> for current line/function coverage on the host build</li>
+<li><b>Static Analysis</b>: cppcheck clean, zero warnings</li>
+<li><b>Standalone Build System</b>: Makefile-based build without IDE dependency</li>
+<li><b>Memory Map Visualizer</b>: Interactive web tool for analyzing linker output</li>
+<li><b>DO-178C Documentation</b>: Complete certification-aligned documentation suite</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md27"></a>
-DO-178C Alignment</h1>
+<h2><a class="anchor" id="autotoc_md32"></a>
+Architecture Overview</h2>
+<p>ICARUS OS is structured in layers, from low-level hardware abstraction to high-level application tasks.</p>
+<h3><a class="anchor" id="autotoc_md33"></a>
+System Architecture</h3>
+<div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
+<div class="line">│                    APPLICATION LAYER                         │</div>
+<div class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</div>
+<div class="line">│  │ ICARUS Runner│  │  Demo Tasks  │  │ Stress Tests │      │</div>
+<div class="line">│  │   (Game)     │  │ (Producers/  │  │ (19 tasks)   │      │</div>
+<div class="line">│  │  4 tasks     │  │  Consumers)  │  │              │      │</div>
+<div class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</div>
+<div class="line">├─────────────────────────────────────────────────────────────┤</div>
+<div class="line">│                      ICARUS RTOS API                         │</div>
+<div class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</div>
+<div class="line">│  │  Semaphores  │  │    Pipes     │  │    Tasks     │      │</div>
+<div class="line">│  │  (64 max)    │  │  (64 max)    │  │  (128 max)   │      │</div>
+<div class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</div>
+<div class="line">├─────────────────────────────────────────────────────────────┤</div>
+<div class="line">│                      KERNEL LAYER                            │</div>
+<div class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</div>
+<div class="line">│  │  Scheduler   │  │ Context      │  │  SVC Handler │      │</div>
+<div class="line">│  │ (Round-Robin)│  │ Switch (ASM) │  │  (40 gates)  │      │</div>
+<div class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</div>
+<div class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</div>
+<div class="line">│  │ Task Manager │  │ IPC Manager  │  │ MPU Manager  │      │</div>
+<div class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</div>
+<div class="line">├─────────────────────────────────────────────────────────────┤</div>
+<div class="line">│                   BOARD SUPPORT PACKAGE                      │</div>
+<div class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</div>
+<div class="line">│  │   Display    │  │   USB CDC    │  │     RTC      │      │</div>
+<div class="line">│  │  (Terminal)  │  │  (Serial)    │  │ (Persistence)│      │</div>
+<div class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</div>
+<div class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</div>
+<div class="line">│  │   GPIO/LED   │  │   SPI/I2C    │  │    Timer     │      │</div>
+<div class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</div>
+<div class="line">├─────────────────────────────────────────────────────────────┤</div>
+<div class="line">│                    HARDWARE LAYER                            │</div>
+<div class="line">│  STM32H750VBT6 (ARM Cortex-M7 @ 480MHz)                     │</div>
+<div class="line">│  128KB Flash | 1MB RAM | 64KB ITCM | 128KB DTCM             │</div>
+<div class="line">└─────────────────────────────────────────────────────────────┘</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md34"></a>
+Directory Structure</h3>
+<div class="fragment"><div class="line">icarus-os-core/</div>
+<div class="line">├── Core/</div>
+<div class="line">│   ├── Inc/</div>
+<div class="line">│   │   ├── icarus/          # RTOS kernel headers</div>
+<div class="line">│   │   │   ├── icarus.h     # Main API umbrella header</div>
+<div class="line">│   │   │   ├── kernel.h     # Kernel state and initialization</div>
+<div class="line">│   │   │   ├── scheduler.h  # Task scheduling</div>
+<div class="line">│   │   │   ├── task.h       # Task management</div>
+<div class="line">│   │   │   ├── semaphore.h  # Semaphore API</div>
+<div class="line">│   │   │   ├── pipe.h       # Message pipe API</div>
+<div class="line">│   │   │   ├── svc.h        # SVC definitions (40 call gates)</div>
+<div class="line">│   │   │   ├── types.h      # Core data structures (TCB, etc.)</div>
+<div class="line">│   │   │   └── config.h     # Configuration constants</div>
+<div class="line">│   │   ├── bsp/             # Board support package headers</div>
+<div class="line">│   │   │   ├── bsp.h        # BSP master header</div>
+<div class="line">│   │   │   ├── config.h     # Hardware pin mappings</div>
+<div class="line">│   │   │   ├── display.h    # Terminal GUI</div>
+<div class="line">│   │   │   ├── gpio.h       # GPIO/LED control</div>
+<div class="line">│   │   │   ├── i2c.h        # I2C driver (IMU)</div>
+<div class="line">│   │   │   ├── spi.h        # SPI driver (LCD)</div>
+<div class="line">│   │   │   ├── rtc.h        # Real-time clock</div>
+<div class="line">│   │   │   ├── timer.h      # Timer/PWM</div>
+<div class="line">│   │   │   └── usb.h        # USB CDC</div>
+<div class="line">│   │   ├── game/            # ICARUS Runner game headers</div>
+<div class="line">│   │   │   ├── game.h       # Game API</div>
+<div class="line">│   │   │   ├── game_config.h # Game constants</div>
+<div class="line">│   │   │   ├── game_types.h  # Game data structures</div>
+<div class="line">│   │   │   └── game_internal.h # Internal game state</div>
+<div class="line">│   │   ├── demo_tasks.h     # Demo task registration</div>
+<div class="line">│   │   ├── interactive_tasks.h # Interactive demo</div>
+<div class="line">│   │   ├── stress_test.h    # Stress test suite</div>
+<div class="line">│   │   └── main.h           # Main entry point</div>
+<div class="line">│   ├── Src/</div>
+<div class="line">│   │   ├── icarus/          # RTOS kernel implementation</div>
+<div class="line">│   │   │   ├── kernel.c     # Kernel core</div>
+<div class="line">│   │   │   ├── scheduler.c  # Scheduler logic</div>
+<div class="line">│   │   │   ├── task.c       # Task management</div>
+<div class="line">│   │   │   ├── semaphore.c  # Semaphore implementation</div>
+<div class="line">│   │   │   ├── pipe.c       # Pipe implementation</div>
+<div class="line">│   │   │   ├── svc.c        # SVC dispatcher</div>
+<div class="line">│   │   │   └── context_switch.s # Assembly context switch</div>
+<div class="line">│   │   ├── bsp/             # BSP implementation</div>
+<div class="line">│   │   ├── game/            # Game implementation</div>
+<div class="line">│   │   │   ├── game.c       # Game initialization</div>
+<div class="line">│   │   │   ├── game_state.c # State management</div>
+<div class="line">│   │   │   ├── game_physics.c # Physics engine</div>
+<div class="line">│   │   │   ├── game_collision.c # Collision detection</div>
+<div class="line">│   │   │   ├── game_render.c # Terminal rendering</div>
+<div class="line">│   │   │   ├── game_obstacles.c # Obstacle management</div>
+<div class="line">│   │   │   └── game_score.c # Score tracking</div>
+<div class="line">│   │   ├── demo_tasks.c     # Demo task implementation</div>
+<div class="line">│   │   ├── interactive_tasks.c # Interactive demo</div>
+<div class="line">│   │   ├── stress_test.c    # Stress test implementation</div>
+<div class="line">│   │   └── main.c           # Application entry point</div>
+<div class="line">│   └── Startup/</div>
+<div class="line">│       └── startup_stm32h750vbtx.s # Startup code</div>
+<div class="line">├── Drivers/</div>
+<div class="line">│   ├── STM32H7xx_HAL_Driver/ # STM32 HAL library</div>
+<div class="line">│   ├── CMSIS/               # ARM CMSIS headers</div>
+<div class="line">│   └── BSP/ST7735/          # LCD driver</div>
+<div class="line">├── Middlewares/</div>
+<div class="line">│   └── ST/STM32_USB_Device_Library/ # USB device stack</div>
+<div class="line">├── USB_DEVICE/              # USB CDC application</div>
+<div class="line">├── build/</div>
+<div class="line">│   ├── Makefile             # Standalone build system</div>
+<div class="line">│   ├── rebuild.sh           # Clean rebuild script</div>
+<div class="line">│   └── build.sh             # Incremental build script</div>
+<div class="line">├── tests/</div>
+<div class="line">│   ├── src/                 # Unit test sources</div>
+<div class="line">│   ├── mocks/               # Hardware mocks</div>
+<div class="line">│   ├── unity/               # Unity test framework</div>
+<div class="line">│   ├── cmock/               # CMock framework</div>
+<div class="line">│   ├── Makefile             # Test build system</div>
+<div class="line">│   └── README.md            # Test documentation</div>
+<div class="line">├── docs/</div>
+<div class="line">│   ├── do178c/              # DO-178C certification docs</div>
+<div class="line">│   │   ├── plans/           # PSAC, SDP, SVP, SCMP, SQAP</div>
+<div class="line">│   │   ├── requirements/    # SRS (71 requirements)</div>
+<div class="line">│   │   ├── design/          # SDD with traceability</div>
+<div class="line">│   │   ├── verification/    # Coverage, test traceability</div>
+<div class="line">│   │   └── README.md        # Documentation overview</div>
+<div class="line">│   └── doxygen/             # API documentation</div>
+<div class="line">├── tools/</div>
+<div class="line">│   └── map-visualizer/      # Memory map visualization tool</div>
+<div class="line">│       ├── index.html       # Web interface</div>
+<div class="line">│       ├── app.js           # Application controller</div>
+<div class="line">│       ├── parser.js        # Map file parser</div>
+<div class="line">│       ├── visualizer.js    # Memory layout renderer</div>
+<div class="line">│       └── README.md        # Tool documentation</div>
+<div class="line">├── STM32H750VBTX_FLASH.ld   # Linker script (Flash boot)</div>
+<div class="line">├── STM32H750VBTX_RAM.ld     # Linker script (RAM boot)</div>
+<div class="line">├── icarus_terminal.sh       # Terminal connection script</div>
+<div class="line">├── FAULT_BLINK_DECODER.md   # LED fault decoder guide</div>
+<div class="line">├── README.md                # This file</div>
+<div class="line">└── LICENSE                  # Apache 2.0 license</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md35"></a>
+Task Execution Flow</h3>
+<div class="fragment"><div class="line">1. System Boot</div>
+<div class="line">   ├─&gt; Reset_Handler (startup_stm32h750vbtx.s)</div>
+<div class="line">   ├─&gt; SystemInit() - Configure clocks, MPU, caches</div>
+<div class="line">   ├─&gt; main()</div>
+<div class="line">   │   ├─&gt; hal_init() - Initialize BSP</div>
+<div class="line">   │   ├─&gt; os_init() - Initialize kernel</div>
+<div class="line">   │   ├─&gt; game_init() / demo_tasks_init() - Register tasks</div>
+<div class="line">   │   └─&gt; os_start() - Start scheduler (never returns)</div>
+<div class="line">   │</div>
+<div class="line">2. Scheduler Loop (in SysTick_Handler)</div>
+<div class="line">   ├─&gt; Decrement current_task_ticks_remaining</div>
+<div class="line">   ├─&gt; If time slice expired:</div>
+<div class="line">   │   └─&gt; Trigger PendSV (context switch)</div>
+<div class="line">   │</div>
+<div class="line">3. Context Switch (PendSV_Handler)</div>
+<div class="line">   ├─&gt; Save current task context (R4-R11, PSP)</div>
+<div class="line">   ├─&gt; Update current task state (RUNNING → READY)</div>
+<div class="line">   ├─&gt; Select next ready task (round-robin)</div>
+<div class="line">   ├─&gt; Reconfigure MPU Region 4 for task data</div>
+<div class="line">   ├─&gt; Restore next task context</div>
+<div class="line">   └─&gt; Return to task (unprivileged mode)</div>
+<div class="line">   │</div>
+<div class="line">4. Task Execution</div>
+<div class="line">   ├─&gt; Task runs in unprivileged mode</div>
+<div class="line">   ├─&gt; Can call RTOS API via SVC instructions</div>
+<div class="line">   ├─&gt; Can access own stack (RAM_D1) and data (RAM_D2)</div>
+<div class="line">   ├─&gt; Cannot access kernel data (DTCM) or other tasks&#39; data</div>
+<div class="line">   └─&gt; Preempted after 50ms time slice</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md36"></a>
+IPC Data Flow Example (Semaphore)</h3>
+<div class="fragment"><div class="line">Producer Task                    Kernel (DTCM)              Consumer Task</div>
+<div class="line">─────────────                    ─────────────              ─────────────</div>
+<div class="line">                                                            </div>
+<div class="line">semaphore_feed(0)                                           semaphore_consume(0)</div>
+<div class="line">    │                                                           │</div>
+<div class="line">    ├─&gt; while (!sem_can_feed(0))  ──SVC 29──&gt;                 ├─&gt; while (!sem_can_consume(0))</div>
+<div class="line">    │       task_active_sleep(1)              Check count     │       task_active_sleep(1)</div>
+<div class="line">    │                             &lt;──Return──  &lt; max?         │</div>
+<div class="line">    │                                                          │</div>
+<div class="line">    ├─&gt; sem_increment(0)          ──SVC 33──&gt;                 │</div>
+<div class="line">    │                                         ++count         │</div>
+<div class="line">    │                             &lt;──Return──                 │</div>
+<div class="line">    │                                                          │</div>
+<div class="line">    │                                                          ├─&gt; sem_decrement(0)  ──SVC 34──&gt;</div>
+<div class="line">    │                                                          │                                --count</div>
+<div class="line">    │                                                          │                    &lt;──Return──</div>
+<div class="line">    │                                                          │</div>
+<div class="line">    └─&gt; Continue                                               └─&gt; Continue</div>
+</div><!-- fragment --><hr  />
+<h2><a class="anchor" id="autotoc_md38"></a>
+Memory Protection Architecture</h2>
+<p>ICARUS OS implements comprehensive hardware-enforced memory protection using the ARM Cortex-M7 Memory Protection Unit (MPU). This provides three layers of isolation essential for safety-critical applications.</p>
+<h3><a class="anchor" id="autotoc_md39"></a>
+Protection Layers</h3>
+<h4><a class="anchor" id="autotoc_md40"></a>
+1. DTCM Protection (Kernel Data Isolation)</h4>
+<p><b>Problem:</b> Unprivileged tasks could corrupt kernel state (task lists, semaphores, pipes, tick counter).</p>
+<p><b>Solution:</b> Kernel data structures isolated in privileged-only DTCM (Region 5: PRIV_RW).</p>
+<p><b>Implementation:</b></p><ul>
+<li>All kernel data marked with <code>DTCM_DATA_PRIV</code> attribute</li>
+<li>Unprivileged tasks cannot directly read/write DTCM</li>
+<li>All kernel data access forced through SVC call gates</li>
+</ul>
+<p><b>Verification:</b> <code>mpu_dtcm_attack_task</code> attempts DTCM read → MemManage fault (protection working)</p>
+<h4><a class="anchor" id="autotoc_md41"></a>
+2. ITCM Protection (Code Integrity)</h4>
+<p><b>Problem:</b> Malicious code could modify kernel handlers at runtime.</p>
+<p><b>Solution:</b> Kernel code marked read-only in ITCM (Region 0: RO for all).</p>
+<p><b>Implementation:</b></p><ul>
+<li>All kernel code placed in ITCM section</li>
+<li>MPU Region 0 configured as read-only + executable</li>
+<li>Write attempts trigger MemManage fault</li>
+</ul>
+<p><b>Verification:</b> <code>mpu_itcm_write_test</code> attempts ITCM write → MemManage fault (protection working)</p>
+<h4><a class="anchor" id="autotoc_md42"></a>
+3. Task Data Isolation (Cross-Task Protection)</h4>
+<p><b>Problem:</b> One task could corrupt another task's data, causing cascading failures.</p>
+<p><b>Solution:</b> Each task gets isolated 2KB data region with MPU reconfiguration on context switch.</p>
+<p><b>Implementation:</b></p><ul>
+<li>Task data regions allocated from RAM_D2 (2KB-aligned)</li>
+<li>MPU Region 4 reconfigured in PendSV handler</li>
+<li>Memory barriers (DSB/ISB) ensure MPU changes take effect</li>
+</ul>
+<p><b>Verification:</b> <code>mpu_redteam_task</code> attempts cross-task access → MemManage fault (protection working)</p>
+<h3><a class="anchor" id="autotoc_md43"></a>
+SVC Call Gate Architecture</h3>
+<p><b>Challenge:</b> Once DTCM is privileged-only, spinning functions (semaphore feed/consume, pipe enqueue/dequeue) cannot read kernel state from unprivileged mode.</p>
+<p><b>Solution:</b> SVC call gates that read/write kernel state atomically in privileged mode.</p>
+<p><b>40 SVC Numbers Defined:</b></p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">SVC Range   </th><th class="markdownTableHeadNone">Purpose   </th><th class="markdownTableHeadNone">Examples    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0-15   </td><td class="markdownTableBodyNone">Core kernel operations   </td><td class="markdownTableBodyNone">os_init, os_start, os_yield, task_sleep    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">16-28   </td><td class="markdownTableBodyNone">IPC operations   </td><td class="markdownTableBodyNone">semaphore_init, pipe_init, task lifecycle    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">29-36   </td><td class="markdownTableBodyNone">Call gates (spinning)   </td><td class="markdownTableBodyNone">sem_can_feed, pipe_can_enqueue, sem_increment, pipe_write_bytes    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">37-39   </td><td class="markdownTableBodyNone">Metadata gates   </td><td class="markdownTableBodyNone">os_get_tick_count, os_get_task_name   </td></tr>
+</table>
+<p><b>Spinning Pattern with Call Gates:</b> </p><div class="fragment"><div class="line"><span class="keywordtype">bool</span> <a class="code hl_function" href="semaphore_8h.html#adaf4fd634aba7757c187eb339c4ca92b">semaphore_feed</a>(uint8_t semaphore_idx) {</div>
+<div class="line">    <span class="keywordflow">while</span> (!<a class="code hl_function" href="semaphore_8h.html#a18191128c44ae720080796d624703b1a">sem_can_feed</a>(semaphore_idx)) {  <span class="comment">// SVC 29: read DTCM</span></div>
+<div class="line">        <a class="code hl_function" href="kernel_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(1);</div>
+<div class="line">    }</div>
+<div class="line">    <a class="code hl_function" href="semaphore_8h.html#ae1628133b43861aa63a84fbbe8cc8fb9">sem_increment</a>(semaphore_idx);  <span class="comment">// SVC 33: write DTCM</span></div>
+<div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line">}</div>
+<div class="ttc" id="akernel_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="kernel_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified ticks (cooperative, via SVC)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00254">svc.c:254</a></div></div>
+<div class="ttc" id="asemaphore_8h_html_a18191128c44ae720080796d624703b1a"><div class="ttname"><a href="semaphore_8h.html#a18191128c44ae720080796d624703b1a">sem_can_feed</a></div><div class="ttdeci">bool sem_can_feed(uint8_t semaphore_idx)</div><div class="ttdoc">Check if semaphore can accept a feed (SVC call gate)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00654">svc.c:654</a></div></div>
+<div class="ttc" id="asemaphore_8h_html_adaf4fd634aba7757c187eb339c4ca92b"><div class="ttname"><a href="semaphore_8h.html#adaf4fd634aba7757c187eb339c4ca92b">semaphore_feed</a></div><div class="ttdeci">bool semaphore_feed(uint8_t semaphore_idx)</div><div class="ttdoc">Increment semaphore count (V operation / signal)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00515">svc.c:515</a></div></div>
+<div class="ttc" id="asemaphore_8h_html_ae1628133b43861aa63a84fbbe8cc8fb9"><div class="ttname"><a href="semaphore_8h.html#ae1628133b43861aa63a84fbbe8cc8fb9">sem_increment</a></div><div class="ttdeci">void sem_increment(uint8_t semaphore_idx)</div><div class="ttdoc">Increment semaphore count (SVC call gate)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00746">svc.c:746</a></div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md44"></a>
+Fault Handling</h3>
+<p><b>MemManage Handler Features:</b></p><ul>
+<li>Captures fault address (MMFAR register)</li>
+<li>Captures fault PC (exception stack frame)</li>
+<li>Fault counter with limit (1000 faults before halt)</li>
+<li>Instruction skip recovery (+2 bytes for Thumb-2)</li>
+<li>Fault blink pattern for debugging (2 rapid blinks)</li>
+</ul>
+<p><b>Fault Statistics (10 min stress test with attack tasks):</b></p><ul>
+<li>Total faults: 240 (all intentional from attack tests)</li>
+<li>Fault recovery: 100% successful</li>
+<li>System uptime: 100%</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md45"></a>
+Performance Impact</h3>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Metric   </th><th class="markdownTableHeadNone">Before MPU   </th><th class="markdownTableHeadNone">After MPU   </th><th class="markdownTableHeadNone">Overhead    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Context switch   </td><td class="markdownTableBodyNone">~8μs   </td><td class="markdownTableBodyNone">~10μs   </td><td class="markdownTableBodyNone">+2μs (+25%)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">SVC call   </td><td class="markdownTableBodyNone">N/A   </td><td class="markdownTableBodyNone">~0.8μs   </td><td class="markdownTableBodyNone">N/A    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Code size   </td><td class="markdownTableBodyNone">32KB   </td><td class="markdownTableBodyNone">39.5KB   </td><td class="markdownTableBodyNone">+7.5KB (+23%)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Data size   </td><td class="markdownTableBodyNone">512KB   </td><td class="markdownTableBodyNone">768KB   </td><td class="markdownTableBodyNone">+256KB (+50%)   </td></tr>
+</table>
+<p><b>Note:</b> Context switch overhead is negligible for 50ms time quantum (0.004% overhead).</p>
+<h3><a class="anchor" id="autotoc_md46"></a>
+Attack Test Results</h3>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Test   </th><th class="markdownTableHeadNone">Attack Type   </th><th class="markdownTableHeadNone">Expected   </th><th class="markdownTableHeadNone">Result    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_dtcm_attack_task</code>   </td><td class="markdownTableBodyNone">Read kernel data   </td><td class="markdownTableBodyNone">MemManage fault   </td><td class="markdownTableBodyNone">✅ Fault caught    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>mpu_itcm_write_test</code>   </td><td class="markdownTableBodyNone">Modify kernel code   </td><td class="markdownTableBodyNone">MemManage fault   </td><td class="markdownTableBodyNone">✅ Fault caught    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_redteam_task</code>   </td><td class="markdownTableBodyNone">Cross-task access   </td><td class="markdownTableBodyNone">MemManage fault   </td><td class="markdownTableBodyNone">✅ Fault caught    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>mpu_kernel_bypass_test</code>   </td><td class="markdownTableBodyNone">Direct kernel call   </td><td class="markdownTableBodyNone">MemManage fault   </td><td class="markdownTableBodyNone">✅ Fault caught    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_verify_task</code>   </td><td class="markdownTableBodyNone">Data integrity   </td><td class="markdownTableBodyNone">No corruption   </td><td class="markdownTableBodyNone">✅ 0 errors   </td></tr>
+</table>
+<p><b>Protection Effectiveness:</b> 100% (all attacks caught, system stable)</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md48"></a>
+Tools &amp; Utilities</h2>
+<h3><a class="anchor" id="autotoc_md49"></a>
+Memory Map Visualizer</h3>
+<p>ICARUS OS includes an interactive web-based tool for analyzing linker map files. This helps with debugging memory issues, optimizing Flash/RAM usage, and understanding the memory layout.</p>
+<p><b>Features:</b></p><ul>
+<li>Automatic loading of <code>build/icarus_os.map</code></li>
+<li>Interactive memory region filtering</li>
+<li>Click-to-explore sections and symbols</li>
+<li>Real-time symbol search</li>
+<li>Visual memory layout with proportional sizing</li>
+<li>Color-coded sections (Flash, RAM, DTCM, ITCM, etc.)</li>
+<li>Detailed statistics and usage percentages</li>
+</ul>
+<p><b>Usage:</b> </p><div class="fragment"><div class="line"># Open in browser</div>
+<div class="line">open tools/map-visualizer/index.html</div>
+<div class="line"> </div>
+<div class="line"># Or use a local server</div>
+<div class="line">cd tools/map-visualizer</div>
+<div class="line">python3 -m http.server 8000</div>
+<div class="line"># Then open http://localhost:8000</div>
+</div><!-- fragment --><p><b>Use Cases:</b></p><ul>
+<li>Debug stack overflow issues</li>
+<li>Identify large sections consuming Flash</li>
+<li>Find symbol addresses quickly</li>
+<li>Visualize memory region utilization</li>
+<li>Spot overlapping sections</li>
+</ul>
+<p>See <code>tools/map-visualizer/README.md</code> for detailed documentation.</p>
+<h3><a class="anchor" id="autotoc_md50"></a>
+Terminal Connection Script</h3>
+<p>The <code>icarus_terminal.sh</code> script automatically detects your STM32 board and connects to the USB serial port.</p>
+<p><b>Features:</b></p><ul>
+<li>Auto-detection of USB serial devices (macOS/Linux)</li>
+<li>Supports multiple terminal programs (picocom, screen)</li>
+<li>Automatic cursor restoration on exit</li>
+<li>Helpful error messages with device listing</li>
+</ul>
+<p><b>Usage:</b> </p><div class="fragment"><div class="line"># Connect to ICARUS OS terminal</div>
+<div class="line">bash icarus_terminal.sh</div>
+<div class="line"> </div>
+<div class="line"># Exit:</div>
+<div class="line"># - picocom: Ctrl+A then Ctrl+X</div>
+<div class="line"># - screen: Ctrl+A then K</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md51"></a>
+Fault Blink Decoder</h3>
+<p>When a MemManage fault occurs, ICARUS OS blinks the LED to communicate the fault address. This is useful for debugging MPU violations.</p>
+<p><b>Blink Pattern:</b></p><ol type="1">
+<li>4 fast blinks - MemManage fault indicator</li>
+<li>Long pause (4 seconds)</li>
+<li>Address nibbles - Upper 16 bits of MMFAR (4 hex digits)</li>
+<li>Long pause (6 seconds)</li>
+<li>Continuous 4 blinks - System halted</li>
+</ol>
+<p><b>Decoding:</b></p><ul>
+<li>0 = One long blink (0.8s)</li>
+<li>1-15 = That many short blinks (0.2s each)</li>
+<li>Between nibbles: 1 second pause</li>
+</ul>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">4 fast → pause → 2 blinks → pause → 0 (long) → pause → 0 (long) → pause → 0 (long)</div>
+<div class="line">Decodes to: 0x2000xxxx (DTCM region)</div>
+</div><!-- fragment --><p>See <code>FAULT_BLINK_DECODER.md</code> for complete documentation.</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md53"></a>
+DO-178C Alignment</h2>
 <p>ICARUS OS is being developed to support DO-178C DAL C certification objectives. Complete certification-aligned documentation is available in <code>docs/do178c/</code>.</p>
-<h2><a class="anchor" id="autotoc_md28"></a>
-Documentation Suite</h2>
+<h3><a class="anchor" id="autotoc_md54"></a>
+Documentation Suite</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Category   </th><th class="markdownTableHeadNone">Documents    </th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>Plans</b>   </td><td class="markdownTableBodyNone">PSAC, SDP, SVP, SCMP, SQAP    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><b>Requirements</b>   </td><td class="markdownTableBodyNone">SRS (101 requirements: 41 implemented, 60 planned)    </td></tr>
+<td class="markdownTableBodyNone"><b>Requirements</b>   </td><td class="markdownTableBodyNone">SRS (71 requirements: 41 implemented, 30 planned)    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>Design</b>   </td><td class="markdownTableBodyNone">SDD with full traceability matrix    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>Verification</b>   </td><td class="markdownTableBodyNone">Coverage analysis, deactivated code analysis, test traceability   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md29"></a>
-Compliance Status</h2>
+<p><b>Memory Protection Requirements (HLR-KRN-063 to HLR-KRN-086):</b></p><ul>
+<li>14 new requirements for MPU-based isolation</li>
+<li>All requirements implemented and verified</li>
+<li>Attack tests validate 100% protection effectiveness</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md55"></a>
+Compliance Status</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Objective   </th><th class="markdownTableHeadNone">Status    </th></tr>
@@ -471,11 +916,11 @@ Compliance Status</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">MISRA C:2012 subset   </td><td class="markdownTableBodyNone">✅ Complete    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Unit testing (Unity)   </td><td class="markdownTableBodyNone">✅ 131 tests    </td></tr>
+<td class="markdownTableBodyNone">Unit testing (Unity)   </td><td class="markdownTableBodyNone">✅ 140 tests    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Line coverage   </td><td class="markdownTableBodyNone">✅ 88.5%    </td></tr>
+<td class="markdownTableBodyNone">Line coverage   </td><td class="markdownTableBodyNone">✅ ~91% (host <code>lcov</code>, kernel+BSP under test)    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Function coverage   </td><td class="markdownTableBodyNone">✅ 85.9%    </td></tr>
+<td class="markdownTableBodyNone">Function coverage   </td><td class="markdownTableBodyNone">✅ ~89.5%    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Requirements traceability   </td><td class="markdownTableBodyNone">✅ SRS complete    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -487,8 +932,8 @@ Compliance Status</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Formal verification   </td><td class="markdownTableBodyNone">📋 Planned (DAL B)   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md30"></a>
-Running Verification</h2>
+<h3><a class="anchor" id="autotoc_md56"></a>
+Running Verification</h3>
 <div class="fragment"><div class="line"># Run all tests</div>
 <div class="line">cd tests &amp;&amp; make clean test</div>
 <div class="line"> </div>
@@ -498,6 +943,189 @@ Running Verification</h2>
 <div class="line"># Run static analysis</div>
 <div class="line">cd build &amp;&amp; make cppcheck</div>
 </div><!-- fragment --><hr  />
+<h2><a class="anchor" id="autotoc_md58"></a>
+Project Status &amp; Roadmap</h2>
+<h3><a class="anchor" id="autotoc_md59"></a>
+Current Status (v0.1.0)</h3>
+<p>ICARUS OS is in active development with core functionality complete and undergoing verification.</p>
+<p><b>Implemented Features:</b></p><ul>
+<li>✅ Preemptive round-robin scheduler with 50ms time quantum</li>
+<li>✅ Hardware-enforced memory protection (MPU with 8 regions)</li>
+<li>✅ Task management (128 tasks, 2KB stack + 2KB data each)</li>
+<li>✅ Semaphores (64 max, counting with blocking operations)</li>
+<li>✅ Message pipes (64 max, FIFO with up to 128-byte messages)</li>
+<li>✅ SVC call gates (40 gates for privilege separation)</li>
+<li>✅ Context switching with MPU reconfiguration</li>
+<li>✅ Fault recovery with LED blink decoder</li>
+<li>✅ Terminal GUI with real-time visualization</li>
+<li>✅ USB CDC serial communication</li>
+<li>✅ ICARUS Runner game demo (4 tasks)</li>
+<li>✅ Demo tasks (12 producer/consumer patterns)</li>
+<li>✅ Stress testing (19 tasks, 10+ min stability)</li>
+<li>✅ Unit testing (140 tests; ~91% statement coverage on exercised kernel/BSP sources — see <code>tests/README.md</code>)</li>
+<li>✅ Static analysis (cppcheck clean)</li>
+<li>✅ MISRA C:2012 compliance</li>
+<li>✅ DO-178C documentation (plans, requirements, design, verification)</li>
+<li>✅ Memory map visualizer tool</li>
+<li>✅ Standalone build system (Makefile)</li>
+</ul>
+<p><b>Known Limitations:</b></p><ul>
+<li>⚠️ Priority-based scheduling not yet implemented (round-robin only)</li>
+<li>⚠️ No dynamic memory allocation (static allocation only)</li>
+<li>⚠️ Limited to STM32H750VBT6 (portability planned)</li>
+<li>⚠️ MC/DC coverage analysis not yet complete</li>
+<li>⚠️ Formal verification not yet started</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md60"></a>
+Roadmap</h3>
+<h4><a class="anchor" id="autotoc_md61"></a>
+v0.2.0 (Q2 2026) - Priority Scheduling</h4>
+<ul class="check">
+<li class="unchecked">Priority-based preemptive scheduling</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Priority inheritance for semaphores</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Priority ceiling protocol</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Deadline-driven scheduling</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Enhanced stress tests for priority inversion</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md62"></a>
+v0.3.0 (Q3 2026) - Enhanced IPC</h4>
+<ul class="check">
+<li class="unchecked">Event flags (binary semaphores with broadcast)</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Mutexes with priority inheritance</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Mailboxes (fixed-size message queues)</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Shared memory regions with access control</li>
+</ul>
+<ul class="check">
+<li class="unchecked">IPC timeout mechanisms</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md63"></a>
+v0.4.0 (Q4 2026) - Portability</h4>
+<ul class="check">
+<li class="unchecked">HAL abstraction layer</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Support for STM32F7 series</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Support for STM32H7 series (all variants)</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Support for other Cortex-M7 MCUs</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Board configuration system</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md64"></a>
+v0.5.0 (Q1 2027) - Advanced Features</h4>
+<ul class="check">
+<li class="unchecked">Dynamic task creation/deletion</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Task suspension/resumption</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Software timers</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Watchdog integration</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Power management (sleep modes)</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md65"></a>
+v1.0.0 (Q2 2027) - Certification Ready</h4>
+<ul class="check">
+<li class="unchecked">Complete MC/DC coverage analysis</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Full MISRA C:2012 compliance (PC-lint Plus)</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Formal verification (CBMC or similar)</li>
+</ul>
+<ul class="check">
+<li class="unchecked">DO-178C DAL C certification package</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Production-ready release</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md66"></a>
+v2.0.0 (2028+) - AI Integration</h4>
+<ul class="check">
+<li class="unchecked">Deterministic neural network inference</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Certifiable AI runtime</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Model quantization and optimization</li>
+</ul>
+<ul class="check">
+<li class="unchecked">Safety monitors for AI outputs</li>
+</ul>
+<ul class="check">
+<li class="unchecked">DO-178C DAL B certification for AI components</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md67"></a>
+Contributing</h3>
+<p>ICARUS OS is open source and welcomes contributions! Areas where help is needed:</p>
+<p><b>High Priority:</b></p><ul>
+<li>MC/DC coverage analysis and tooling</li>
+<li>Formal verification setup (CBMC, Frama-C)</li>
+<li>Porting to other STM32 variants</li>
+<li>Additional demo applications</li>
+<li>Documentation improvements</li>
+</ul>
+<p><b>Medium Priority:</b></p><ul>
+<li>Priority scheduling implementation</li>
+<li>Enhanced IPC primitives</li>
+<li>Power management features</li>
+<li>Additional unit tests</li>
+<li>Performance benchmarking</li>
+</ul>
+<p><b>Low Priority:</b></p><ul>
+<li>GUI improvements</li>
+<li>Additional visualization tools</li>
+<li>Example projects</li>
+<li>Tutorial content</li>
+</ul>
+<p><b>How to Contribute:</b></p><ol type="1">
+<li>Fork the repository</li>
+<li>Create a feature branch (<code>git checkout -b feature/amazing-feature</code>)</li>
+<li>Follow MISRA C:2012 coding standards</li>
+<li>Add unit tests for new functionality</li>
+<li>Update documentation</li>
+<li>Submit a pull request</li>
+</ol>
+<p>There is no separate <code>CONTRIBUTING.md</code> yet; use the checklist above when opening a pull request.</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md69"></a>
+Support ICARUS OS</h2>
+<p>Building a certifiable RTOS from scratch is a massive undertaking. ICARUS OS is developed in the open because safety-critical software should be transparent, auditable, and accessible to everyone building systems where failure is not an option.</p>
+<p>Your sponsorship directly funds:</p><ul>
+<li>🔬 <b>Formal verification tooling</b> for DAL A/B certification paths</li>
+<li>📋 <b>Full MISRA C:2012 compliance</b> with commercial static analyzers</li>
+<li>🧪 <b>MC/DC coverage infrastructure</b> for complete decision coverage</li>
+<li>📚 <b>Expanded platform support</b> beyond STM32H7</li>
+<li>⚡ <b>Performance optimization</b> and determinism guarantees</li>
+</ul>
+<p>If ICARUS OS helps your project, or you believe in open-source safety-critical software, consider supporting its development:</p>
+<p><a href="https://github.com/sponsors/ironhide23586"><img src="https://img.shields.io/badge/Sponsor%20on-GitHub-ea4aaa?style=for-the-badge&amp;logo=github" alt="Sponsor on GitHub" class="inline"/> </a> &#160;&#160; <a href="https://buymeacoffee.com/souham"><img src="https://img.shields.io/badge/Buy%20Me%20A-Coffee-ffdd00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Buy Me A Coffee" class="inline"/> </a> </p>
+<hr  />
  </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
@@ -505,7 +1133,7 @@ Running Verification</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

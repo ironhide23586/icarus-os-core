@@ -7,5 +7,5 @@ var searchData=
   ['nth_5fx_4',['nth_x',['../structlsm9ds1__int__src__m__t.html#a68499ba3fc5ddef80b9d052e49106961',1,'lsm9ds1_int_src_m_t::nth_x'],['../structlsm9ds1__mag__trshld__src__t.html#aab393c7548ee8ae267d89c84c674a4c9',1,'lsm9ds1_mag_trshld_src_t::nth_x']]],
   ['nth_5fy_5',['nth_y',['../structlsm9ds1__int__src__m__t.html#a46b92023c8010fff6a6fa54d5a8d80aa',1,'lsm9ds1_int_src_m_t::nth_y'],['../structlsm9ds1__mag__trshld__src__t.html#af5fae5551534ceec5918f69827f1a8c7',1,'lsm9ds1_mag_trshld_src_t::nth_y']]],
   ['nth_5fz_6',['nth_z',['../structlsm9ds1__int__src__m__t.html#a7ea6f3f1806ca58803b6637958e023d6',1,'lsm9ds1_int_src_m_t::nth_z'],['../structlsm9ds1__mag__trshld__src__t.html#a534f6aacfee7af631ff2e7d78f448cdf',1,'lsm9ds1_mag_trshld_src_t::nth_z']]],
-  ['num_5fcreated_5ftasks_7',['num_created_tasks',['../group__SCHEDULER__STATE.html#ga0b2301472f186765d40f1736ea9098fd',1,'icarus_task.c']]]
+  ['num_5fcreated_5ftasks_7',['num_created_tasks',['../kernel_8h.html#a0b2301472f186765d40f1736ea9098fd',1,'num_created_tasks:&#160;kernel.c'],['../kernel_8c.html#a0b2301472f186765d40f1736ea9098fd',1,'num_created_tasks:&#160;kernel.c']]]
 ];

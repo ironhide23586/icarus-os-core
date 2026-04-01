@@ -1,16 +1,8 @@
 var searchData=
 [
-  ['xda_0',['xda',['../structlsm9ds1__status__reg__m__t.html#ac6e06d93da52e955cea97e27411a7087',1,'lsm9ds1_status_reg_m_t']]],
-  ['xen_5fg_1',['xen_g',['../structlsm9ds1__ctrl__reg4__t.html#af68fc65a6e6e3afb54d1f711449dd166',1,'lsm9ds1_ctrl_reg4_t::xen_g'],['../structlsm9ds1__gy__axis__t.html#a61b2514f98855fa8c34bd98a4cf12833',1,'lsm9ds1_gy_axis_t::xen_g']]],
-  ['xen_5fxl_2',['xen_xl',['../structlsm9ds1__ctrl__reg5__xl__t.html#aee240bdd5c218d933e96433d31056583',1,'lsm9ds1_ctrl_reg5_xl_t::xen_xl'],['../structlsm9ds1__xl__axis__t.html#a2eec0abbe31c806d8ec9d31f0a60aff6',1,'lsm9ds1_xl_axis_t::xen_xl']]],
-  ['xh_5fg_3',['xh_g',['../structlsm9ds1__int__gen__src__g__t.html#a180cf0ffff3452d213af295c705f4bf0',1,'lsm9ds1_int_gen_src_g_t::xh_g'],['../structlsm9ds1__gy__trshld__src__t.html#a2f86aec9c7d3f9bade6b45e53d81c376',1,'lsm9ds1_gy_trshld_src_t::xh_g']]],
-  ['xh_5fxl_4',['xh_xl',['../structlsm9ds1__int__gen__src__xl__t.html#ab8b3a7b503687ef715f4379c3422bec3',1,'lsm9ds1_int_gen_src_xl_t::xh_xl'],['../structlsm9ds1__xl__trshld__src__t.html#a29979ad75ec7f3304ae622c5ea4645a1',1,'lsm9ds1_xl_trshld_src_t::xh_xl'],['../structlsm9ds1__6d__src__t.html#a86bbd7d8165dd67edb8c93ded9a61109',1,'lsm9ds1_6d_src_t::xh_xl']]],
-  ['xhie_5fg_5',['xhie_g',['../structlsm9ds1__int__gen__cfg__g__t.html#a90151c8503af856cfd07277719fb2522',1,'lsm9ds1_int_gen_cfg_g_t::xhie_g'],['../structlsm9ds1__gy__trshld__en__t.html#a095eb226462543092219f6f632e7290e',1,'lsm9ds1_gy_trshld_en_t::xhie_g']]],
-  ['xhie_5fxl_6',['xhie_xl',['../structlsm9ds1__int__gen__cfg__xl__t.html#a4e295fc190ec7a954fe3d858ff3741ea',1,'lsm9ds1_int_gen_cfg_xl_t::xhie_xl'],['../structlsm9ds1__xl__trshld__en__t.html#a08ec654b861926efea94e84d7755f107',1,'lsm9ds1_xl_trshld_en_t::xhie_xl']]],
-  ['xien_7',['xien',['../structlsm9ds1__int__cfg__m__t.html#a137899eed54e6c37cd7caafa963917cb',1,'lsm9ds1_int_cfg_m_t::xien'],['../structlsm9ds1__mag__trshld__axis__t.html#a0a2b9703e218381e25f3f3215b2bcfff',1,'lsm9ds1_mag_trshld_axis_t::xien']]],
-  ['xl_5fg_8',['xl_g',['../structlsm9ds1__int__gen__src__g__t.html#a8e44dc6f2004060a09803c34ce90a2b6',1,'lsm9ds1_int_gen_src_g_t::xl_g'],['../structlsm9ds1__gy__trshld__src__t.html#abbb0289d93ab712847c89a0810e462f8',1,'lsm9ds1_gy_trshld_src_t::xl_g']]],
-  ['xl_5fxl_9',['xl_xl',['../structlsm9ds1__int__gen__src__xl__t.html#a15d64e1d76f3431876547152b32e0e2f',1,'lsm9ds1_int_gen_src_xl_t::xl_xl'],['../structlsm9ds1__xl__trshld__src__t.html#ac1c031ab29f426e95c27c1767ed6f3b7',1,'lsm9ds1_xl_trshld_src_t::xl_xl'],['../structlsm9ds1__6d__src__t.html#acb784a0b6ffc4406bfff9c0730e82e1f',1,'lsm9ds1_6d_src_t::xl_xl']]],
-  ['xlda_10',['xlda',['../structlsm9ds1__status__reg__t.html#a2fb5b813b38253e554de62db41969838',1,'lsm9ds1_status_reg_t']]],
-  ['xlie_5fg_11',['xlie_g',['../structlsm9ds1__int__gen__cfg__g__t.html#a4586bf5ccdf7c7ec4784cbc132799b5d',1,'lsm9ds1_int_gen_cfg_g_t::xlie_g'],['../structlsm9ds1__gy__trshld__en__t.html#a5ba0d295e89e58ab8fdf5264a55020c6',1,'lsm9ds1_gy_trshld_en_t::xlie_g']]],
-  ['xlie_5fxl_12',['xlie_xl',['../structlsm9ds1__int__gen__cfg__xl__t.html#a4142e552903ac49e2efeadb8495219df',1,'lsm9ds1_int_gen_cfg_xl_t::xlie_xl'],['../structlsm9ds1__xl__trshld__en__t.html#a91f4f5157b095d3c9a0d5057ea8edd6f',1,'lsm9ds1_xl_trshld_en_t::xlie_xl']]]
+  ['wait_5fg_0',['wait_g',['../structlsm9ds1__int__gen__dur__g__t.html#a557404b9c0d514ec9b2dc1ac9759207a',1,'lsm9ds1_int_gen_dur_g_t']]],
+  ['wait_5fxl_1',['wait_xl',['../structlsm9ds1__int__gen__dur__xl__t.html#aeb3f3595d96f4054286cdefc11083206',1,'lsm9ds1_int_gen_dur_xl_t']]],
+  ['what_20you_20ll_20see_2',['What You&apos;ll See',['../index.html#autotoc_md21',1,'']]],
+  ['workflow_3',['10.2 Problem Report Workflow',['../md_docs_2do178c_2plans_2SDP.html#autotoc_md353',1,'']]],
+  ['write_5freg_4',['write_reg',['../structstmdev__ctx__t.html#a99b7a22f79ae58c659c50231257650e5',1,'stmdev_ctx_t']]]
 ];

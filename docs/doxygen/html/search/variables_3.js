@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['cleanup_5ftask_5fidx_0',['cleanup_task_idx',['../group__KERNEL__DATA.html#gab6b7ccecbf26fe99c61c36f303a256b2',1,'icarus_task.c']]],
+  ['cleanup_5ftask_5fidx_0',['cleanup_task_idx',['../kernel_8h.html#ab6b7ccecbf26fe99c61c36f303a256b2',1,'cleanup_task_idx:&#160;kernel.c'],['../kernel_8c.html#ab6b7ccecbf26fe99c61c36f303a256b2',1,'cleanup_task_idx:&#160;kernel.c']]],
   ['count_1',['count',['../structicarus__semaphore__t.html#ad2f55245f78ea15c0bd5927af7707786',1,'icarus_semaphore_t::count'],['../structicarus__pipe__t.html#a8ef464a20655016f9152ba40d3dd4e70',1,'icarus_pipe_t::count'],['../structmsg__history__t.html#a21c48aa1145e822ed2faa96cb72b4ced',1,'msg_history_t::count']]],
-  ['cpu_5fvregisters_2',['cpu_vregisters',['../group__SCHEDULER__STATE.html#gac9ea1bd42e65785713a0ce362b0ae77f',1,'icarus_task.c']]],
-  ['critical_5fstack_5fdepth_3',['critical_stack_depth',['../group__SCHEDULER__STATE.html#ga8f52138584fd6575cfe437c737b9e9de',1,'icarus_task.c']]],
+  ['cpu_5fvregisters_2',['cpu_vregisters',['../kernel_8c.html#ac9ea1bd42e65785713a0ce362b0ae77f',1,'kernel.c']]],
+  ['critical_5fstack_5fdepth_3',['critical_stack_depth',['../kernel_8c.html#a8f52138584fd6575cfe437c737b9e9de',1,'kernel.c']]],
   ['ctrl_5freg10_4',['ctrl_reg10',['../unionlsm9ds1__reg__t.html#ad77feee1c95bf8d195f36f7e09a6e1bf',1,'lsm9ds1_reg_t']]],
   ['ctrl_5freg1_5fg_5',['ctrl_reg1_g',['../unionlsm9ds1__reg__t.html#a9670b93777837512965c2f0100a758b3',1,'lsm9ds1_reg_t']]],
   ['ctrl_5freg1_5fm_6',['ctrl_reg1_m',['../unionlsm9ds1__reg__t.html#ae736e4fc35aac03cb2825fc45c77119c',1,'lsm9ds1_reg_t']]],
@@ -19,7 +19,7 @@ var searchData=
   ['ctrl_5freg7_5fxl_16',['ctrl_reg7_xl',['../unionlsm9ds1__reg__t.html#ae32206b8197756985ad5edcd66e1e549',1,'lsm9ds1_reg_t']]],
   ['ctrl_5freg8_17',['ctrl_reg8',['../unionlsm9ds1__reg__t.html#af3ab78347708d4d87eda0b9f34728d14',1,'lsm9ds1_reg_t']]],
   ['ctrl_5freg9_18',['ctrl_reg9',['../unionlsm9ds1__reg__t.html#abd4678bdc328d11d98ecc3758e0e8381',1,'lsm9ds1_reg_t']]],
-  ['current_5fcleanup_5ftask_5fidx_19',['current_cleanup_task_idx',['../group__SCHEDULER__STATE.html#ga67d3a97b38bd640b4bb92e51ca895f9b',1,'icarus_task.c']]],
-  ['current_5ftask_5findex_20',['current_task_index',['../group__SCHEDULER__STATE.html#ga1e57cf56984cc68485c1b2f52f0d8ce2',1,'icarus_task.c']]],
-  ['current_5ftask_5fticks_5fremaining_21',['current_task_ticks_remaining',['../group__SCHEDULER__STATE.html#ga0d0a488ee168eb96e031931a33190afe',1,'icarus_task.c']]]
+  ['current_5fcleanup_5ftask_5fidx_19',['current_cleanup_task_idx',['../kernel_8h.html#a67d3a97b38bd640b4bb92e51ca895f9b',1,'current_cleanup_task_idx:&#160;kernel.c'],['../kernel_8c.html#a67d3a97b38bd640b4bb92e51ca895f9b',1,'current_cleanup_task_idx:&#160;kernel.c']]],
+  ['current_5ftask_5findex_20',['current_task_index',['../kernel_8h.html#a1e57cf56984cc68485c1b2f52f0d8ce2',1,'current_task_index:&#160;kernel.c'],['../kernel_8c.html#a1e57cf56984cc68485c1b2f52f0d8ce2',1,'current_task_index:&#160;kernel.c']]],
+  ['current_5ftask_5fticks_5fremaining_21',['current_task_ticks_remaining',['../kernel_8h.html#a0d0a488ee168eb96e031931a33190afe',1,'current_task_ticks_remaining:&#160;kernel.c'],['../kernel_8c.html#a0d0a488ee168eb96e031931a33190afe',1,'current_task_ticks_remaining:&#160;kernel.c']]]
 ];

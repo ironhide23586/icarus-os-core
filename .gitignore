@@ -89,6 +89,10 @@ build/cppcheck_report.html
 build/cppcheck_output.txt
 build/cppcheck_html/
 
+# Private / knowledge-base files
+docs/files/
+docs/files.zip
+
 # Dependencies (if using package managers)
 node_modules/
 vendor/

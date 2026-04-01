@@ -31,6 +31,7 @@
 .equ TCB_TASK_STATE,    16      /* offsetof(icarus_task_t, task_state) */
 .equ TCB_TICK_PAUSED,   20      /* offsetof(icarus_task_t, global_tick_paused) */
 .equ TCB_TICKS_PAUSE,   24      /* offsetof(icarus_task_t, ticks_to_pause) */
+.equ TCB_DATA_PTR,      28      /* offsetof(icarus_task_t, data_pointer) */
 
 /* Task state constants */
 .equ STATE_COLD,        0
@@ -123,6 +124,13 @@ find_next_task:
 yield_postprocess:
     /* Switch to next task */
     strb    r9, [r0]                    /* Update current_task_index */
+
+    /* Set up Memory Protection Unit for task data section */
+    push    {r0-r3, r12, lr}
+    ldr     r0, [r11, #TCB_DATA_PTR]
+    bl      MPU_ConfigureTaskData
+    pop     {r0-r3, r12, lr}
+
     ldr     r1, [r11, #TCB_STACK_PTR]   /* Load next task's SP */
     mov     r5, #STATE_RUNNING
     strb    r5, [r11, #TCB_TASK_STATE]  /* Set state to RUNNING */
@@ -203,28 +211,28 @@ start_cold_task:
     ldr     r1, [r0, #TCB_STACK_PTR]
     msr     psp, r1                     /* Set Process Stack Pointer */
 
-    /* Switch to PSP for thread mode */
-    mov     r1, #0x02                   /* SPSEL = 1 (use PSP) */
-    msr     control, r1
-    isb                                 /* Instruction barrier */
-
     /* Mark task as RUNNING */
     mov     r1, #STATE_RUNNING
     strb    r1, [r0, #TCB_TASK_STATE]
 
-    /* Pop exception frame from stack */
-    pop     {r0-r3, r12, lr}            /* R0-R3, R12, LR */
-    pop     {r4}                        /* PC -> r4 */
-    pop     {r5}                        /* xPSR -> r5 */
-    msr     apsr_nzcvq, r5              /* Restore flags */
-
-    /* Set OS running flags */
+    /* Set OS running flags BEFORE switching to unprivileged mode */
     ldr     r5, =os_running
     mov     r6, #1
     strb    r6, [r5]
 
     ldr     r5, =running_task_count
     strb    r6, [r5]
+
+    /* Switch to PSP for thread mode */
+    mov     r1, #0x03                   /* SPSEL = 1 (use PSP), nPRIV = 1 (unprivileged) */
+    msr     control, r1
+    isb                                 /* Instruction barrier */
+
+    /* Pop exception frame from stack */
+    pop     {r0-r3, r12, lr}            /* R0-R3, R12, LR */
+    pop     {r4}                        /* PC -> r4 */
+    pop     {r5}                        /* xPSR -> r5 */
+    msr     apsr_nzcvq, r5              /* Restore flags */
 
     /* Enable interrupts and jump to task */
     cpsie   i                           /* Enable IRQ */

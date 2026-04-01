@@ -8,8 +8,6 @@ var topics =
     [ "GPIO Pin Definitions", "group__GPIO__PINS.html", "group__GPIO__PINS" ],
     [ "Peripheral Configuration", "group__PERIPH__CONFIG.html", "group__PERIPH__CONFIG" ],
     [ "Memory Regions", "group__MEMORY__MAP.html", "group__MEMORY__MAP" ],
-    [ "Kernel Data Structures", "group__KERNEL__DATA.html", "group__KERNEL__DATA" ],
-    [ "Scheduler State Variables", "group__SCHEDULER__STATE.html", "group__SCHEDULER__STATE" ],
     [ "ANSI Escape Codes", "group__ANSI__CODES.html", "group__ANSI__CODES" ],
     [ "LSM9DS1", "group__LSM9DS1.html", "group__LSM9DS1" ],
     [ "CMSIS", "group__CMSIS.html", "group__CMSIS" ]

@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "bsp/rtc.h"
+#include "bsp/error.h"
 
 /* USER CODE BEGIN 0 */
 

@@ -106,7 +106,7 @@ $(function(){initNavTree('structicarus__task__t.html',''); initResizable(true); 
 <p>Task Control Block (TCB)  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="types_8h_source.html">types.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -122,7 +122,7 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a9eb9d70b04227a8fb7ac50f0093c955a" id="r_a9eb9d70b04227a8fb7ac50f0093c955a"><td class="memItemLeft" align="right" valign="top">uint32_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9eb9d70b04227a8fb7ac50f0093c955a">stack_pointer</a></td></tr>
 <tr class="memdesc:a9eb9d70b04227a8fb7ac50f0093c955a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current stack pointer (offset 12)  <br /></td></tr>
 <tr class="separator:a9eb9d70b04227a8fb7ac50f0093c955a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5631b668fb7f162883bc5b86c70a73cc" id="r_a5631b668fb7f162883bc5b86c70a73cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="icarus__types_8h.html#a0a783fd26d85d3cb80f255d0f829405f">icarus_task_state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5631b668fb7f162883bc5b86c70a73cc">task_state</a></td></tr>
+<tr class="memitem:a5631b668fb7f162883bc5b86c70a73cc" id="r_a5631b668fb7f162883bc5b86c70a73cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#a0a783fd26d85d3cb80f255d0f829405f">icarus_task_state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5631b668fb7f162883bc5b86c70a73cc">task_state</a></td></tr>
 <tr class="memdesc:a5631b668fb7f162883bc5b86c70a73cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current task state (offset 16)  <br /></td></tr>
 <tr class="separator:a5631b668fb7f162883bc5b86c70a73cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e11e44c37c40f91bf2d7b6040175d43" id="r_a0e11e44c37c40f91bf2d7b6040175d43"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e11e44c37c40f91bf2d7b6040175d43">global_tick_paused</a></td></tr>
@@ -131,7 +131,10 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ae8ccd935a7973865cad965efc3da7c34" id="r_ae8ccd935a7973865cad965efc3da7c34"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8ccd935a7973865cad965efc3da7c34">ticks_to_pause</a></td></tr>
 <tr class="memdesc:ae8ccd935a7973865cad965efc3da7c34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ticks to remain blocked (offset 24)  <br /></td></tr>
 <tr class="separator:ae8ccd935a7973865cad965efc3da7c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d390d9973956d3c794b15d753c0e6a8" id="r_a0d390d9973956d3c794b15d753c0e6a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="icarus__types_8h.html#aa4d9c9ddb3d81f0de103703f9be6d1d3">icarus_task_priority_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d390d9973956d3c794b15d753c0e6a8">task_priority</a></td></tr>
+<tr class="memitem:a8eeddb7b861bb754fc77e315aeaa09f4" id="r_a8eeddb7b861bb754fc77e315aeaa09f4"><td class="memItemLeft" align="right" valign="top">uint32_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8eeddb7b861bb754fc77e315aeaa09f4">data_pointer</a></td></tr>
+<tr class="memdesc:a8eeddb7b861bb754fc77e315aeaa09f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current data pointer (offset 28)  <br /></td></tr>
+<tr class="separator:a8eeddb7b861bb754fc77e315aeaa09f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d390d9973956d3c794b15d753c0e6a8" id="r_a0d390d9973956d3c794b15d753c0e6a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="types_8h.html#aa4d9c9ddb3d81f0de103703f9be6d1d3">icarus_task_priority_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d390d9973956d3c794b15d753c0e6a8">task_priority</a></td></tr>
 <tr class="memdesc:a0d390d9973956d3c794b15d753c0e6a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Task priority level.  <br /></td></tr>
 <tr class="separator:a0d390d9973956d3c794b15d753c0e6a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a335b22227496266c35c26239c73a3266" id="r_a335b22227496266c35c26239c73a3266"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a335b22227496266c35c26239c73a3266">name</a> [32]</td></tr>
@@ -150,8 +153,28 @@ Data Fields</h2></td></tr>
 </dd></dl>
 <dl class="section see"><dt>See also</dt><dd>Core/Src/kernel/context_switch.s for assembly offset usage </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00115">115</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00115">115</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
+<a id="a8eeddb7b861bb754fc77e315aeaa09f4" name="a8eeddb7b861bb754fc77e315aeaa09f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8eeddb7b861bb754fc77e315aeaa09f4">&#9670;&#160;</a></span>data_pointer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t* icarus_task_t::data_pointer</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Current data pointer (offset 28) </p>
+
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00127">127</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
+
+</div>
+</div>
 <a id="acdaae40bd964c88a7e7c955d2ef7ac30" name="acdaae40bd964c88a7e7c955d2ef7ac30"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acdaae40bd964c88a7e7c955d2ef7ac30">&#9670;&#160;</a></span>function</h2>
 
@@ -166,9 +189,9 @@ Data Fields</h2></td></tr>
 
 <p>Task entry point function pointer. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00117">117</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00117">117</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -186,9 +209,9 @@ Data Fields</h2></td></tr>
 
 <p>Tick count when blocked (offset 20) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00124">124</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00124">124</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>, and <a class="el" href="icarus__task_8c_source.html#l00708">task_active_sleep()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="scheduler_8c_source.html#l00107">__task_active_sleep()</a>, and <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -206,9 +229,9 @@ Data Fields</h2></td></tr>
 
 <p>Human-readable task name. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00129">129</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00131">131</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00610">display_init()</a>, <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>, and <a class="el" href="icarus__task_8c_source.html#l00566">os_get_current_task_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="scheduler_8c_source.html#l00065">__os_get_current_task_name()</a>, <a class="el" href="kernel_8c_source.html#l00314">__os_get_task_name()</a>, and <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -226,9 +249,9 @@ Data Fields</h2></td></tr>
 
 <p>Base address of task stack. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00118">118</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00118">118</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -246,9 +269,9 @@ Data Fields</h2></td></tr>
 
 <p>Current stack pointer (offset 12) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00122">122</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00122">122</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -266,9 +289,9 @@ Data Fields</h2></td></tr>
 
 <p>Stack size in 32-bit words. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00119">119</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00119">119</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -279,16 +302,16 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="icarus__types_8h.html#aa4d9c9ddb3d81f0de103703f9be6d1d3">icarus_task_priority_t</a> icarus_task_t::task_priority</td>
+          <td class="memname"><a class="el" href="types_8h.html#aa4d9c9ddb3d81f0de103703f9be6d1d3">icarus_task_priority_t</a> icarus_task_t::task_priority</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Task priority level. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00128">128</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00130">130</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -299,16 +322,16 @@ Data Fields</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="icarus__types_8h.html#a0a783fd26d85d3cb80f255d0f829405f">icarus_task_state_t</a> icarus_task_t::task_state</td>
+          <td class="memname"><a class="el" href="types_8h.html#a0a783fd26d85d3cb80f255d0f829405f">icarus_task_state_t</a> icarus_task_t::task_state</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Current task state (offset 16) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00123">123</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00123">123</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00888">os_exit_task()</a>, <a class="el" href="icarus__task_8c_source.html#l00942">os_kill_process()</a>, and <a class="el" href="icarus__task_8c_source.html#l00708">task_active_sleep()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="task_8c_source.html#l00082">__os_exit_task()</a>, <a class="el" href="task_8c_source.html#l00102">__os_kill_process()</a>, <a class="el" href="scheduler_8c_source.html#l00107">__task_active_sleep()</a>, and <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
@@ -326,14 +349,14 @@ Data Fields</h2></td></tr>
 
 <p>Ticks to remain blocked (offset 24) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00125">125</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00125">125</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l01072">os_create_task()</a>, and <a class="el" href="icarus__task_8c_source.html#l00708">task_active_sleep()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="scheduler_8c_source.html#l00107">__task_active_sleep()</a>, and <a class="el" href="task_8c_source.html#l00027">os_create_task()</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Core/Inc/icarus/<a class="el" href="icarus__types_8h_source.html">icarus_types.h</a></li>
+<li>Core/Inc/icarus/<a class="el" href="types_8h_source.html">types.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -341,7 +364,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structicarus__task__t.html">icarus_task_t</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

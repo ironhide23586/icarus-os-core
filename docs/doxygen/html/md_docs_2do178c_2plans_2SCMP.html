@@ -100,7 +100,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2SCMP.html',''); initResizable(
   <div class="headertitle"><div class="title">Software Configuration Management Plan (SCMP)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md200"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md247"></a></p>
 <p><b>Document ID:</b> ICARUS-SCMP-001 <br  />
  <b>Version:</b> 0.1 <br  />
  <b>Date:</b> 2025-01-26 <br  />
@@ -108,7 +108,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2SCMP.html',''); initResizable(
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md202"></a>
+<h1><a class="anchor" id="autotoc_md249"></a>
 Document Control</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -121,7 +121,7 @@ Document Control</h1>
 <td class="markdownTableBodyNone">Approver   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md204"></a>
+<h1><a class="anchor" id="autotoc_md251"></a>
 Revision History</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -130,12 +130,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md206"></a>
+<h1><a class="anchor" id="autotoc_md253"></a>
 1. Introduction</h1>
-<h2><a class="anchor" id="autotoc_md207"></a>
+<h2><a class="anchor" id="autotoc_md254"></a>
 1.1 Purpose</h2>
 <p>This Software Configuration Management Plan (SCMP) defines the processes and procedures for managing ICARUS OS configuration items throughout the software life cycle, per DO-178C objectives.</p>
-<h2><a class="anchor" id="autotoc_md208"></a>
+<h2><a class="anchor" id="autotoc_md255"></a>
 1.2 Scope</h2>
 <p>This plan covers:</p><ul>
 <li>Source code and documentation</li>
@@ -144,9 +144,9 @@ Revision History</h1>
 <li>Release management</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md210"></a>
+<h1><a class="anchor" id="autotoc_md257"></a>
 2. Configuration Management Organization</h1>
-<h2><a class="anchor" id="autotoc_md211"></a>
+<h2><a class="anchor" id="autotoc_md258"></a>
 2.1 Roles</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -160,7 +160,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Release Manager   </td><td class="markdownTableBodyNone">Tag releases, generate artifacts, publish   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md212"></a>
+<h2><a class="anchor" id="autotoc_md259"></a>
 2.2 Tools</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -172,12 +172,12 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">GitHub Actions   </td><td class="markdownTableBodyNone">CI/CD automation   </td><td class="markdownTableBodyNone">.github/workflows/    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Make/CMake   </td><td class="markdownTableBodyNone">Build automation   </td><td class="markdownTableBodyNone">Makefile, CMakeLists.txt   </td></tr>
+<td class="markdownTableBodyNone">Make   </td><td class="markdownTableBodyNone">Build automation   </td><td class="markdownTableBodyNone"><code>build/Makefile</code>, <code>tests/Makefile</code>   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md214"></a>
+<h1><a class="anchor" id="autotoc_md261"></a>
 3. Configuration Identification</h1>
-<h2><a class="anchor" id="autotoc_md215"></a>
+<h2><a class="anchor" id="autotoc_md262"></a>
 3.1 Configuration Items</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -195,7 +195,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Third-Party Code   </td><td class="markdownTableBodyNone">Software   </td><td class="markdownTableBodyNone">Drivers/STM32*, Middlewares/   </td><td class="markdownTableBodyNone">CC2   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md216"></a>
+<h2><a class="anchor" id="autotoc_md263"></a>
 3.2 Naming Conventions</h2>
 <p><b>Branches:</b> </p><div class="fragment"><div class="line">main                    # Stable release branch</div>
 <div class="line">dev                     # Development integration</div>
@@ -205,7 +205,7 @@ Revision History</h1>
 </div><!-- fragment --><p><b>Tags:</b> </p><div class="fragment"><div class="line">v&lt;MAJOR&gt;.&lt;MINOR&gt;.&lt;PATCH&gt;        # Release tags (e.g., v1.0.0)</div>
 <div class="line">v&lt;MAJOR&gt;.&lt;MINOR&gt;.&lt;PATCH&gt;-rc&lt;N&gt;  # Release candidates</div>
 </div><!-- fragment --><p><b>Documents:</b> </p><div class="fragment"><div class="line">ICARUS-&lt;TYPE&gt;-&lt;SEQ&gt;     # e.g., ICARUS-SRS-001</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md217"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md264"></a>
 3.3 Version Numbering</h2>
 <p>Semantic Versioning (SemVer):</p><ul>
 <li><b>MAJOR:</b> Incompatible API changes</li>
@@ -213,9 +213,9 @@ Revision History</h1>
 <li><b>PATCH:</b> Bug fixes, backward compatible</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md219"></a>
+<h1><a class="anchor" id="autotoc_md266"></a>
 4. Baseline Management</h1>
-<h2><a class="anchor" id="autotoc_md220"></a>
+<h2><a class="anchor" id="autotoc_md267"></a>
 4.1 Baseline Types</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -227,7 +227,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Release   </td><td class="markdownTableBodyNone">Tagged release   </td><td class="markdownTableBodyNone">Certification milestone   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md221"></a>
+<h2><a class="anchor" id="autotoc_md268"></a>
 4.2 Baseline Contents</h2>
 <p>A release baseline includes:</p>
 <div class="fragment"><div class="line">Release v1.0.0/</div>
@@ -249,9 +249,9 @@ Revision History</h1>
 <div class="line">│   └── icarus_os.map</div>
 <div class="line">└── Release Notes</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md223"></a>
+<h1><a class="anchor" id="autotoc_md270"></a>
 5. Change Control</h1>
-<h2><a class="anchor" id="autotoc_md224"></a>
+<h2><a class="anchor" id="autotoc_md271"></a>
 5.1 Change Process</h2>
 <div class="fragment"><div class="line">┌──────────────┐    ┌──────────────┐    ┌──────────────┐</div>
 <div class="line">│   Issue/PR   │───▶│    Review    │───▶│    Merge     │</div>
@@ -262,7 +262,7 @@ Revision History</h1>
 <div class="line">  • Description       • Code review      • CI passes</div>
 <div class="line">  • Traceability      • Test review      • Coverage met</div>
 <div class="line">  • Impact analysis   • Doc review       • No regressions</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md225"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md272"></a>
 5.2 Pull Request Requirements</h2>
 <p>All changes must:</p>
 <ul class="check">
@@ -283,7 +283,7 @@ Revision History</h1>
 <ul class="check">
 <li class="unchecked">Follow coding standards</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md226"></a>
+<h2><a class="anchor" id="autotoc_md273"></a>
 5.3 Change Categories</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -297,7 +297,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Safety-critical   </td><td class="markdownTableBodyNone">2 reviewers + QA   </td><td class="markdownTableBodyNone">Yes   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md227"></a>
+<h2><a class="anchor" id="autotoc_md274"></a>
 5.4 Emergency Changes</h2>
 <p>For critical fixes:</p><ol type="1">
 <li>Create hotfix branch from main</li>
@@ -307,9 +307,9 @@ Revision History</h1>
 <li>Document deviation from normal process</li>
 </ol>
 <hr  />
-<h1><a class="anchor" id="autotoc_md229"></a>
+<h1><a class="anchor" id="autotoc_md276"></a>
 6. Build Management</h1>
-<h2><a class="anchor" id="autotoc_md230"></a>
+<h2><a class="anchor" id="autotoc_md277"></a>
 6.1 Build Environment</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -317,13 +317,13 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">OS   </td><td class="markdownTableBodyNone">Linux (CI), macOS/Windows (dev)    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Compiler   </td><td class="markdownTableBodyNone">ARM GCC 12.x    </td></tr>
+<td class="markdownTableBodyNone">Compiler   </td><td class="markdownTableBodyNone">ARM GCC 13.3+ / 14.3+ (<code>arm-none-eabi-gcc</code>)    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Build Tool   </td><td class="markdownTableBodyNone">GNU Make 4.x    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Container   </td><td class="markdownTableBodyNone">Docker (optional, for reproducibility)   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md231"></a>
+<h2><a class="anchor" id="autotoc_md278"></a>
 6.2 Build Targets</h2>
 <div class="fragment"><div class="line"># Primary targets</div>
 <div class="line">make all          # Build release firmware</div>
@@ -337,7 +337,7 @@ Revision History</h1>
 <div class="line"># Analysis targets</div>
 <div class="line">make cppcheck     # Run static analysis</div>
 <div class="line">make misra        # Run MISRA checker (planned)</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md232"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md279"></a>
 6.3 Build Reproducibility</h2>
 <p>To ensure reproducible builds:</p><ul>
 <li>Compiler version locked in CI</li>
@@ -346,9 +346,9 @@ Revision History</h1>
 <li>Docker image available for exact reproduction</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md234"></a>
+<h1><a class="anchor" id="autotoc_md281"></a>
 7. Release Management</h1>
-<h2><a class="anchor" id="autotoc_md235"></a>
+<h2><a class="anchor" id="autotoc_md282"></a>
 7.1 Release Process</h2>
 <div class="fragment"><div class="line">1. Feature Freeze</div>
 <div class="line">   └── No new features on release branch</div>
@@ -369,7 +369,7 @@ Revision History</h1>
 <div class="line">   ├── Generate artifacts</div>
 <div class="line">   ├── Publish release notes</div>
 <div class="line">   └── Archive baseline</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md236"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md283"></a>
 7.2 Release Artifacts</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -387,7 +387,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Test results   </td><td class="markdownTableBodyNone">HTML, XML   </td><td class="markdownTableBodyNone">Verification evidence   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md237"></a>
+<h2><a class="anchor" id="autotoc_md284"></a>
 7.3 Release Notes Template</h2>
 <div class="fragment"><div class="line"># ICARUS OS v1.0.0 Release Notes</div>
 <div class="line"> </div>
@@ -416,9 +416,9 @@ Revision History</h1>
 <div class="line">## Upgrade Notes</div>
 <div class="line">- [Migration instructions if needed]</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md239"></a>
+<h1><a class="anchor" id="autotoc_md286"></a>
 8. Problem Reporting</h1>
-<h2><a class="anchor" id="autotoc_md240"></a>
+<h2><a class="anchor" id="autotoc_md287"></a>
 8.1 Issue Tracking</h2>
 <p>All problems tracked via GitHub Issues with labels:</p>
 <table class="markdownTable">
@@ -441,7 +441,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>priority:low</code>   </td><td class="markdownTableBodyNone">Backlog   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md241"></a>
+<h2><a class="anchor" id="autotoc_md288"></a>
 8.2 Problem Report Template</h2>
 <div class="fragment"><div class="line">## Description</div>
 <div class="line">[Clear description of the problem]</div>
@@ -467,9 +467,9 @@ Revision History</h1>
 <div class="line">- [ ] Performance</div>
 <div class="line">- [ ] Documentation</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md243"></a>
+<h1><a class="anchor" id="autotoc_md290"></a>
 9. Audit and Status Accounting</h1>
-<h2><a class="anchor" id="autotoc_md244"></a>
+<h2><a class="anchor" id="autotoc_md291"></a>
 9.1 Configuration Status Reports</h2>
 <p>Generated automatically via CI:</p><ul>
 <li>Build status (pass/fail)</li>
@@ -477,7 +477,7 @@ Revision History</h1>
 <li>Coverage metrics</li>
 <li>Open issues count</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md245"></a>
+<h2><a class="anchor" id="autotoc_md292"></a>
 9.2 Audit Trail</h2>
 <p>Git provides complete audit trail:</p><ul>
 <li>Who made each change</li>
@@ -485,7 +485,7 @@ Revision History</h1>
 <li>What was changed (diff)</li>
 <li>Why (commit message, PR description)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md246"></a>
+<h2><a class="anchor" id="autotoc_md293"></a>
 9.3 Periodic Reviews</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -498,9 +498,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Baseline Review   </td><td class="markdownTableBodyNone">Per release   </td><td class="markdownTableBodyNone">Complete baseline audit   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md248"></a>
+<h1><a class="anchor" id="autotoc_md295"></a>
 10. Supplier Control</h1>
-<h2><a class="anchor" id="autotoc_md249"></a>
+<h2><a class="anchor" id="autotoc_md296"></a>
 10.1 Third-Party Components</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -514,7 +514,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Unity   </td><td class="markdownTableBodyNone">ThrowTheSwitch   </td><td class="markdownTableBodyNone">2.5.x   </td><td class="markdownTableBodyNone">Tagged release   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md250"></a>
+<h2><a class="anchor" id="autotoc_md297"></a>
 10.2 Supplier Change Management</h2>
 <ul>
 <li>Third-party updates reviewed before integration</li>
@@ -530,7 +530,7 @@ Revision History</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

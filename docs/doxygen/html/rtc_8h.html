@@ -106,20 +106,18 @@ $(function(){initNavTree('rtc_8h.html',''); initResizable(true); });
 
 <p>This file contains all the function prototypes for the <a class="el" href="rtc_8c.html" title="This file provides code for the configuration of the RTC instances.">rtc.c</a> file.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;main.h&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="bsp_2config_8h_source.html">bsp/config.h</a>&quot;</code><br />
 </div>
 <p><a href="rtc_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:abf4accd1ce479030808e546f3d4642c9" id="r_abf4accd1ce479030808e546f3d4642c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf4accd1ce479030808e546f3d4642c9">MX_RTC_Init</a> (void)</td></tr>
-<tr class="memdesc:abf4accd1ce479030808e546f3d4642c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize RTC peripheral.  <br /></td></tr>
 <tr class="separator:abf4accd1ce479030808e546f3d4642c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:aa0c7fca836406ade332e1e3f1039d8ab" id="r_aa0c7fca836406ade332e1e3f1039d8ab"><td class="memItemLeft" align="right" valign="top">RTC_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0c7fca836406ade332e1e3f1039d8ab">hrtc</a></td></tr>
-<tr class="memdesc:aa0c7fca836406ade332e1e3f1039d8ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">RTC handle.  <br /></td></tr>
 <tr class="separator:aa0c7fca836406ade332e1e3f1039d8ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -144,18 +142,14 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Initialize RTC peripheral. </p>
-<p>Configures RTC with:</p><ul>
-<li>LSE clock source</li>
-<li>24-hour format</li>
-<li>Default time: 12:00:00</li>
-<li>Default date: Monday, June 1, 2020 </li>
-</ul>
 <p>Initialize RTC Only</p>
 <p>Initialize RTC and set the Time and Date</p>
 
-<p class="definition">Definition at line <a class="el" href="rtc_8c_source.html#l00030">30</a> of file <a class="el" href="rtc_8c_source.html">rtc.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="rtc_8c_source.html#l00031">31</a> of file <a class="el" href="rtc_8c_source.html">rtc.c</a>.</p>
+
+<p class="reference">References <a class="el" href="error_8c_source.html#l00050">Error_Handler()</a>, and <a class="el" href="rtc_8c_source.html#l00028">hrtc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00201">hal_init()</a>.</p>
 
 </div>
 </div>
@@ -180,11 +174,9 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>RTC handle. </p>
+<p class="definition">Definition at line <a class="el" href="rtc_8c_source.html#l00028">28</a> of file <a class="el" href="rtc_8c_source.html">rtc.c</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="rtc_8c_source.html#l00027">27</a> of file <a class="el" href="rtc_8c_source.html">rtc.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="rtc_8c_source.html#l00030">MX_RTC_Init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="rtc_8c_source.html#l00031">MX_RTC_Init()</a>.</p>
 
 </div>
 </div>
@@ -194,7 +186,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_e2489e887f17afa3cbc07a4ec152cdd2.html">Inc</a></li><li class="navelem"><a class="el" href="dir_f7835850016de063b8ae418a1221d9cd.html">bsp</a></li><li class="navelem"><a class="el" href="rtc_8h.html">rtc.h</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

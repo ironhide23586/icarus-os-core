@@ -128,8 +128,8 @@ The following system-level requirements are allocated to ICARUS OS:
 | HLR-KRN-048 | Message queues shall support variable-length messages | Must | ✅ Implemented |
 | HLR-KRN-049 | Semaphore operations shall block when resource unavailable | Must | ✅ Implemented |
 | HLR-KRN-050 | Pipe operations shall block when full/empty | Must | ✅ Implemented |
-| HLR-KRN-051 | The kernel shall support up to MAX_SEMAPHORES (32) semaphores | Must | ✅ Implemented |
-| HLR-KRN-052 | The kernel shall support up to MAX_MESSAGE_QUEUES (32) pipes | Must | ✅ Implemented |
+| HLR-KRN-051 | The kernel shall support up to ICARUS_MAX_SEMAPHORES (64) semaphores | Must | ✅ Implemented |
+| HLR-KRN-052 | The kernel shall support up to ICARUS_MAX_MESSAGE_QUEUES (64) pipes | Must | ✅ Implemented |
 | HLR-KRN-053 | Each pipe shall support up to 128 bytes capacity | Must | ✅ Implemented |
 
 #### 3.1.6 Memory Management
@@ -137,18 +137,31 @@ The following system-level requirements are allocated to ICARUS OS:
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | HLR-KRN-060 | The kernel shall use static memory allocation only | Must | ✅ Implemented |
-| HLR-KRN-061 | The kernel shall detect stack overflow | Should | Planned |
-| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Should | Planned |
-| HLR-KRN-063 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
+| HLR-KRN-061 | The kernel shall detect stack overflow | Should | ✅ Implemented |
+| HLR-KRN-062 | The kernel shall support MPU-based memory protection | Must | ✅ Implemented |
+| HLR-KRN-063 | The kernel shall isolate kernel code in privileged ITCM region | Must | ✅ Implemented |
+| HLR-KRN-064 | The kernel shall isolate kernel data in privileged DTCM region | Must | ✅ Implemented |
+| HLR-KRN-065 | The kernel shall isolate task data regions from each other | Must | ✅ Implemented |
+| HLR-KRN-066 | The kernel shall enforce read-only protection on code regions | Must | ✅ Implemented |
+| HLR-KRN-067 | The kernel shall provide SVC call gates for kernel services | Must | ✅ Implemented |
+| HLR-KRN-068 | The kernel shall execute tasks in unprivileged mode | Must | ✅ Implemented |
+| HLR-KRN-069 | The kernel shall execute kernel functions in privileged mode | Must | ✅ Implemented |
+| HLR-KRN-070 | The kernel shall prevent unprivileged access to kernel data | Must | ✅ Implemented |
+| HLR-KRN-071 | The kernel shall prevent cross-task memory access | Must | ✅ Implemented |
+| HLR-KRN-072 | The kernel shall recover from recoverable memory faults | Must | ✅ Implemented |
+| HLR-KRN-073 | The kernel shall support memory partitioning (ARINC 653) | Could | Planned |
 
 #### 3.1.7 Fault Handling
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| HLR-KRN-070 | The kernel shall handle processor faults gracefully | Must | ✅ Implemented |
-| HLR-KRN-071 | The kernel shall support watchdog integration | Should | Planned |
-| HLR-KRN-072 | The kernel shall log fault information for diagnostics | Should | Planned |
-| HLR-KRN-073 | The kernel shall support fault recovery (task restart) | Could | Planned |
+| HLR-KRN-080 | The kernel shall handle processor faults gracefully | Must | ✅ Implemented |
+| HLR-KRN-081 | The kernel shall handle MemManage faults from unprivileged tasks | Must | ✅ Implemented |
+| HLR-KRN-082 | The kernel shall recover from data access violations | Must | ✅ Implemented |
+| HLR-KRN-083 | The kernel shall halt on instruction fetch violations | Must | ✅ Implemented |
+| HLR-KRN-084 | The kernel shall support watchdog integration | Should | Planned |
+| HLR-KRN-085 | The kernel shall log fault information for diagnostics | Should | ✅ Implemented |
+| HLR-KRN-086 | The kernel shall support fault recovery (task restart) | Could | Planned |
 
 ---
 
@@ -258,7 +271,7 @@ The following system-level requirements are allocated to ICARUS OS:
 |----|-------------|-------|--------|
 | PRF-010 | Kernel code size | <32KB | ✅ Met |
 | PRF-011 | Kernel RAM usage | <8KB + stacks | ✅ Met |
-| PRF-012 | Per-task stack (minimum) | 512 bytes | ✅ Met |
+| PRF-012 | Per-task stack | 2 KB (ICARUS_STACK_WORDS=512 words) | ✅ Met |
 | PRF-013 | AI runtime code size | <64KB | Planned |
 | PRF-014 | AI runtime RAM (base) | <16KB | Planned |
 
@@ -266,10 +279,10 @@ The following system-level requirements are allocated to ICARUS OS:
 
 | ID | Requirement | Value | Status |
 |----|-------------|-------|--------|
-| PRF-020 | Maximum tasks | 16 (configurable) | ✅ Met |
+| PRF-020 | Maximum tasks | 128 (ICARUS_MAX_TASKS, configurable) | ✅ Met |
 | PRF-021 | Maximum priority levels | 8 | Planned |
-| PRF-022 | Maximum message queues | 8 | Planned |
-| PRF-023 | Maximum semaphores | 20 | ✅ Met |
+| PRF-022 | Maximum message queues | 64 (ICARUS_MAX_MESSAGE_QUEUES) | ✅ Met |
+| PRF-023 | Maximum semaphores | 64 (ICARUS_MAX_SEMAPHORES) | ✅ Met |
 | PRF-024 | Maximum AI models loaded | 4 | Planned |
 
 ---
@@ -297,11 +310,6 @@ uint32_t task_blocking_sleep(uint32_t ticks);
 uint32_t os_get_tick_count(void);
 uint8_t os_get_running_task_count(void);
 const char* os_get_current_task_name(void);
-
-// IPC (Planned)
-int ipc_queue_create(queue_t *queue, size_t item_size, size_t capacity);
-int ipc_queue_send(queue_t *queue, const void *item, uint32_t timeout);
-int ipc_queue_receive(queue_t *queue, void *item, uint32_t timeout);
 
 // Semaphores (Implemented)
 bool semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
@@ -396,12 +404,16 @@ See `ICARUS-VER-003 Test Traceability Matrix` for complete mapping.
 
 | Category | Total | Implemented | Planned |
 |----------|-------|-------------|---------|
-| Kernel | 35 | 22 | 13 |
+| Kernel (KRN) | 53 | 40 | 13 |
 | BSP | 15 | 11 | 4 |
 | AI Runtime | 24 | 0 | 24 |
-| Performance | 18 | 12 | 6 |
+| Performance | 18 | 14 | 4 |
 | Safety | 9 | 1 | 8 |
-| **Total** | **101** | **46** | **55** |
+| **Total** | **119** | **66** | **53** |
+
+> Counts include MPU/fault requirements HLR-KRN-060 through HLR-KRN-086 and
+> the updated IPC scalability numbers (PRF-022/023). Recount after adding or
+> removing requirements.
 
 ---
 

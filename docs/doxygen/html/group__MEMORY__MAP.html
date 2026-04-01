@@ -143,6 +143,11 @@ Macros</h2></td></tr>
 <tr class="separator:ga60e888398289fa3c4e028836d9caac8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9cef6ead921fb23fb089464b6ffc8c97" id="r_ga9cef6ead921fb23fb089464b6ffc8c97"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9cef6ead921fb23fb089464b6ffc8c97">BSP_QSPI_SIZE</a>&#160;&#160;&#160;(8 * 1024 * 1024)</td></tr>
 <tr class="separator:ga9cef6ead921fb23fb089464b6ffc8c97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaae05dda8fc6376a9a2b77abe96b727dc" id="r_gaae05dda8fc6376a9a2b77abe96b727dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaae05dda8fc6376a9a2b77abe96b727dc">BSP_PERIPH_BASE</a>&#160;&#160;&#160;0x40000000</td></tr>
+<tr class="memdesc:gaae05dda8fc6376a9a2b77abe96b727dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Peripheral base address (512MB)  <br /></td></tr>
+<tr class="separator:gaae05dda8fc6376a9a2b77abe96b727dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga92789fb51e84be5dca42507e29767f26" id="r_ga92789fb51e84be5dca42507e29767f26"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga92789fb51e84be5dca42507e29767f26">BSP_PERIPH_SIZE</a>&#160;&#160;&#160;(512 * 1024 * 1024)</td></tr>
+<tr class="separator:ga92789fb51e84be5dca42507e29767f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>STM32H750 memory region definitions </p>
@@ -162,7 +167,9 @@ Macros</h2></td></tr>
 
 <p>DTCM RAM base address (128KB, zero wait-state data) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00137">137</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00031">31</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mpu_8c_source.html#l00064">MPU_Config()</a>.</p>
 
 </div>
 </div>
@@ -178,7 +185,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00138">138</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00032">32</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -196,7 +203,9 @@ Macros</h2></td></tr>
 
 <p>Internal Flash base address (128KB) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00153">153</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00046">46</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00201">hal_init()</a>, and <a class="el" href="mpu_8c_source.html#l00064">MPU_Config()</a>.</p>
 
 </div>
 </div>
@@ -212,7 +221,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00154">154</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00047">47</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -230,7 +239,9 @@ Macros</h2></td></tr>
 
 <p>ITCM RAM base address (64KB, zero wait-state code) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00133">133</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00027">27</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mpu_8c_source.html#l00064">MPU_Config()</a>.</p>
 
 </div>
 </div>
@@ -246,7 +257,43 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00134">134</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00028">28</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
+
+</div>
+</div>
+<a id="gaae05dda8fc6376a9a2b77abe96b727dc" name="gaae05dda8fc6376a9a2b77abe96b727dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaae05dda8fc6376a9a2b77abe96b727dc">&#9670;&#160;</a></span>BSP_PERIPH_BASE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BSP_PERIPH_BASE&#160;&#160;&#160;0x40000000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Peripheral base address (512MB) </p>
+
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00054">54</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mpu_8c_source.html#l00064">MPU_Config()</a>.</p>
+
+</div>
+</div>
+<a id="ga92789fb51e84be5dca42507e29767f26" name="ga92789fb51e84be5dca42507e29767f26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga92789fb51e84be5dca42507e29767f26">&#9670;&#160;</a></span>BSP_PERIPH_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BSP_PERIPH_SIZE&#160;&#160;&#160;(512 * 1024 * 1024)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00055">55</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -264,7 +311,7 @@ Macros</h2></td></tr>
 
 <p>QSPI Flash base address (8MB external) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00157">157</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00050">50</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -280,7 +327,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00158">158</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00051">51</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -298,7 +345,9 @@ Macros</h2></td></tr>
 
 <p>AXI SRAM (RAM_D1) base address (512KB) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00141">141</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00034">34</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="mpu_8c_source.html#l00064">MPU_Config()</a>.</p>
 
 </div>
 </div>
@@ -314,7 +363,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00142">142</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00035">35</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -332,7 +381,7 @@ Macros</h2></td></tr>
 
 <p>AHB SRAM (RAM_D2) base address (288KB) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00145">145</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00038">38</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -348,7 +397,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00146">146</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00039">39</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -366,7 +415,7 @@ Macros</h2></td></tr>
 
 <p>AHB SRAM (RAM_D3) base address (64KB) </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00149">149</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00042">42</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -382,7 +431,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__config_8h_source.html#l00150">150</a> of file <a class="el" href="bsp__config_8h_source.html">bsp_config.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mpu_8h_source.html#l00043">43</a> of file <a class="el" href="mpu_8h_source.html">mpu.h</a>.</p>
 
 </div>
 </div>
@@ -391,7 +440,7 @@ Macros</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

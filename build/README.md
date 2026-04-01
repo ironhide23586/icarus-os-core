@@ -129,7 +129,7 @@ The script will:
 The Makefile automatically finds all source files from:
 - `../Core/Src/` - Application and kernel code
 - `../Core/Src/bsp/` - Board support package
-- `../Core/Src/kernel/` - Kernel implementation
+- `../Core/Src/icarus/` - RTOS kernel implementation
 - `../Drivers/` - STM32 HAL drivers
 - `../Middlewares/` - USB Device Library
 - `../USB_DEVICE/` - USB configuration

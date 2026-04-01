@@ -253,8 +253,8 @@ Key rules enforced:
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| Test pass rate | 100% | 100% |
-| Code coverage | >80% | 79.3% |
+| Test pass rate | 100% | Run `cd tests && make test` |
+| Code coverage (host stmt) | >80% | ~91% (see `coverage_analysis.md`) |
 | Open critical issues | 0 | 0 |
 | MISRA violations | 0 (mandatory) | TBD |
 | Review turnaround | <3 days | TBD |
@@ -268,12 +268,12 @@ Automated via CI:
 │                 ICARUS Quality Dashboard                     │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│  Build Status:     ✅ Passing                               │
-│  Test Results:     76/76 passed (100%)                      │
-│  Code Coverage:    79.3% (target: 80%)                      │
-│  Static Analysis:  0 errors, 2 warnings                     │
-│  Open Issues:      5 (0 critical, 1 high, 4 medium)         │
-│  Last Release:     v0.1.0 (2026-01-15)                      │
+│  Build Status:     (see CI / local build output)             │
+│  Test Results:     140 tests (run `make test` for status)    │
+│  Code Coverage:    ~91% stmt (kernel+BSP, `lcov` host)      │
+│  Static Analysis:  cppcheck clean (see build/Makefile)       │
+│  Open Issues:      (check GitHub Issues)                     │
+│  Current Version:  v0.1.0                                    │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
 ```

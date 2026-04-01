@@ -109,57 +109,66 @@ $(function(){initNavTree('retarget__stdio_8c_source.html',''); initResizable(tru
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="icarus__task_8h.html">icarus/icarus_task.h</a>&quot;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;usbd_cdc_if.h&quot;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;usbd_def.h&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;cmsis_gcc.h&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">/* Function prototype */</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keywordtype">int</span> <a class="code hl_function" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar</a>(<span class="keywordtype">int</span> ch);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">//int __io_putchar(int ch) {</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">//  enqueue_print_buffer(ch);</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">//  return ch;</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">//}</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">//</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">// Change your __io_putchar implementation</span></div>
-<div class="foldopen" id="foldopen00026" data-start="{" data-end="}">
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">   26</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar</a>(<span class="keywordtype">int</span> ch) {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keyword">static</span> uint8_t buf[64];</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keyword">static</span> uint8_t i = 0;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  buf[i++] = (uint8_t)ch;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="comment">// Flush on newline or when buffer is full</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;\n&#39;</span> || i == <span class="keyword">sizeof</span>(buf)) {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    uint8_t result = <a class="code hl_function" href="bsp__usb_8h.html#afd779c055ec134b0678907faeb808c4c">CDC_Transmit_FS</a>(buf, i);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    uint16_t retry_count = 0;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordflow">while</span> (retry_count &lt; 1000 &amp;&amp; result == USBD_BUSY) {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>      result = <a class="code hl_function" href="bsp__usb_8h.html#afd779c055ec134b0678907faeb808c4c">CDC_Transmit_FS</a>(buf, i);</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>      <a class="code hl_function" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a>(1);</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>      retry_count++;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    }</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    i = 0;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="comment">// task_blocking_sleep(10);</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  }</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keywordflow">return</span> ch;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>}</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="kernel_8h.html">icarus/kernel.h</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="scheduler_8h.html">icarus/scheduler.h</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;usbd_cdc_if.h&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;usbd_def.h&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;cmsis_gcc.h&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">/* Function prototype */</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keywordtype">int</span> <a class="code hl_function" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar</a>(<span class="keywordtype">int</span> ch);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">//int __io_putchar(int ch) {</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">//  enqueue_print_buffer(ch);</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">//  return ch;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">//}</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">//</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// Change your __io_putchar implementation</span></div>
+<div class="foldopen" id="foldopen00027" data-start="{" data-end="}">
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">   27</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar</a>(<span class="keywordtype">int</span> ch) {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="comment">/* Static variables must be in RAM_D1, not DTCM, for unprivileged access */</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#ifndef HOST_TEST</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keyword">static</span> uint8_t buf[64] __attribute__((section(<span class="stringliteral">&quot;.ram_d1&quot;</span>)));</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">static</span> uint8_t i __attribute__((section(<span class="stringliteral">&quot;.ram_d1&quot;</span>))) = 0;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">static</span> uint8_t buf[64];</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keyword">static</span> uint8_t i = 0;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  buf[i++] = (uint8_t)ch;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="comment">// Flush on newline or when buffer is full</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  <span class="keywordflow">if</span> (ch == <span class="charliteral">&#39;\n&#39;</span> || i == <span class="keyword">sizeof</span>(buf)) {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    uint8_t result = <a class="code hl_function" href="usb_8h.html#afd779c055ec134b0678907faeb808c4c">CDC_Transmit_FS</a>(buf, i);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    uint16_t retry_count = 0;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">while</span> (retry_count &lt; 1000 &amp;&amp; result == USBD_BUSY) {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      result = <a class="code hl_function" href="usb_8h.html#afd779c055ec134b0678907faeb808c4c">CDC_Transmit_FS</a>(buf, i);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      <a class="code hl_function" href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a>(1);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      retry_count++;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    i = 0;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// task_blocking_sleep(10);</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keywordflow">return</span> ch;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>}</div>
 </div>
-<div class="ttc" id="absp__usb_8h_html_afd779c055ec134b0678907faeb808c4c"><div class="ttname"><a href="bsp__usb_8h.html#afd779c055ec134b0678907faeb808c4c">CDC_Transmit_FS</a></div><div class="ttdeci">uint8_t CDC_Transmit_FS(uint8_t *buf, uint16_t len)</div><div class="ttdoc">Transmit data over USB CDC.</div></div>
-<div class="ttc" id="aicarus__task_8h_html"><div class="ttname"><a href="icarus__task_8h.html">icarus_task.h</a></div><div class="ttdoc">ICARUS OS Task Management API.</div></div>
-<div class="ttc" id="aicarus__task_8h_html_a8f901685f4b0a3eb8900850de554152e"><div class="ttname"><a href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a></div><div class="ttdeci">uint32_t task_blocking_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep with interrupts disabled (blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00750">icarus_task.c:750</a></div></div>
-<div class="ttc" id="aretarget__stdio_8c_html_abc513dd972081ae765b6949a62872eb7"><div class="ttname"><a href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar</a></div><div class="ttdeci">int __io_putchar(int ch)</div><div class="ttdef"><b>Definition</b> <a href="#l00026">retarget_stdio.c:26</a></div></div>
+<div class="ttc" id="akernel_8h_html"><div class="ttname"><a href="kernel_8h.html">kernel.h</a></div><div class="ttdoc">ICARUS Kernel Core - State and Initialization.</div></div>
+<div class="ttc" id="aretarget__stdio_8c_html_abc513dd972081ae765b6949a62872eb7"><div class="ttname"><a href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar</a></div><div class="ttdeci">int __io_putchar(int ch)</div><div class="ttdef"><b>Definition</b> <a href="#l00027">retarget_stdio.c:27</a></div></div>
+<div class="ttc" id="ascheduler_8h_html"><div class="ttname"><a href="scheduler_8h.html">scheduler.h</a></div><div class="ttdoc">ICARUS Scheduler - Task Scheduling and Timing.</div></div>
+<div class="ttc" id="ascheduler_8h_html_a8f901685f4b0a3eb8900850de554152e"><div class="ttname"><a href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a></div><div class="ttdeci">uint32_t task_blocking_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep with scheduler disabled (blocking)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00274">svc.c:274</a></div></div>
+<div class="ttc" id="ausb_8h_html_afd779c055ec134b0678907faeb808c4c"><div class="ttname"><a href="usb_8h.html#afd779c055ec134b0678907faeb808c4c">CDC_Transmit_FS</a></div><div class="ttdeci">uint8_t CDC_Transmit_FS(uint8_t *buf, uint16_t len)</div><div class="ttdoc">Transmit data over USB CDC.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="retarget__stdio_8c.html">retarget_stdio.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

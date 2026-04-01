@@ -1,0 +1,25 @@
+var scheduler_8h =
+[
+    [ "__os_get_current_task_name", "scheduler_8h.html#a92018fd8a430142e476bb8878cc2a6aa", null ],
+    [ "__os_get_num_created_tasks", "scheduler_8h.html#a4e6df3871838291403b534434b01dcc4", null ],
+    [ "__os_get_running_task_count", "scheduler_8h.html#a358f1b2217c2f59aa0fdca22675c6e1f", null ],
+    [ "__os_get_task_name", "scheduler_8h.html#ab041c0199bf4e0f154eb99a491d7fb3d", null ],
+    [ "__os_get_task_ticks_remaining", "scheduler_8h.html#af43d357d1f95bc72d702a6b9636b0a0b", null ],
+    [ "__os_get_tick_count", "scheduler_8h.html#a0b700e30b0445944dcf1c14de7dfeaf7", null ],
+    [ "__os_is_running", "scheduler_8h.html#aa01a923462d25eb680dabdae3f0b3ec9", null ],
+    [ "__os_yield", "scheduler_8h.html#af152347ef9ef0788f03d34865d175a8e", null ],
+    [ "__task_active_sleep", "scheduler_8h.html#ae90ec9ddd1dc71c809e17435717823f9", null ],
+    [ "__task_blocking_sleep", "scheduler_8h.html#a101a26dd46ded7d1e198cd6840d0a191", null ],
+    [ "__task_busy_wait", "scheduler_8h.html#ae64f18590d0ae5e328c99b99adb252eb", null ],
+    [ "os_get_current_task_name", "scheduler_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c", null ],
+    [ "os_get_num_created_tasks", "scheduler_8h.html#addbeb7e8c9632ff09882f378769756e8", null ],
+    [ "os_get_running_task_count", "scheduler_8h.html#ae2e7057f265bec1758ecf2bab3218362", null ],
+    [ "os_get_task_name", "scheduler_8h.html#a9c1dcfc8374cf120e7e803bf280e98fe", null ],
+    [ "os_get_task_ticks_remaining", "scheduler_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f", null ],
+    [ "os_get_tick_count", "scheduler_8h.html#a9ad054a9f7ba66763a95b010bc55f949", null ],
+    [ "os_is_running", "scheduler_8h.html#adaa94248e5bada064318aa8db9920e39", null ],
+    [ "os_yield", "scheduler_8h.html#a02d2fa79b4b720c7906a7262740db686", null ],
+    [ "task_active_sleep", "scheduler_8h.html#ac3bac781800873509713328e27b5ada4", null ],
+    [ "task_blocking_sleep", "scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e", null ],
+    [ "task_busy_wait", "scheduler_8h.html#abf480b084de52354a2fd785135c1fbed", null ]
+];

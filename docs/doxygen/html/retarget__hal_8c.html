@@ -105,7 +105,8 @@ $(function(){initNavTree('retarget__hal_8c.html',''); initResizable(true); });
 
 <p>ICARUS OS Hardware Abstraction Layer Implementation.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="retarget__hal_8h_source.html">retarget_hal.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="retarget__hal_8h_source.html">bsp/retarget_hal.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="error_8h_source.html">bsp/error.h</a>&quot;</code><br />
 </div>
 <p><a href="retarget__hal_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -115,7 +116,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a70af21c671abfcc773614a9a4f63d920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure system clocks for 480MHz operation.  <br /></td></tr>
 <tr class="separator:a70af21c671abfcc773614a9a4f63d920"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3bac781800873509713328e27b5ada4" id="r_ac3bac781800873509713328e27b5ada4"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3bac781800873509713328e27b5ada4">task_active_sleep</a> (uint32_t ticks)</td></tr>
-<tr class="memdesc:ac3bac781800873509713328e27b5ada4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for specified ticks while allowing other tasks to run.  <br /></td></tr>
+<tr class="memdesc:ac3bac781800873509713328e27b5ada4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for specified ticks (cooperative, via SVC)  <br /></td></tr>
 <tr class="separator:ac3bac781800873509713328e27b5ada4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d06812ba5c631eb19fe9eacf8111013" id="r_a9d06812ba5c631eb19fe9eacf8111013"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d06812ba5c631eb19fe9eacf8111013">platform_write</a> (void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len)</td></tr>
 <tr class="memdesc:a9d06812ba5c631eb19fe9eacf8111013"><td class="mdescLeft">&#160;</td><td class="mdescRight">Platform write function for LSM9DS1 IMU driver.  <br /></td></tr>
@@ -123,9 +124,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ae6a9af4efd48b19aa917b0b2fe5240f4" id="r_ae6a9af4efd48b19aa917b0b2fe5240f4"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6a9af4efd48b19aa917b0b2fe5240f4">platform_read</a> (void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)</td></tr>
 <tr class="memdesc:ae6a9af4efd48b19aa917b0b2fe5240f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Platform read function for LSM9DS1 IMU driver.  <br /></td></tr>
 <tr class="separator:ae6a9af4efd48b19aa917b0b2fe5240f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb190c192583d879b7e8edb9f01f3b61" id="r_acb190c192583d879b7e8edb9f01f3b61"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb190c192583d879b7e8edb9f01f3b61">MPU_Config</a> (void)</td></tr>
-<tr class="memdesc:acb190c192583d879b7e8edb9f01f3b61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure Memory Protection Unit for QSPI flash access.  <br /></td></tr>
-<tr class="separator:acb190c192583d879b7e8edb9f01f3b61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad38fe6643424bf9422b9d08d061fcaff" id="r_ad38fe6643424bf9422b9d08d061fcaff"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad38fe6643424bf9422b9d08d061fcaff">CPU_CACHE_Enable</a> (void)</td></tr>
 <tr class="memdesc:ad38fe6643424bf9422b9d08d061fcaff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable CPU instruction and data caches.  <br /></td></tr>
 <tr class="separator:ad38fe6643424bf9422b9d08d061fcaff"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -200,14 +198,14 @@ Functions</h2></td></tr>
 
 <p>Enable CPU instruction and data caches. </p>
 <p>Enables both I-Cache and D-Cache for improved performance. Must be called after MPU configuration to ensure proper cacheability attributes are in effect.</p>
-<dl class="section pre"><dt>Precondition</dt><dd><a class="el" href="#acb190c192583d879b7e8edb9f01f3b61" title="Configure Memory Protection Unit for QSPI flash access.">MPU_Config()</a> must be called first </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd><a class="el" href="mpu_8h.html#a93ce41942d08d309203e0188cad7e54e" title="Configure Memory Protection Unit regions.">MPU_Config()</a> must be called first </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>I-Cache and D-Cache enabled</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Cache coherency must be managed for DMA operations</dd></dl>
 <dl class="section see"><dt>See also</dt><dd>ARMv7-M Architecture Reference Manual, Section B2.2 (Caches) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00126">126</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00066">66</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00261">hal_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00201">hal_init()</a>.</p>
 
 </div>
 </div>
@@ -242,16 +240,16 @@ Functions</h2></td></tr>
 </ol>
 <dl class="section pre"><dt>Precondition</dt><dd>None (called at system startup) </dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>All hardware ready for kernel initialization</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Must be called before <a class="el" href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a> </dd>
+<dl class="section note"><dt>Note</dt><dd>Must be called before <a class="el" href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a> </dd>
 <dd>
 USB may take up to 1 second to enumerate on host</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a70af21c671abfcc773614a9a4f63d920" title="Configure system clocks for 480MHz operation.">SystemClock_Config()</a> for clock tree details </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00261">261</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00201">201</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="retarget__hal_8c_source.html#l00126">CPU_CACHE_Enable()</a>, <a class="el" href="retarget__hal_8c_source.html#l00073">MPU_Config()</a>, <a class="el" href="gpio_8c_source.html#l00043">MX_GPIO_Init()</a>, <a class="el" href="i2c_8c_source.html#l00030">MX_I2C2_Init()</a>, <a class="el" href="rtc_8c_source.html#l00030">MX_RTC_Init()</a>, <a class="el" href="spi_8c_source.html#l00030">MX_SPI4_Init()</a>, <a class="el" href="tim_8c_source.html#l00030">MX_TIM1_Init()</a>, <a class="el" href="bsp__usb_8h.html#adab4f7fc1db4ce2be073d3913209d2af">MX_USB_DEVICE_Init()</a>, and <a class="el" href="retarget__hal_8c_source.html#l00332">SystemClock_Config()</a>.</p>
+<p class="reference">References <a class="el" href="mpu_8h_source.html#l00046">BSP_FLASH_BASE</a>, <a class="el" href="retarget__hal_8c_source.html#l00066">CPU_CACHE_Enable()</a>, <a class="el" href="mpu_8c_source.html#l00064">MPU_Config()</a>, <a class="el" href="gpio_8c_source.html#l00043">MX_GPIO_Init()</a>, <a class="el" href="i2c_8c_source.html#l00031">MX_I2C2_Init()</a>, <a class="el" href="rtc_8c_source.html#l00031">MX_RTC_Init()</a>, <a class="el" href="spi_8c_source.html#l00031">MX_SPI4_Init()</a>, <a class="el" href="timer_8c_source.html#l00031">MX_TIM1_Init()</a>, <a class="el" href="usb_8h.html#adab4f7fc1db4ce2be073d3913209d2af">MX_USB_DEVICE_Init()</a>, and <a class="el" href="retarget__hal_8c_source.html#l00282">SystemClock_Config()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00088">main()</a>.</p>
 
 </div>
 </div>
@@ -276,7 +274,7 @@ USB may take up to 1 second to enumerate on host</dd></dl>
 
 <p>Blink LED with specified on/off timing. </p>
 <p>Blink LED with specified timing.</p>
-<p>Turns LED on for specified duration, then off for specified duration. Uses <a class="el" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified number of ticks (non-blocking)">task_active_sleep()</a> for non-blocking delays.</p>
+<p>Turns LED on for specified duration, then off for specified duration. Uses <a class="el" href="kernel_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified ticks (cooperative, via SVC)">task_active_sleep()</a> for non-blocking delays.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">Hdelay</td><td>LED on duration in OS ticks </td></tr>
@@ -289,11 +287,11 @@ USB may take up to 1 second to enumerate on host</dd></dl>
 Must be called from task context (uses task_active_sleep)</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Total blink period = Hdelay + Ldelay ticks </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00153">153</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00093">93</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>, and <a class="el" href="icarus__task_8c_source.html#l00708">task_active_sleep()</a>.</p>
+<p class="reference">References <a class="el" href="bsp_2config_8h_source.html#l00135">E3_GPIO_Port</a>, <a class="el" href="bsp_2config_8h_source.html#l00134">E3_Pin</a>, and <a class="el" href="svc_8c_source.html#l00254">task_active_sleep()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00073">main()</a>, and <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="main_8c_source.html#l00088">main()</a>, and <a class="el" href="kernel_8c_source.html#l00175">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -316,11 +314,11 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 <p>Sets PE3 GPIO pin low to turn off the onboard LED.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>GPIO must be initialized </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00178">178</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00118">118</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, and <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>.</p>
+<p class="reference">References <a class="el" href="bsp_2config_8h_source.html#l00135">E3_GPIO_Port</a>, and <a class="el" href="bsp_2config_8h_source.html#l00134">E3_Pin</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00175">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -344,61 +342,11 @@ Must be called from task context (uses task_active_sleep)</dd></dl>
 <p>Sets PE3 GPIO pin high to illuminate the onboard LED.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>GPIO must be initialized </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00167">167</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00107">107</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="bsp__config_8h_source.html#l00168">E3_GPIO_Port</a>, and <a class="el" href="bsp__config_8h_source.html#l00167">E3_Pin</a>.</p>
+<p class="reference">References <a class="el" href="bsp_2config_8h_source.html#l00135">E3_GPIO_Port</a>, and <a class="el" href="bsp_2config_8h_source.html#l00134">E3_Pin</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>.</p>
-
-</div>
-</div>
-<a id="acb190c192583d879b7e8edb9f01f3b61" name="acb190c192583d879b7e8edb9f01f3b61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb190c192583d879b7e8edb9f01f3b61">&#9670;&#160;</a></span>MPU_Config()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void MPU_Config </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Configure Memory Protection Unit for QSPI flash access. </p>
-<p>Sets up two MPU regions for QSPI memory-mapped flash:</p><ul>
-<li>Region 0: 256MB background region with no access (catches stray accesses)</li>
-<li>Region 1: 8MB overlay for actual flash with read-only, cacheable access</li>
-</ul>
-<dl class="section user"><dt>Region Configuration:</dt><dd><table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Region   </th><th class="markdownTableHeadNone">Base   </th><th class="markdownTableHeadNone">Size   </th><th class="markdownTableHeadNone">Access   </th><th class="markdownTableHeadNone">Cache   </th><th class="markdownTableHeadNone">Execute    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0x90000000   </td><td class="markdownTableBodyNone">256MB   </td><td class="markdownTableBodyNone">No Access   </td><td class="markdownTableBodyNone">None   </td><td class="markdownTableBodyNone">No    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">0x90000000   </td><td class="markdownTableBodyNone">8MB   </td><td class="markdownTableBodyNone">Priv RO   </td><td class="markdownTableBodyNone">WT Cache   </td><td class="markdownTableBodyNone">Yes   </td></tr>
-</table>
-</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Must be called before enabling caches </dd>
-<dd>
-Uses privileged default memory map for non-configured regions</dd></dl>
-<dl class="section see"><dt>See also</dt><dd>ARMv7-M Architecture Reference Manual, Section B3.5 (MPU) </dd>
-<dd>
-STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00073">73</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00261">hal_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00175">os_heartbeat_task()</a>.</p>
 
 </div>
 </div>
@@ -432,7 +380,6 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 </div><div class="memdoc">
 
 <p>Platform read function for LSM9DS1 IMU driver. </p>
-<p>Platform read function for IMU driver.</p>
 <p>Reads data from IMU register via I2C. Used by the LSM9DS1 driver library for sensor data acquisition.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -446,9 +393,9 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>0 on success (HAL status ignored for simplicity)</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Uses blocking I2C transfer with HAL_MAX_DELAY timeout </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00227">227</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00167">167</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00051">IMU_ADDRESS</a>.</p>
+<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00053">IMU_ADDRESS</a>.</p>
 
 </div>
 </div>
@@ -482,7 +429,6 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 </div><div class="memdoc">
 
 <p>Platform write function for LSM9DS1 IMU driver. </p>
-<p>Platform write function for IMU driver.</p>
 <p>Writes data to IMU register via I2C. Used by the LSM9DS1 driver library for register configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -496,9 +442,9 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>0 on success (HAL status ignored for simplicity)</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Uses blocking I2C transfer with HAL_MAX_DELAY timeout </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00201">201</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00141">141</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
-<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00051">IMU_ADDRESS</a>.</p>
+<p class="reference">References <a class="el" href="retarget__hal_8h_source.html#l00053">IMU_ADDRESS</a>.</p>
 
 </div>
 </div>
@@ -556,7 +502,7 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 <td class="markdownTableBodyNone">APB4   </td><td class="markdownTableBodyNone">/1   </td><td class="markdownTableBodyNone">120 MHz   </td></tr>
 </table>
 </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Calls <a class="el" href="bsp__error_8h.html#a1730ffe1e560465665eb47d9264826f9" title="System error handler.">Error_Handler()</a> on configuration failure</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Calls <a class="el" href="error_8h.html#a1730ffe1e560465665eb47d9264826f9" title="System error handler for unrecoverable faults.">Error_Handler()</a> on configuration failure</dd></dl>
 <dl class="section see"><dt>See also</dt><dd>STM32H750 Reference Manual RM0433, Section 8 (RCC) </dd></dl>
 <p>Supply configuration update enable</p>
 <p>&lt; Core domains are supplied from the LDO <br  />
@@ -571,11 +517,11 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 <p>&lt; FLASH One Latency cycle <br  />
 </p>
 
-<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00332">332</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="retarget__hal_8c_source.html#l00282">282</a> of file <a class="el" href="retarget__hal_8c_source.html">retarget_hal.c</a>.</p>
 
 <p class="reference">References <a class="el" href="error_8c_source.html#l00050">Error_Handler()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00261">hal_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00201">hal_init()</a>.</p>
 
 </div>
 </div>
@@ -602,45 +548,12 @@ STM32H750 Reference Manual RM0433, Section 2.3.4 </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Sleep for specified ticks while allowing other tasks to run. </p>
-<p>Sleep for specified number of ticks (non-blocking)</p>
-<p>Puts the current task into BLOCKED state for the specified number of ticks. The scheduler will skip this task until the sleep period expires, allowing other tasks to execute.</p>
-<p>This is the preferred sleep method for cooperative multitasking as it does not waste CPU cycles. The task is automatically returned to READY state by the scheduler when ticks expire.</p>
-<p>Placed in ITCM for zero wait-state execution.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ticks</td><td>Number of ticks to sleep (1 tick = 1ms at 1kHz)</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>uint32_t Actual ticks elapsed (may be &gt;= requested due to scheduling latency)</dd></dl>
-<dl class="section pre"><dt>Precondition</dt><dd>Scheduler must be running </dd>
-<dd>
-Called from task context (not ISR)</dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd>Task state temporarily set to TASK_STATE_BLOCKED </dd>
-<dd>
-Task resumes after at least 'ticks' have elapsed</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Minimum sleep is 1 tick; 0 is treated as immediate yield </dd>
-<dd>
-Actual sleep may be longer due to higher-priority tasks</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with interrupts disabled (blocking)">task_blocking_sleep()</a> for non-preemptible sleep </dd>
-<dd>
-<a class="el" href="icarus__task_8h.html#abf480b084de52354a2fd785135c1fbed" title="Busy-wait for specified ticks (must be in critical section)">task_busy_wait()</a> for spin-wait delay</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><span class="comment">// Blink LED at 1Hz</span></div>
-<div class="line"><span class="keywordflow">while</span> (1) {</div>
-<div class="line">    <a class="code hl_function" href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a>();</div>
-<div class="line">    <a class="code hl_function" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(500);  <span class="comment">// 500ms on</span></div>
-<div class="line">    <a class="code hl_function" href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a>();</div>
-<div class="line">    <a class="code hl_function" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(500);  <span class="comment">// 500ms off</span></div>
-<div class="line">}</div>
-<div class="ttc" id="absp__led_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00167">retarget_hal.c:167</a></div></div>
-<div class="ttc" id="absp__led_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00178">retarget_hal.c:178</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified number of ticks (non-blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00708">icarus_task.c:708</a></div></div>
-</div><!-- fragment --> </dd></dl>
+<p>Sleep for specified ticks (cooperative, via SVC) </p>
+<p>Sleep for specified ticks (cooperative) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__task_8c_source.html#l00708">708</a> of file <a class="el" href="icarus__task_8c_source.html">icarus_task.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="svc_8c_source.html#l00254">254</a> of file <a class="el" href="svc_8c_source.html">svc.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00153">LED_Blink()</a>, <a class="el" href="icarus__task_8c_source.html#l00361">os_heartbeat_task()</a>, <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>, <a class="el" href="icarus__task_8c_source.html#l01337">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l01275">semaphore_feed()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00093">LED_Blink()</a>.</p>
 
 </div>
 </div>
@@ -650,7 +563,7 @@ Actual sleep may be longer due to higher-priority tasks</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_b596f468b52957496e4f78b80e029268.html">Src</a></li><li class="navelem"><a class="el" href="dir_bf2a2d012ff69ea052924e5f9890413a.html">bsp</a></li><li class="navelem"><a class="el" href="retarget__hal_8c.html">retarget_hal.c</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

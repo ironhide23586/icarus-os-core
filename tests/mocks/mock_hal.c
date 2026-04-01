@@ -54,6 +54,11 @@ void HAL_MPU_Enable(uint32_t MPU_Control) {
 	// Mock: do nothing
 }
 
+// Mock MPU configuration function
+void MPU_Config(void) {
+	// Mock: do nothing
+}
+
 // Mock RCC/PWR functions
 HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef *RCC_OscInitStruct) {
 	(void)RCC_OscInitStruct;
@@ -141,3 +146,9 @@ void HAL_PCD_IRQHandler(PCD_HandleTypeDef *hpcd) {
 
 // Mock USB handle instance (for extern in stm32h7xx_it.c)
 PCD_HandleTypeDef hpcd_USB_OTG_FS = {0};
+
+// Mock TIM function
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim) {
+	(void)htim;
+	// Mock: do nothing
+}

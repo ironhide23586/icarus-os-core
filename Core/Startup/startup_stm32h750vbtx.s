@@ -65,7 +65,7 @@ Reset_Handler:
 /* Call the clock system initialization function.*/
   bl  SystemInit
 
-/* Copy the ITCM code from flash to ITCM RAM */
+/* Copy the ITCM (hot-path code) from flash to ITCM RAM */
   ldr r0, =_sitcm
   ldr r1, =_eitcm
   ldr r2, =_siitcm
@@ -125,6 +125,20 @@ FillZeroDtcm:
 LoopFillZeroDtcm:
   cmp r2, r4
   bcc FillZeroDtcm
+
+/* Zero fill the DTCM_PRIV segment (privileged kernel state). */
+  ldr r2, =_sdtcm_priv
+  ldr r4, =_edtcm_priv
+  movs r3, #0
+  b LoopFillZeroDtcmPriv
+
+FillZeroDtcmPriv:
+  str  r3, [r2]
+  adds r2, r2, #4
+
+LoopFillZeroDtcmPriv:
+  cmp r2, r4
+  bcc FillZeroDtcmPriv
 
 /* Call static constructors */
     bl __libc_init_array

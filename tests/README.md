@@ -66,7 +66,7 @@ Create test files in `tests/src/` with naming convention `test_*.c`:
 
 ```c
 #include "unity.h"
-#include "kernel/task.h"
+#include "icarus/task.h"
 
 void setUp(void) {
     // Initialize test fixtures

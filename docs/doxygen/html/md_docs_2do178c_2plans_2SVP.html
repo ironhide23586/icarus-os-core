@@ -100,7 +100,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2SVP.html',''); initResizable(t
   <div class="headertitle"><div class="title">Software Verification Plan (SVP)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md365"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md412"></a></p>
 <p><b>Document ID:</b> ICARUS-SVP-001 <br  />
  <b>Version:</b> 0.1 <br  />
  <b>Date:</b> 2025-01-26 <br  />
@@ -108,7 +108,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2SVP.html',''); initResizable(t
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md367"></a>
+<h1><a class="anchor" id="autotoc_md414"></a>
 Document Control</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -121,7 +121,7 @@ Document Control</h1>
 <td class="markdownTableBodyNone">Approver   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md369"></a>
+<h1><a class="anchor" id="autotoc_md416"></a>
 Revision History</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -130,12 +130,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md371"></a>
+<h1><a class="anchor" id="autotoc_md418"></a>
 1. Introduction</h1>
-<h2><a class="anchor" id="autotoc_md372"></a>
+<h2><a class="anchor" id="autotoc_md419"></a>
 1.1 Purpose</h2>
 <p>This Software Verification Plan (SVP) defines the verification strategy, methods, and procedures for ICARUS OS. It establishes how software requirements are verified and how structural coverage objectives are achieved per DO-178C DAL C.</p>
-<h2><a class="anchor" id="autotoc_md373"></a>
+<h2><a class="anchor" id="autotoc_md420"></a>
 1.2 Scope</h2>
 <p>This plan covers verification of:</p><ul>
 <li>ICARUS OS Kernel</li>
@@ -143,7 +143,7 @@ Revision History</h1>
 <li>AI Runtime Environment</li>
 <li>Integration with target hardware</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md374"></a>
+<h2><a class="anchor" id="autotoc_md421"></a>
 1.3 Verification Objectives</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -160,9 +160,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">A-7   </td><td class="markdownTableBodyNone">Verify test coverage   </td><td class="markdownTableBodyNone">Yes   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md376"></a>
+<h1><a class="anchor" id="autotoc_md423"></a>
 2. Verification Strategy</h1>
-<h2><a class="anchor" id="autotoc_md377"></a>
+<h2><a class="anchor" id="autotoc_md424"></a>
 2.1 Multi-Level Verification</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                 ICARUS Verification Pyramid                  │</div>
@@ -190,7 +190,7 @@ Revision History</h1>
 <div class="line">│    └─────────────────────────────────────────────┘          │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md378"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md425"></a>
 2.2 Verification Methods</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -205,9 +205,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone"><b>Formal Methods</b>   </td><td class="markdownTableBodyNone">Mathematical proof   </td><td class="markdownTableBodyNone">Critical algorithms (planned)   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md380"></a>
+<h1><a class="anchor" id="autotoc_md427"></a>
 3. Test Environment</h1>
-<h2><a class="anchor" id="autotoc_md381"></a>
+<h2><a class="anchor" id="autotoc_md428"></a>
 3.1 Host-Based Testing</h2>
 <p><b>Purpose:</b> Rapid iteration, high coverage, CI integration</p>
 <table class="markdownTable">
@@ -232,7 +232,7 @@ Revision History</h1>
 <li>❌ Timing verification</li>
 <li>❌ Interrupt behavior</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md382"></a>
+<h2><a class="anchor" id="autotoc_md429"></a>
 3.2 Target-Based Testing</h2>
 <p><b>Purpose:</b> Hardware verification, timing analysis, integration</p>
 <table class="markdownTable">
@@ -256,7 +256,7 @@ Revision History</h1>
 <li>✅ Peripheral interaction</li>
 <li>✅ Context switch verification</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md383"></a>
+<h2><a class="anchor" id="autotoc_md430"></a>
 3.3 Simulation Testing</h2>
 <p><b>Purpose:</b> CI integration for target code, fault injection</p>
 <table class="markdownTable">
@@ -269,7 +269,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Custom Sim   </td><td class="markdownTableBodyNone">x86 BSP   </td><td class="markdownTableBodyNone">Fast iteration   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md384"></a>
+<h2><a class="anchor" id="autotoc_md431"></a>
 3.4 AI Model Testing</h2>
 <p><b>Purpose:</b> Verify AI inference correctness and timing</p>
 <table class="markdownTable">
@@ -285,9 +285,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Integrity   </td><td class="markdownTableBodyNone">Model hash verification   </td><td class="markdownTableBodyNone">Match expected   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md386"></a>
+<h1><a class="anchor" id="autotoc_md433"></a>
 4. Test Categories</h1>
-<h2><a class="anchor" id="autotoc_md387"></a>
+<h2><a class="anchor" id="autotoc_md434"></a>
 4.1 Unit Tests</h2>
 <p><b>Scope:</b> Individual functions and modules</p>
 <p><b>Location:</b> <code>tests/src/test_*.c</code></p>
@@ -299,7 +299,7 @@ Revision History</h1>
 <div class="line"><span class="keywordtype">void</span> test_scheduler_yield_blocked_task(<span class="keywordtype">void</span>);</div>
 <div class="line"><span class="keywordtype">void</span> test_ai_inference_simple_model(<span class="keywordtype">void</span>);</div>
 </div><!-- fragment --><p><b>Coverage Target:</b> 100% statement coverage (testable code)</p>
-<h2><a class="anchor" id="autotoc_md388"></a>
+<h2><a class="anchor" id="autotoc_md435"></a>
 4.2 Integration Tests</h2>
 <p><b>Scope:</b> Component interactions</p>
 <p><b>Categories:</b></p>
@@ -315,7 +315,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Full Stack   </td><td class="markdownTableBodyNone">Application + Kernel + BSP   </td><td class="markdownTableBodyNone">Target only   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md389"></a>
+<h2><a class="anchor" id="autotoc_md436"></a>
 4.3 System Tests</h2>
 <p><b>Scope:</b> End-to-end scenarios</p>
 <p><b>Test Scenarios:</b></p>
@@ -333,7 +333,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">AI inference   </td><td class="markdownTableBodyNone">Model execution   </td><td class="markdownTableBodyNone">Correct output, within WCET   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md390"></a>
+<h2><a class="anchor" id="autotoc_md437"></a>
 4.4 Robustness Tests</h2>
 <p><b>Scope:</b> Error handling and edge cases</p>
 <table class="markdownTable">
@@ -348,10 +348,43 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Corrupted model   </td><td class="markdownTableBodyNone">Bad CRC   </td><td class="markdownTableBodyNone">Reject, fallback   </td></tr>
 </table>
+<h2><a class="anchor" id="autotoc_md438"></a>
+4.5 Memory Protection Tests</h2>
+<p><b>Scope:</b> MPU configuration and fault handling</p>
+<p><b>Purpose:</b> Verify memory protection mechanisms prevent unauthorized access</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Test   </th><th class="markdownTableHeadNone">Attack Vector   </th><th class="markdownTableHeadNone">Expected Behavior   </th><th class="markdownTableHeadNone">Verifies    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_redteam_task</code>   </td><td class="markdownTableBodyNone">Write to another task's data region   </td><td class="markdownTableBodyNone">MemManage fault, task continues   </td><td class="markdownTableBodyNone">HLR-KRN-071    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>mpu_itcm_write_test</code>   </td><td class="markdownTableBodyNone">Write to ITCM (code region)   </td><td class="markdownTableBodyNone">MemManage fault, task continues   </td><td class="markdownTableBodyNone">HLR-KRN-066    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_dtcm_attack_task</code>   </td><td class="markdownTableBodyNone">Read from DTCM (kernel data)   </td><td class="markdownTableBodyNone">MemManage fault, task continues   </td><td class="markdownTableBodyNone">HLR-KRN-070    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>mpu_kernel_bypass_test</code>   </td><td class="markdownTableBodyNone">Direct call to <code>__os_*</code> function   </td><td class="markdownTableBodyNone">MemManage fault when accessing DTCM   </td><td class="markdownTableBodyNone">HLR-KRN-070   </td></tr>
+</table>
+<p><b>Test Execution:</b></p><ul>
+<li>Tests run continuously as stress test tasks</li>
+<li>Real-time status displayed via USB CDC terminal</li>
+<li>Fault count monitored to verify protection active</li>
+<li>Pass criteria: Fault count increases on each attack attempt</li>
+</ul>
+<p><b>Verification Evidence:</b> </p><div class="fragment"><div class="line">MPU_VICTIM: allocs=3 verifies=7 corruptions=0 [PASS]</div>
+<div class="line">MPU_REDTEAM: attacks=26 own_data=OK [PROTECTED]</div>
+<div class="line">MPU_ITCM_WR: attempts=4 faults=27 [WRITE PROTECTED]</div>
+<div class="line">MPU_DTCM: attempts=4 faults=28 [DTCM PROTECTED]</div>
+<div class="line">MPU_BYPASS: attempts=4 faults=30 [DTCM PROTECTED]</div>
+</div><!-- fragment --><p><b>Fault Recovery Verification:</b></p><ul>
+<li>MemManage handler advances PC past faulting instruction</li>
+<li>Task continues execution after fault</li>
+<li>Fault address and PC captured for analysis</li>
+<li>System remains stable after multiple faults</li>
+</ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md392"></a>
+<h1><a class="anchor" id="autotoc_md440"></a>
 5. Structural Coverage</h1>
-<h2><a class="anchor" id="autotoc_md393"></a>
+<h2><a class="anchor" id="autotoc_md441"></a>
 5.1 Coverage Requirements (DAL C)</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -363,7 +396,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">MC/DC   </td><td class="markdownTableBodyNone">Not required   </td><td class="markdownTableBodyNone">-   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md394"></a>
+<h2><a class="anchor" id="autotoc_md442"></a>
 5.2 Coverage Analysis Process</h2>
 <div class="fragment"><div class="line">┌──────────────┐    ┌──────────────┐    ┌──────────────┐</div>
 <div class="line">│  Run Tests   │───▶│   Collect    │───▶│   Generate   │</div>
@@ -382,7 +415,7 @@ Revision History</h1>
 <div class="line">             │  Add Tests   │          │   Justify    │          │   Mark as    │</div>
 <div class="line">             │  (if needed) │          │  (dead code) │          │  Deactivated │</div>
 <div class="line">             └──────────────┘          └──────────────┘          └──────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md395"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md443"></a>
 5.3 Coverage Exclusions</h2>
 <p>The following code is excluded from coverage requirements:</p>
 <table class="markdownTable">
@@ -398,27 +431,25 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Vendor code   </td><td class="markdownTableBodyNone">STM32 HAL   </td><td class="markdownTableBodyNone">Third-party, not in scope   </td></tr>
 </table>
 <p>See <code>ICARUS-VER-002 Deactivated Code Analysis</code> for complete list.</p>
-<h2><a class="anchor" id="autotoc_md396"></a>
+<h2><a class="anchor" id="autotoc_md444"></a>
 5.4 Current Coverage Status</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Component   </th><th class="markdownTableHeadNone">Statement   </th><th class="markdownTableHeadNone">Functions   </th><th class="markdownTableHeadNone">Status    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">kernel/task.c   </td><td class="markdownTableBodyNone">73.8%   </td><td class="markdownTableBodyNone">83.3%   </td><td class="markdownTableBodyNone">Host tests complete    </td></tr>
+<td class="markdownTableBodyNone"><code>Core/Src/icarus/*.c</code> (aggregate)   </td><td class="markdownTableBodyNone">~91% stmt   </td><td class="markdownTableBodyNone">~90% fn   </td><td class="markdownTableBodyNone">Host Unity tests (see <code><a class="el" href="coverage__analysis_8md.html">verification/coverage_analysis.md</a></code>)    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="display_8c.html" title="ICARUS OS Terminal Display Implementation.">bsp/display.c</a>   </td><td class="markdownTableBodyNone">83.5%   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">Host tests complete    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="display_8c.html" title="ICARUS OS Terminal Display Implementation.">bsp/display.c</a>   </td><td class="markdownTableBodyNone">~94%   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">Host tests    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="retarget__hal_8c.html" title="ICARUS OS Hardware Abstraction Layer Implementation.">bsp/retarget_hal.c</a>   </td><td class="markdownTableBodyNone">96.2%   </td><td class="markdownTableBodyNone">100%   </td><td class="markdownTableBodyNone">Host tests complete    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">bsp/stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">~63%   </td><td class="markdownTableBodyNone">40%   </td><td class="markdownTableBodyNone">Fault paths: target / review    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">bsp/stm32h7xx_it.c</a>   </td><td class="markdownTableBodyNone">53.6%   </td><td class="markdownTableBodyNone">40%   </td><td class="markdownTableBodyNone">Target tests needed    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><b>Overall</b>   </td><td class="markdownTableBodyNone"><b>79.3%</b>   </td><td class="markdownTableBodyNone"><b>77.6%</b>   </td><td class="markdownTableBodyNone">In progress   </td></tr>
+<td class="markdownTableBodyNone"><b>Overall (filtered host report)</b>   </td><td class="markdownTableBodyNone"><b>91.1%</b>   </td><td class="markdownTableBodyNone"><b>89.5%</b>   </td><td class="markdownTableBodyNone">Regenerate with <code>tests/make coverage-summary</code>   </td></tr>
 </table>
-<p><b>Adjusted (excluding deactivated):</b> ~100%</p>
+<p><b>Adjusted (excluding justified deactivated code):</b> Documented in <code><a class="el" href="deactivated__code_8md.html">deactivated_code.md</a></code> and refreshed with each baseline.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md398"></a>
+<h1><a class="anchor" id="autotoc_md446"></a>
 6. Static Analysis</h1>
-<h2><a class="anchor" id="autotoc_md399"></a>
+<h2><a class="anchor" id="autotoc_md447"></a>
 6.1 Tools and Configuration</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -432,7 +463,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>Coverity</b>   </td><td class="markdownTableBodyNone">Deep analysis   </td><td class="markdownTableBodyNone">Planned (CI integration)   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md400"></a>
+<h2><a class="anchor" id="autotoc_md448"></a>
 6.2 MISRA Compliance</h2>
 <p><b>Target:</b> MISRA C:2012 (DAL C subset)</p>
 <table class="markdownTable">
@@ -451,7 +482,7 @@ Revision History</h1>
 <li>Review and approve deviation</li>
 <li>Track in configuration management</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md401"></a>
+<h2><a class="anchor" id="autotoc_md449"></a>
 6.3 Complexity Metrics</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -466,9 +497,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Parameters   </td><td class="markdownTableBodyNone">≤6   </td><td class="markdownTableBodyNone">Consider struct   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md403"></a>
+<h1><a class="anchor" id="autotoc_md451"></a>
 7. AI Verification</h1>
-<h2><a class="anchor" id="autotoc_md404"></a>
+<h2><a class="anchor" id="autotoc_md452"></a>
 7.1 AI-Specific Verification Challenges</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -484,7 +515,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Timing variability   </td><td class="markdownTableBodyNone">WCET analysis per layer   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md405"></a>
+<h2><a class="anchor" id="autotoc_md453"></a>
 7.2 AI Verification Methods</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                 AI Verification Framework                    │</div>
@@ -509,7 +540,7 @@ Revision History</h1>
 <div class="line">│     └── Overflow/underflow tests                            │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md406"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md454"></a>
 7.3 AI Test Cases</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -525,7 +556,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Memory bounds   </td><td class="markdownTableBodyNone">Allocation verification   </td><td class="markdownTableBodyNone">All models   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md407"></a>
+<h2><a class="anchor" id="autotoc_md455"></a>
 7.4 AI Certification Artifacts</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -540,9 +571,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">AI Runtime Coverage Report   </td><td class="markdownTableBodyNone">Code coverage for AI subsystem   </td><td class="markdownTableBodyNone">Planned   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md409"></a>
+<h1><a class="anchor" id="autotoc_md457"></a>
 8. Test Procedures</h1>
-<h2><a class="anchor" id="autotoc_md410"></a>
+<h2><a class="anchor" id="autotoc_md458"></a>
 8.1 Unit Test Execution</h2>
 <div class="fragment"><div class="line"># Host-based unit tests</div>
 <div class="line">cd tests</div>
@@ -553,7 +584,7 @@ Revision History</h1>
 <div class="line"># Expected output:</div>
 <div class="line"># 76 Tests 0 Failures 0 Ignored</div>
 <div class="line"># Coverage: 79.3% lines, 77.6% functions</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md411"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md459"></a>
 8.2 Integration Test Execution</h2>
 <div class="fragment"><div class="line"># Target-based tests (requires hardware)</div>
 <div class="line">cd tests/integration</div>
@@ -563,7 +594,7 @@ Revision History</h1>
 <div class="line"> </div>
 <div class="line"># Or via debug probe:</div>
 <div class="line">arm-none-eabi-gdb -x test_script.gdb</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md412"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md460"></a>
 8.3 Coverage Collection</h2>
 <div class="fragment"><div class="line"># Collect and report coverage</div>
 <div class="line">cd tests</div>
@@ -576,9 +607,9 @@ Revision History</h1>
 <div class="line">    exit 1</div>
 <div class="line">fi</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md414"></a>
+<h1><a class="anchor" id="autotoc_md462"></a>
 9. Verification Records</h1>
-<h2><a class="anchor" id="autotoc_md415"></a>
+<h2><a class="anchor" id="autotoc_md463"></a>
 9.1 Test Results Format</h2>
 <div class="fragment"><div class="line">Test Run: ICARUS-TR-2025-01-26-001</div>
 <div class="line">Date: 2025-01-26</div>
@@ -597,7 +628,7 @@ Revision History</h1>
 <div class="line">  </div>
 <div class="line">Deactivated Code: 11 functions (see VER-002)</div>
 <div class="line">Adjusted Coverage: ~100%</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md416"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md464"></a>
 9.2 Verification Matrix</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -611,7 +642,7 @@ Revision History</h1>
 </table>
 <p>See <code>ICARUS-VER-003 Test Traceability Matrix</code> for complete matrix.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md418"></a>
+<h1><a class="anchor" id="autotoc_md466"></a>
 10. Verification Schedule</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -641,7 +672,7 @@ Revision History</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>
