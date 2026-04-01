@@ -1,7 +1,7 @@
 /**
  * @file    config.h
  * @brief   ICARUS OS Configuration Header
- * @version 0.1.0
+ * @version 0.2.0
  *
  * @details Central configuration file for ICARUS Real-Time Operating System.
  *          All tunable parameters and feature flags are defined here.
@@ -12,9 +12,9 @@
  * @see     docs/do178c/requirements/SRS.md for Software Requirements Specification
  *
  * @author  Souham Biswas
- * @date    2025
+ * @date    2025-2026
  *
- * @copyright Copyright 2025 Souham Biswas
+ * @copyright Copyright 2025-2026 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
  *            Licensed under the Apache License, Version 2.0
  */
@@ -31,9 +31,9 @@ extern "C" {
  * ========================================================================= */
 
 #define ICARUS_VERSION_MAJOR    0
-#define ICARUS_VERSION_MINOR    1
+#define ICARUS_VERSION_MINOR    2
 #define ICARUS_VERSION_PATCH    0
-#define ICARUS_VERSION_STRING   "0.1.0"
+#define ICARUS_VERSION_STRING   "0.2.0"
 
 /* ============================================================================
  * KERNEL CONFIGURATION

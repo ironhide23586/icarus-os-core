@@ -75,8 +75,8 @@ void LCD_Test(void)
 //	extern unsigned char WeActStudiologo_160_80[];
 //	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo_160_80);
 
-	extern unsigned char hawklogic_logo[];
-	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,hawklogic_logo);
+	extern unsigned char icarus_logo[];
+	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,icarus_logo);
 
 	sprintf((char *)&text,"Systems");
 	LCD_ShowString(82, 20, 160, 16, 16, text);
@@ -110,7 +110,7 @@ void LCD_Test(void)
 
 	sprintf((char *)&text, "ICARUS Reaper Mark I");
 	LCD_ShowString(4, 4, ST7735Ctx.Width, 16, 16, text);
-	sprintf((char *)&text, "HawkLogic Systems");
+	sprintf((char *)&text, "ICARUS Project");
 //	sprintf((char *)&text, "STM32H7xx 0x%X", HAL_GetDEVID());
 	LCD_ShowString(4, 22, ST7735Ctx.Width, 16, 16, text);
 //	sprintf((char *)&text, "LCD ID:0x%X", st7735_id);

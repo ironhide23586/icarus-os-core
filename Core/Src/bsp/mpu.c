@@ -30,7 +30,7 @@
  * @author  Souham Biswas
  * @date    2025
  *
- * @copyright Copyright 2025 Souham Biswas
+ * @copyright Copyright 2025-2026 Souham Biswas
  *            https://github.com/ironhide23586/icarus-os-core
  *            Licensed under the Apache License, Version 2.0
  */

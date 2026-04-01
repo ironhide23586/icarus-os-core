@@ -429,7 +429,7 @@ ICARUS is designed to be the first open-source RTOS with:
 - **Up to 128 Tasks**: Configurable task pool with 2KB stack and 2KB data region per task
 - **64 Semaphores & 64 Pipes**: Rich IPC primitives for complex applications
 
-#### Memory Protection (v0.1.0)
+#### Memory Protection (v0.2.0)
 - **Hardware-Enforced Isolation**: ARM Cortex-M7 MPU with 8-region configuration
 - **DTCM Protection**: Kernel data isolated in privileged-only memory (Region 5, 128KB)
 - **ITCM Protection**: Kernel code marked read-only to prevent modification attacks (Region 0, 64KB)
@@ -906,7 +906,7 @@ cd build && make cppcheck
 
 ## Project Status & Roadmap
 
-### Current Status (v0.1.0)
+### Current Status (v0.2.0)
 
 ICARUS OS is in active development with core functionality complete and undergoing verification.
 
