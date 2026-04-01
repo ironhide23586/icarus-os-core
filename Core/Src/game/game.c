@@ -32,9 +32,12 @@
 
 /* ============================================================================
  * SHARED GAME STATE (static = .bss = RAM_D1 by default)
+ * Place in .bss.0_game_state to ensure it comes BEFORE stack_pool in memory
+ * This protects it from stack overflow (stacks grow downward)
+ * Volatile to prevent compiler optimization issues with unprivileged access
  * ========================================================================= */
 
-static game_state_t g_game_state;
+static volatile game_state_t g_game_state __attribute__((section(".bss.0_game_state")));
 
 /* ============================================================================
  * TASK 1: INPUT HANDLER (10ms period)
@@ -47,18 +50,32 @@ static void game_input_task(void)
     bool button_prev = false;
     uint32_t last_debounce = 0;
     
-    printf("[INPUT] Task started\r\n");
+    // printf("[INPUT] Task started\r\n");
 
-    semaphore_consume(GAME_SEM_STATE);
-    printf("[INPUT] Initial state: y=%.2f vel=%.2f grnd=%d state=%d\r\n",
-           g_game_state.player.y, g_game_state.player.velocity,
-           g_game_state.player.is_grounded, g_game_state.state);
-    game_state_init(&g_game_state);
-    printf("[INPUT] Reset state: y=%.2f vel=%.2f grnd=%d state=%d\r\n",
-           g_game_state.player.y, g_game_state.player.velocity,
-           g_game_state.player.is_grounded, g_game_state.state);
-    while(1);
-    semaphore_feed(GAME_SEM_STATE);
+    /* Test game_state_init from unprivileged task */
+    // semaphore_consume(GAME_SEM_STATE);
+    
+    // /* Read raw memory to verify ALL initial values */
+    // volatile uint32_t *raw_y = (volatile uint32_t *)&g_game_state.player.y;
+    // volatile uint32_t *raw_vel = (volatile uint32_t *)&g_game_state.player.velocity;
+    // volatile uint32_t *raw_speed = (volatile uint32_t *)&g_game_state.score.speed_multiplier;
+    
+    // printf("[INPUT] Raw memory verification:\r\n");
+    // printf("  player.y at 0x%08lx: 0x%08lx (expect 0x41880000=17.0)\r\n", 
+    //        (unsigned long)raw_y, *raw_y);
+    // printf("  player.velocity at 0x%08lx: 0x%08lx (expect 0x00000000=0.0)\r\n", 
+    //        (unsigned long)raw_vel, *raw_vel);
+    // printf("  player.is_grounded: %d (expect 1)\r\n", g_game_state.player.is_grounded);
+    // printf("  player.is_jumping: %d (expect 0)\r\n", g_game_state.player.is_jumping);
+    // printf("  state: %d (expect 0=INIT)\r\n", g_game_state.state);
+    // printf("  score.speed_multiplier at 0x%08lx: 0x%08lx (expect 0x3f800000=1.0)\r\n", 
+    //        (unsigned long)raw_speed, *raw_speed);
+    // printf("  obstacle_spawn_interval: %lu (expect 2000)\r\n", g_game_state.obstacle_spawn_interval);
+    // printf("  frame_count: %lu (expect 0)\r\n", g_game_state.frame_count);
+    
+    // while(1);
+    // semaphore_feed(GAME_SEM_STATE);
+
     while (1) {
         uint32_t current_tick = os_get_tick_count();
         
@@ -98,23 +115,33 @@ static void game_physics_task(void)
 {
     uint8_t jump_cmd;
     
-    printf("[PHYSICS] Task started\r\n");
-    printf("[PHYSICS] g_game_state addr=0x%08lx size=%u\r\n",
-           (unsigned long)&g_game_state, (unsigned)sizeof(g_game_state));
-    
-    /* Print initial game state */
     // semaphore_consume(GAME_SEM_STATE);
-    // printf("[PHYSICS] Initial state: y=%.2f vel=%.2f grnd=%d state=%d\r\n",
-    //        g_game_state.player.y, g_game_state.player.velocity,
-    //        g_game_state.player.is_grounded, g_game_state.state);
-    // printf("[PHYSICS] player offset=%u\r\n",
-    //        (unsigned)((char*)&g_game_state.player - (char*)&g_game_state));
+    
+    // /* Read raw memory to verify ALL initial values */
+    // volatile uint32_t *raw_y = (volatile uint32_t *)&g_game_state.player.y;
+    // volatile uint32_t *raw_vel = (volatile uint32_t *)&g_game_state.player.velocity;
+    // volatile uint32_t *raw_speed = (volatile uint32_t *)&g_game_state.score.speed_multiplier;
+    
+    // printf("[INPUT] Raw memory verification:\r\n");
+    // printf("  player.y at 0x%08lx: 0x%08lx (expect 0x41880000=17.0)\r\n", 
+    //        (unsigned long)raw_y, *raw_y);
+    // printf("  player.velocity at 0x%08lx: 0x%08lx (expect 0x00000000=0.0)\r\n", 
+    //        (unsigned long)raw_vel, *raw_vel);
+    // printf("  player.is_grounded: %d (expect 1)\r\n", g_game_state.player.is_grounded);
+    // printf("  player.is_jumping: %d (expect 0)\r\n", g_game_state.player.is_jumping);
+    // printf("  state: %d (expect 0=INIT)\r\n", g_game_state.state);
+    // printf("  score.speed_multiplier at 0x%08lx: 0x%08lx (expect 0x3f800000=1.0)\r\n", 
+    //        (unsigned long)raw_speed, *raw_speed);
+    // printf("  obstacle_spawn_interval: %lu (expect 2000)\r\n", g_game_state.obstacle_spawn_interval);
+    // printf("  frame_count: %lu (expect 0)\r\n", g_game_state.frame_count);
+    
     // while(1);
     // semaphore_feed(GAME_SEM_STATE);
     
     while (1) {
         /* Check for jump commands from input task */
         // semaphore_consume(GAME_SEM_STATE);
+    
         if (pipe_dequeue(GAME_PIPE_JUMP_CMD, &jump_cmd, 1)) {
             semaphore_consume(GAME_SEM_STATE);
             
@@ -125,7 +152,7 @@ static void game_physics_task(void)
                     g_game_state.player.is_jumping = true;
                     g_game_state.player.is_grounded = false;
                     
-                    // /* Drain any additional jump commands in the pipe to prevent queuing */
+                    /* Drain any additional jump commands in the pipe to prevent queuing */
                     // uint8_t dummy;
                     // while (pipe_dequeue(GAME_PIPE_JUMP_CMD, &dummy, 1)) {
                     //     /* Discard */
@@ -148,43 +175,42 @@ static void game_physics_task(void)
         }
 
         /* Update physics */
-        semaphore_consume(GAME_SEM_STATE);
+        // semaphore_consume(GAME_SEM_STATE);
         
-        if (g_game_state.state == GAME_STATE_RUNNING) {
-            if (!g_game_state.player.is_grounded) {
-                /* Print BEFORE update */
-                printf("[BEFORE] y=%.2f vel=%.2f grnd=%d\r\n", 
-                       g_game_state.player.y, g_game_state.player.velocity, 
-                       g_game_state.player.is_grounded);
-                
-                /* Apply gravity */
-                g_game_state.player.velocity += GAME_GRAVITY;
-                
-                /* Update position */
-                g_game_state.player.y += g_game_state.player.velocity;
-                
-                /* Print AFTER update */
-                printf("[AFTER]  y=%.2f vel=%.2f grnd=%d\r\n", 
-                       g_game_state.player.y, g_game_state.player.velocity, 
-                       g_game_state.player.is_grounded);
-                
-                /* HALT for debugging - REMOVED */
-                // while(1);
-            }
-            
-            /* Ground collision */
-            if (g_game_state.player.y >= GAME_PLAYER_GROUND_Y) {
-                g_game_state.player.y = GAME_PLAYER_GROUND_Y;
-                g_game_state.player.velocity = 0.0f;
-                g_game_state.player.is_grounded = true;
-                g_game_state.player.is_jumping = false;
-            } else {
-                /* In air */
-                g_game_state.player.is_grounded = false;
-            }
-        }
+        // if (g_game_state.state == GAME_STATE_RUNNING) {
+        // if (!g_game_state.player.is_grounded) {
+        /* Print BEFORE update - use raw memory since %.2f is broken */
+        // volatile uint32_t *raw_y = (volatile uint32_t *)&g_game_state.player.y;
+        // volatile uint32_t *raw_vel = (volatile uint32_t *)&g_game_state.player.velocity;
+        // printf("[BEFORE] y=0x%08lx vel=0x%08lx grnd=%d\r\n", 
+        //        *raw_y, *raw_vel, g_game_state.player.is_grounded);
         
-        semaphore_feed(GAME_SEM_STATE);
+        /* Apply gravity */
+        // g_game_state.player.velocity += GAME_GRAVITY;
+        
+        /* Update position */
+        // g_game_state.player.y += g_game_state.player.velocity;
+        
+        // /* Print AFTER update */
+        // printf("[AFTER]  y=0x%08lx vel=0x%08lx grnd=%d\r\n", 
+        //        *raw_y, *raw_vel, g_game_state.player.is_grounded);
+        
+        // while(1);  /* Halt to see output */
+        // }
+        
+        // /* Ground collision */
+        // if (g_game_state.player.y >= GAME_PLAYER_GROUND_Y) {
+        //     g_game_state.player.y = GAME_PLAYER_GROUND_Y;
+        //     g_game_state.player.velocity = 0.0f;
+        //     g_game_state.player.is_grounded = true;
+        //     g_game_state.player.is_jumping = false;
+        // } else {
+        //     /* In air */
+        //     g_game_state.player.is_grounded = false;
+        // }
+        // // }
+        
+        // semaphore_feed(GAME_SEM_STATE);
         
         task_active_sleep(20);  /* 20ms period - 50 FPS physics */
     }
@@ -196,7 +222,7 @@ static void game_physics_task(void)
 
 static void game_logic_task(void)
 {
-    printf("[LOGIC] Task started\r\n");
+    // printf("[LOGIC] Task started\r\n");
     
     while (1) {
         semaphore_consume(GAME_SEM_STATE);
@@ -226,7 +252,7 @@ static void game_logic_task(void)
 
 static void game_render_task(void)
 {
-    printf("[RENDER] Task started\r\n");
+    // printf("[RENDER] Task started\r\n");
     
     /* Hide cursor */
     printf("\033[?25l");
@@ -236,7 +262,6 @@ static void game_render_task(void)
     
     while (1) {
         semaphore_consume(GAME_SEM_STATE);
-        
         switch (g_game_state.state) {
             case GAME_STATE_RUNNING:
                 game_render_frame(&g_game_state);

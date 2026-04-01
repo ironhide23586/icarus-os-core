@@ -8,7 +8,7 @@
 #include "icarus/icarus.h"
 #include <stdlib.h>
 
-void game_obstacles_update(game_state_t *game)
+void game_obstacles_update(volatile game_state_t *game)
 {
     uint32_t current_tick = os_get_tick_count();
     

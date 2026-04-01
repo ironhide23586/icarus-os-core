@@ -7,7 +7,7 @@
 #include "game/game_internal.h"
 #include "bsp/rtc.h"
 
-void game_collision_check(game_state_t *game)
+void game_collision_check(volatile game_state_t *game)
 {
     int16_t player_bottom = (int16_t)game->player.y + GAME_PLAYER_HEIGHT;
     

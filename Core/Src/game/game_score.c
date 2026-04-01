@@ -7,7 +7,7 @@
 #include "game/game_internal.h"
 #include "icarus/icarus.h"
 
-void game_score_update(game_state_t *game)
+void game_score_update(volatile game_state_t *game)
 {
     uint32_t current_tick = os_get_tick_count();
     

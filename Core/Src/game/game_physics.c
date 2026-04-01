@@ -8,7 +8,7 @@
 #include "game/game_internal.h"
 
 /* Physics update is now handled by the physics task in game.c */
-void game_physics_update(game_state_t *game)
+void game_physics_update(volatile game_state_t *game)
 {
     /* This function is no longer used in multi-task version */
     /* Physics is handled by game_physics_task() in game.c */

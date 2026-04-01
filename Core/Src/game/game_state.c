@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 
-static void clear_player(player_t *player)
+static void clear_player(volatile player_t *player)
 {
     player->y = 0.0f;
     player->velocity = 0.0f;
@@ -17,7 +17,7 @@ static void clear_player(player_t *player)
     player->is_jumping = false;
 }
 
-static void clear_obstacles(obstacle_t *obstacles, uint8_t count)
+static void clear_obstacles(volatile obstacle_t *obstacles, uint8_t count)
 {
     for (uint8_t i = 0; i < count; i++) {
         obstacles[i].x = 0;
@@ -28,7 +28,7 @@ static void clear_obstacles(obstacle_t *obstacles, uint8_t count)
     }
 }
 
-static void clear_score(score_t *score)
+static void clear_score(volatile score_t *score)
 {
     score->current_score = 0;
     score->high_score = 0;
@@ -38,14 +38,14 @@ static void clear_score(score_t *score)
     score->speed_multiplier = 0.0f;
 }
 
-static void clear_input(input_t *input)
+static void clear_input(volatile input_t *input)
 {
     input->button_pressed = false;
     input->button_prev = false;
     input->last_debounce = 0;
 }
 
-void game_state_init(game_state_t *game)
+void game_state_init(volatile game_state_t *game)
 {
     /* Clear all fields explicitly instead of memset */
     game->state = GAME_STATE_INIT;
@@ -69,9 +69,22 @@ void game_state_init(game_state_t *game)
     if (game->score.high_score > 999999) {
         game->score.high_score = 0;
     }
+    
+    /* Data Synchronization Barrier - ensures all writes complete before returning
+     * Critical for unprivileged tasks writing to cacheable/bufferable RAM_D1
+     * Forces write buffer to flush so subsequent reads see updated values */
+    __DSB();
+    __ISB();  /* Instruction barrier to ensure pipeline is flushed */
 
-    // printf("[STATE_INIT] Setting y=%.2f vel=%.2f grnd=%d state=%d\r\n",
-    //        game->player.y, game->player.velocity,
-    //        game->player.is_grounded, game->state);
-    // while(1);
+    // if (print_state) {
+    //     /* Force a read-back to verify writes took effect */
+    //     volatile float y_readback = game->player.y;
+    //     volatile float vel_readback = game->player.velocity;
+    //     volatile bool grnd_readback = game->player.is_grounded;
+    //     volatile game_state_e state_readback = game->state;
+        
+    //     printf("[STATE_INIT] Setting y=%.2f vel=%.2f grnd=%d state=%d\r\n",
+    //         y_readback, vel_readback, grnd_readback, state_readback);
+    //     while(1);
+    // }
 }
