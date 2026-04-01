@@ -34,6 +34,7 @@ LINKER_SCRIPT = $(PROJECT_ROOT)/STM32H750VBTX_FLASH.ld
 CORE_SRC = $(PROJECT_ROOT)/Core/Src
 CORE_BSP_SRC = $(PROJECT_ROOT)/Core/Src/bsp
 CORE_ICARUS_SRC = $(PROJECT_ROOT)/Core/Src/icarus
+CORE_GAME_SRC = $(PROJECT_ROOT)/Core/Src/game
 CORE_STARTUP = $(PROJECT_ROOT)/Core/Startup
 DRIVERS_HAL = $(PROJECT_ROOT)/Drivers/STM32H7xx_HAL_Driver/Src
 DRIVERS_BSP = $(PROJECT_ROOT)/Drivers/BSP/ST7735
@@ -61,6 +62,7 @@ C_SOURCES = \
 	$(wildcard $(CORE_SRC)/*.c) \
 	$(wildcard $(CORE_BSP_SRC)/*.c) \
 	$(wildcard $(CORE_ICARUS_SRC)/*.c) \
+	$(wildcard $(CORE_GAME_SRC)/*.c) \
 	$(wildcard $(DRIVERS_HAL)/*.c) \
 	$(wildcard $(DRIVERS_BSP)/*.c) \
 	$(wildcard $(USB_DEVICE_APP)/*.c) \
@@ -222,7 +224,8 @@ LDFLAGS = $(MCU) \
 	-Wl,--start-group \
 	-lc \
 	-lm \
-	-Wl,--end-group
+	-Wl,--end-group \
+	-u _printf_float
 
 # Output files
 ELF_FILE = $(BUILD_DIR)/$(PROJECT).elf
@@ -281,6 +284,7 @@ all: $(ELF_FILE) $(HEX_FILE) $(BIN_FILE) size cppcheck cppcheck-html test-report
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)/Core/Src/bsp
 	@mkdir -p $(OBJ_DIR)/Core/Src/icarus
+	@mkdir -p $(OBJ_DIR)/Core/Src/game
 	@mkdir -p $(OBJ_DIR)/Core/Startup
 	@mkdir -p $(OBJ_DIR)/Drivers/STM32H7xx_HAL_Driver/Src
 	@mkdir -p $(OBJ_DIR)/Drivers/BSP/ST7735
@@ -292,6 +296,7 @@ $(OBJ_DIR):
 $(DEP_DIR):
 	@mkdir -p $(DEP_DIR)/Core/Src/bsp
 	@mkdir -p $(DEP_DIR)/Core/Src/icarus
+	@mkdir -p $(DEP_DIR)/Core/Src/game
 	@mkdir -p $(DEP_DIR)/Core/Startup
 	@mkdir -p $(DEP_DIR)/Drivers/STM32H7xx_HAL_Driver/Src
 	@mkdir -p $(DEP_DIR)/Drivers/BSP/ST7735

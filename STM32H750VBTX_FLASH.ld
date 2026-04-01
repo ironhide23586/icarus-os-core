@@ -163,6 +163,7 @@ SECTIONS
     _sbss = .;         /* define a global symbol at bss start */
     __bss_start__ = _sbss;
     *(.bss)
+    *(.bss.0_game_state)  /* Game state first - protected from stack overflow */
     *(.bss*)
     *(COMMON)
 

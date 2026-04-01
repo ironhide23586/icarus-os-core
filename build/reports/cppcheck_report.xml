@@ -75,6 +75,9 @@
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lX in format string (no. 2) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/demo_tasks.c">
             <location file="../Core/Src/demo_tasks.c" line="928" column="13"/>
         </error>
+        <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/interactive_tasks.c">
+            <location file="../Core/Src/interactive_tasks.c" line="57" column="17"/>
+        </error>
         <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="0" column="0"/>
         </error>
