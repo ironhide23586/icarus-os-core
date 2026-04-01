@@ -42,13 +42,32 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 
 ---
 
-## Terminal GUI
+## Terminal GUI — ICARUS Runner (Default)
 
-ICARUS OS includes a real-time terminal-based GUI that visualizes kernel activity, IPC operations, and stress test metrics. The display uses ANSI escape codes for cursor positioning and colors.
+The default firmware boots straight into **ICARUS Runner**, a Chrome-dino-style endless runner that demonstrates multitasking, IPC, and real-time rendering on the RTOS.
 
-**Default firmware (`Core/Src/main.c`):** `ENABLE_GAME` is on; `ENABLE_DEMO_TASKS`, `ENABLE_STRESS_TEST`, and `ENABLE_INTERACTIVE` are off. You get the full multi-section dashboard (demo bars, stress stats, and so on) only after setting those macros to `1` and rebuilding.
+Connect via USB CDC at 115200 baud (see [Connecting to the Terminal](#connecting-to-the-terminal) below) and you'll see an 80×24 ANSI terminal game:
 
-### GUI Layout Overview
+- **4 concurrent RTOS tasks**: Input (10 ms), Physics (20 ms), Logic (50 ms), Render (50 ms)
+- **IPC in action**: Semaphore-protected shared game state, pipe-based command passing between tasks
+- **Dynamic difficulty**: Speed ramps from 1.0× to 4.0× as your score grows
+- **High score persistence**: Stored in an RTC backup register — survives power cycles
+- **Button control**: K1 (PC13) to jump, 50 ms debounce
+
+### Enabling the IPC Dashboard / Stress Tests
+
+The game is just one of four demo modes selected by compile-time flags near the top of `Core/Src/main.c`:
+
+```c
+#define ENABLE_GAME         1   // ← on by default
+#define ENABLE_DEMO_TASKS   0   // 12 producer/consumer IPC tasks
+#define ENABLE_STRESS_TEST  0   // 19-task high-contention suite
+#define ENABLE_INTERACTIVE  0   // Button-controlled LED demo
+```
+
+To see the full IPC dashboard with progress bars, semaphore gauges, pipe history panels, and stress-test statistics, set the flags you want to `1`, rebuild (`bash build/rebuild.sh`), and reflash. Multiple modes can be enabled at once.
+
+### IPC Dashboard Layout (when ENABLE_DEMO_TASKS / ENABLE_STRESS_TEST = 1)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -105,7 +124,7 @@ ICARUS OS includes a real-time terminal-based GUI that visualizes kernel activit
 └──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### GUI Components Explained
+### Dashboard Components Explained
 
 #### 1. Header Section
 The ICARUS ASCII art logo with platform information (ARMv7E-M, STM32H750).
@@ -186,7 +205,7 @@ Format: `>Pn:` = Producer n sent, `<Cn:` = Consumer n received
 | `[PASS]` | Green if all zeros - no errors detected |
 | `[FAIL]` | Red if any errors - bugs detected |
 
-### Color Coding
+### Dashboard Color Coding
 
 | Color | Meaning |
 |-------|---------|
@@ -354,24 +373,9 @@ bash icarus_terminal.sh
 
 ### What You'll See
 
-With the stock `main.c` flags above, expect the **ICARUS Runner** game over USB serial—not the full dashboard. When demo/stress features are enabled at compile time, you will see the terminal GUI with items such as: ASCII header, optional heartbeat banner, demo task bars, semaphore/pipe views, message history, and stress statistics.
+Out of the box you get the **ICARUS Runner** game — an 80×24 ANSI endless-runner rendered in real time by 4 cooperating RTOS tasks. Press **K1** to jump.
 
-**Example output:**
-```
-┌──────────────────────────────────────────────────────────────┐
-│   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │
-│   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │
-│   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │
-│   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │
-│   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │
-│   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │
-│   Preemptive Kernel • ARMv7E-M • STM32H750                   │
-└──────────────────────────────────────────────────────────────┘
-
-[>ICARUS_HEARTBEAT<] ★★★★★★★★★★★★★★★★★★★★ [>ICARUS_HEARTBEAT<]
-[producer] ████████████────────  160/200 ticks  →[42]
-[consumer] ██████████──────────  100/190 ticks  ←[42]
-```
+To switch to the IPC dashboard / stress-test view, flip the compile-time flags described in the [Terminal GUI](#terminal-gui--icarus-runner-default) section, rebuild, and reflash.
 
 ---
 
