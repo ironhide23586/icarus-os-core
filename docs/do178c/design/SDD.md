@@ -98,12 +98,12 @@ This document covers:
 
 | Component | Status | Source Location | Description |
 |-----------|--------|-----------------|-------------|
-| Scheduler | ✅ Implemented | `kernel/task.c` | Preemptive round-robin |
-| Task Manager | ✅ Implemented | `kernel/task.c` | Task lifecycle management |
-| Context Switch | ✅ Implemented | `kernel/context_switch.s` | ARM assembly context save/restore |
-| Semaphores | ✅ Implemented | `kernel/task.c` | Bounded counting semaphores |
-| IPC | 🔲 Planned | `kernel/ipc.c` | Message queues, mutexes |
-| AI Runtime | 🔲 Planned | `kernel/ai_runtime.c` | Deterministic inference |
+| Scheduler | ✅ Implemented | `Core/Src/icarus/scheduler.c` | Preemptive round-robin |
+| Task Manager | ✅ Implemented | `Core/Src/icarus/task.c` | Task lifecycle management |
+| Context Switch | ✅ Implemented | `Core/Src/icarus/context_switch.s` | ARM assembly context save/restore |
+| Semaphores | ✅ Implemented | `Core/Src/icarus/semaphore.c` | Bounded counting semaphores |
+| Message pipes (IPC) | ✅ Implemented | `Core/Src/icarus/pipe.c` | FIFO byte-stream queues (see `pipe.h`) |
+| AI Runtime | 🔲 Planned | TBD | Deterministic inference |
 | BSP - GPIO | ✅ Implemented | `bsp/gpio.c` | Digital I/O |
 | BSP - I2C | ✅ Implemented | `bsp/i2c.c` | I2C communication |
 | BSP - SPI | ✅ Implemented | `bsp/spi.c` | SPI communication |
@@ -1261,13 +1261,13 @@ This matrix traces each requirement to its design element(s).
 
 | Design Element | Source File | Function/Symbol |
 |----------------|-------------|-----------------|
-| Scheduler | `kernel/task.c` | SysTick_Handler, schedule_next_task |
-| Task Manager | `kernel/task.c` | os_create_task, os_kill_process |
-| Context Switch | `kernel/context_switch.s` | context_switch, start_cold_task |
-| Critical Section | `kernel/task.c` | enter_critical, exit_critical |
-| Semaphores | `kernel/task.c` | semaphore_init, semaphore_feed, semaphore_consume |
-| Message Pipes | `kernel/task.c` | pipe_init, pipe_enqueue, pipe_dequeue |
-| Print Buffer | `kernel/task.c` | enqueue_print_buffer, dequeue_print_buffer |
+| Scheduler | `icarus/scheduler.c` | SysTick-driven scheduling, `schedule_next_task` |
+| Task Manager | `icarus/task.c` | os_create_task, os_kill_process |
+| Context Switch | `icarus/context_switch.s` | context_switch, start_cold_task |
+| Critical Section | `icarus/kernel.c` | `__enter_critical` / `__exit_critical` (via SVC) |
+| Semaphores | `icarus/semaphore.c` | semaphore_init, semaphore_feed, semaphore_consume |
+| Message Pipes | `icarus/pipe.c` | pipe_init, pipe_enqueue, pipe_dequeue |
+| Print Buffer | `icarus/task.c` | enqueue_print_buffer, dequeue_print_buffer |
 | BSP Init | `bsp/retarget_hal.c` | hal_init |
 | GPIO | `bsp/gpio.c` | LED_On, LED_Off |
 | Display | `bsp/display.c` | display_init, display_render_*, display_render_vbar |

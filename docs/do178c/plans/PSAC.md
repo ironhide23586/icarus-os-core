@@ -156,16 +156,16 @@ The software is organized into the following components:
 
 | Component | Location | Lines of Code | Description |
 |-----------|----------|---------------|-------------|
-| Kernel | `Core/Src/kernel/` | ~400 | Task scheduler and management |
+| Kernel | `Core/Src/icarus/` | ~400 | Scheduler, IPC, SVC, context switch |
 | BSP | `Core/Src/bsp/` | ~300 | Hardware abstraction |
-| Context Switch | `Core/Src/kernel/context_switch.s` | ~100 | ARM assembly context switch |
+| Context Switch | `Core/Src/icarus/context_switch.s` | ~100 | ARM assembly context switch |
 | Startup | `Core/Startup/` | ~200 | Processor initialization |
 
 ### 3.3 Software Partitioning
 
-The software does not implement partitioning. All tasks execute in the same memory space with shared access to kernel resources.
+Application tasks share a single load image but **task data is isolated** using the Cortex-M7 MPU (dedicated per-task RAM regions and privileged-only DTCM for kernel state). Kernel code and data are additionally protected as described in the SDD and SRS memory-protection requirements.
 
-**Rationale:** The target application does not require memory protection between tasks. All tasks are developed and verified together as a single software load.
+**Rationale:** The platform enforces spatial and privilege separation suitable for the certified use case; tasks are still verified as one software load with shared flash and HAL services.
 
 ### 3.4 Deactivated Code
 
@@ -219,7 +219,7 @@ Per DO-178C Table A-7, DAL C requires:
 | Decision Coverage | No | - |
 | MC/DC | No | - |
 
-**Current Status:** 79.3% statement coverage achieved via host-based testing. Remaining coverage requires target integration testing for infinite-loop tasks and assembly code.
+**Current Status:** ~91% statement coverage (host-based, kernel+BSP sources). Remaining gaps are fault handlers, infinite-loop tasks, and assembly code requiring target integration testing. See `verification/coverage_analysis.md`.
 
 ### 4.4 Software Tool Qualification
 

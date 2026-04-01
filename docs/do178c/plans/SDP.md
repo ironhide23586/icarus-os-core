@@ -192,24 +192,29 @@ static uint8_t s_task_count;
 ```
 Core/
 ├── Inc/
-│   ├── kernel/
+│   ├── icarus/             # RTOS public and internal headers
+│   │   ├── icarus.h        # Umbrella include
+│   │   ├── kernel.h        # Kernel state, os_init/os_start
 │   │   ├── task.h          # Task management API
 │   │   ├── scheduler.h     # Scheduler internals
-│   │   ├── ipc.h           # Inter-process communication
-│   │   └── ai_runtime.h    # AI inference API
-│   └── bsp/
-│       ├── platform.h      # Platform abstraction
-│       └── <driver>.h      # Hardware drivers
+│   │   ├── semaphore.h
+│   │   ├── pipe.h
+│   │   ├── svc.h
+│   │   ├── config.h
+│   │   └── types.h
+│   └── bsp/                # Board support headers
 ├── Src/
-│   ├── kernel/
-│   │   ├── task.c
+│   ├── icarus/
+│   │   ├── kernel.c
 │   │   ├── scheduler.c
-│   │   ├── ipc.c
-│   │   └── ai_runtime.c
+│   │   ├── task.c
+│   │   ├── semaphore.c
+│   │   ├── pipe.c
+│   │   ├── svc.c
+│   │   └── context_switch.s
 │   └── bsp/
-│       └── <platform>/     # Platform-specific code
 └── Startup/
-    └── <platform>/         # Platform startup code
+    └── startup_stm32h750vbtx.s   # (example: current target)
 ```
 
 

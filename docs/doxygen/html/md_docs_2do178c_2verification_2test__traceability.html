@@ -100,118 +100,118 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
   <div class="headertitle"><div class="title">Test Traceability Matrix</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md532"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md583"></a></p>
 <p><b>Document ID:</b> ICARUS-VER-003 <br  />
  <b>Version:</b> 0.1 <br  />
- <b>Date:</b> 2025-01-26 <br  />
+ <b>Date:</b> 2026-04-01 <br  />
  <b>Status:</b> Draft <br  />
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
-<h1><a class="anchor" id="autotoc_md533"></a>
+<h1><a class="anchor" id="autotoc_md584"></a>
 1. Purpose</h1>
 <p>This document provides traceability between software requirements, test cases, and source code in accordance with DO-178C objectives A-5 (Software Verification Traceability).</p>
-<h1><a class="anchor" id="autotoc_md534"></a>
+<h1><a class="anchor" id="autotoc_md585"></a>
 2. Traceability Overview</h1>
 <div class="fragment"><div class="line">Requirements (HLR/LLR) → Test Cases → Source Code</div>
 <div class="line">         ↓                    ↓            ↓</div>
 <div class="line">    Verified by          Executes      Implements</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md535"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md586"></a>
 3. Functional Requirements Traceability</h1>
-<h2><a class="anchor" id="autotoc_md536"></a>
+<h2><a class="anchor" id="autotoc_md587"></a>
 3.1 Kernel - Task Management</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-001   </td><td class="markdownTableBodyNone">System shall initialize kernel state   </td><td class="markdownTableBodyNone"><code>test_os_init</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-001   </td><td class="markdownTableBodyNone">System shall initialize kernel state   </td><td class="markdownTableBodyNone"><code>test_os_init</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-002   </td><td class="markdownTableBodyNone">System shall support task registration   </td><td class="markdownTableBodyNone"><code>test_os_register_task</code>, <code>test_os_register_task_multiple</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#afaa47eee07d9632189e536d1ea70a1bf" title="Register a task with automatic stack allocation.">os_register_task()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-002   </td><td class="markdownTableBodyNone">System shall support task registration   </td><td class="markdownTableBodyNone"><code>test_os_register_task</code>, <code>test_os_register_task_multiple</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#afaa47eee07d9632189e536d1ea70a1bf" title="Register a task with automatic stack allocation.">os_register_task()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-003   </td><td class="markdownTableBodyNone">System shall create tasks with stack allocation   </td><td class="markdownTableBodyNone"><code>test_os_create_task_normal</code>, <code>test_os_create_task_long_name</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558" title="Create a task with explicit stack allocation.">os_create_task()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-003   </td><td class="markdownTableBodyNone">System shall create tasks with stack allocation   </td><td class="markdownTableBodyNone"><code>test_os_create_task_normal</code>, <code>test_os_create_task_long_name</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#a041d15fb5184f477a215121b6dd356a9" title="Create a task with explicit stack allocation.">os_create_task()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-004   </td><td class="markdownTableBodyNone">System shall enforce maximum task limit   </td><td class="markdownTableBodyNone"><code>test_os_create_task_max_tasks</code>, <code>test_os_create_task_max_running_tasks</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558" title="Create a task with explicit stack allocation.">os_create_task()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-004   </td><td class="markdownTableBodyNone">System shall enforce maximum task limit   </td><td class="markdownTableBodyNone"><code>test_os_create_task_max_tasks</code>, <code>test_os_create_task_max_running_tasks</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#a041d15fb5184f477a215121b6dd356a9" title="Create a task with explicit stack allocation.">os_create_task()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-005   </td><td class="markdownTableBodyNone">System shall start task execution   </td><td class="markdownTableBodyNone"><code>test_os_start_valid_tasks</code>, <code>test_os_start_no_tasks</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a19c7111cf2121a69331d99dabe3e9df0" title="Start the ICARUS scheduler.">os_start()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-005   </td><td class="markdownTableBodyNone">System shall start task execution   </td><td class="markdownTableBodyNone"><code>test_os_start_valid_tasks</code>, <code>test_os_start_no_tasks</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a19c7111cf2121a69331d99dabe3e9df0" title="Start the ICARUS scheduler.">os_start()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-006   </td><td class="markdownTableBodyNone">System shall support task yielding   </td><td class="markdownTableBodyNone"><code>test_os_yield</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a02d2fa79b4b720c7906a7262740db686" title="Voluntarily yield CPU to scheduler.">os_yield()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-006   </td><td class="markdownTableBodyNone">System shall support task yielding   </td><td class="markdownTableBodyNone"><code>test_os_yield</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a02d2fa79b4b720c7906a7262740db686" title="Voluntarily yield CPU to scheduler.">os_yield()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-007   </td><td class="markdownTableBodyNone">System shall support task exit   </td><td class="markdownTableBodyNone"><code>test_os_exit_task_with_running_count</code>, <code>test_os_exit_task_zero_running_count</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-007   </td><td class="markdownTableBodyNone">System shall support task exit   </td><td class="markdownTableBodyNone"><code>test_os_exit_task_with_running_count</code>, <code>test_os_exit_task_zero_running_count</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-008   </td><td class="markdownTableBodyNone">System shall support task termination   </td><td class="markdownTableBodyNone"><code>test_os_kill_process_valid</code>, <code>test_os_kill_process_suicide</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task.">os_kill_process()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-008   </td><td class="markdownTableBodyNone">System shall support task termination   </td><td class="markdownTableBodyNone"><code>test_os_kill_process_valid</code>, <code>test_os_kill_process_suicide</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task by index.">os_kill_process()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-009   </td><td class="markdownTableBodyNone">System shall protect task 0 from termination   </td><td class="markdownTableBodyNone"><code>test_os_kill_process_index_zero</code>, <code>test_os_kill_process_index_zero_error</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task.">os_kill_process()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-009   </td><td class="markdownTableBodyNone">System shall protect task 0 from termination   </td><td class="markdownTableBodyNone"><code>test_os_kill_process_index_zero</code>, <code>test_os_kill_process_index_zero_error</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task by index.">os_kill_process()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-010   </td><td class="markdownTableBodyNone">System shall track cleanup tasks   </td><td class="markdownTableBodyNone"><code>test_os_exit_task_cleanup_idx_max</code>, <code>test_os_kill_process_cleanup_idx_max</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a></code>, <code><a class="el" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task.">os_kill_process()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">KRN-010   </td><td class="markdownTableBodyNone">System shall track cleanup tasks   </td><td class="markdownTableBodyNone"><code>test_os_exit_task_cleanup_idx_max</code>, <code>test_os_kill_process_cleanup_idx_max</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a></code>, <code><a class="el" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task by index.">os_kill_process()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md537"></a>
+<h2><a class="anchor" id="autotoc_md588"></a>
 3.2 Kernel - Task Scheduling</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-020   </td><td class="markdownTableBodyNone">System shall support active sleep   </td><td class="markdownTableBodyNone"><code>test_task_active_sleep</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified number of ticks (non-blocking)">task_active_sleep()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-020   </td><td class="markdownTableBodyNone">System shall support active sleep   </td><td class="markdownTableBodyNone"><code>test_task_active_sleep</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified ticks (cooperative, via SVC)">task_active_sleep()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-021   </td><td class="markdownTableBodyNone">System shall support blocking sleep   </td><td class="markdownTableBodyNone"><code>test_task_blocking_sleep</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with interrupts disabled (blocking)">task_blocking_sleep()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-021   </td><td class="markdownTableBodyNone">System shall support blocking sleep   </td><td class="markdownTableBodyNone"><code>test_task_blocking_sleep</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with scheduler disabled (blocking)">task_blocking_sleep()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-022   </td><td class="markdownTableBodyNone">System shall support busy wait   </td><td class="markdownTableBodyNone"><code>test_task_busy_wait_basic</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#abf480b084de52354a2fd785135c1fbed" title="Busy-wait for specified ticks (must be in critical section)">task_busy_wait()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-022   </td><td class="markdownTableBodyNone">System shall support busy wait   </td><td class="markdownTableBodyNone"><code>test_task_busy_wait_basic</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#abf480b084de52354a2fd785135c1fbed" title="Busy-wait for specified ticks.">task_busy_wait()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-023   </td><td class="markdownTableBodyNone">System shall maintain tick count   </td><td class="markdownTableBodyNone"><code>test_os_get_tick_count</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a9ad054a9f7ba66763a95b010bc55f949" title="Get current system tick count.">os_get_tick_count()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-023   </td><td class="markdownTableBodyNone">System shall maintain tick count   </td><td class="markdownTableBodyNone"><code>test_os_get_tick_count</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#a9ad054a9f7ba66763a95b010bc55f949" title="Get current system tick count.">os_get_tick_count()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-024   </td><td class="markdownTableBodyNone">System shall track running task count   </td><td class="markdownTableBodyNone"><code>test_os_get_running_task_count</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#ae2e7057f265bec1758ecf2bab3218362" title="Get number of active tasks.">os_get_running_task_count()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-024   </td><td class="markdownTableBodyNone">System shall track running task count   </td><td class="markdownTableBodyNone"><code>test_os_get_running_task_count</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#ae2e7057f265bec1758ecf2bab3218362" title="Get number of active tasks.">os_get_running_task_count()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-025   </td><td class="markdownTableBodyNone">System shall provide current task name   </td><td class="markdownTableBodyNone"><code>test_os_get_current_task_name</code>, <code>test_os_get_current_task_name_null_task</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c" title="Get name of currently executing task.">os_get_current_task_name()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-025   </td><td class="markdownTableBodyNone">System shall provide current task name   </td><td class="markdownTableBodyNone"><code>test_os_get_current_task_name</code>, <code>test_os_get_current_task_name_null_task</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c" title="Get name of currently executing task.">os_get_current_task_name()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-026   </td><td class="markdownTableBodyNone">System shall track task ticks remaining   </td><td class="markdownTableBodyNone"><code>test_os_get_task_ticks_remaining</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f" title="Get remaining ticks in current time slice.">os_get_task_ticks_remaining()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">KRN-026   </td><td class="markdownTableBodyNone">System shall track task ticks remaining   </td><td class="markdownTableBodyNone"><code>test_os_get_task_ticks_remaining</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f" title="Get remaining ticks in current time slice.">os_get_task_ticks_remaining()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md538"></a>
+<h2><a class="anchor" id="autotoc_md589"></a>
 3.3 Kernel - Critical Sections</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-030   </td><td class="markdownTableBodyNone">System shall support nested critical sections   </td><td class="markdownTableBodyNone"><code>test_critical_sections</code>, <code>test_exit_critical_depth_nonzero</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8c.html#a8c37c79b24dbe7d362bde4110f7c150d" title="Enter critical section (disable scheduler)">enter_critical()</a></code>, <code><a class="el" href="icarus__task_8c.html#a6dc3cbf6bed1d8ba3a811d08595581cc" title="Exit critical section (re-enable scheduler if outermost)">exit_critical()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-030   </td><td class="markdownTableBodyNone">System shall support nested critical sections   </td><td class="markdownTableBodyNone"><code>test_critical_sections</code>, <code>test_exit_critical_depth_nonzero</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a8dcbc84d8ecee85815dc5320c852d1cd" title="Enter critical section (disable scheduler)">enter_critical()</a></code>, <code><a class="el" href="kernel_8h.html#a521c46d2fe4940150406258f634195f1" title="Exit critical section (re-enable scheduler if outermost)">exit_critical()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-031   </td><td class="markdownTableBodyNone">System shall re-enable scheduler on critical exit   </td><td class="markdownTableBodyNone"><code>test_exit_critical_depth_zero</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8c.html#a6dc3cbf6bed1d8ba3a811d08595581cc" title="Exit critical section (re-enable scheduler if outermost)">exit_critical()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">KRN-031   </td><td class="markdownTableBodyNone">System shall re-enable scheduler on critical exit   </td><td class="markdownTableBodyNone"><code>test_exit_critical_depth_zero</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a521c46d2fe4940150406258f634195f1" title="Exit critical section (re-enable scheduler if outermost)">exit_critical()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md539"></a>
+<h2><a class="anchor" id="autotoc_md590"></a>
 3.4 Kernel - Semaphores</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-040   </td><td class="markdownTableBodyNone">System shall initialize semaphores   </td><td class="markdownTableBodyNone"><code>test_semaphore_init_valid</code>, <code>test_semaphore_init_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#adf56dcf3cc0690836ab8ea00615d81b8" title="Initialize a counting semaphore.">semaphore_init()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-040   </td><td class="markdownTableBodyNone">System shall initialize semaphores   </td><td class="markdownTableBodyNone"><code>test_semaphore_init_valid</code>, <code>test_semaphore_init_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#adf56dcf3cc0690836ab8ea00615d81b8" title="Initialize a counting semaphore.">semaphore_init()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-041   </td><td class="markdownTableBodyNone">System shall support semaphore feed   </td><td class="markdownTableBodyNone"><code>test_semaphore_feed_valid</code>, <code>test_semaphore_feed_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#adaf4fd634aba7757c187eb339c4ca92b" title="Increment semaphore count (V operation / signal)">semaphore_feed()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-041   </td><td class="markdownTableBodyNone">System shall support semaphore feed   </td><td class="markdownTableBodyNone"><code>test_semaphore_feed_valid</code>, <code>test_semaphore_feed_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#adaf4fd634aba7757c187eb339c4ca92b" title="Increment semaphore count (V operation / signal)">semaphore_feed()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-042   </td><td class="markdownTableBodyNone">System shall support semaphore consume   </td><td class="markdownTableBodyNone"><code>test_semaphore_consume_valid</code>, <code>test_semaphore_consume_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a0778882901c150b13eaaa726639d28f4" title="Decrement semaphore count (P operation / wait)">semaphore_consume()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-042   </td><td class="markdownTableBodyNone">System shall support semaphore consume   </td><td class="markdownTableBodyNone"><code>test_semaphore_consume_valid</code>, <code>test_semaphore_consume_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#a0778882901c150b13eaaa726639d28f4" title="Decrement semaphore count (P operation / wait)">semaphore_consume()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-043   </td><td class="markdownTableBodyNone">System shall enforce bounded semaphore capacity   </td><td class="markdownTableBodyNone"><code>test_semaphore_feed_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#adaf4fd634aba7757c187eb339c4ca92b" title="Increment semaphore count (V operation / signal)">semaphore_feed()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-043   </td><td class="markdownTableBodyNone">System shall enforce bounded semaphore capacity   </td><td class="markdownTableBodyNone"><code>test_semaphore_feed_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#adaf4fd634aba7757c187eb339c4ca92b" title="Increment semaphore count (V operation / signal)">semaphore_feed()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-044   </td><td class="markdownTableBodyNone">System shall provide semaphore count query   </td><td class="markdownTableBodyNone"><code>test_semaphore_get_count_valid</code>, <code>test_semaphore_get_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a1b097749f8c7f30e7cb3b3b49902beab" title="Get current semaphore count.">semaphore_get_count()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-044   </td><td class="markdownTableBodyNone">System shall provide semaphore count query   </td><td class="markdownTableBodyNone"><code>test_semaphore_get_count_valid</code>, <code>test_semaphore_get_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#a1b097749f8c7f30e7cb3b3b49902beab" title="Get current semaphore count.">semaphore_get_count()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-045   </td><td class="markdownTableBodyNone">System shall provide semaphore max count query   </td><td class="markdownTableBodyNone"><code>test_semaphore_get_max_count_valid</code>, <code>test_semaphore_get_max_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a000289a63b46d8613839bbb28bc93665" title="Get semaphore maximum count.">semaphore_get_max_count()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">KRN-045   </td><td class="markdownTableBodyNone">System shall provide semaphore max count query   </td><td class="markdownTableBodyNone"><code>test_semaphore_get_max_count_valid</code>, <code>test_semaphore_get_max_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#a000289a63b46d8613839bbb28bc93665" title="Get semaphore maximum count.">semaphore_get_max_count()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md540"></a>
+<h2><a class="anchor" id="autotoc_md591"></a>
 3.5 Kernel - Message Pipes</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-050   </td><td class="markdownTableBodyNone">System shall initialize message pipes   </td><td class="markdownTableBodyNone"><code>test_pipe_init_valid</code>, <code>test_pipe_init_invalid_idx</code>, <code>test_pipe_init_zero_capacity</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a3ef3d0bf9f6c1fb5be4dd623ab768c5a" title="Initialize a message pipe.">pipe_init()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-050   </td><td class="markdownTableBodyNone">System shall initialize message pipes   </td><td class="markdownTableBodyNone"><code>test_pipe_init_valid</code>, <code>test_pipe_init_invalid_idx</code>, <code>test_pipe_init_zero_capacity</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#a3ef3d0bf9f6c1fb5be4dd623ab768c5a" title="Initialize a message pipe.">pipe_init()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-051   </td><td class="markdownTableBodyNone">System shall support pipe enqueue   </td><td class="markdownTableBodyNone"><code>test_pipe_enqueue_valid</code>, <code>test_pipe_enqueue_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a17349ac08b340c667d1422016c853f61" title="Enqueue message to pipe.">pipe_enqueue()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-051   </td><td class="markdownTableBodyNone">System shall support pipe enqueue   </td><td class="markdownTableBodyNone"><code>test_pipe_enqueue_valid</code>, <code>test_pipe_enqueue_invalid_idx</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#a17349ac08b340c667d1422016c853f61" title="Enqueue bytes to pipe.">pipe_enqueue()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-052   </td><td class="markdownTableBodyNone">System shall support pipe dequeue   </td><td class="markdownTableBodyNone"><code>test_pipe_dequeue_valid</code>, <code>test_pipe_dequeue_invalid_idx</code>, <code>test_pipe_dequeue_empty</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#ab2cbab03c89366c0ba5f8e1239f18c71" title="Dequeue message from pipe.">pipe_dequeue()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-052   </td><td class="markdownTableBodyNone">System shall support pipe dequeue   </td><td class="markdownTableBodyNone"><code>test_pipe_dequeue_valid</code>, <code>test_pipe_dequeue_invalid_idx</code>, <code>test_pipe_dequeue_empty</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#ab2cbab03c89366c0ba5f8e1239f18c71" title="Dequeue bytes from pipe.">pipe_dequeue()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-053   </td><td class="markdownTableBodyNone">System shall maintain FIFO ordering   </td><td class="markdownTableBodyNone"><code>test_pipe_enqueue_valid</code>, <code>test_pipe_dequeue_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a17349ac08b340c667d1422016c853f61" title="Enqueue message to pipe.">pipe_enqueue()</a></code>, <code><a class="el" href="icarus__task_8h.html#ab2cbab03c89366c0ba5f8e1239f18c71" title="Dequeue message from pipe.">pipe_dequeue()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-053   </td><td class="markdownTableBodyNone">System shall maintain FIFO ordering   </td><td class="markdownTableBodyNone"><code>test_pipe_enqueue_valid</code>, <code>test_pipe_dequeue_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#a17349ac08b340c667d1422016c853f61" title="Enqueue bytes to pipe.">pipe_enqueue()</a></code>, <code><a class="el" href="pipe_8h.html#ab2cbab03c89366c0ba5f8e1239f18c71" title="Dequeue bytes from pipe.">pipe_dequeue()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-054   </td><td class="markdownTableBodyNone">System shall enforce pipe capacity   </td><td class="markdownTableBodyNone"><code>test_pipe_enqueue_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a17349ac08b340c667d1422016c853f61" title="Enqueue message to pipe.">pipe_enqueue()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-054   </td><td class="markdownTableBodyNone">System shall enforce pipe capacity   </td><td class="markdownTableBodyNone"><code>test_pipe_enqueue_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#a17349ac08b340c667d1422016c853f61" title="Enqueue bytes to pipe.">pipe_enqueue()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">KRN-055   </td><td class="markdownTableBodyNone">System shall provide pipe count query   </td><td class="markdownTableBodyNone"><code>test_pipe_get_count_valid</code>, <code>test_pipe_get_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#afde35efc753e78f88c6e9abda446808d" title="Get current byte count in pipe.">pipe_get_count()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">KRN-055   </td><td class="markdownTableBodyNone">System shall provide pipe count query   </td><td class="markdownTableBodyNone"><code>test_pipe_get_count_valid</code>, <code>test_pipe_get_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#afde35efc753e78f88c6e9abda446808d" title="Get current byte count in pipe.">pipe_get_count()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">KRN-056   </td><td class="markdownTableBodyNone">System shall provide pipe max count query   </td><td class="markdownTableBodyNone"><code>test_pipe_get_max_count_valid</code>, <code>test_pipe_get_max_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a656ba5cc462c6f126136d8737a831c96" title="Get pipe capacity.">pipe_get_max_count()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">KRN-056   </td><td class="markdownTableBodyNone">System shall provide pipe max count query   </td><td class="markdownTableBodyNone"><code>test_pipe_get_max_count_valid</code>, <code>test_pipe_get_max_count_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8h.html#a656ba5cc462c6f126136d8737a831c96" title="Get pipe capacity.">pipe_get_max_count()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md541"></a>
+<h2><a class="anchor" id="autotoc_md592"></a>
 3.6 Kernel - Print Buffer</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -223,61 +223,61 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">KRN-062   </td><td class="markdownTableBodyNone">System shall wrap buffer index   </td><td class="markdownTableBodyNone"><code>test_enqueue_print_buffer_wrap_around</code>   </td><td class="markdownTableBodyNone"><code>enqueue_print_buffer()</code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md542"></a>
+<h2><a class="anchor" id="autotoc_md593"></a>
 3.7 BSP - Display</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-001   </td><td class="markdownTableBodyNone">System shall initialize display once   </td><td class="markdownTableBodyNone"><code>test_display_init_first_call</code>, <code>test_display_init_second_call</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a407d5033a6f0198221c8a9081d7e807e" title="Initialize terminal display.">display_init()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-001   </td><td class="markdownTableBodyNone">System shall initialize display once   </td><td class="markdownTableBodyNone"><code>test_display_init_first_call</code>, <code>test_display_init_second_call</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a407d5033a6f0198221c8a9081d7e807e" title="Initialize terminal display - clear screen and print header.">display_init()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-002   </td><td class="markdownTableBodyNone">System shall render progress bar   </td><td class="markdownTableBodyNone"><code>test_display_render_bar_normal</code>, <code>test_display_render_bar_zero_period</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a7520bc2f8594614588d9d31f3415d0fb" title="Render horizontal progress bar.">display_render_bar()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-002   </td><td class="markdownTableBodyNone">System shall render progress bar   </td><td class="markdownTableBodyNone"><code>test_display_render_bar_normal</code>, <code>test_display_render_bar_zero_period</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a7520bc2f8594614588d9d31f3415d0fb" title="Render a progress bar on a fixed row.">display_render_bar()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-003   </td><td class="markdownTableBodyNone">System shall clamp progress bar values   </td><td class="markdownTableBodyNone"><code>test_display_render_bar_elapsed_exceeds_period</code>, <code>test_display_render_bar_filled_exceeds_width</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a7520bc2f8594614588d9d31f3415d0fb" title="Render horizontal progress bar.">display_render_bar()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-003   </td><td class="markdownTableBodyNone">System shall clamp progress bar values   </td><td class="markdownTableBodyNone"><code>test_display_render_bar_elapsed_exceeds_period</code>, <code>test_display_render_bar_filled_exceeds_width</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a7520bc2f8594614588d9d31f3415d0fb" title="Render a progress bar on a fixed row.">display_render_bar()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-004   </td><td class="markdownTableBodyNone">System shall handle null task name   </td><td class="markdownTableBodyNone"><code>test_display_render_bar_null_name</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a7520bc2f8594614588d9d31f3415d0fb" title="Render horizontal progress bar.">display_render_bar()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-004   </td><td class="markdownTableBodyNone">System shall handle null task name   </td><td class="markdownTableBodyNone"><code>test_display_render_bar_null_name</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a7520bc2f8594614588d9d31f3415d0fb" title="Render a progress bar on a fixed row.">display_render_bar()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-005   </td><td class="markdownTableBodyNone">System shall render banner   </td><td class="markdownTableBodyNone"><code>test_display_render_banner_on</code>, <code>test_display_render_banner_off</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a40122382f60e1f27a4483c193578628e" title="Render on/off banner (heartbeat indicator)">display_render_banner()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-005   </td><td class="markdownTableBodyNone">System shall render banner   </td><td class="markdownTableBodyNone"><code>test_display_render_banner_on</code>, <code>test_display_render_banner_off</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a40122382f60e1f27a4483c193578628e" title="Render a simple flashing banner (on/off indicator)">display_render_banner()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-006   </td><td class="markdownTableBodyNone">System shall render vertical bar   </td><td class="markdownTableBodyNone"><code>test_display_render_vbar_normal</code>, <code>test_display_render_vbar_zero_max</code>, <code>test_display_render_vbar_value_exceeds_max</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#aa23e6d0b5d3afdbda5c81cba51a5d6f9" title="Render vertical bar (semaphore fill level)">display_render_vbar()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-006   </td><td class="markdownTableBodyNone">System shall render vertical bar   </td><td class="markdownTableBodyNone"><code>test_display_render_vbar_normal</code>, <code>test_display_render_vbar_zero_max</code>, <code>test_display_render_vbar_value_exceeds_max</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#aa23e6d0b5d3afdbda5c81cba51a5d6f9" title="Render a vertical bar showing semaphore fill level.">display_render_vbar()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-007   </td><td class="markdownTableBodyNone">System shall render pipe visualization   </td><td class="markdownTableBodyNone"><code>test_display_render_pipe_normal</code>, <code>test_display_render_pipe_zero_capacity</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a09198df6430376e95efd208b1c158f97" title="Render message pipe visualization.">display_render_pipe()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-007   </td><td class="markdownTableBodyNone">System shall render pipe visualization   </td><td class="markdownTableBodyNone"><code>test_display_render_pipe_normal</code>, <code>test_display_render_pipe_zero_capacity</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a09198df6430376e95efd208b1c158f97" title="Render a message queue visualization panel.">display_render_pipe()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-008   </td><td class="markdownTableBodyNone">System shall render producer visualization   </td><td class="markdownTableBodyNone"><code>test_display_render_producer_normal</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#ab6dc27a9942fa96fd5368031c8155a58" title="Render producer task bar with message indicator.">display_render_producer()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-008   </td><td class="markdownTableBodyNone">System shall render producer visualization   </td><td class="markdownTableBodyNone"><code>test_display_render_producer_normal</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#ab6dc27a9942fa96fd5368031c8155a58" title="Render a producer task bar with sent message indicator.">display_render_producer()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-009   </td><td class="markdownTableBodyNone">System shall render consumer visualization   </td><td class="markdownTableBodyNone"><code>test_display_render_consumer_normal</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#ad127e7f8ce900ae5e9bec5d1a4c10f83" title="Render consumer task bar with message indicator.">display_render_consumer()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-009   </td><td class="markdownTableBodyNone">System shall render consumer visualization   </td><td class="markdownTableBodyNone"><code>test_display_render_consumer_normal</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#ad127e7f8ce900ae5e9bec5d1a4c10f83" title="Render a consumer task bar with received message indicator.">display_render_consumer()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-010   </td><td class="markdownTableBodyNone">System shall initialize message history   </td><td class="markdownTableBodyNone"><code>test_msg_history_init</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a6c3781539153538a74dd53ab3233f7b6" title="Initialize message history buffer.">msg_history_init()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-010   </td><td class="markdownTableBodyNone">System shall initialize message history   </td><td class="markdownTableBodyNone"><code>test_msg_history_init</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a6c3781539153538a74dd53ab3233f7b6" title="Initialize a message history buffer.">msg_history_init()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-011   </td><td class="markdownTableBodyNone">System shall add messages to history   </td><td class="markdownTableBodyNone"><code>test_msg_history_add_normal</code>, <code>test_msg_history_add_wrap</code>, <code>test_msg_history_add_null_msg</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a265707d0ecea8ba5bc116e7349f66af1" title="Add message to history.">msg_history_add()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-011   </td><td class="markdownTableBodyNone">System shall add messages to history   </td><td class="markdownTableBodyNone"><code>test_msg_history_add_normal</code>, <code>test_msg_history_add_wrap</code>, <code>test_msg_history_add_null_msg</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a265707d0ecea8ba5bc116e7349f66af1" title="Add a message to history.">msg_history_add()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-012   </td><td class="markdownTableBodyNone">System shall render message history   </td><td class="markdownTableBodyNone"><code>test_display_render_msg_history_empty</code>, <code>test_display_render_msg_history_partial</code>, <code>test_display_render_msg_history_full</code>, <code>test_display_render_msg_history_wrapped</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a1157ea2c970e78ff6261f35c1801b078" title="Render message history as rolling window.">display_render_msg_history()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">BSP-012   </td><td class="markdownTableBodyNone">System shall render message history   </td><td class="markdownTableBodyNone"><code>test_display_render_msg_history_empty</code>, <code>test_display_render_msg_history_partial</code>, <code>test_display_render_msg_history_full</code>, <code>test_display_render_msg_history_wrapped</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a1157ea2c970e78ff6261f35c1801b078" title="Render message history as a rolling window.">display_render_msg_history()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md543"></a>
+<h2><a class="anchor" id="autotoc_md594"></a>
 3.8 BSP - LED Control</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-010   </td><td class="markdownTableBodyNone">System shall turn LED on   </td><td class="markdownTableBodyNone"><code>test_LED_On</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d" title="Turn LED on.">LED_On()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-010   </td><td class="markdownTableBodyNone">System shall turn LED on   </td><td class="markdownTableBodyNone"><code>test_LED_On</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d" title="Turn LED on.">LED_On()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-011   </td><td class="markdownTableBodyNone">System shall turn LED off   </td><td class="markdownTableBodyNone"><code>test_LED_Off</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65" title="Turn LED off.">LED_Off()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-011   </td><td class="markdownTableBodyNone">System shall turn LED off   </td><td class="markdownTableBodyNone"><code>test_LED_Off</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="led_8h.html#af842f9996045107cd0841a4f0707fc65" title="Turn LED off.">LED_Off()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-012   </td><td class="markdownTableBodyNone">System shall blink LED with timing   </td><td class="markdownTableBodyNone"><code>test_LED_Blink</code>, <code>test_LED_Blink_zero_delays</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9" title="Blink LED with specified timing.">LED_Blink()</a></code>   </td></tr>
+<td class="markdownTableBodyNone">BSP-012   </td><td class="markdownTableBodyNone">System shall blink LED with timing   </td><td class="markdownTableBodyNone"><code>test_LED_Blink</code>, <code>test_LED_Blink_zero_delays</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9" title="Blink LED with specified timing.">LED_Blink()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md544"></a>
+<h2><a class="anchor" id="autotoc_md595"></a>
 3.9 BSP - Platform I/O</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP-020   </td><td class="markdownTableBodyNone">System shall write to I2C   </td><td class="markdownTableBodyNone"><code>test_platform_write</code>, <code>test_platform_write_zero_length</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__i2c_8h.html#a9d06812ba5c631eb19fe9eacf8111013" title="Platform write function for IMU driver.">platform_write()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-020   </td><td class="markdownTableBodyNone">System shall write to I2C   </td><td class="markdownTableBodyNone"><code>test_platform_write</code>, <code>test_platform_write_zero_length</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html#a9d06812ba5c631eb19fe9eacf8111013" title="Platform write function for LSM9DS1 IMU driver.">platform_write()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP-021   </td><td class="markdownTableBodyNone">System shall read from I2C   </td><td class="markdownTableBodyNone"><code>test_platform_read</code>, <code>test_platform_read_zero_length</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="bsp__i2c_8h.html#ae6a9af4efd48b19aa917b0b2fe5240f4" title="Platform read function for IMU driver.">platform_read()</a></code>    </td></tr>
+<td class="markdownTableBodyNone">BSP-021   </td><td class="markdownTableBodyNone">System shall read from I2C   </td><td class="markdownTableBodyNone"><code>test_platform_read</code>, <code>test_platform_read_zero_length</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html#ae6a9af4efd48b19aa917b0b2fe5240f4" title="Platform read function for LSM9DS1 IMU driver.">platform_read()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">BSP-022   </td><td class="markdownTableBodyNone">System shall initialize hardware   </td><td class="markdownTableBodyNone"><code>test_hal_init</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183" title="Initialize all hardware abstraction layer components.">hal_init()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md545"></a>
+<h2><a class="anchor" id="autotoc_md596"></a>
 3.10 BSP - Standard I/O</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -289,7 +289,7 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">BSP-032   </td><td class="markdownTableBodyNone">System shall flush on buffer full   </td><td class="markdownTableBodyNone"><code>test_io_putchar_buffer_full</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">__io_putchar()</a></code>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md546"></a>
+<h2><a class="anchor" id="autotoc_md597"></a>
 3.11 BSP - Interrupt Handlers</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -309,37 +309,67 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">INT-007   </td><td class="markdownTableBodyNone">Debug monitor shall be callable   </td><td class="markdownTableBodyNone"><code>test_DebugMon_Handler</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="stm32h7xx__it_8h.html#adbdfb05858cc36fc520974df37ec3cb0" title="This function handles Debug monitor.">DebugMon_Handler()</a></code>   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md547"></a>
-4. Test Case Summary</h1>
+<h2><a class="anchor" id="autotoc_md598"></a>
+3.12 Kernel - SVC Dispatch</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Category   </th><th class="markdownTableHeadNone">Test Cases   </th><th class="markdownTableHeadNone">Pass   </th><th class="markdownTableHeadNone">Fail   </th><th class="markdownTableHeadNone">Ignored    </th></tr>
+<th class="markdownTableHeadNone">Req ID   </th><th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Test Case(s)   </th><th class="markdownTableHeadNone">Source Function    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Kernel - Task Management   </td><td class="markdownTableBodyNone">18   </td><td class="markdownTableBodyNone">18   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-001   </td><td class="markdownTableBodyNone">SVC sem_can_feed shall return correct predicate   </td><td class="markdownTableBodyNone"><code>test_svc_sem_can_feed_valid</code>, <code>test_svc_sem_can_feed_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Kernel - Scheduling   </td><td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-002   </td><td class="markdownTableBodyNone">SVC sem_can_consume shall return correct predicate   </td><td class="markdownTableBodyNone"><code>test_svc_sem_can_consume_valid</code>, <code>test_svc_sem_can_consume_invalid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Kernel - Critical Sections   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-003   </td><td class="markdownTableBodyNone">SVC sem_increment shall atomically modify count   </td><td class="markdownTableBodyNone"><code>test_svc_sem_increment_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Kernel - Semaphores   </td><td class="markdownTableBodyNone">6   </td><td class="markdownTableBodyNone">6   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-004   </td><td class="markdownTableBodyNone">SVC sem_decrement shall atomically modify count   </td><td class="markdownTableBodyNone"><code>test_svc_sem_decrement_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Kernel - Message Pipes   </td><td class="markdownTableBodyNone">13   </td><td class="markdownTableBodyNone">13   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-005   </td><td class="markdownTableBodyNone">SVC pipe_can_send shall return correct predicate   </td><td class="markdownTableBodyNone"><code>test_svc_pipe_can_send_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Kernel - Print Buffer   </td><td class="markdownTableBodyNone">5   </td><td class="markdownTableBodyNone">5   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-006   </td><td class="markdownTableBodyNone">SVC pipe_can_receive shall return correct predicate   </td><td class="markdownTableBodyNone"><code>test_svc_pipe_can_receive_valid</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP - Display   </td><td class="markdownTableBodyNone">21   </td><td class="markdownTableBodyNone">21   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-007   </td><td class="markdownTableBodyNone">SVC get_task_name shall return task name   </td><td class="markdownTableBodyNone"><code>test_os_get_task_name_svc</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP - LED   </td><td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
+<td class="markdownTableBodyNone">SVC-008   </td><td class="markdownTableBodyNone">SVC get_num_tasks shall return created count   </td><td class="markdownTableBodyNone"><code>test_os_get_num_created_tasks_svc</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP - Platform I/O   </td><td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">BSP - Standard I/O   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BSP - Interrupts   </td><td class="markdownTableBodyNone">8   </td><td class="markdownTableBodyNone">8   </td><td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><b>Total</b>   </td><td class="markdownTableBodyNone"><b>131</b>   </td><td class="markdownTableBodyNone"><b>131</b>   </td><td class="markdownTableBodyNone"><b>0</b>   </td><td class="markdownTableBodyNone"><b>0</b>   </td></tr>
+<td class="markdownTableBodyNone">SVC-009   </td><td class="markdownTableBodyNone">SVC os_is_running shall return running flag   </td><td class="markdownTableBodyNone"><code>test_os_is_running_svc</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="svc_8h.html#ab9a1ab462e20c09c36397c56b51e131b" title="C-level SVC dispatcher called from SVC_Handler assembly.">SVC_Handler_C()</a></code>   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md548"></a>
+<h1><a class="anchor" id="autotoc_md599"></a>
+4. Test Case Summary</h1>
+<p>Run <code>cd tests &amp;&amp; make test</code> to obtain current pass/fail results.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Category   </th><th class="markdownTableHeadNone">Test Cases    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Kernel - Task Management   </td><td class="markdownTableBodyNone">18    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Kernel - Scheduling   </td><td class="markdownTableBodyNone">7    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Kernel - Critical Sections   </td><td class="markdownTableBodyNone">3    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Kernel - Semaphores   </td><td class="markdownTableBodyNone">16    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Kernel - Message Pipes   </td><td class="markdownTableBodyNone">19    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Kernel - Print Buffer   </td><td class="markdownTableBodyNone">5    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Kernel - SVC Dispatch   </td><td class="markdownTableBodyNone">11    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">BSP - Display   </td><td class="markdownTableBodyNone">21    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">BSP - LED   </td><td class="markdownTableBodyNone">4    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">BSP - Platform I/O   </td><td class="markdownTableBodyNone">7    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">BSP - Standard I/O   </td><td class="markdownTableBodyNone">3    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">BSP - Interrupts   </td><td class="markdownTableBodyNone">8    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><b>Total</b>   </td><td class="markdownTableBodyNone">**~140**   </td></tr>
+</table>
+<blockquote class="doxtable">
+<p>&zwj;<b>Note:</b> counts above are approximate; the canonical test count comes from the Unity runner output at test execution time. </p>
+</blockquote>
+<h1><a class="anchor" id="autotoc_md600"></a>
 5. Untested Requirements</h1>
 <p>The following requirements require target integration testing:</p>
 <table class="markdownTable">
@@ -356,7 +386,7 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">INT-010   </td><td class="markdownTableBodyNone">Fault handlers shall halt system   </td><td class="markdownTableBodyNone">Dead code by design   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md549"></a>
+<h1><a class="anchor" id="autotoc_md601"></a>
 6. Approval</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -368,13 +398,15 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">QA   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md550"></a>
+<h1><a class="anchor" id="autotoc_md602"></a>
 7. Revision History</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Version   </th><th class="markdownTableHeadNone">Date   </th><th class="markdownTableHeadNone">Author   </th><th class="markdownTableHeadNone">Changes    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
+<td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">0.2   </td><td class="markdownTableBodyNone">2026-04-01   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Added SVC tests; updated counts to ~140; reconciled semaphore/pipe test names   </td></tr>
 </table>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -382,7 +414,7 @@ $(function(){initNavTree('md_docs_2do178c_2verification_2test__traceability.html
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

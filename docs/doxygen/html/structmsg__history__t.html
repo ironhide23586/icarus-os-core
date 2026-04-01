@@ -103,27 +103,24 @@ $(function(){initNavTree('structmsg__history__t.html',''); initResizable(true); 
 </div><!--header-->
 <div class="contents">
 
-<p>Circular message history buffer.  
+<p>Message history buffer for a pipe.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="display_8h_source.html">display.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a42eac006086c7343cdc598a2a6c7c8bb" id="r_a42eac006086c7343cdc598a2a6c7c8bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structmsg__history__entry__t.html">msg_history_entry_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42eac006086c7343cdc598a2a6c7c8bb">entries</a> [8]</td></tr>
-<tr class="separator:a42eac006086c7343cdc598a2a6c7c8bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad127e20a5e790294aa182096a4aae67c" id="r_ad127e20a5e790294aa182096a4aae67c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structmsg__history__entry__t.html">msg_history_entry_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad127e20a5e790294aa182096a4aae67c">entries</a> [8]</td></tr>
+<tr class="separator:ad127e20a5e790294aa182096a4aae67c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0e5f657066b3d32db57058234b38f17" id="r_ae0e5f657066b3d32db57058234b38f17"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0e5f657066b3d32db57058234b38f17">head</a></td></tr>
-<tr class="memdesc:ae0e5f657066b3d32db57058234b38f17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next write position.  <br /></td></tr>
 <tr class="separator:ae0e5f657066b3d32db57058234b38f17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21c48aa1145e822ed2faa96cb72b4ced" id="r_a21c48aa1145e822ed2faa96cb72b4ced"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21c48aa1145e822ed2faa96cb72b4ced">count</a></td></tr>
-<tr class="memdesc:a21c48aa1145e822ed2faa96cb72b4ced"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of valid entries.  <br /></td></tr>
 <tr class="separator:a21c48aa1145e822ed2faa96cb72b4ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Circular message history buffer. </p>
-<p>Message history buffer for a pipe. </p>
+<div class="textblock"><p>Message history buffer for a pipe. </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00105">105</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00150">150</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a21c48aa1145e822ed2faa96cb72b4ced" name="a21c48aa1145e822ed2faa96cb72b4ced"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a21c48aa1145e822ed2faa96cb72b4ced">&#9670;&#160;</a></span>count</h2>
@@ -137,29 +134,27 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Number of valid entries. </p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00153">153</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00108">108</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
-<a id="a42eac006086c7343cdc598a2a6c7c8bb" name="a42eac006086c7343cdc598a2a6c7c8bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42eac006086c7343cdc598a2a6c7c8bb">&#9670;&#160;</a></span>entries</h2>
+<a id="ad127e20a5e790294aa182096a4aae67c" name="ad127e20a5e790294aa182096a4aae67c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad127e20a5e790294aa182096a4aae67c">&#9670;&#160;</a></span>entries</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structmsg__history__entry__t.html">msg_history_entry_t</a> msg_history_t::entries</td>
+          <td class="memname"><a class="el" href="structmsg__history__entry__t.html">msg_history_entry_t</a> msg_history_t::entries[8]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00106">106</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00151">151</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
@@ -175,16 +170,13 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Next write position. </p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00152">152</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00107">107</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following files:<ul>
-<li>Core/Inc/bsp/<a class="el" href="bsp__display_8h_source.html">bsp_display.h</a></li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>Core/Inc/bsp/<a class="el" href="display_8h_source.html">display.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -193,7 +185,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structmsg__history__t.html">msg_history_t</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

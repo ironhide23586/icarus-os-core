@@ -2,7 +2,7 @@
 
 **Document ID:** ICARUS-VER-003  
 **Version:** 0.1  
-**Date:** 2025-01-26  
+**Date:** 2026-04-01  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
 
@@ -138,22 +138,42 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | INT-006 | SVC handler shall be callable | `test_SVC_Handler` | `SVC_Handler()` |
 | INT-007 | Debug monitor shall be callable | `test_DebugMon_Handler` | `DebugMon_Handler()` |
 
+### 3.12 Kernel - SVC Dispatch
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| SVC-001 | SVC sem_can_feed shall return correct predicate | `test_svc_sem_can_feed_valid`, `test_svc_sem_can_feed_invalid` | `SVC_Handler_C()` |
+| SVC-002 | SVC sem_can_consume shall return correct predicate | `test_svc_sem_can_consume_valid`, `test_svc_sem_can_consume_invalid` | `SVC_Handler_C()` |
+| SVC-003 | SVC sem_increment shall atomically modify count | `test_svc_sem_increment_valid` | `SVC_Handler_C()` |
+| SVC-004 | SVC sem_decrement shall atomically modify count | `test_svc_sem_decrement_valid` | `SVC_Handler_C()` |
+| SVC-005 | SVC pipe_can_send shall return correct predicate | `test_svc_pipe_can_send_valid` | `SVC_Handler_C()` |
+| SVC-006 | SVC pipe_can_receive shall return correct predicate | `test_svc_pipe_can_receive_valid` | `SVC_Handler_C()` |
+| SVC-007 | SVC get_task_name shall return task name | `test_os_get_task_name_svc` | `SVC_Handler_C()` |
+| SVC-008 | SVC get_num_tasks shall return created count | `test_os_get_num_created_tasks_svc` | `SVC_Handler_C()` |
+| SVC-009 | SVC os_is_running shall return running flag | `test_os_is_running_svc` | `SVC_Handler_C()` |
+
 ## 4. Test Case Summary
 
-| Category | Test Cases | Pass | Fail | Ignored |
-|----------|------------|------|------|---------|
-| Kernel - Task Management | 18 | 18 | 0 | 0 |
-| Kernel - Scheduling | 7 | 7 | 0 | 0 |
-| Kernel - Critical Sections | 3 | 3 | 0 | 0 |
-| Kernel - Semaphores | 6 | 6 | 0 | 0 |
-| Kernel - Message Pipes | 13 | 13 | 0 | 0 |
-| Kernel - Print Buffer | 5 | 5 | 0 | 0 |
-| BSP - Display | 21 | 21 | 0 | 0 |
-| BSP - LED | 4 | 4 | 0 | 0 |
-| BSP - Platform I/O | 7 | 7 | 0 | 0 |
-| BSP - Standard I/O | 3 | 3 | 0 | 0 |
-| BSP - Interrupts | 8 | 8 | 0 | 0 |
-| **Total** | **131** | **131** | **0** | **0** |
+Run `cd tests && make test` to obtain current pass/fail results.
+
+| Category | Test Cases |
+|----------|------------|
+| Kernel - Task Management | 18 |
+| Kernel - Scheduling | 7 |
+| Kernel - Critical Sections | 3 |
+| Kernel - Semaphores | 16 |
+| Kernel - Message Pipes | 19 |
+| Kernel - Print Buffer | 5 |
+| Kernel - SVC Dispatch | 11 |
+| BSP - Display | 21 |
+| BSP - LED | 4 |
+| BSP - Platform I/O | 7 |
+| BSP - Standard I/O | 3 |
+| BSP - Interrupts | 8 |
+| **Total** | **~140** |
+
+> **Note:** counts above are approximate; the canonical test count comes from the
+> Unity runner output at test execution time.
 
 ## 5. Untested Requirements
 
@@ -180,3 +200,4 @@ The following requirements require target integration testing:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Added SVC tests; updated counts to ~140; reconciled semaphore/pipe test names |

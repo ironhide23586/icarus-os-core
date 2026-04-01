@@ -34,8 +34,8 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 
 | Metric | Status |
 |--------|--------|
-| **Test Coverage** | 88.5% line, 85.9% function |
-| **Unit Tests** | 131 tests, 0 failures |
+| **Test Coverage** | 91.1% line, 89.5% function (host, see `tests/`) |
+| **Unit Tests** | 140 Unity tests — run `cd tests && make test` |
 | **Static Analysis** | cppcheck clean |
 | **Certification Target** | DO-178C DAL C |
 | **Coding Standard** | MISRA C:2012 subset |
@@ -44,7 +44,9 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 
 ## Terminal GUI
 
-ICARUS OS features a real-time terminal-based GUI that visualizes kernel activity, IPC operations, and stress test metrics. The display uses ANSI escape codes for cursor positioning and colors.
+ICARUS OS includes a real-time terminal-based GUI that visualizes kernel activity, IPC operations, and stress test metrics. The display uses ANSI escape codes for cursor positioning and colors.
+
+**Default firmware (`Core/Src/main.c`):** `ENABLE_GAME` is on; `ENABLE_DEMO_TASKS`, `ENABLE_STRESS_TEST`, and `ENABLE_INTERACTIVE` are off. You get the full multi-section dashboard (demo bars, stress stats, and so on) only after setting those macros to `1` and rebuilding.
 
 ### GUI Layout Overview
 
@@ -224,9 +226,9 @@ ls build/icarus_os.hex
 ls build/icarus_os.map
 ```
 
-**Build artifacts:**
-- `icarus_os.elf` - Executable with debug symbols (2.2 MB)
-- `icarus_os.hex` - Flash programming file (147 KB)
+**Build artifacts (typical sizes, varies with options):**
+- `icarus_os.elf` - ELF with debug symbols (on the order of ~100 KB for a clean `-O2` build in this tree)
+- `icarus_os.hex` - Flash programming file (on the order of ~130–140 KB)
 - `icarus_os.map` - Memory map and symbol table
 
 ### Memory Layout
@@ -352,13 +354,7 @@ bash icarus_terminal.sh
 
 ### What You'll See
 
-Upon successful connection, you'll see the ICARUS OS terminal GUI with:
-- ASCII art header
-- Heartbeat banner (flashing with LED)
-- Demo task progress bars
-- Semaphore/pipe visualizations
-- Message history panels
-- Stress test statistics (if enabled)
+With the stock `main.c` flags above, expect the **ICARUS Runner** game over USB serial—not the full dashboard. When demo/stress features are enabled at compile time, you will see the terminal GUI with items such as: ASCII header, optional heartbeat banner, demo task bars, semaphore/pipe views, message history, and stress statistics.
 
 **Example output:**
 ```
@@ -381,7 +377,7 @@ Upon successful connection, you'll see the ICARUS OS terminal GUI with:
 
 ## Overview
 
-ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750). The kernel provides deterministic task scheduling, context switching, and a clean API for embedded real-time applications.
+ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750VBT6). The kernel provides deterministic task scheduling, hardware-enforced memory protection, and a comprehensive API for safety-critical embedded applications.
 
 ### Vision
 
@@ -395,28 +391,251 @@ ICARUS is designed to be the first open-source RTOS with:
 
 #### Core Kernel
 - **Preemptive Round-Robin Scheduling**: Time-sliced task execution with configurable time quantum (50ms default)
-- **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV
+- **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV with MPU reconfiguration
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
-- **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages
+- **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages up to 128 bytes
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
 - **Blocking Sleep**: Busy-wait sleep for critical timing
+- **Up to 128 Tasks**: Configurable task pool with 2KB stack and 2KB data region per task
+- **64 Semaphores & 64 Pipes**: Rich IPC primitives for complex applications
 
-#### Memory Protection (NEW in v0.1.0)
+#### Memory Protection (v0.1.0)
 - **Hardware-Enforced Isolation**: ARM Cortex-M7 MPU with 8-region configuration
-- **DTCM Protection**: Kernel data isolated in privileged-only memory (Region 5)
-- **ITCM Protection**: Kernel code marked read-only to prevent modification attacks (Region 0)
+- **DTCM Protection**: Kernel data isolated in privileged-only memory (Region 5, 128KB)
+- **ITCM Protection**: Kernel code marked read-only to prevent modification attacks (Region 0, 64KB)
 - **Task Data Isolation**: Each task gets isolated 2KB data region with MPU reconfiguration on context switch (Region 4)
 - **Privilege Separation**: Tasks run unprivileged (CONTROL.nPRIV=1), kernel runs privileged via SVC mechanism
-- **SVC Call Gates**: 39 SVC numbers for controlled privilege transitions with atomic kernel state access
-- **Fault Recovery**: Graceful handling of MemManage faults with fault address/PC capture
+- **40 SVC Call Gates**: Controlled privilege transitions with atomic kernel state access
+- **Fault Recovery**: Graceful handling of MemManage faults with fault address/PC capture and LED blink decoder
 - **Attack Validation**: 5 red team test tasks validate 100% protection effectiveness
 
-#### Development & Debugging
-- **Visual Debugging**: Terminal-based display with progress bars, message history, semaphore/pipe visualization
-- **Stress Testing**: Built-in stress test suite with real-time verification (19 tasks, 10+ min stability)
-- **USB CDC Support**: Serial communication via USB Virtual COM Port
+#### ICARUS Runner Game
+- **Multi-Task Demo**: Chrome dino-style endless runner showcasing RTOS capabilities
+- **4 Concurrent Tasks**: Input (10ms), Physics (20ms), Logic (50ms), Render (50ms)
+- **IPC Demonstration**: Semaphore-protected shared state, pipe-based command passing
+- **Dynamic Difficulty**: Speed increases with score (1.0x-4.0x multiplier based on distance)
+- **High Score Persistence**: RTC backup register storage survives power cycles
+- **80×24 Terminal Display**: ANSI escape code rendering with collision detection
+- **Button Control**: K1 button (PC13) for jump input with 50ms debouncing
+
+#### Demo & Testing
+- **Demo Tasks**: 12 producer/consumer tasks demonstrating semaphores and pipes (SS, SM, MS, MM patterns)
+- **Stress Testing**: 19 competing tasks with high-contention IPC operations (10+ min stability verified)
+- **Interactive Demo**: Button-controlled LED with real-time feedback
+- **Visual Debugging**: Terminal-based GUI with progress bars, message history, semaphore/pipe visualization
+- **USB CDC Support**: Serial communication via USB Virtual COM Port (115200 baud)
+
+#### Development & Quality
 - **MISRA C Compliant**: Follows MISRA C:2012 coding standards
+- **Comprehensive Unit Tests**: 140+ Unity tests; run `cd tests && make coverage-summary` for current line/function coverage on the host build
+- **Static Analysis**: cppcheck clean, zero warnings
+- **Standalone Build System**: Makefile-based build without IDE dependency
+- **Memory Map Visualizer**: Interactive web tool for analyzing linker output
+- **DO-178C Documentation**: Complete certification-aligned documentation suite
+
+---
+
+## Architecture Overview
+
+ICARUS OS is structured in layers, from low-level hardware abstraction to high-level application tasks.
+
+### System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ ICARUS Runner│  │  Demo Tasks  │  │ Stress Tests │      │
+│  │   (Game)     │  │ (Producers/  │  │ (19 tasks)   │      │
+│  │  4 tasks     │  │  Consumers)  │  │              │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+├─────────────────────────────────────────────────────────────┤
+│                      ICARUS RTOS API                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  Semaphores  │  │    Pipes     │  │    Tasks     │      │
+│  │  (64 max)    │  │  (64 max)    │  │  (128 max)   │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+├─────────────────────────────────────────────────────────────┤
+│                      KERNEL LAYER                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  Scheduler   │  │ Context      │  │  SVC Handler │      │
+│  │ (Round-Robin)│  │ Switch (ASM) │  │  (40 gates)  │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ Task Manager │  │ IPC Manager  │  │ MPU Manager  │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+├─────────────────────────────────────────────────────────────┤
+│                   BOARD SUPPORT PACKAGE                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   Display    │  │   USB CDC    │  │     RTC      │      │
+│  │  (Terminal)  │  │  (Serial)    │  │ (Persistence)│      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   GPIO/LED   │  │   SPI/I2C    │  │    Timer     │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+├─────────────────────────────────────────────────────────────┤
+│                    HARDWARE LAYER                            │
+│  STM32H750VBT6 (ARM Cortex-M7 @ 480MHz)                     │
+│  128KB Flash | 1MB RAM | 64KB ITCM | 128KB DTCM             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Directory Structure
+
+```
+icarus-os-core/
+├── Core/
+│   ├── Inc/
+│   │   ├── icarus/          # RTOS kernel headers
+│   │   │   ├── icarus.h     # Main API umbrella header
+│   │   │   ├── kernel.h     # Kernel state and initialization
+│   │   │   ├── scheduler.h  # Task scheduling
+│   │   │   ├── task.h       # Task management
+│   │   │   ├── semaphore.h  # Semaphore API
+│   │   │   ├── pipe.h       # Message pipe API
+│   │   │   ├── svc.h        # SVC definitions (40 call gates)
+│   │   │   ├── types.h      # Core data structures (TCB, etc.)
+│   │   │   └── config.h     # Configuration constants
+│   │   ├── bsp/             # Board support package headers
+│   │   │   ├── bsp.h        # BSP master header
+│   │   │   ├── config.h     # Hardware pin mappings
+│   │   │   ├── display.h    # Terminal GUI
+│   │   │   ├── gpio.h       # GPIO/LED control
+│   │   │   ├── i2c.h        # I2C driver (IMU)
+│   │   │   ├── spi.h        # SPI driver (LCD)
+│   │   │   ├── rtc.h        # Real-time clock
+│   │   │   ├── timer.h      # Timer/PWM
+│   │   │   └── usb.h        # USB CDC
+│   │   ├── game/            # ICARUS Runner game headers
+│   │   │   ├── game.h       # Game API
+│   │   │   ├── game_config.h # Game constants
+│   │   │   ├── game_types.h  # Game data structures
+│   │   │   └── game_internal.h # Internal game state
+│   │   ├── demo_tasks.h     # Demo task registration
+│   │   ├── interactive_tasks.h # Interactive demo
+│   │   ├── stress_test.h    # Stress test suite
+│   │   └── main.h           # Main entry point
+│   ├── Src/
+│   │   ├── icarus/          # RTOS kernel implementation
+│   │   │   ├── kernel.c     # Kernel core
+│   │   │   ├── scheduler.c  # Scheduler logic
+│   │   │   ├── task.c       # Task management
+│   │   │   ├── semaphore.c  # Semaphore implementation
+│   │   │   ├── pipe.c       # Pipe implementation
+│   │   │   ├── svc.c        # SVC dispatcher
+│   │   │   └── context_switch.s # Assembly context switch
+│   │   ├── bsp/             # BSP implementation
+│   │   ├── game/            # Game implementation
+│   │   │   ├── game.c       # Game initialization
+│   │   │   ├── game_state.c # State management
+│   │   │   ├── game_physics.c # Physics engine
+│   │   │   ├── game_collision.c # Collision detection
+│   │   │   ├── game_render.c # Terminal rendering
+│   │   │   ├── game_obstacles.c # Obstacle management
+│   │   │   └── game_score.c # Score tracking
+│   │   ├── demo_tasks.c     # Demo task implementation
+│   │   ├── interactive_tasks.c # Interactive demo
+│   │   ├── stress_test.c    # Stress test implementation
+│   │   └── main.c           # Application entry point
+│   └── Startup/
+│       └── startup_stm32h750vbtx.s # Startup code
+├── Drivers/
+│   ├── STM32H7xx_HAL_Driver/ # STM32 HAL library
+│   ├── CMSIS/               # ARM CMSIS headers
+│   └── BSP/ST7735/          # LCD driver
+├── Middlewares/
+│   └── ST/STM32_USB_Device_Library/ # USB device stack
+├── USB_DEVICE/              # USB CDC application
+├── build/
+│   ├── Makefile             # Standalone build system
+│   ├── rebuild.sh           # Clean rebuild script
+│   └── build.sh             # Incremental build script
+├── tests/
+│   ├── src/                 # Unit test sources
+│   ├── mocks/               # Hardware mocks
+│   ├── unity/               # Unity test framework
+│   ├── cmock/               # CMock framework
+│   ├── Makefile             # Test build system
+│   └── README.md            # Test documentation
+├── docs/
+│   ├── do178c/              # DO-178C certification docs
+│   │   ├── plans/           # PSAC, SDP, SVP, SCMP, SQAP
+│   │   ├── requirements/    # SRS (71 requirements)
+│   │   ├── design/          # SDD with traceability
+│   │   ├── verification/    # Coverage, test traceability
+│   │   └── README.md        # Documentation overview
+│   └── doxygen/             # API documentation
+├── tools/
+│   └── map-visualizer/      # Memory map visualization tool
+│       ├── index.html       # Web interface
+│       ├── app.js           # Application controller
+│       ├── parser.js        # Map file parser
+│       ├── visualizer.js    # Memory layout renderer
+│       └── README.md        # Tool documentation
+├── STM32H750VBTX_FLASH.ld   # Linker script (Flash boot)
+├── STM32H750VBTX_RAM.ld     # Linker script (RAM boot)
+├── icarus_terminal.sh       # Terminal connection script
+├── FAULT_BLINK_DECODER.md   # LED fault decoder guide
+├── README.md                # This file
+└── LICENSE                  # Apache 2.0 license
+```
+
+### Task Execution Flow
+
+```
+1. System Boot
+   ├─> Reset_Handler (startup_stm32h750vbtx.s)
+   ├─> SystemInit() - Configure clocks, MPU, caches
+   ├─> main()
+   │   ├─> hal_init() - Initialize BSP
+   │   ├─> os_init() - Initialize kernel
+   │   ├─> game_init() / demo_tasks_init() - Register tasks
+   │   └─> os_start() - Start scheduler (never returns)
+   │
+2. Scheduler Loop (in SysTick_Handler)
+   ├─> Decrement current_task_ticks_remaining
+   ├─> If time slice expired:
+   │   └─> Trigger PendSV (context switch)
+   │
+3. Context Switch (PendSV_Handler)
+   ├─> Save current task context (R4-R11, PSP)
+   ├─> Update current task state (RUNNING → READY)
+   ├─> Select next ready task (round-robin)
+   ├─> Reconfigure MPU Region 4 for task data
+   ├─> Restore next task context
+   └─> Return to task (unprivileged mode)
+   │
+4. Task Execution
+   ├─> Task runs in unprivileged mode
+   ├─> Can call RTOS API via SVC instructions
+   ├─> Can access own stack (RAM_D1) and data (RAM_D2)
+   ├─> Cannot access kernel data (DTCM) or other tasks' data
+   └─> Preempted after 50ms time slice
+```
+
+### IPC Data Flow Example (Semaphore)
+
+```
+Producer Task                    Kernel (DTCM)              Consumer Task
+─────────────                    ─────────────              ─────────────
+                                                            
+semaphore_feed(0)                                           semaphore_consume(0)
+    │                                                           │
+    ├─> while (!sem_can_feed(0))  ──SVC 29──>                 ├─> while (!sem_can_consume(0))
+    │       task_active_sleep(1)              Check count     │       task_active_sleep(1)
+    │                             <──Return──  < max?         │
+    │                                                          │
+    ├─> sem_increment(0)          ──SVC 33──>                 │
+    │                                         ++count         │
+    │                             <──Return──                 │
+    │                                                          │
+    │                                                          ├─> sem_decrement(0)  ──SVC 34──>
+    │                                                          │                                --count
+    │                                                          │                    <──Return──
+    │                                                          │
+    └─> Continue                                               └─> Continue
+```
 
 ---
 
@@ -468,22 +687,22 @@ ICARUS OS implements comprehensive hardware-enforced memory protection using the
 
 **Solution:** SVC call gates that read/write kernel state atomically in privileged mode.
 
-**39 SVC Numbers Defined:**
+**40 SVC Numbers Defined:**
 
 | SVC Range | Purpose | Examples |
 |-----------|---------|----------|
 | 0-15 | Core kernel operations | os_init, os_start, os_yield, task_sleep |
 | 16-28 | IPC operations | semaphore_init, pipe_init, task lifecycle |
-| 29-36 | Call gates (spinning) | sem_can_feed, pipe_can_enqueue, sem_increment |
+| 29-36 | Call gates (spinning) | sem_can_feed, pipe_can_enqueue, sem_increment, pipe_write_bytes |
 | 37-39 | Metadata gates | os_get_tick_count, os_get_task_name |
 
 **Spinning Pattern with Call Gates:**
 ```c
 bool semaphore_feed(uint8_t semaphore_idx) {
-    while (!sem_can_feed(semaphore_idx)) {  // SVC call gate (read DTCM)
+    while (!sem_can_feed(semaphore_idx)) {  // SVC 29: read DTCM
         task_active_sleep(1);
     }
-    sem_increment(semaphore_idx);  // SVC write gate (write DTCM)
+    sem_increment(semaphore_idx);  // SVC 33: write DTCM
     return true;
 }
 ```
@@ -527,6 +746,87 @@ bool semaphore_feed(uint8_t semaphore_idx) {
 
 ---
 
+## Tools & Utilities
+
+### Memory Map Visualizer
+
+ICARUS OS includes an interactive web-based tool for analyzing linker map files. This helps with debugging memory issues, optimizing Flash/RAM usage, and understanding the memory layout.
+
+**Features:**
+- Automatic loading of `build/icarus_os.map`
+- Interactive memory region filtering
+- Click-to-explore sections and symbols
+- Real-time symbol search
+- Visual memory layout with proportional sizing
+- Color-coded sections (Flash, RAM, DTCM, ITCM, etc.)
+- Detailed statistics and usage percentages
+
+**Usage:**
+```bash
+# Open in browser
+open tools/map-visualizer/index.html
+
+# Or use a local server
+cd tools/map-visualizer
+python3 -m http.server 8000
+# Then open http://localhost:8000
+```
+
+**Use Cases:**
+- Debug stack overflow issues
+- Identify large sections consuming Flash
+- Find symbol addresses quickly
+- Visualize memory region utilization
+- Spot overlapping sections
+
+See `tools/map-visualizer/README.md` for detailed documentation.
+
+### Terminal Connection Script
+
+The `icarus_terminal.sh` script automatically detects your STM32 board and connects to the USB serial port.
+
+**Features:**
+- Auto-detection of USB serial devices (macOS/Linux)
+- Supports multiple terminal programs (picocom, screen)
+- Automatic cursor restoration on exit
+- Helpful error messages with device listing
+
+**Usage:**
+```bash
+# Connect to ICARUS OS terminal
+bash icarus_terminal.sh
+
+# Exit:
+# - picocom: Ctrl+A then Ctrl+X
+# - screen: Ctrl+A then K
+```
+
+### Fault Blink Decoder
+
+When a MemManage fault occurs, ICARUS OS blinks the LED to communicate the fault address. This is useful for debugging MPU violations.
+
+**Blink Pattern:**
+1. 4 fast blinks - MemManage fault indicator
+2. Long pause (4 seconds)
+3. Address nibbles - Upper 16 bits of MMFAR (4 hex digits)
+4. Long pause (6 seconds)
+5. Continuous 4 blinks - System halted
+
+**Decoding:**
+- 0 = One long blink (0.8s)
+- 1-15 = That many short blinks (0.2s each)
+- Between nibbles: 1 second pause
+
+**Example:**
+```
+4 fast → pause → 2 blinks → pause → 0 (long) → pause → 0 (long) → pause → 0 (long)
+Decodes to: 0x2000xxxx (DTCM region)
+```
+
+See `FAULT_BLINK_DECODER.md` for complete documentation.
+
+---
+
 ## DO-178C Alignment
 
 ICARUS OS is being developed to support DO-178C DAL C certification objectives. Complete certification-aligned documentation is available in `docs/do178c/`.
@@ -551,9 +851,9 @@ ICARUS OS is being developed to support DO-178C DAL C certification objectives. 
 |-----------|--------|
 | Static analysis (cppcheck) | ✅ Complete |
 | MISRA C:2012 subset | ✅ Complete |
-| Unit testing (Unity) | ✅ 131 tests |
-| Line coverage | ✅ 88.5% |
-| Function coverage | ✅ 85.9% |
+| Unit testing (Unity) | ✅ 140 tests |
+| Line coverage | ✅ ~91% (host `lcov`, kernel+BSP under test) |
+| Function coverage | ✅ ~89.5% |
 | Requirements traceability | ✅ SRS complete |
 | Design traceability | ✅ SDD complete |
 | MC/DC coverage | 🔄 In progress |
@@ -572,6 +872,120 @@ cd tests && make COVERAGE=yes clean test coverage-html
 # Run static analysis
 cd build && make cppcheck
 ```
+
+---
+
+## Project Status & Roadmap
+
+### Current Status (v0.1.0)
+
+ICARUS OS is in active development with core functionality complete and undergoing verification.
+
+**Implemented Features:**
+- ✅ Preemptive round-robin scheduler with 50ms time quantum
+- ✅ Hardware-enforced memory protection (MPU with 8 regions)
+- ✅ Task management (128 tasks, 2KB stack + 2KB data each)
+- ✅ Semaphores (64 max, counting with blocking operations)
+- ✅ Message pipes (64 max, FIFO with up to 128-byte messages)
+- ✅ SVC call gates (40 gates for privilege separation)
+- ✅ Context switching with MPU reconfiguration
+- ✅ Fault recovery with LED blink decoder
+- ✅ Terminal GUI with real-time visualization
+- ✅ USB CDC serial communication
+- ✅ ICARUS Runner game demo (4 tasks)
+- ✅ Demo tasks (12 producer/consumer patterns)
+- ✅ Stress testing (19 tasks, 10+ min stability)
+- ✅ Unit testing (140 tests; ~91% statement coverage on exercised kernel/BSP sources — see `tests/README.md`)
+- ✅ Static analysis (cppcheck clean)
+- ✅ MISRA C:2012 compliance
+- ✅ DO-178C documentation (plans, requirements, design, verification)
+- ✅ Memory map visualizer tool
+- ✅ Standalone build system (Makefile)
+
+**Known Limitations:**
+- ⚠️ Priority-based scheduling not yet implemented (round-robin only)
+- ⚠️ No dynamic memory allocation (static allocation only)
+- ⚠️ Limited to STM32H750VBT6 (portability planned)
+- ⚠️ MC/DC coverage analysis not yet complete
+- ⚠️ Formal verification not yet started
+
+### Roadmap
+
+#### v0.2.0 (Q2 2026) - Priority Scheduling
+- [ ] Priority-based preemptive scheduling
+- [ ] Priority inheritance for semaphores
+- [ ] Priority ceiling protocol
+- [ ] Deadline-driven scheduling
+- [ ] Enhanced stress tests for priority inversion
+
+#### v0.3.0 (Q3 2026) - Enhanced IPC
+- [ ] Event flags (binary semaphores with broadcast)
+- [ ] Mutexes with priority inheritance
+- [ ] Mailboxes (fixed-size message queues)
+- [ ] Shared memory regions with access control
+- [ ] IPC timeout mechanisms
+
+#### v0.4.0 (Q4 2026) - Portability
+- [ ] HAL abstraction layer
+- [ ] Support for STM32F7 series
+- [ ] Support for STM32H7 series (all variants)
+- [ ] Support for other Cortex-M7 MCUs
+- [ ] Board configuration system
+
+#### v0.5.0 (Q1 2027) - Advanced Features
+- [ ] Dynamic task creation/deletion
+- [ ] Task suspension/resumption
+- [ ] Software timers
+- [ ] Watchdog integration
+- [ ] Power management (sleep modes)
+
+#### v1.0.0 (Q2 2027) - Certification Ready
+- [ ] Complete MC/DC coverage analysis
+- [ ] Full MISRA C:2012 compliance (PC-lint Plus)
+- [ ] Formal verification (CBMC or similar)
+- [ ] DO-178C DAL C certification package
+- [ ] Production-ready release
+
+#### v2.0.0 (2028+) - AI Integration
+- [ ] Deterministic neural network inference
+- [ ] Certifiable AI runtime
+- [ ] Model quantization and optimization
+- [ ] Safety monitors for AI outputs
+- [ ] DO-178C DAL B certification for AI components
+
+### Contributing
+
+ICARUS OS is open source and welcomes contributions! Areas where help is needed:
+
+**High Priority:**
+- MC/DC coverage analysis and tooling
+- Formal verification setup (CBMC, Frama-C)
+- Porting to other STM32 variants
+- Additional demo applications
+- Documentation improvements
+
+**Medium Priority:**
+- Priority scheduling implementation
+- Enhanced IPC primitives
+- Power management features
+- Additional unit tests
+- Performance benchmarking
+
+**Low Priority:**
+- GUI improvements
+- Additional visualization tools
+- Example projects
+- Tutorial content
+
+**How to Contribute:**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Follow MISRA C:2012 coding standards
+4. Add unit tests for new functionality
+5. Update documentation
+6. Submit a pull request
+
+There is no separate `CONTRIBUTING.md` yet; use the checklist above when opening a pull request.
 
 ---
 

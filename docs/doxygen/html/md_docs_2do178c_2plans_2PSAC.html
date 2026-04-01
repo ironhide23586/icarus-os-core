@@ -100,7 +100,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2PSAC.html',''); initResizable(
   <div class="headertitle"><div class="title">Plan for Software Aspects of Certification (PSAC)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md129"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md176"></a></p>
 <p><b>Document ID:</b> ICARUS-PSAC-001 <br  />
  <b>Version:</b> 0.1 <br  />
  <b>Date:</b> 2025-01-26 <br  />
@@ -108,7 +108,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2PSAC.html',''); initResizable(
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md131"></a>
+<h1><a class="anchor" id="autotoc_md178"></a>
 Document Control</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -121,7 +121,7 @@ Document Control</h1>
 <td class="markdownTableBodyNone">Approver   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md133"></a>
+<h1><a class="anchor" id="autotoc_md180"></a>
 Revision History</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -130,7 +130,7 @@ Revision History</h1>
 <td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md135"></a>
+<h1><a class="anchor" id="autotoc_md182"></a>
 Table of Contents</h1>
 <ol type="1">
 <li>Introduction</li>
@@ -144,15 +144,15 @@ Table of Contents</h1>
 <li>Additional Considerations</li>
 </ol>
 <hr  />
-<h1><a class="anchor" id="autotoc_md137"></a>
+<h1><a class="anchor" id="autotoc_md184"></a>
 1. Introduction</h1>
-<h2><a class="anchor" id="autotoc_md138"></a>
+<h2><a class="anchor" id="autotoc_md185"></a>
 1.1 Purpose</h2>
 <p>This Plan for Software Aspects of Certification (PSAC) describes the software development and verification processes for the ICARUS Operating System (ICARUS OS). This document provides the certification authority with visibility into the software development activities and demonstrates compliance with DO-178C objectives.</p>
-<h2><a class="anchor" id="autotoc_md139"></a>
+<h2><a class="anchor" id="autotoc_md186"></a>
 1.2 Scope</h2>
 <p>This PSAC covers the ICARUS OS real-time operating system kernel and board support package (BSP) software executing on the STM32H750 microcontroller platform.</p>
-<h2><a class="anchor" id="autotoc_md140"></a>
+<h2><a class="anchor" id="autotoc_md187"></a>
 1.3 Applicable Documents</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -166,7 +166,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ARP4754A   </td><td class="markdownTableBodyNone">Guidelines for Development of Civil Aircraft and Systems   </td><td class="markdownTableBodyNone">-   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md141"></a>
+<h2><a class="anchor" id="autotoc_md188"></a>
 1.4 Reference Documents</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -183,12 +183,12 @@ Table of Contents</h1>
 <td class="markdownTableBodyNone">ICARUS-SRS-001   </td><td class="markdownTableBodyNone">Software Requirements Specification   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md143"></a>
+<h1><a class="anchor" id="autotoc_md190"></a>
 2. System Overview</h1>
-<h2><a class="anchor" id="autotoc_md144"></a>
+<h2><a class="anchor" id="autotoc_md191"></a>
 2.1 System Description</h2>
 <p>ICARUS OS is a preemptive real-time operating system designed for embedded aerospace applications. The system provides task scheduling, inter-task communication, and hardware abstraction for the STM32H750 Cortex-M7 microcontroller.</p>
-<h2><a class="anchor" id="autotoc_md145"></a>
+<h2><a class="anchor" id="autotoc_md192"></a>
 2.2 System Functions</h2>
 <p>The system provides the following high-level functions:</p>
 <table class="markdownTable">
@@ -205,7 +205,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Debug Output   </td><td class="markdownTableBodyNone">USB CDC serial output for diagnostics   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md146"></a>
+<h2><a class="anchor" id="autotoc_md193"></a>
 2.3 System Architecture</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    Application Tasks                         │</div>
@@ -224,7 +224,7 @@ Table of Contents</h1>
 <div class="line">├─────────────────────────────────────────────────────────────┤</div>
 <div class="line">│                 STM32H750 Hardware (Cortex-M7)               │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md147"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md194"></a>
 2.4 Hardware Platform</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -241,31 +241,31 @@ Table of Contents</h1>
 <td class="markdownTableBodyNone">Peripherals   </td><td class="markdownTableBodyNone">USB OTG, SPI, I2C, GPIO, TIM   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md149"></a>
+<h1><a class="anchor" id="autotoc_md196"></a>
 3. Software Overview</h1>
-<h2><a class="anchor" id="autotoc_md150"></a>
+<h2><a class="anchor" id="autotoc_md197"></a>
 3.1 Software Functions</h2>
-<h3><a class="anchor" id="autotoc_md151"></a>
+<h3><a class="anchor" id="autotoc_md198"></a>
 3.1.1 Kernel Functions</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Function   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Safety Relevance    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a></code>   </td><td class="markdownTableBodyNone">Initialize kernel state   </td><td class="markdownTableBodyNone">High - system startup    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a></code>   </td><td class="markdownTableBodyNone">Initialize kernel state   </td><td class="markdownTableBodyNone">High - system startup    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a19c7111cf2121a69331d99dabe3e9df0" title="Start the ICARUS scheduler.">os_start()</a></code>   </td><td class="markdownTableBodyNone">Begin task execution   </td><td class="markdownTableBodyNone">High - scheduler start    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a19c7111cf2121a69331d99dabe3e9df0" title="Start the ICARUS scheduler.">os_start()</a></code>   </td><td class="markdownTableBodyNone">Begin task execution   </td><td class="markdownTableBodyNone">High - scheduler start    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a02d2fa79b4b720c7906a7262740db686" title="Voluntarily yield CPU to scheduler.">os_yield()</a></code>   </td><td class="markdownTableBodyNone">Voluntary context switch   </td><td class="markdownTableBodyNone">Medium - task cooperation    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#a02d2fa79b4b720c7906a7262740db686" title="Voluntarily yield CPU to scheduler.">os_yield()</a></code>   </td><td class="markdownTableBodyNone">Voluntary context switch   </td><td class="markdownTableBodyNone">Medium - task cooperation    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558" title="Create a task with explicit stack allocation.">os_create_task()</a></code>   </td><td class="markdownTableBodyNone">Create new task   </td><td class="markdownTableBodyNone">Medium - resource allocation    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#a041d15fb5184f477a215121b6dd356a9" title="Create a task with explicit stack allocation.">os_create_task()</a></code>   </td><td class="markdownTableBodyNone">Create new task   </td><td class="markdownTableBodyNone">Medium - resource allocation    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task.">os_kill_process()</a></code>   </td><td class="markdownTableBodyNone">Terminate task   </td><td class="markdownTableBodyNone">Medium - resource cleanup    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task by index.">os_kill_process()</a></code>   </td><td class="markdownTableBodyNone">Terminate task   </td><td class="markdownTableBodyNone">Medium - resource cleanup    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified number of ticks (non-blocking)">task_active_sleep()</a></code>   </td><td class="markdownTableBodyNone">Non-blocking sleep   </td><td class="markdownTableBodyNone">Low - timing    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="kernel_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified ticks (cooperative, via SVC)">task_active_sleep()</a></code>   </td><td class="markdownTableBodyNone">Non-blocking sleep   </td><td class="markdownTableBodyNone">Low - timing    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with interrupts disabled (blocking)">task_blocking_sleep()</a></code>   </td><td class="markdownTableBodyNone">Blocking sleep   </td><td class="markdownTableBodyNone">Low - timing   </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with scheduler disabled (blocking)">task_blocking_sleep()</a></code>   </td><td class="markdownTableBodyNone">Blocking sleep   </td><td class="markdownTableBodyNone">Low - timing   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md152"></a>
+<h3><a class="anchor" id="autotoc_md199"></a>
 3.1.2 BSP Functions</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -273,32 +273,32 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183" title="Initialize all hardware abstraction layer components.">hal_init()</a></code>   </td><td class="markdownTableBodyNone">Initialize hardware   </td><td class="markdownTableBodyNone">High - hardware setup    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code><a class="el" href="bsp__led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9" title="Blink LED with specified timing.">LED_Blink()</a></code>   </td><td class="markdownTableBodyNone">Heartbeat indication   </td><td class="markdownTableBodyNone">Low - status display    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9" title="Blink LED with specified timing.">LED_Blink()</a></code>   </td><td class="markdownTableBodyNone">Heartbeat indication   </td><td class="markdownTableBodyNone">Low - status display    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code><a class="el" href="bsp__display_8h.html#a407d5033a6f0198221c8a9081d7e807e" title="Initialize terminal display.">display_init()</a></code>   </td><td class="markdownTableBodyNone">Initialize LCD   </td><td class="markdownTableBodyNone">Low - user interface    </td></tr>
+<td class="markdownTableBodyNone"><code><a class="el" href="display_8h.html#a407d5033a6f0198221c8a9081d7e807e" title="Initialize terminal display - clear screen and print header.">display_init()</a></code>   </td><td class="markdownTableBodyNone">Initialize LCD   </td><td class="markdownTableBodyNone">Low - user interface    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>platform_read/write()</code>   </td><td class="markdownTableBodyNone">I2C communication   </td><td class="markdownTableBodyNone">Medium - sensor data   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md153"></a>
+<h2><a class="anchor" id="autotoc_md200"></a>
 3.2 Software Architecture</h2>
 <p>The software is organized into the following components:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Component   </th><th class="markdownTableHeadNone">Location   </th><th class="markdownTableHeadNone">Lines of Code   </th><th class="markdownTableHeadNone">Description    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Kernel   </td><td class="markdownTableBodyNone"><code>Core/Src/kernel/</code>   </td><td class="markdownTableBodyNone">~400   </td><td class="markdownTableBodyNone">Task scheduler and management    </td></tr>
+<td class="markdownTableBodyNone">Kernel   </td><td class="markdownTableBodyNone"><code>Core/Src/icarus/</code>   </td><td class="markdownTableBodyNone">~400   </td><td class="markdownTableBodyNone">Scheduler, IPC, SVC, context switch    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">BSP   </td><td class="markdownTableBodyNone"><code>Core/Src/bsp/</code>   </td><td class="markdownTableBodyNone">~300   </td><td class="markdownTableBodyNone">Hardware abstraction    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Context Switch   </td><td class="markdownTableBodyNone"><code>Core/Src/kernel/context_switch.s</code>   </td><td class="markdownTableBodyNone">~100   </td><td class="markdownTableBodyNone">ARM assembly context switch    </td></tr>
+<td class="markdownTableBodyNone">Context Switch   </td><td class="markdownTableBodyNone"><code><a class="el" href="context__switch_8s.html">Core/Src/icarus/context_switch.s</a></code>   </td><td class="markdownTableBodyNone">~100   </td><td class="markdownTableBodyNone">ARM assembly context switch    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Startup   </td><td class="markdownTableBodyNone"><code>Core/Startup/</code>   </td><td class="markdownTableBodyNone">~200   </td><td class="markdownTableBodyNone">Processor initialization   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md154"></a>
+<h2><a class="anchor" id="autotoc_md201"></a>
 3.3 Software Partitioning</h2>
-<p>The software does not implement partitioning. All tasks execute in the same memory space with shared access to kernel resources.</p>
-<p><b>Rationale:</b> The target application does not require memory protection between tasks. All tasks are developed and verified together as a single software load.</p>
-<h2><a class="anchor" id="autotoc_md155"></a>
+<p>Application tasks share a single load image but <b>task data is isolated</b> using the Cortex-M7 MPU (dedicated per-task RAM regions and privileged-only DTCM for kernel state). Kernel code and data are additionally protected as described in the SDD and SRS memory-protection requirements.</p>
+<p><b>Rationale:</b> The platform enforces spatial and privilege separation suitable for the certified use case; tasks are still verified as one software load with shared flash and HAL services.</p>
+<h2><a class="anchor" id="autotoc_md202"></a>
 3.4 Deactivated Code</h2>
 <p>The following code is present but not executed during normal operation:</p>
 <table class="markdownTable">
@@ -307,13 +307,13 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Fault handlers   </td><td class="markdownTableBodyNone">Error recovery   </td><td class="markdownTableBodyNone">Execute only on hardware faults    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>os_transmit_printf_task</code>   </td><td class="markdownTableBodyNone">Debug output   </td><td class="markdownTableBodyNone">Currently disabled in <code><a class="el" href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a></code>   </td></tr>
+<td class="markdownTableBodyNone"><code>os_transmit_printf_task</code>   </td><td class="markdownTableBodyNone">Debug output   </td><td class="markdownTableBodyNone">Currently disabled in <code><a class="el" href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09" title="Initialize the ICARUS kernel.">os_init()</a></code>   </td></tr>
 </table>
 <p>See <code>ICARUS-VER-002 Deactivated Code Analysis</code> for complete analysis.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md157"></a>
+<h1><a class="anchor" id="autotoc_md204"></a>
 4. Certification Considerations</h1>
-<h2><a class="anchor" id="autotoc_md158"></a>
+<h2><a class="anchor" id="autotoc_md205"></a>
 4.1 Software Level</h2>
 <p><b>Assigned Software Level: DAL C (Major)</b></p>
 <p><b>Rationale:</b> Failure of the ICARUS OS could result in:</p><ul>
@@ -321,7 +321,7 @@ Table of Contents</h1>
 <li>Incorrect timing affecting dependent systems</li>
 <li>These effects are classified as "Major" per ARP4754A</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md159"></a>
+<h2><a class="anchor" id="autotoc_md206"></a>
 4.2 DO-178C Objectives</h2>
 <p>The following DO-178C objectives apply to DAL C software:</p>
 <table class="markdownTable">
@@ -348,7 +348,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">A-10   </td><td class="markdownTableBodyNone">Certification Liaison Process   </td><td class="markdownTableBodyNone">Yes   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md160"></a>
+<h2><a class="anchor" id="autotoc_md207"></a>
 4.3 Structural Coverage</h2>
 <p>Per DO-178C Table A-7, DAL C requires:</p>
 <table class="markdownTable">
@@ -362,7 +362,7 @@ Table of Contents</h1>
 <td class="markdownTableBodyNone">MC/DC   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">-   </td></tr>
 </table>
 <p><b>Current Status:</b> 79.3% statement coverage achieved via host-based testing. Remaining coverage requires target integration testing for infinite-loop tasks and assembly code.</p>
-<h2><a class="anchor" id="autotoc_md161"></a>
+<h2><a class="anchor" id="autotoc_md208"></a>
 4.4 Software Tool Qualification</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -380,9 +380,9 @@ Table of Contents</h1>
 </table>
 <p><b>Rationale:</b> Per DO-330, verification tools that could fail to detect errors require qualification. Unity and lcov are used to verify coverage; their output is reviewed manually, reducing qualification burden.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md163"></a>
+<h1><a class="anchor" id="autotoc_md210"></a>
 5. Software Development Environment</h1>
-<h2><a class="anchor" id="autotoc_md164"></a>
+<h2><a class="anchor" id="autotoc_md211"></a>
 5.1 Development Hardware</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -396,7 +396,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Display   </td><td class="markdownTableBodyNone">ST7735 LCD module   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md165"></a>
+<h2><a class="anchor" id="autotoc_md212"></a>
 5.2 Development Software</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -412,9 +412,9 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">GitHub   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">Repository hosting   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md166"></a>
+<h2><a class="anchor" id="autotoc_md213"></a>
 5.3 Test Environment</h2>
-<h3><a class="anchor" id="autotoc_md167"></a>
+<h3><a class="anchor" id="autotoc_md214"></a>
 5.3.1 Host-Based Testing</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -428,7 +428,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">genhtml   </td><td class="markdownTableBodyNone">2.x   </td><td class="markdownTableBodyNone">Coverage reporting   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md168"></a>
+<h3><a class="anchor" id="autotoc_md215"></a>
 5.3.2 Target-Based Testing</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -440,7 +440,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Logic analyzer   </td><td class="markdownTableBodyNone">Timing verification   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md169"></a>
+<h2><a class="anchor" id="autotoc_md216"></a>
 5.4 Configuration Management</h2>
 <ul>
 <li><b>Repository:</b> GitHub (private)</li>
@@ -449,9 +449,9 @@ Table of Contents</h1>
 </ul>
 <p>See <code>ICARUS-SCMP-001 Software Configuration Management Plan</code> for details.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md171"></a>
+<h1><a class="anchor" id="autotoc_md218"></a>
 6. Software Life Cycle</h1>
-<h2><a class="anchor" id="autotoc_md172"></a>
+<h2><a class="anchor" id="autotoc_md219"></a>
 6.1 Life Cycle Model</h2>
 <p>ICARUS OS follows an iterative development model with the following phases:</p>
 <div class="fragment"><div class="line">┌──────────────┐     ┌──────────────┐     ┌──────────────┐</div>
@@ -470,7 +470,7 @@ Table of Contents</h1>
 <div class="line">│Certification │────▶│   Release    │</div>
 <div class="line">│   Liaison    │     │              │</div>
 <div class="line">└──────────────┘     └──────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md173"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md220"></a>
 6.2 Software Planning Process</h2>
 <p><b>Objective:</b> Establish plans for software development and verification.</p>
 <p><b>Outputs:</b></p><ul>
@@ -480,7 +480,7 @@ Table of Contents</h1>
 <li>Software Configuration Management Plan (SCMP)</li>
 <li>Software Quality Assurance Plan (SQAP)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md174"></a>
+<h2><a class="anchor" id="autotoc_md221"></a>
 6.3 Software Requirements Process</h2>
 <p><b>Objective:</b> Define high-level and low-level software requirements.</p>
 <p><b>Inputs:</b></p><ul>
@@ -491,14 +491,14 @@ Table of Contents</h1>
 <li>Software Requirements Specification (SRS)</li>
 <li>Interface Control Document (ICD)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md175"></a>
+<h2><a class="anchor" id="autotoc_md222"></a>
 6.4 Software Design Process</h2>
 <p><b>Objective:</b> Define software architecture and detailed design.</p>
 <p><b>Outputs:</b></p><ul>
 <li>Software Architecture Document</li>
 <li>Detailed design (in code comments and headers)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md176"></a>
+<h2><a class="anchor" id="autotoc_md223"></a>
 6.5 Software Coding Process</h2>
 <p><b>Objective:</b> Implement software per design.</p>
 <p><b>Standards:</b></p><ul>
@@ -509,14 +509,14 @@ Table of Contents</h1>
 <li>Source code</li>
 <li>Build scripts</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md177"></a>
+<h2><a class="anchor" id="autotoc_md224"></a>
 6.6 Integration Process</h2>
 <p><b>Objective:</b> Combine software components and load onto target.</p>
 <p><b>Outputs:</b></p><ul>
 <li>Executable software load</li>
 <li>Integration test results</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md178"></a>
+<h2><a class="anchor" id="autotoc_md225"></a>
 6.7 Software Verification Process</h2>
 <p><b>Objective:</b> Verify software meets requirements.</p>
 <p><b>Methods:</b></p><ul>
@@ -530,9 +530,9 @@ Table of Contents</h1>
 <li>Verification reports</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md180"></a>
+<h1><a class="anchor" id="autotoc_md227"></a>
 7. Software Life Cycle Data</h1>
-<h2><a class="anchor" id="autotoc_md181"></a>
+<h2><a class="anchor" id="autotoc_md228"></a>
 7.1 Data Items</h2>
 <p>The following data items are produced per DO-178C:</p>
 <table class="markdownTable">
@@ -565,7 +565,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Software Accomplishment Summary   </td><td class="markdownTableBodyNone">ICARUS-SAS-001   </td><td class="markdownTableBodyNone">Planned   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md182"></a>
+<h2><a class="anchor" id="autotoc_md229"></a>
 7.2 Data Control Categories</h2>
 <p>Per DO-178C Table A-9:</p>
 <table class="markdownTable">
@@ -576,7 +576,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">CC2   </td><td class="markdownTableBodyNone">Configuration identification, change control   </td><td class="markdownTableBodyNone">Plans, requirements, design   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md183"></a>
+<h2><a class="anchor" id="autotoc_md230"></a>
 7.3 Traceability</h2>
 <p>The following traceability is maintained:</p>
 <div class="fragment"><div class="line">System Requirements</div>
@@ -591,9 +591,9 @@ Table of Contents</h1>
 <div class="line">Source Code ◄─────────────────── Test Results</div>
 </div><!-- fragment --><p>See <code>ICARUS-VER-003 Test Traceability Matrix</code> for current traceability.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md185"></a>
+<h1><a class="anchor" id="autotoc_md232"></a>
 8. Schedule</h1>
-<h2><a class="anchor" id="autotoc_md186"></a>
+<h2><a class="anchor" id="autotoc_md233"></a>
 8.1 Development Milestones</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -617,7 +617,7 @@ Table of Contents</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">SAS Submission   </td><td class="markdownTableBodyNone">TBD   </td><td class="markdownTableBodyNone">Planned   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md187"></a>
+<h2><a class="anchor" id="autotoc_md234"></a>
 8.2 Certification Milestones</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -632,9 +632,9 @@ Table of Contents</h1>
 <td class="markdownTableBodyNone">Stage 4 - Final Review   </td><td class="markdownTableBodyNone">TBD   </td><td class="markdownTableBodyNone">Planned   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md189"></a>
+<h1><a class="anchor" id="autotoc_md236"></a>
 9. Additional Considerations</h1>
-<h2><a class="anchor" id="autotoc_md190"></a>
+<h2><a class="anchor" id="autotoc_md237"></a>
 9.1 Previously Developed Software</h2>
 <p>The following previously developed software is used:</p>
 <table class="markdownTable">
@@ -648,20 +648,20 @@ Table of Contents</h1>
 <td class="markdownTableBodyNone">USB Middleware   </td><td class="markdownTableBodyNone">STMicroelectronics   </td><td class="markdownTableBodyNone">Vendor-qualified   </td></tr>
 </table>
 <p><b>Approach:</b> These components are treated as COTS (Commercial Off-The-Shelf). Verification focuses on correct integration and usage.</p>
-<h2><a class="anchor" id="autotoc_md191"></a>
+<h2><a class="anchor" id="autotoc_md238"></a>
 9.2 User-Modifiable Software</h2>
 <p>ICARUS OS does not contain user-modifiable software. All configuration is compile-time.</p>
-<h2><a class="anchor" id="autotoc_md192"></a>
+<h2><a class="anchor" id="autotoc_md239"></a>
 9.3 Field-Loadable Software</h2>
 <p>The software is field-loadable via:</p><ul>
 <li>ST-Link debug interface</li>
 <li>USB DFU (Device Firmware Update) - if enabled</li>
 </ul>
 <p><b>Protection:</b> CRC verification of loaded image (planned).</p>
-<h2><a class="anchor" id="autotoc_md193"></a>
+<h2><a class="anchor" id="autotoc_md240"></a>
 9.4 Multiple-Version Dissimilar Software</h2>
 <p>Not applicable. Single version only.</p>
-<h2><a class="anchor" id="autotoc_md194"></a>
+<h2><a class="anchor" id="autotoc_md241"></a>
 9.5 Certification Authority Coordination</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -672,7 +672,7 @@ Table of Contents</h1>
 <td class="markdownTableBodyNone">EASA (if EU)   </td><td class="markdownTableBodyNone">TBD   </td><td class="markdownTableBodyNone">Not initiated   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md196"></a>
+<h1><a class="anchor" id="autotoc_md243"></a>
 Appendix A: Acronyms</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -715,7 +715,7 @@ Appendix A: Acronyms</h1>
 <td class="markdownTableBodyNone">TQL   </td><td class="markdownTableBodyNone">Tool Qualification Level   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md198"></a>
+<h1><a class="anchor" id="autotoc_md245"></a>
 Appendix B: Document Cross-Reference</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -739,7 +739,7 @@ Appendix B: Document Cross-Reference</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

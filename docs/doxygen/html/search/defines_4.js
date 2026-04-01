@@ -1,16 +1,19 @@
 var searchData=
 [
-  ['e3_5fgpio_5fport_0',['E3_GPIO_Port',['../bsp__config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e',1,'bsp_config.h']]],
-  ['e3_5fpin_1',['E3_Pin',['../bsp__config_8h.html#ad16d4751f5632b34736143bbd20fa6c0',1,'bsp_config.h']]],
-  ['enable_5fheartbeat_5fvisualization_2',['ENABLE_HEARTBEAT_VISUALIZATION',['../display_8h.html#ab6a58c22ab8b716a82ea3874a537d2f7',1,'display.h']]],
-  ['enable_5fstress_5ftest_3',['ENABLE_STRESS_TEST',['../main_8c.html#a2a59075a58a93d857db83370241bd51a',1,'main.c']]],
-  ['eth_5fmac_5faddr0_4',['ETH_MAC_ADDR0',['../stm32h7xx__hal__conf_8h.html#a8f14073c39307808d97c6111fce0c47e',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5fmac_5faddr1_5',['ETH_MAC_ADDR1',['../stm32h7xx__hal__conf_8h.html#ac011896a4a0f1d07b81239a6f79e60d4',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5fmac_5faddr2_6',['ETH_MAC_ADDR2',['../stm32h7xx__hal__conf_8h.html#a500c83fdcd1b99dd1aae943a9e1e0b26',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5fmac_5faddr3_7',['ETH_MAC_ADDR3',['../stm32h7xx__hal__conf_8h.html#a4b2e9a9c2ab5d797e0133a872a069801',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5fmac_5faddr4_8',['ETH_MAC_ADDR4',['../stm32h7xx__hal__conf_8h.html#acbd4f065064eea67aba012112bfc555b',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5fmac_5faddr5_9',['ETH_MAC_ADDR5',['../stm32h7xx__hal__conf_8h.html#ac4b54c34ee3d1b39ea7681c5c7ce4e75',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5frx_5fdesc_5fcnt_10',['ETH_RX_DESC_CNT',['../stm32h7xx__hal__conf_8h.html#a0b99b9470bf6c94292daa07be1cc19cb',1,'stm32h7xx_hal_conf.h']]],
-  ['eth_5ftx_5fdesc_5fcnt_11',['ETH_TX_DESC_CNT',['../stm32h7xx__hal__conf_8h.html#a5e866f31df5199c37b4b308d1217438f',1,'stm32h7xx_hal_conf.h']]],
-  ['external_5fclock_5fvalue_12',['EXTERNAL_CLOCK_VALUE',['../stm32h7xx__hal__conf_8h.html#a8c47c935e91e70569098b41718558648',1,'stm32h7xx_hal_conf.h']]]
+  ['e3_5fgpio_5fport_0',['E3_GPIO_Port',['../bsp_2config_8h.html#ade5f1ffe014f55b8a20812b702a00c8e',1,'config.h']]],
+  ['e3_5fpin_1',['E3_Pin',['../bsp_2config_8h.html#ad16d4751f5632b34736143bbd20fa6c0',1,'config.h']]],
+  ['enable_5fdemo_5ftasks_2',['ENABLE_DEMO_TASKS',['../main_8c.html#af4e620c5b733ae8466986ca47f087a96',1,'main.c']]],
+  ['enable_5fgame_3',['ENABLE_GAME',['../main_8c.html#a9132184b040a2adae46e8be478d3f92c',1,'main.c']]],
+  ['enable_5fheartbeat_5fvisualization_4',['ENABLE_HEARTBEAT_VISUALIZATION',['../display_8h.html#ab6a58c22ab8b716a82ea3874a537d2f7',1,'display.h']]],
+  ['enable_5finteractive_5',['ENABLE_INTERACTIVE',['../main_8c.html#a8f79827fcbba68b9b8bb04d7c99ace11',1,'main.c']]],
+  ['enable_5fstress_5ftest_6',['ENABLE_STRESS_TEST',['../main_8c.html#a2a59075a58a93d857db83370241bd51a',1,'main.c']]],
+  ['eth_5fmac_5faddr0_7',['ETH_MAC_ADDR0',['../stm32h7xx__hal__conf_8h.html#a8f14073c39307808d97c6111fce0c47e',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5fmac_5faddr1_8',['ETH_MAC_ADDR1',['../stm32h7xx__hal__conf_8h.html#ac011896a4a0f1d07b81239a6f79e60d4',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5fmac_5faddr2_9',['ETH_MAC_ADDR2',['../stm32h7xx__hal__conf_8h.html#a500c83fdcd1b99dd1aae943a9e1e0b26',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5fmac_5faddr3_10',['ETH_MAC_ADDR3',['../stm32h7xx__hal__conf_8h.html#a4b2e9a9c2ab5d797e0133a872a069801',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5fmac_5faddr4_11',['ETH_MAC_ADDR4',['../stm32h7xx__hal__conf_8h.html#acbd4f065064eea67aba012112bfc555b',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5fmac_5faddr5_12',['ETH_MAC_ADDR5',['../stm32h7xx__hal__conf_8h.html#ac4b54c34ee3d1b39ea7681c5c7ce4e75',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5frx_5fdesc_5fcnt_13',['ETH_RX_DESC_CNT',['../stm32h7xx__hal__conf_8h.html#a0b99b9470bf6c94292daa07be1cc19cb',1,'stm32h7xx_hal_conf.h']]],
+  ['eth_5ftx_5fdesc_5fcnt_14',['ETH_TX_DESC_CNT',['../stm32h7xx__hal__conf_8h.html#a5e866f31df5199c37b4b308d1217438f',1,'stm32h7xx_hal_conf.h']]],
+  ['external_5fclock_5fvalue_15',['EXTERNAL_CLOCK_VALUE',['../stm32h7xx__hal__conf_8h.html#a8c47c935e91e70569098b41718558648',1,'stm32h7xx_hal_conf.h']]]
 ];

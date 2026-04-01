@@ -103,49 +103,42 @@ $(function(){initNavTree('structmsg__history__entry__t.html',''); initResizable(
 </div><!--header-->
 <div class="contents">
 
-<p>Single message history entry.  
+<p>Message history entry for rolling window display.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="display_8h_source.html">display.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:ac2f8ec7de67434106971c04e3185b30d" id="r_ac2f8ec7de67434106971c04e3185b30d"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2f8ec7de67434106971c04e3185b30d">data</a> [4]</td></tr>
-<tr class="memdesc:ac2f8ec7de67434106971c04e3185b30d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message data.  <br /></td></tr>
-<tr class="separator:ac2f8ec7de67434106971c04e3185b30d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28356c9f5dfaafc5f8a657d2e0a5b4c7" id="r_a28356c9f5dfaafc5f8a657d2e0a5b4c7"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28356c9f5dfaafc5f8a657d2e0a5b4c7">data</a> [4]</td></tr>
+<tr class="separator:a28356c9f5dfaafc5f8a657d2e0a5b4c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a798d218709a94510e80fd4fd2ed1cb71" id="r_a798d218709a94510e80fd4fd2ed1cb71"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a798d218709a94510e80fd4fd2ed1cb71">len</a></td></tr>
-<tr class="memdesc:a798d218709a94510e80fd4fd2ed1cb71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Actual message length.  <br /></td></tr>
 <tr class="separator:a798d218709a94510e80fd4fd2ed1cb71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abbcd894b6c4b37c82c326691f1bceca7" id="r_abbcd894b6c4b37c82c326691f1bceca7"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbcd894b6c4b37c82c326691f1bceca7">source_id</a></td></tr>
-<tr class="memdesc:abbcd894b6c4b37c82c326691f1bceca7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Producer ID (0xFF = unknown)  <br /></td></tr>
 <tr class="separator:abbcd894b6c4b37c82c326691f1bceca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76579a6d5b3c5066daf1b35a5711695c" id="r_a76579a6d5b3c5066daf1b35a5711695c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76579a6d5b3c5066daf1b35a5711695c">is_send</a></td></tr>
-<tr class="memdesc:a76579a6d5b3c5066daf1b35a5711695c"><td class="mdescLeft">&#160;</td><td class="mdescRight">true = sent, false = received  <br /></td></tr>
 <tr class="separator:a76579a6d5b3c5066daf1b35a5711695c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Single message history entry. </p>
-<p>Message history entry for rolling window display. </p>
+<div class="textblock"><p>Message history entry for rolling window display. </p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00095">95</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00140">140</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="ac2f8ec7de67434106971c04e3185b30d" name="ac2f8ec7de67434106971c04e3185b30d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2f8ec7de67434106971c04e3185b30d">&#9670;&#160;</a></span>data</h2>
+<a id="a28356c9f5dfaafc5f8a657d2e0a5b4c7" name="a28356c9f5dfaafc5f8a657d2e0a5b4c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28356c9f5dfaafc5f8a657d2e0a5b4c7">&#9670;&#160;</a></span>data</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t msg_history_entry_t::data</td>
+          <td class="memname">uint8_t msg_history_entry_t::data[4]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Message data. </p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00141">141</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00096">96</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
@@ -161,11 +154,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>true = sent, false = received </p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00144">144</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00099">99</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
@@ -181,11 +172,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Actual message length. </p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00142">142</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00097">97</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
@@ -201,16 +190,13 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Producer ID (0xFF = unknown) </p>
+<p class="definition">Definition at line <a class="el" href="display_8h_source.html#l00143">143</a> of file <a class="el" href="display_8h_source.html">display.h</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bsp__display_8h_source.html#l00098">98</a> of file <a class="el" href="bsp__display_8h_source.html">bsp_display.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00168">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00124">msg_history_add()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="display_8c_source.html#l00169">display_render_msg_history()</a>, and <a class="el" href="display_8c_source.html#l00125">msg_history_add()</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following files:<ul>
-<li>Core/Inc/bsp/<a class="el" href="bsp__display_8h_source.html">bsp_display.h</a></li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>Core/Inc/bsp/<a class="el" href="display_8h_source.html">display.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -219,7 +205,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structmsg__history__entry__t.html">msg_history_entry_t</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

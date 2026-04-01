@@ -6,6 +6,8 @@ var group__MEMORY__MAP =
     [ "BSP_FLASH_SIZE", "group__MEMORY__MAP.html#ga87aec132030c800a3cb67773e262f725", null ],
     [ "BSP_ITCM_BASE", "group__MEMORY__MAP.html#gaa0bd9383ccb517f7389a36d676103eaa", null ],
     [ "BSP_ITCM_SIZE", "group__MEMORY__MAP.html#ga6c81b62f90e072123957d55c4e8178c3", null ],
+    [ "BSP_PERIPH_BASE", "group__MEMORY__MAP.html#gaae05dda8fc6376a9a2b77abe96b727dc", null ],
+    [ "BSP_PERIPH_SIZE", "group__MEMORY__MAP.html#ga92789fb51e84be5dca42507e29767f26", null ],
     [ "BSP_QSPI_BASE", "group__MEMORY__MAP.html#ga60e888398289fa3c4e028836d9caac8a", null ],
     [ "BSP_QSPI_SIZE", "group__MEMORY__MAP.html#ga9cef6ead921fb23fb089464b6ffc8c97", null ],
     [ "BSP_RAM_D1_BASE", "group__MEMORY__MAP.html#ga93374d93634dc85750cdd8662c3ba3b8", null ],

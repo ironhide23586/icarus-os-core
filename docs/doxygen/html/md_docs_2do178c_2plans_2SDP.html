@@ -100,7 +100,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2SDP.html',''); initResizable(t
   <div class="headertitle"><div class="title">Software Development Plan (SDP)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md252"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md299"></a></p>
 <p><b>Document ID:</b> ICARUS-SDP-001 <br  />
  <b>Version:</b> 0.1 <br  />
  <b>Date:</b> 2025-01-26 <br  />
@@ -108,7 +108,7 @@ $(function(){initNavTree('md_docs_2do178c_2plans_2SDP.html',''); initResizable(t
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md254"></a>
+<h1><a class="anchor" id="autotoc_md301"></a>
 Document Control</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -121,7 +121,7 @@ Document Control</h1>
 <td class="markdownTableBodyNone">Approver   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md256"></a>
+<h1><a class="anchor" id="autotoc_md303"></a>
 Revision History</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -130,12 +130,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md258"></a>
+<h1><a class="anchor" id="autotoc_md305"></a>
 1. Introduction</h1>
-<h2><a class="anchor" id="autotoc_md259"></a>
+<h2><a class="anchor" id="autotoc_md306"></a>
 1.1 Purpose</h2>
 <p>This Software Development Plan (SDP) defines the processes, methods, standards, and tools used to develop ICARUS OS. It establishes the framework for producing certifiable software that meets DO-178C DAL C objectives.</p>
-<h2><a class="anchor" id="autotoc_md260"></a>
+<h2><a class="anchor" id="autotoc_md307"></a>
 1.2 Scope</h2>
 <p>This plan covers development of:</p><ul>
 <li>ICARUS OS Kernel (scheduler, task management, IPC)</li>
@@ -143,7 +143,7 @@ Revision History</h1>
 <li>AI Runtime Environment (deterministic inference subsystem)</li>
 <li>Verification and validation infrastructure</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md261"></a>
+<h2><a class="anchor" id="autotoc_md308"></a>
 1.3 ICARUS Vision</h2>
 <p>ICARUS (Intelligent Certifiable Autonomous Real-time Unified System) is designed to be the first open-source RTOS with:</p><ul>
 <li><b>Native AI integration</b> with certifiable determinism</li>
@@ -152,9 +152,9 @@ Revision History</h1>
 <li><b>Formal verification readiness</b> for DAL A applications</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md263"></a>
+<h1><a class="anchor" id="autotoc_md310"></a>
 2. Development Organization</h1>
-<h2><a class="anchor" id="autotoc_md264"></a>
+<h2><a class="anchor" id="autotoc_md311"></a>
 2.1 Roles and Responsibilities</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -174,7 +174,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Quality Assurance   </td><td class="markdownTableBodyNone">Process compliance, audits, documentation review   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md265"></a>
+<h2><a class="anchor" id="autotoc_md312"></a>
 2.2 Development Teams</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    ICARUS Development                        │</div>
@@ -187,9 +187,9 @@ Revision History</h1>
 <div class="line">│ • AI Runtime    │ • FPGA BSP      │ • Static Analysis       │</div>
 <div class="line">└─────────────────┴─────────────────┴─────────────────────────┘</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md267"></a>
+<h1><a class="anchor" id="autotoc_md314"></a>
 3. Software Life Cycle</h1>
-<h2><a class="anchor" id="autotoc_md268"></a>
+<h2><a class="anchor" id="autotoc_md315"></a>
 3.1 Development Model</h2>
 <p>ICARUS uses a <b>hybrid iterative-incremental model</b> optimized for certifiable development:</p>
 <div class="fragment"><div class="line">Phase 1: Foundation (Current)</div>
@@ -221,7 +221,7 @@ Revision History</h1>
 <div class="line">├── Hypervisor mode</div>
 <div class="line">├── Time/Space partitioning (ARINC 653)</div>
 <div class="line">├── Formal verification integration</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md269"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md316"></a>
 3.2 Iteration Cycle</h2>
 <p>Each development iteration follows:</p>
 <div class="fragment"><div class="line">┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐</div>
@@ -238,9 +238,9 @@ Revision History</h1>
 </div><!-- fragment --><p><b>Iteration Duration:</b> 2 weeks <br  />
  <b>Release Cadence:</b> Monthly (feature releases), Weekly (patches)</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md271"></a>
+<h1><a class="anchor" id="autotoc_md318"></a>
 4. Development Standards</h1>
-<h2><a class="anchor" id="autotoc_md272"></a>
+<h2><a class="anchor" id="autotoc_md319"></a>
 4.1 Coding Standards</h2>
 <p>ICARUS follows a subset of MISRA C:2012 appropriate for RTOS development:</p>
 <table class="markdownTable">
@@ -262,10 +262,10 @@ Revision History</h1>
 <li>Maximum function complexity: 15 (cyclomatic)</li>
 <li>Maximum nesting depth: 4 levels</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md273"></a>
+<h2><a class="anchor" id="autotoc_md320"></a>
 4.2 Naming Conventions</h2>
 <div class="fragment"><div class="line"><span class="comment">// Functions: module_action_object</span></div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558">os_create_task</a>(task_t *task, ...);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="task_8h.html#a041d15fb5184f477a215121b6dd356a9">os_create_task</a>(task_t *task, ...);</div>
 <div class="line"><span class="keywordtype">void</span> ipc_send_message(queue_t *queue, ...);</div>
 <div class="line"><span class="keywordtype">void</span> ai_run_inference(model_t *model, ...);</div>
 <div class="line"> </div>
@@ -278,38 +278,43 @@ Revision History</h1>
 <div class="line"><span class="preprocessor">#define STACK_SIZE_WORDS 512</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Global variables: module_name (minimize usage)</span></div>
-<div class="line"><span class="keyword">volatile</span> uint32_t <a class="code hl_variable" href="group__SCHEDULER__STATE.html#gaba75124002c580196b86f4df1001320c">os_tick_count</a>;</div>
+<div class="line"><span class="keyword">volatile</span> uint32_t <a class="code hl_variable" href="kernel_8h.html#aba75124002c580196b86f4df1001320c">os_tick_count</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Static variables: s_name or module-scoped</span></div>
 <div class="line"><span class="keyword">static</span> uint8_t s_task_count;</div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_gaba75124002c580196b86f4df1001320c"><div class="ttname"><a href="group__SCHEDULER__STATE.html#gaba75124002c580196b86f4df1001320c">os_tick_count</a></div><div class="ttdeci">volatile uint32_t os_tick_count</div><div class="ttdoc">System tick counter (incremented by SysTick_Handler)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00143">icarus_task.c:143</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a3475de8a0fed26a55e0c5d78cd475558"><div class="ttname"><a href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558">os_create_task</a></div><div class="ttdeci">void os_create_task(icarus_task_t *task, void(*function)(void), uint32_t *stack, uint32_t stack_size, const char *name)</div><div class="ttdoc">Create a task with explicit stack allocation.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l01072">icarus_task.c:1072</a></div></div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md274"></a>
+<div class="ttc" id="akernel_8h_html_aba75124002c580196b86f4df1001320c"><div class="ttname"><a href="kernel_8h.html#aba75124002c580196b86f4df1001320c">os_tick_count</a></div><div class="ttdeci">volatile uint32_t os_tick_count</div><div class="ttdoc">System tick counter.</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00069">kernel.c:69</a></div></div>
+<div class="ttc" id="atask_8h_html_a041d15fb5184f477a215121b6dd356a9"><div class="ttname"><a href="task_8h.html#a041d15fb5184f477a215121b6dd356a9">os_create_task</a></div><div class="ttdeci">void os_create_task(icarus_task_t *task, void(*function)(void), uint32_t *stack, uint32_t stack_size, uint32_t *data, const char *name)</div><div class="ttdoc">Create a task with explicit stack allocation.</div><div class="ttdef"><b>Definition</b> <a href="task_8c_source.html#l00027">task.c:27</a></div></div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md321"></a>
 4.3 File Organization</h2>
 <div class="fragment"><div class="line">Core/</div>
 <div class="line">├── Inc/</div>
-<div class="line">│   ├── kernel/</div>
+<div class="line">│   ├── icarus/             # RTOS public and internal headers</div>
+<div class="line">│   │   ├── icarus.h        # Umbrella include</div>
+<div class="line">│   │   ├── kernel.h        # Kernel state, os_init/os_start</div>
 <div class="line">│   │   ├── task.h          # Task management API</div>
 <div class="line">│   │   ├── scheduler.h     # Scheduler internals</div>
-<div class="line">│   │   ├── ipc.h           # Inter-process communication</div>
-<div class="line">│   │   └── ai_runtime.h    # AI inference API</div>
-<div class="line">│   └── bsp/</div>
-<div class="line">│       ├── platform.h      # Platform abstraction</div>
-<div class="line">│       └── &lt;driver&gt;.h      # Hardware drivers</div>
+<div class="line">│   │   ├── semaphore.h</div>
+<div class="line">│   │   ├── pipe.h</div>
+<div class="line">│   │   ├── svc.h</div>
+<div class="line">│   │   ├── config.h</div>
+<div class="line">│   │   └── types.h</div>
+<div class="line">│   └── bsp/                # Board support headers</div>
 <div class="line">├── Src/</div>
-<div class="line">│   ├── kernel/</div>
-<div class="line">│   │   ├── task.c</div>
+<div class="line">│   ├── icarus/</div>
+<div class="line">│   │   ├── kernel.c</div>
 <div class="line">│   │   ├── scheduler.c</div>
-<div class="line">│   │   ├── ipc.c</div>
-<div class="line">│   │   └── ai_runtime.c</div>
+<div class="line">│   │   ├── task.c</div>
+<div class="line">│   │   ├── semaphore.c</div>
+<div class="line">│   │   ├── pipe.c</div>
+<div class="line">│   │   ├── svc.c</div>
+<div class="line">│   │   └── context_switch.s</div>
 <div class="line">│   └── bsp/</div>
-<div class="line">│       └── &lt;platform&gt;/     # Platform-specific code</div>
 <div class="line">└── Startup/</div>
-<div class="line">    └── &lt;platform&gt;/         # Platform startup code</div>
+<div class="line">    └── startup_stm32h750vbtx.s   # (example: current target)</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md276"></a>
+<h1><a class="anchor" id="autotoc_md323"></a>
 5. Target Hardware Platforms</h1>
-<h2><a class="anchor" id="autotoc_md277"></a>
+<h2><a class="anchor" id="autotoc_md324"></a>
 5.1 Supported Platforms</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -325,7 +330,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>x86-64</b> (QEMU)   </td><td class="markdownTableBodyNone">✅ Simulation   </td><td class="markdownTableBodyNone">N/A   </td><td class="markdownTableBodyNone">Development and CI testing   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md278"></a>
+<h2><a class="anchor" id="autotoc_md325"></a>
 5.2 Hardware Abstraction Strategy</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    ICARUS Kernel API                         │</div>
@@ -342,7 +347,7 @@ Revision History</h1>
 <div class="line">│ STM32H7  │ STM32F4  │ RISC-V   │  Zynq    │  x86 (Sim)      │</div>
 <div class="line">│ BSP      │ BSP      │ BSP      │  BSP     │  BSP            │</div>
 <div class="line">└──────────┴──────────┴──────────┴──────────┴─────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md279"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md326"></a>
 5.3 Memory Map (STM32H7 Reference)</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -359,9 +364,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Flash   </td><td class="markdownTableBodyNone">0x08000000   </td><td class="markdownTableBodyNone">128 KB   </td><td class="markdownTableBodyNone">Code (+ external QSPI)   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md281"></a>
+<h1><a class="anchor" id="autotoc_md328"></a>
 6. Development Tools</h1>
-<h2><a class="anchor" id="autotoc_md282"></a>
+<h2><a class="anchor" id="autotoc_md329"></a>
 6.1 Toolchain</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -377,7 +382,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>Ninja</b>   </td><td class="markdownTableBodyNone">1.11+   </td><td class="markdownTableBodyNone">Fast builds   </td><td class="markdownTableBodyNone">Not required   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md283"></a>
+<h2><a class="anchor" id="autotoc_md330"></a>
 6.2 Verification Tools</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -393,7 +398,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>Polyspace</b>   </td><td class="markdownTableBodyNone">Formal analysis   </td><td class="markdownTableBodyNone">TQL-4   </td><td class="markdownTableBodyNone">Planned (DAL B)   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md284"></a>
+<h2><a class="anchor" id="autotoc_md331"></a>
 6.3 AI Development Tools</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -407,7 +412,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>WCET Analyzer</b>   </td><td class="markdownTableBodyNone">Timing verification   </td><td class="markdownTableBodyNone">Integration planned   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md285"></a>
+<h2><a class="anchor" id="autotoc_md332"></a>
 6.4 CI/CD Pipeline</h2>
 <div class="fragment"><div class="line"># .github/workflows/ci.yml (conceptual)</div>
 <div class="line">Pipeline:</div>
@@ -431,9 +436,9 @@ Revision History</h1>
 <div class="line">    - Binary artifacts</div>
 <div class="line">    - Release notes generation</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md287"></a>
+<h1><a class="anchor" id="autotoc_md334"></a>
 7. AI Runtime Architecture</h1>
-<h2><a class="anchor" id="autotoc_md288"></a>
+<h2><a class="anchor" id="autotoc_md335"></a>
 7.1 Design Philosophy</h2>
 <p>ICARUS integrates AI as a <b>first-class citizen</b> while maintaining certifiable determinism:</p>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
@@ -446,7 +451,7 @@ Revision History</h1>
 <div class="line">│  • Verifiable model structure (whitelist operators)         │</div>
 <div class="line">│  • Isolated execution (AI task sandboxing)                  │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md289"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md336"></a>
 7.2 AI Subsystem Components</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    Application Layer                         │</div>
@@ -473,7 +478,7 @@ Revision History</h1>
 <div class="line">│  │  (Cortex-M) │  │  (Zynq)     │  │  (dedicated)        │  │</div>
 <div class="line">│  └─────────────┘  └─────────────┘  └─────────────────────┘  │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md290"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md337"></a>
 7.3 Certifiable AI Constraints</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -491,7 +496,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>Model Integrity</b>   </td><td class="markdownTableBodyNone">Prevent tampering   </td><td class="markdownTableBodyNone">CRC/hash verification   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md291"></a>
+<h2><a class="anchor" id="autotoc_md338"></a>
 7.4 AI Use Cases</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -507,7 +512,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Predictive maintenance   </td><td class="markdownTableBodyNone">LSTM (simplified)   </td><td class="markdownTableBodyNone">&lt;100ms   </td><td class="markdownTableBodyNone">D   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md292"></a>
+<h2><a class="anchor" id="autotoc_md339"></a>
 7.5 AI Certification Strategy</h2>
 <p>Per DO-178C and emerging guidance (EASA AI Roadmap 2.0):</p>
 <ol type="1">
@@ -518,9 +523,9 @@ Revision History</h1>
 <li><b>Fallback Behavior:</b> Graceful degradation when AI uncertain</li>
 </ol>
 <hr  />
-<h1><a class="anchor" id="autotoc_md294"></a>
+<h1><a class="anchor" id="autotoc_md341"></a>
 8. Differentiation from Competitors</h1>
-<h2><a class="anchor" id="autotoc_md295"></a>
+<h2><a class="anchor" id="autotoc_md342"></a>
 8.1 Competitive Landscape</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -542,7 +547,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">RISC-V Support   </td><td class="markdownTableBodyNone">Planned   </td><td class="markdownTableBodyNone">✅   </td><td class="markdownTableBodyNone">❌   </td><td class="markdownTableBodyNone">Planned   </td><td class="markdownTableBodyNone">✅   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md296"></a>
+<h2><a class="anchor" id="autotoc_md343"></a>
 8.2 ICARUS Unique Value</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                 ICARUS Differentiators                       │</div>
@@ -569,7 +574,7 @@ Revision History</h1>
 <div class="line">│     • Containerized build environment                       │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md297"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md344"></a>
 8.3 Target Markets</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -586,9 +591,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone"><b>Industrial</b>   </td><td class="markdownTableBodyNone">IEC 61508, determinism   </td><td class="markdownTableBodyNone">Adaptation possible   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md299"></a>
+<h1><a class="anchor" id="autotoc_md346"></a>
 9. Review Process</h1>
-<h2><a class="anchor" id="autotoc_md300"></a>
+<h2><a class="anchor" id="autotoc_md347"></a>
 9.1 Review Types</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -604,7 +609,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>Coverage Review</b>   </td><td class="markdownTableBodyNone">Verification, Lead   </td><td class="markdownTableBodyNone">After testing   </td><td class="markdownTableBodyNone">Coverage report   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md301"></a>
+<h2><a class="anchor" id="autotoc_md348"></a>
 9.2 Code Review Checklist</h2>
 <ul class="check">
 <li class="unchecked">Follows coding standards (naming, formatting)</li>
@@ -630,7 +635,7 @@ Revision History</h1>
 <ul class="check">
 <li class="unchecked">Traceability to requirement documented</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md302"></a>
+<h2><a class="anchor" id="autotoc_md349"></a>
 9.3 Independence Requirements</h2>
 <p>Per DO-178C for DAL C:</p><ul>
 <li>Code author cannot be sole reviewer</li>
@@ -638,9 +643,9 @@ Revision History</h1>
 <li>QA independent from development</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md304"></a>
+<h1><a class="anchor" id="autotoc_md351"></a>
 10. Problem Reporting</h1>
-<h2><a class="anchor" id="autotoc_md305"></a>
+<h2><a class="anchor" id="autotoc_md352"></a>
 10.1 Problem Report Categories</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -654,7 +659,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>Documentation</b>   </td><td class="markdownTableBodyNone">Low   </td><td class="markdownTableBodyNone">Next release   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md306"></a>
+<h2><a class="anchor" id="autotoc_md353"></a>
 10.2 Problem Report Workflow</h2>
 <div class="fragment"><div class="line">┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐</div>
 <div class="line">│ Reported │───▶│ Analyzed │───▶│  Fixed   │───▶│ Verified │</div>
@@ -665,7 +670,7 @@ Revision History</h1>
 <div class="line">              │ Deferred │                    │  Closed  │</div>
 <div class="line">              └──────────┘                    └──────────┘</div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md308"></a>
+<h1><a class="anchor" id="autotoc_md355"></a>
 Appendix A: Coding Standard Deviations</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -683,7 +688,7 @@ Appendix A: Coding Standard Deviations</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

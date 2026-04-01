@@ -1,8 +1,8 @@
 # Structural Coverage Analysis Report
 
 **Document ID:** ICARUS-VER-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
+**Version:** 0.2  
+**Date:** 2026-04-01  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
 
@@ -12,128 +12,116 @@ This document provides structural coverage analysis for the ICARUS OS kernel and
 
 ## 2. Scope
 
-This analysis covers host-based unit testing of the following software components:
+This analysis covers host-based unit testing of kernel and BSP sources under `Core/Src/`, driven by the `tests/` Unity suite.
 
-| Component | Source File | Description |
+| Component | Source path | Description |
 |-----------|-------------|-------------|
-| Kernel | `Core/Src/kernel/task.c` | Task scheduler and management |
-| Display BSP | `Core/Src/bsp/display.c` | LCD display driver |
-| I/O BSP | `Core/Src/bsp/retarget_stdio.c` | Standard I/O retargeting |
-| HAL BSP | `Core/Src/bsp/retarget_hal.c` | Hardware abstraction |
-| Interrupts | `Core/Src/bsp/stm32h7xx_it.c` | Interrupt handlers |
-| Error | `Core/Src/bsp/error.c` | Error handling |
+| Kernel core | `Core/Src/icarus/kernel.c` | Initialization, critical sections, lifecycle |
+| Scheduler | `Core/Src/icarus/scheduler.c` | Preemption and scheduling |
+| Tasks | `Core/Src/icarus/task.c` | Task control blocks, yields, sleep |
+| SVC | `Core/Src/icarus/svc.c` | Supervisor call dispatch |
+| Semaphores | `Core/Src/icarus/semaphore.c` | Counting semaphores |
+| Pipes | `Core/Src/icarus/pipe.c` | Byte-stream IPC |
+| Display BSP | `Core/Src/bsp/display.c` | Terminal / GUI helpers |
+| I/O BSP | `Core/Src/bsp/retarget_stdio.c` | Stdio retarget |
+| HAL BSP | `Core/Src/bsp/retarget_hal.c` | HAL glue for tests |
+| Interrupts | `Core/Src/bsp/stm32h7xx_it.c` | Vector stubs / fault handlers |
+| Error | `Core/Src/bsp/error.c` | `Error_Handler` |
 
-**Out of Scope:**
-- `Core/Src/kernel/context_switch.s` - ARM assembly (requires target testing)
-- STM32 HAL drivers - Third-party vendor code
-- USB middleware - Third-party vendor code
+**Out of scope (host-unobservable or third-party):**
+- `Core/Src/icarus/context_switch.s` — ARM assembly (target integration)
+- STM32 HAL, USB stack, CMSIS — vendor or board-integration code
 
 ## 3. Coverage Metrics
 
 ### 3.1 Summary
 
+Figures below were produced with `cd tests && make coverage-summary` on 2026-04-01 (macOS, Homebrew `lcov`, after excluding mocks, `unity.c`, and `test_task.c` per the project Makefile filters).
+
 | Metric | Achieved | Required (DAL C) | Required (DAL B) | Required (DAL A) |
 |--------|----------|------------------|------------------|------------------|
-| Statement Coverage | 88.5% | 100%* | 100% | 100% |
+| Statement Coverage | 91.1% | 100%* | 100% | 100% |
 | Decision Coverage | TBD | - | 100% | 100% |
 | MC/DC Coverage | TBD | - | - | 100% |
 
 *With justified deactivated/dead code exclusions
 
-### 3.2 Per-File Coverage
+### 3.2 Per-file coverage (instrumented lines)
 
-| File | Lines | Covered | Coverage | Functions | Covered | Coverage |
-|------|-------|---------|----------|-----------|---------|----------|
-| `kernel/task.c` | 348 | 308 | 88.5% | 41 | 38 | 92.7% |
-| `bsp/display.c` | 85 | 71 | 83.5% | 3 | 3 | 100% |
-| `bsp/retarget_hal.c` | 105 | 101 | 96.2% | 10 | 10 | 100% |
-| `bsp/retarget_stdio.c` | 13 | 10 | 76.9% | 1 | 1 | 100% |
-| `bsp/stm32h7xx_it.c` | 28 | 15 | 53.6% | 10 | 4 | 40% |
-| `bsp/error.c` | 4 | 0 | 0% | 1 | 0 | 0% |
-| **Total** | **583** | **505** | **88.5%** | **66** | **56** | **85.9%** |
+| File | Lines hit / total | Line % | Function % |
+|------|-------------------|--------|------------|
+| `icarus/task.c` | 59/59 | 100% | 100% |
+| `icarus/pipe.c` | 85/91 | 93.4% | 100% |
+| `icarus/svc.c` | 83/89 | 93.3% | 92.5% |
+| `icarus/semaphore.c` | 64/68 | 94.1% | 100% |
+| `icarus/kernel.c` | 75/88 | 85.2% | 84.6% |
+| `icarus/scheduler.c` | 34/42 | 81.0% | 100% |
+| `bsp/display.c` | 220/233 | 94.4% | 100% |
+| `bsp/retarget_hal.c` | 70/74 | 94.6% | 100% |
+| `bsp/retarget_stdio.c` | 9/12 | 75.0% | 100% |
+| `bsp/stm32h7xx_it.c` | 15/24 | 62.5% | 40.0% |
+| `bsp/error.c` | 0/4 | 0.0% | 0.0% |
+| **Total (filtered)** | **714/784** | **91.1%** | **89.5%** |
 
-### 3.3 Uncovered Functions
+### 3.3 Partially covered or deactivated areas
 
-See `deactivated_code.md` for detailed analysis of each uncovered function.
-
-| Function | File | Reason | Justification |
-|----------|------|--------|---------------|
-| `Error_Handler` | error.c | Infinite loop | Dead code - fault handler |
-| `NMI_Handler` | stm32h7xx_it.c | Empty handler | Dead code - fault handler |
-| `HardFault_Handler` | stm32h7xx_it.c | Infinite loop | Dead code - fault handler |
-| `MemManage_Handler` | stm32h7xx_it.c | Infinite loop | Dead code - fault handler |
-| `BusFault_Handler` | stm32h7xx_it.c | Infinite loop | Dead code - fault handler |
-| `UsageFault_Handler` | stm32h7xx_it.c | Infinite loop | Dead code - fault handler |
-| `PendSV_Handler` | stm32h7xx_it.c | Calls assembly | Requires target testing |
-| `os_transmit_printf_task` | task.c | Infinite loop | Requires target testing |
-| `os_idle_task` | task.c | Infinite loop | Requires target testing |
-| `os_heartbeart_task` | task.c | Infinite loop | Requires target testing |
-| `dequeue_print_buffer` | task.c | Static function | Only called by untestable code |
+See `deactivated_code.md` for fault handlers, infinite-loop tasks, and similar items. Host coverage gaps remain in `error.c` and fault-vector paths in `stm32h7xx_it.c` by design.
 
 ## 4. Test Environment
 
-### 4.1 Host Test Configuration
+### 4.1 Host test configuration
 
 - **Host OS:** macOS (darwin)
 - **Compiler:** GCC (host native)
-- **Test Framework:** Unity
-- **Coverage Tool:** lcov/gcov
-- **Build System:** GNU Make
+- **Test framework:** Unity
+- **Coverage:** lcov / gcov
+- **Build system:** GNU Make (`tests/Makefile`)
 
-### 4.2 Test Execution
+### 4.2 Commands
 
 ```bash
 cd tests
 make clean test          # Run all tests
-make coverage-summary    # Generate coverage report
-make coverage-html       # Generate HTML report
+make coverage-summary    # Regenerate coverage.info and print summary
+make coverage-html       # HTML under tests/build/coverage/html/
 ```
 
-### 4.3 Test Results
+### 4.3 Test results
 
-- **Total Tests:** 131
-- **Passed:** 131
-- **Failed:** 0
-- **Ignored:** 0
+Re-run after changes. Example command:
 
-## 5. Coverage Gap Analysis
+```bash
+cd tests && make test
+```
 
-### 5.1 Justified Exclusions
+The suite defines **140** tests; record pass/fail counts from your baseline run in verification records.
 
-The following code is excluded from coverage requirements per DO-178C guidance on deactivated code:
+## 5. Coverage gap analysis
 
-1. **Fault Handlers (6 functions):** These execute only on hardware faults and contain infinite loops by design. They cannot be unit tested and are verified through code review.
+### 5.1 Justified exclusions
 
-2. **Infinite Loop Tasks (3 functions):** These are RTOS tasks with `while(1)` loops that run continuously. They require target integration testing.
+As documented in `deactivated_code.md`:
 
-3. **Assembly Interface (1 function):** `PendSV_Handler` calls ARM assembly context switch code that cannot execute on host.
+1. **Fault handlers** — Run only on hardware faults; infinite loops by design.  
+2. **Certain interrupt paths** — Require target or HW stubs beyond current mocks.  
+3. **Assembly** — Context switch not executed on the host.  
 
-4. **Static Helper (1 function):** `dequeue_print_buffer` is only called by `os_transmit_printf_task` which is untestable.
+### 5.2 Certification follow-up
 
-### 5.2 Effective Coverage
-
-Excluding justified deactivated code:
-
-| Metric | Raw | Adjusted |
-|--------|-----|----------|
-| Functions Covered | 56/66 (85.9%) | 56/56 (100%) |
-| Lines Covered | 505/583 (88.5%) | 505/~505 (~100%) |
+- Maintain this report by re-running `make coverage-summary` after substantive kernel or BSP changes.  
+- For DAL B/A, add decision and MC/DC tooling on top of statement coverage.
 
 ## 6. Recommendations
 
-### 6.1 For DAL C Certification
-- ✅ Current coverage is sufficient with documented justifications
-- ⚠️ Complete formal deactivated code analysis documentation
+### 6.1 For DAL C certification
+- Keep deactivated-code analysis aligned with coverage exclusions.  
+- Archive `coverage.info` / HTML for each baseline.
 
-### 6.2 For DAL B Certification
-- Add decision coverage analysis tooling
-- Implement target-based integration tests for infinite loop tasks
-- Document decision coverage for all branches
+### 6.2 For DAL B certification
+- Add decision-coverage tooling and target-based tests for loop tasks.
 
-### 6.3 For DAL A Certification
-- Add MC/DC coverage analysis tooling
-- Ensure all conditions independently affect decisions
-- Complete MC/DC test cases for complex boolean expressions
+### 6.3 For DAL A certification
+- Plan MC/DC evidence where required by the certification authority.
 
 ## 7. Approval
 
@@ -143,8 +131,9 @@ Excluding justified deactivated code:
 | Reviewer | | | |
 | QA | | | |
 
-## 8. Revision History
+## 8. Revision history
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Paths `Core/Src/icarus/`; refreshed metrics from host `lcov` |

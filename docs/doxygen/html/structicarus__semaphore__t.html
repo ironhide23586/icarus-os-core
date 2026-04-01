@@ -106,7 +106,7 @@ $(function(){initNavTree('structicarus__semaphore__t.html',''); initResizable(tr
 <p>Counting Semaphore.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="types_8h_source.html">types.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -129,7 +129,7 @@ Data Fields</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>Memory footprint: 16 bytes per semaphore</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="SDD_8md.html">docs/do178c/design/SDD.md</a> Section 4.4 - Synchronization Primitives </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00147">147</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00149">149</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad2f55245f78ea15c0bd5927af7707786" name="ad2f55245f78ea15c0bd5927af7707786"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad2f55245f78ea15c0bd5927af7707786">&#9670;&#160;</a></span>count</h2>
@@ -145,9 +145,9 @@ Data Fields</h2></td></tr>
 
 <p>Current semaphore count. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00149">149</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00151">151</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00262">__init_sem()</a>, <a class="el" href="icarus__task_8c_source.html#l01337">semaphore_consume()</a>, <a class="el" href="icarus__task_8c_source.html#l01275">semaphore_feed()</a>, and <a class="el" href="icarus__task_8c_source.html#l01381">semaphore_get_count()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00135">__init_sem()</a>, <a class="el" href="semaphore_8c_source.html#l00147">__sem_can_consume()</a>, <a class="el" href="semaphore_8c_source.html#l00133">__sem_can_feed()</a>, <a class="el" href="semaphore_8c_source.html#l00174">__sem_decrement()</a>, <a class="el" href="semaphore_8c_source.html#l00160">__sem_increment()</a>, <a class="el" href="semaphore_8c_source.html#l00107">__semaphore_get_count()</a>, and <a class="el" href="semaphore_8c_source.html#l00035">__semaphore_init()</a>.</p>
 
 </div>
 </div>
@@ -165,9 +165,9 @@ Data Fields</h2></td></tr>
 
 <p>true if semaphore is initialized and active </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00148">148</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00150">150</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00262">__init_sem()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00135">__init_sem()</a>, and <a class="el" href="semaphore_8c_source.html#l00035">__semaphore_init()</a>.</p>
 
 </div>
 </div>
@@ -185,9 +185,9 @@ Data Fields</h2></td></tr>
 
 <p>Maximum count (initial value) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00150">150</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00152">152</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00262">__init_sem()</a>, and <a class="el" href="icarus__task_8c_source.html#l01415">semaphore_get_max_count()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00135">__init_sem()</a>, <a class="el" href="semaphore_8c_source.html#l00133">__sem_can_feed()</a>, <a class="el" href="semaphore_8c_source.html#l00119">__semaphore_get_max_count()</a>, and <a class="el" href="semaphore_8c_source.html#l00035">__semaphore_init()</a>.</p>
 
 </div>
 </div>
@@ -205,14 +205,14 @@ Data Fields</h2></td></tr>
 
 <p>Last modification timestamp (for debugging) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00151">151</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00153">153</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00262">__init_sem()</a>, <a class="el" href="icarus__task_8c_source.html#l01337">semaphore_consume()</a>, and <a class="el" href="icarus__task_8c_source.html#l01275">semaphore_feed()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00135">__init_sem()</a>, <a class="el" href="semaphore_8c_source.html#l00174">__sem_decrement()</a>, <a class="el" href="semaphore_8c_source.html#l00160">__sem_increment()</a>, and <a class="el" href="semaphore_8c_source.html#l00035">__semaphore_init()</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Core/Inc/icarus/<a class="el" href="icarus__types_8h_source.html">icarus_types.h</a></li>
+<li>Core/Inc/icarus/<a class="el" href="types_8h_source.html">types.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -220,7 +220,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structicarus__semaphore__t.html">icarus_semaphore_t</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

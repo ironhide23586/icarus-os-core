@@ -106,7 +106,7 @@ $(function(){initNavTree('structicarus__pipe__t.html',''); initResizable(true); 
 <p>Message Pipe (Queue)  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="types_8h_source.html">types.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -138,7 +138,7 @@ Data Fields</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>Memory footprint: ~140 bytes per pipe (with 128-byte buffer)</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="SDD_8md.html">docs/do178c/design/SDD.md</a> Section 4.5 - Inter-Process Communication </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00165">165</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00167">167</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a193c39eb87b51ecab4918dcba3965169" name="a193c39eb87b51ecab4918dcba3965169"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a193c39eb87b51ecab4918dcba3965169">&#9670;&#160;</a></span>buffer</h2>
@@ -154,9 +154,9 @@ Data Fields</h2></td></tr>
 
 <p>Circular message buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00172">172</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00174">174</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>, <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>, and <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>, <a class="el" href="pipe_8c_source.html#l00199">__pipe_read_bytes()</a>, and <a class="el" href="pipe_8c_source.html#l00176">__pipe_write_bytes()</a>.</p>
 
 </div>
 </div>
@@ -174,9 +174,9 @@ Data Fields</h2></td></tr>
 
 <p>Current number of bytes in buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00167">167</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00169">169</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>, <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>, and <a class="el" href="icarus__task_8c_source.html#l01688">pipe_get_count()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, <a class="el" href="pipe_8c_source.html#l00163">__pipe_can_dequeue()</a>, <a class="el" href="pipe_8c_source.html#l00123">__pipe_get_count()</a>, <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>, <a class="el" href="pipe_8c_source.html#l00199">__pipe_read_bytes()</a>, and <a class="el" href="pipe_8c_source.html#l00176">__pipe_write_bytes()</a>.</p>
 
 </div>
 </div>
@@ -194,9 +194,9 @@ Data Fields</h2></td></tr>
 
 <p>Read index (circular) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00170">170</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00172">172</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>, and <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>, and <a class="el" href="pipe_8c_source.html#l00199">__pipe_read_bytes()</a>.</p>
 
 </div>
 </div>
@@ -214,9 +214,9 @@ Data Fields</h2></td></tr>
 
 <p>true if pipe is initialized and active </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00166">166</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00168">168</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, and <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>.</p>
 
 </div>
 </div>
@@ -234,9 +234,9 @@ Data Fields</h2></td></tr>
 
 <p>Write index (circular) </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00169">169</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00171">171</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>, and <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>, and <a class="el" href="pipe_8c_source.html#l00176">__pipe_write_bytes()</a>.</p>
 
 </div>
 </div>
@@ -254,9 +254,9 @@ Data Fields</h2></td></tr>
 
 <p>Maximum buffer capacity in bytes. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00168">168</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00170">170</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>, <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>, <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>, and <a class="el" href="icarus__task_8c_source.html#l01722">pipe_get_max_count()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, <a class="el" href="pipe_8c_source.html#l00135">__pipe_get_max_count()</a>, <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>, <a class="el" href="pipe_8c_source.html#l00199">__pipe_read_bytes()</a>, and <a class="el" href="pipe_8c_source.html#l00176">__pipe_write_bytes()</a>.</p>
 
 </div>
 </div>
@@ -274,14 +274,14 @@ Data Fields</h2></td></tr>
 
 <p>Last modification timestamp. </p>
 
-<p class="definition">Definition at line <a class="el" href="icarus__types_8h_source.html#l00171">171</a> of file <a class="el" href="icarus__types_8h_source.html">icarus_types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00173">173</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="icarus__task_8c_source.html#l00286">__init_pipe()</a>, <a class="el" href="icarus__task_8c_source.html#l01627">pipe_dequeue()</a>, and <a class="el" href="icarus__task_8c_source.html#l01542">pipe_enqueue()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="kernel_8c_source.html#l00144">__init_pipe()</a>, <a class="el" href="pipe_8c_source.html#l00035">__pipe_init()</a>, <a class="el" href="pipe_8c_source.html#l00199">__pipe_read_bytes()</a>, and <a class="el" href="pipe_8c_source.html#l00176">__pipe_write_bytes()</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>Core/Inc/icarus/<a class="el" href="icarus__types_8h_source.html">icarus_types.h</a></li>
+<li>Core/Inc/icarus/<a class="el" href="types_8h_source.html">types.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -289,7 +289,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structicarus__pipe__t.html">icarus_pipe_t</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

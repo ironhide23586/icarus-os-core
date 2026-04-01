@@ -100,7 +100,7 @@ $(function(){initNavTree('md_docs_2do178c_2design_2SDD.html',''); initResizable(
   <div class="headertitle"><div class="title">Software Design Description (SDD)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md32"></a></p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md71"></a></p>
 <p><b>Document ID:</b> ICARUS-SDD-001 <br  />
  <b>Version:</b> 0.1 <br  />
  <b>Date:</b> 2025-01-26 <br  />
@@ -108,7 +108,7 @@ $(function(){initNavTree('md_docs_2do178c_2design_2SDD.html',''); initResizable(
  <b>Classification:</b> Public (Open Source) <br  />
 </p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md34"></a>
+<h1><a class="anchor" id="autotoc_md73"></a>
 Document Control</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -121,7 +121,7 @@ Document Control</h1>
 <td class="markdownTableBodyNone">Approver   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md36"></a>
+<h1><a class="anchor" id="autotoc_md75"></a>
 Revision History</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -130,12 +130,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">0.1   </td><td class="markdownTableBodyNone">2025-01-26   </td><td class="markdownTableBodyNone">Souham Biswas   </td><td class="markdownTableBodyNone">Initial draft   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md38"></a>
+<h1><a class="anchor" id="autotoc_md77"></a>
 1. Introduction</h1>
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="autotoc_md78"></a>
 1.1 Purpose</h2>
 <p>This Software Design Description (SDD) defines the architecture, components, interfaces, and data structures of ICARUS OS. It provides the bridge between requirements (SRS) and implementation, enabling traceability and design verification.</p>
-<h2><a class="anchor" id="autotoc_md40"></a>
+<h2><a class="anchor" id="autotoc_md79"></a>
 1.2 Scope</h2>
 <p>This document covers:</p><ul>
 <li>System architecture and decomposition</li>
@@ -144,7 +144,7 @@ Revision History</h1>
 <li>Memory architecture</li>
 <li>Timing design</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md41"></a>
+<h2><a class="anchor" id="autotoc_md80"></a>
 1.3 Design Principles</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -161,9 +161,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone"><b>Certifiability</b>   </td><td class="markdownTableBodyNone">Design supports DO-178C verification   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md43"></a>
+<h1><a class="anchor" id="autotoc_md82"></a>
 2. System Architecture</h1>
-<h2><a class="anchor" id="autotoc_md44"></a>
+<h2><a class="anchor" id="autotoc_md83"></a>
 2.1 Architectural Overview</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                         APPLICATION LAYER                                │</div>
@@ -199,23 +199,23 @@ Revision History</h1>
 <div class="line">│  │  STM32H750 (Cortex-M7) │ STM32F4 │ RISC-V │ Zynq │ x86 (Sim)     │  │</div>
 <div class="line">│  └───────────────────────────────────────────────────────────────────┘  │</div>
 <div class="line">└─────────────────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md45"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md84"></a>
 2.2 Component Summary</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Component   </th><th class="markdownTableHeadNone">Status   </th><th class="markdownTableHeadNone">Source Location   </th><th class="markdownTableHeadNone">Description    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Scheduler   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">Preemptive round-robin    </td></tr>
+<td class="markdownTableBodyNone">Scheduler   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8c.html" title="ICARUS Scheduler Implementation.">Core/Src/icarus/scheduler.c</a></code>   </td><td class="markdownTableBodyNone">Preemptive round-robin    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Task Manager   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">Task lifecycle management    </td></tr>
+<td class="markdownTableBodyNone">Task Manager   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8c.html" title="ICARUS Task Management Implementation.">Core/Src/icarus/task.c</a></code>   </td><td class="markdownTableBodyNone">Task lifecycle management    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Context Switch   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code>kernel/context_switch.s</code>   </td><td class="markdownTableBodyNone">ARM assembly context save/restore    </td></tr>
+<td class="markdownTableBodyNone">Context Switch   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code><a class="el" href="context__switch_8s.html">Core/Src/icarus/context_switch.s</a></code>   </td><td class="markdownTableBodyNone">ARM assembly context save/restore    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Semaphores   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">Bounded counting semaphores    </td></tr>
+<td class="markdownTableBodyNone">Semaphores   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8c.html" title="ICARUS Semaphore Implementation.">Core/Src/icarus/semaphore.c</a></code>   </td><td class="markdownTableBodyNone">Bounded counting semaphores    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">IPC   </td><td class="markdownTableBodyNone">🔲 Planned   </td><td class="markdownTableBodyNone"><code>kernel/ipc.c</code>   </td><td class="markdownTableBodyNone">Message queues, mutexes    </td></tr>
+<td class="markdownTableBodyNone">Message pipes (IPC)   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8c.html" title="ICARUS Message Pipe Implementation.">Core/Src/icarus/pipe.c</a></code>   </td><td class="markdownTableBodyNone">FIFO byte-stream queues (see <code><a class="el" href="pipe_8h.html" title="ICARUS Pipe - Message Pipes (Circular Buffer Queues)">pipe.h</a></code>)    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">AI Runtime   </td><td class="markdownTableBodyNone">🔲 Planned   </td><td class="markdownTableBodyNone"><code>kernel/ai_runtime.c</code>   </td><td class="markdownTableBodyNone">Deterministic inference    </td></tr>
+<td class="markdownTableBodyNone">AI Runtime   </td><td class="markdownTableBodyNone">🔲 Planned   </td><td class="markdownTableBodyNone">TBD   </td><td class="markdownTableBodyNone">Deterministic inference    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">BSP - GPIO   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code><a class="el" href="gpio_8c.html" title="This file provides code for the configuration of all used GPIO pins.">bsp/gpio.c</a></code>   </td><td class="markdownTableBodyNone">Digital I/O    </td></tr>
 <tr class="markdownTableRowEven">
@@ -228,11 +228,11 @@ Revision History</h1>
 <td class="markdownTableBodyNone">BSP - USB   </td><td class="markdownTableBodyNone">✅ Implemented   </td><td class="markdownTableBodyNone"><code>USB_DEVICE/</code>   </td><td class="markdownTableBodyNone">USB CDC serial   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md47"></a>
+<h1><a class="anchor" id="autotoc_md86"></a>
 3. Component Design</h1>
-<h2><a class="anchor" id="autotoc_md48"></a>
+<h2><a class="anchor" id="autotoc_md87"></a>
 3.1 Scheduler Component</h2>
-<h3><a class="anchor" id="autotoc_md49"></a>
+<h3><a class="anchor" id="autotoc_md88"></a>
 3.1.1 Design Overview</h3>
 <p>The scheduler implements preemptive round-robin scheduling with configurable time quantum.</p>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
@@ -262,7 +262,7 @@ Revision History</h1>
 <div class="line">│         └──────────┘       └──────────┘                    │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md50"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md89"></a>
 3.1.2 Scheduling Algorithm</h3>
 <div class="fragment"><div class="line">ALGORITHM: Round-Robin Preemptive Scheduler</div>
 <div class="line"> </div>
@@ -295,7 +295,7 @@ Revision History</h1>
 <div class="line">    </div>
 <div class="line">    task_list[current_task_index].state = RUNNING</div>
 <div class="line">    restore_context(task_list[current_task_index])</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md51"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md90"></a>
 3.1.3 Timing Characteristics</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -309,7 +309,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Interrupt latency   </td><td class="markdownTableBodyNone">&lt;5 μs   </td><td class="markdownTableBodyNone">No   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md52"></a>
+<h3><a class="anchor" id="autotoc_md91"></a>
 3.1.4 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -326,12 +326,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Tick counter   </td><td class="markdownTableBodyNone">HLR-KRN-020   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md54"></a>
+<h2><a class="anchor" id="autotoc_md93"></a>
 3.2 Task Manager Component</h2>
-<h3><a class="anchor" id="autotoc_md55"></a>
+<h3><a class="anchor" id="autotoc_md94"></a>
 3.2.1 Design Overview</h3>
 <p>The Task Manager handles task lifecycle: creation, execution, sleep, and termination.</p>
-<h3><a class="anchor" id="autotoc_md56"></a>
+<h3><a class="anchor" id="autotoc_md95"></a>
 3.2.2 Task Control Block (TCB)</h3>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span>task {</div>
 <div class="line">    void (*function)(void);      <span class="comment">// Task entry point</span></div>
@@ -348,7 +348,7 @@ Revision History</h1>
 <div class="line"><span class="comment">// Static assertions ensure offsets match assembly expectations</span></div>
 <div class="line"><span class="keyword">_Static_assert</span>(offsetof(task_t, stack_pointer) == 12);</div>
 <div class="line"><span class="keyword">_Static_assert</span>(offsetof(task_t, task_state) == 16);</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md57"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md96"></a>
 3.2.3 Task States</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -366,7 +366,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">TASK_FINISHED   </td><td class="markdownTableBodyNone">5   </td><td class="markdownTableBodyNone">Exited normally   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md58"></a>
+<h3><a class="anchor" id="autotoc_md97"></a>
 3.2.4 Stack Frame Layout</h3>
 <div class="fragment"><div class="line">High Address (stack_base + stack_size)</div>
 <div class="line">┌─────────────────────────────────────┐</div>
@@ -393,7 +393,7 @@ Revision History</h1>
 <div class="line">│           ...                       │</div>
 <div class="line">├─────────────────────────────────────┤</div>
 <div class="line">Low Address (stack_base)</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md59"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md98"></a>
 3.2.5 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -403,21 +403,21 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Stack allocation   </td><td class="markdownTableBodyNone">HLR-KRN-003    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a>   </td><td class="markdownTableBodyNone">HLR-KRN-004    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a>   </td><td class="markdownTableBodyNone">HLR-KRN-004    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task.">os_kill_process()</a>   </td><td class="markdownTableBodyNone">HLR-KRN-005    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task by index.">os_kill_process()</a>   </td><td class="markdownTableBodyNone">HLR-KRN-005    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Task 0 protection   </td><td class="markdownTableBodyNone">HLR-KRN-006    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">task_state field   </td><td class="markdownTableBodyNone">HLR-KRN-007   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md61"></a>
+<h2><a class="anchor" id="autotoc_md100"></a>
 3.3 Context Switch Component</h2>
-<h3><a class="anchor" id="autotoc_md62"></a>
+<h3><a class="anchor" id="autotoc_md101"></a>
 3.3.1 Design Overview</h3>
 <p>Context switching is implemented in ARM assembly for Cortex-M7. It uses the PendSV exception (lowest priority) to ensure all other interrupts complete before switching.</p>
-<h3><a class="anchor" id="autotoc_md63"></a>
+<h3><a class="anchor" id="autotoc_md102"></a>
 3.3.2 Context Switch Flow</h3>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                  CONTEXT SWITCH SEQUENCE                     │</div>
@@ -446,7 +446,7 @@ Revision History</h1>
 <div class="line">│     └── Pop R0-R3, R12, LR, PC, xPSR from PSP              │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md64"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md103"></a>
 3.3.3 Assembly Implementation</h3>
 <div class="fragment"><div class="line">// context_switch.s (simplified)</div>
 <div class="line">.syntax unified</div>
@@ -483,7 +483,7 @@ Revision History</h1>
 <div class="line">    MSR     PSP, R0                 // Set PSP</div>
 <div class="line">    </div>
 <div class="line">    BX      LR                      // Return (hardware restores rest)</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md65"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md104"></a>
 3.3.4 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -496,30 +496,30 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Register save/restore   </td><td class="markdownTableBodyNone">HLR-KRN-010 (preemption)   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md67"></a>
+<h2><a class="anchor" id="autotoc_md106"></a>
 3.4 Critical Section Component</h2>
-<h3><a class="anchor" id="autotoc_md68"></a>
+<h3><a class="anchor" id="autotoc_md107"></a>
 3.4.1 Design Overview</h3>
 <p>Critical sections protect shared data from concurrent access by disabling the scheduler (not interrupts).</p>
-<h3><a class="anchor" id="autotoc_md69"></a>
+<h3><a class="anchor" id="autotoc_md108"></a>
 3.4.2 Implementation</h3>
-<div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">volatile</span> uint8_t <a class="code hl_variable" href="group__SCHEDULER__STATE.html#ga8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a> = 0;</div>
-<div class="line"><span class="keyword">volatile</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a> = <span class="keyword">true</span>;</div>
+<div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">volatile</span> uint8_t <a class="code hl_variable" href="kernel_8c.html#a8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a> = 0;</div>
+<div class="line"><span class="keyword">volatile</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="kernel_8h.html#af25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a> = <span class="keyword">true</span>;</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8c.html#a8c37c79b24dbe7d362bde4110f7c150d">enter_critical</a>(<span class="keywordtype">void</span>) {</div>
-<div class="line">    <a class="code hl_variable" href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a> = <span class="keyword">false</span>;</div>
-<div class="line">    <a class="code hl_variable" href="group__SCHEDULER__STATE.html#ga8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a>++;</div>
+<div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="kernel_8h.html#a8dcbc84d8ecee85815dc5320c852d1cd">enter_critical</a>(<span class="keywordtype">void</span>) {</div>
+<div class="line">    <a class="code hl_variable" href="kernel_8h.html#af25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a> = <span class="keyword">false</span>;</div>
+<div class="line">    <a class="code hl_variable" href="kernel_8c.html#a8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a>++;</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8c.html#a6dc3cbf6bed1d8ba3a811d08595581cc">exit_critical</a>(<span class="keywordtype">void</span>) {</div>
-<div class="line">    <span class="keywordflow">if</span> (--<a class="code hl_variable" href="group__SCHEDULER__STATE.html#ga8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a> == 0)</div>
-<div class="line">        <a class="code hl_variable" href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a> = <span class="keyword">true</span>;</div>
+<div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="kernel_8h.html#a521c46d2fe4940150406258f634195f1">exit_critical</a>(<span class="keywordtype">void</span>) {</div>
+<div class="line">    <span class="keywordflow">if</span> (--<a class="code hl_variable" href="kernel_8c.html#a8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a> == 0)</div>
+<div class="line">        <a class="code hl_variable" href="kernel_8h.html#af25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a> = <span class="keyword">true</span>;</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_ga8f52138584fd6575cfe437c737b9e9de"><div class="ttname"><a href="group__SCHEDULER__STATE.html#ga8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a></div><div class="ttdeci">volatile uint8_t critical_stack_depth</div><div class="ttdoc">Critical section nesting depth.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00149">icarus_task.c:149</a></div></div>
-<div class="ttc" id="agroup__SCHEDULER__STATE_html_gaf25078275f73d42cf062dbaee7ed1e88"><div class="ttname"><a href="group__SCHEDULER__STATE.html#gaf25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a></div><div class="ttdeci">volatile bool scheduler_enabled</div><div class="ttdoc">Scheduler enable flag (false during critical sections)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00152">icarus_task.c:152</a></div></div>
-<div class="ttc" id="aicarus__task_8c_html_a6dc3cbf6bed1d8ba3a811d08595581cc"><div class="ttname"><a href="icarus__task_8c.html#a6dc3cbf6bed1d8ba3a811d08595581cc">exit_critical</a></div><div class="ttdeci">static void exit_critical(void)</div><div class="ttdoc">Exit critical section (re-enable scheduler if outermost)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00237">icarus_task.c:237</a></div></div>
-<div class="ttc" id="aicarus__task_8c_html_a8c37c79b24dbe7d362bde4110f7c150d"><div class="ttname"><a href="icarus__task_8c.html#a8c37c79b24dbe7d362bde4110f7c150d">enter_critical</a></div><div class="ttdeci">static void enter_critical(void)</div><div class="ttdoc">Enter critical section (disable scheduler)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00214">icarus_task.c:214</a></div></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md70"></a>
+<div class="ttc" id="akernel_8c_html_a8f52138584fd6575cfe437c737b9e9de"><div class="ttname"><a href="kernel_8c.html#a8f52138584fd6575cfe437c737b9e9de">critical_stack_depth</a></div><div class="ttdeci">volatile uint8_t critical_stack_depth</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00071">kernel.c:71</a></div></div>
+<div class="ttc" id="akernel_8h_html_a521c46d2fe4940150406258f634195f1"><div class="ttname"><a href="kernel_8h.html#a521c46d2fe4940150406258f634195f1">exit_critical</a></div><div class="ttdeci">void exit_critical(void)</div><div class="ttdoc">Exit critical section (re-enable scheduler if outermost)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00221">svc.c:221</a></div></div>
+<div class="ttc" id="akernel_8h_html_a8dcbc84d8ecee85815dc5320c852d1cd"><div class="ttname"><a href="kernel_8h.html#a8dcbc84d8ecee85815dc5320c852d1cd">enter_critical</a></div><div class="ttdeci">void enter_critical(void)</div><div class="ttdoc">Enter critical section (disable scheduler)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00210">svc.c:210</a></div></div>
+<div class="ttc" id="akernel_8h_html_af25078275f73d42cf062dbaee7ed1e88"><div class="ttname"><a href="kernel_8h.html#af25078275f73d42cf062dbaee7ed1e88">scheduler_enabled</a></div><div class="ttdeci">volatile bool scheduler_enabled</div><div class="ttdoc">Scheduler enable flag.</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00072">kernel.c:72</a></div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md109"></a>
 3.4.3 Design Rationale</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -531,7 +531,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Spinlock   </td><td class="markdownTableBodyNone">Fine-grained   </td><td class="markdownTableBodyNone">Complex, potential deadlock   </td><td class="markdownTableBodyNone">Future (multi-core)   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md71"></a>
+<h3><a class="anchor" id="autotoc_md110"></a>
 3.4.4 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -544,12 +544,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Inline implementation   </td><td class="markdownTableBodyNone">HLR-KRN-032 (minimal duration)   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md73"></a>
+<h2><a class="anchor" id="autotoc_md112"></a>
 3.5 Semaphore Component</h2>
-<h3><a class="anchor" id="autotoc_md74"></a>
+<h3><a class="anchor" id="autotoc_md113"></a>
 3.5.1 Design Overview</h3>
 <p>The semaphore component implements bounded counting semaphores for producer-consumer synchronization. Semaphores use non-blocking waits (task_active_sleep) to allow other tasks to run while waiting.</p>
-<h3><a class="anchor" id="autotoc_md75"></a>
+<h3><a class="anchor" id="autotoc_md114"></a>
 3.5.2 Data Structure</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#define MAX_SEMAPHORES 32</span></div>
 <div class="line"> </div>
@@ -564,9 +564,9 @@ Revision History</h1>
 <div class="line">    <span class="keywordtype">bool</span> engaged;                            <span class="comment">// Semaphore is initialized</span></div>
 <div class="line">} semaphore_t;</div>
 <div class="line"> </div>
-<div class="line">semaphore_t* <a class="code hl_variable" href="group__KERNEL__DATA.html#gab5e5984bbda98cded99ce30d836e73c5">semaphore_list</a>[MAX_SEMAPHORES];</div>
-<div class="ttc" id="agroup__KERNEL__DATA_html_gab5e5984bbda98cded99ce30d836e73c5"><div class="ttname"><a href="group__KERNEL__DATA.html#gab5e5984bbda98cded99ce30d836e73c5">semaphore_list</a></div><div class="ttdeci">icarus_semaphore_t * semaphore_list[64]</div><div class="ttdoc">Array of pointers to all semaphores.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00095">icarus_task.c:95</a></div></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md76"></a>
+<div class="line">semaphore_t* <a class="code hl_variable" href="kernel_8h.html#ab5e5984bbda98cded99ce30d836e73c5">semaphore_list</a>[MAX_SEMAPHORES];</div>
+<div class="ttc" id="akernel_8h_html_ab5e5984bbda98cded99ce30d836e73c5"><div class="ttname"><a href="kernel_8h.html#ab5e5984bbda98cded99ce30d836e73c5">semaphore_list</a></div><div class="ttdeci">icarus_semaphore_t * semaphore_list[64]</div><div class="ttdoc">Array of pointers to all semaphores.</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00051">kernel.c:51</a></div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md115"></a>
 3.5.3 Semaphore Operations</h3>
 <div class="fragment"><div class="line">ALGORITHM: Bounded Semaphore Feed (Producer)</div>
 <div class="line"> </div>
@@ -602,7 +602,7 @@ Revision History</h1>
 <div class="line">    count--</div>
 <div class="line">    EXIT_CRITICAL</div>
 <div class="line">    RETURN true</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md77"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md116"></a>
 3.5.4 Blocking Behavior</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -617,7 +617,7 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Consume when count == 0   </td><td class="markdownTableBodyNone">Block until producer increments   </td></tr>
 </table>
 <p>The blocking uses <code>task_active_sleep(1)</code> which yields to the scheduler, allowing other tasks to run. This is cooperative blocking, not busy-waiting.</p>
-<h3><a class="anchor" id="autotoc_md78"></a>
+<h3><a class="anchor" id="autotoc_md117"></a>
 3.5.5 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -636,12 +636,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">MAX_SEMAPHORES=32   </td><td class="markdownTableBodyNone">HLR-KRN-051   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md80"></a>
+<h2><a class="anchor" id="autotoc_md119"></a>
 3.6 Message Pipe Component</h2>
-<h3><a class="anchor" id="autotoc_md81"></a>
+<h3><a class="anchor" id="autotoc_md120"></a>
 3.6.1 Design Overview</h3>
 <p>The message pipe component implements FIFO byte-stream communication channels between tasks. Pipes support variable-length messages with bounded capacity and blocking semantics.</p>
-<h3><a class="anchor" id="autotoc_md82"></a>
+<h3><a class="anchor" id="autotoc_md121"></a>
 3.6.2 Data Structure</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#define MAX_MESSAGE_QUEUES 32</span></div>
 <div class="line"><span class="preprocessor">#define MAX_PIPE_CAPACITY 128</span></div>
@@ -655,9 +655,9 @@ Revision History</h1>
 <div class="line">    <span class="keywordtype">bool</span> engaged;                       <span class="comment">// Pipe is initialized</span></div>
 <div class="line">} message_pipe_t;</div>
 <div class="line"> </div>
-<div class="line">message_pipe_t* <a class="code hl_variable" href="group__KERNEL__DATA.html#ga56fcd99d5fefd22d92278a34c354a5b1">message_pipe_list</a>[MAX_MESSAGE_QUEUES];</div>
-<div class="ttc" id="agroup__KERNEL__DATA_html_ga56fcd99d5fefd22d92278a34c354a5b1"><div class="ttname"><a href="group__KERNEL__DATA.html#ga56fcd99d5fefd22d92278a34c354a5b1">message_pipe_list</a></div><div class="ttdeci">icarus_pipe_t * message_pipe_list[64]</div><div class="ttdoc">Array of pointers to all message pipes.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00098">icarus_task.c:98</a></div></div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md83"></a>
+<div class="line">message_pipe_t* <a class="code hl_variable" href="kernel_8h.html#a56fcd99d5fefd22d92278a34c354a5b1">message_pipe_list</a>[MAX_MESSAGE_QUEUES];</div>
+<div class="ttc" id="akernel_8h_html_a56fcd99d5fefd22d92278a34c354a5b1"><div class="ttname"><a href="kernel_8h.html#a56fcd99d5fefd22d92278a34c354a5b1">message_pipe_list</a></div><div class="ttdeci">icarus_pipe_t * message_pipe_list[64]</div><div class="ttdoc">Array of pointers to all message pipes.</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00052">kernel.c:52</a></div></div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md122"></a>
 3.6.3 Pipe Operations</h3>
 <div class="fragment"><div class="line">ALGORITHM: Pipe Enqueue (Producer)</div>
 <div class="line"> </div>
@@ -697,7 +697,7 @@ Revision History</h1>
 <div class="line">    count--</div>
 <div class="line">    EXIT_CRITICAL</div>
 <div class="line">    RETURN data</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md84"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md123"></a>
 3.6.4 Circular Buffer Layout</h3>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    CIRCULAR PIPE BUFFER                      │</div>
@@ -716,7 +716,7 @@ Revision History</h1>
 <div class="line">│  FIFO:  head follows tail, wraps at capacity                │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md85"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md124"></a>
 3.6.5 Pipe Characteristics</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -734,7 +734,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Max pipes   </td><td class="markdownTableBodyNone">32   </td><td class="markdownTableBodyNone">HLR-KRN-052   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md86"></a>
+<h3><a class="anchor" id="autotoc_md125"></a>
 3.6.6 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -755,19 +755,19 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Bounded operations   </td><td class="markdownTableBodyNone">HLR-KRN-046 (bounded WCET)   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md88"></a>
+<h2><a class="anchor" id="autotoc_md127"></a>
 3.7 Print Buffer Component</h2>
-<h3><a class="anchor" id="autotoc_md89"></a>
+<h3><a class="anchor" id="autotoc_md128"></a>
 3.7.1 Design Overview</h3>
 <p>Circular buffer for asynchronous printf output via USB CDC.</p>
-<h3><a class="anchor" id="autotoc_md90"></a>
+<h3><a class="anchor" id="autotoc_md129"></a>
 3.7.2 Data Structure</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#define PRINT_BUFFER_BYTES 256</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">static</span> uint8_t print_buffer[PRINT_BUFFER_BYTES];</div>
 <div class="line"><span class="keyword">volatile</span> uint8_t print_buffer_dequeue_idx = 0;</div>
 <div class="line"><span class="keyword">volatile</span> uint8_t print_buffer_enqueue_idx = 0;</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md91"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md130"></a>
 3.7.3 Buffer Operations</h3>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    CIRCULAR BUFFER                           │</div>
@@ -786,12 +786,12 @@ Revision History</h1>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md93"></a>
+<h2><a class="anchor" id="autotoc_md132"></a>
 3.8 Mutex Component (Planned)</h2>
-<h3><a class="anchor" id="autotoc_md94"></a>
+<h3><a class="anchor" id="autotoc_md133"></a>
 3.8.1 Design Overview</h3>
 <p>Inter-Process Communication provides synchronization and data exchange between tasks.</p>
-<h3><a class="anchor" id="autotoc_md95"></a>
+<h3><a class="anchor" id="autotoc_md134"></a>
 3.8.2 Message Queue Design</h3>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
 <div class="line">    uint8_t *buffer;           <span class="comment">// Queue storage</span></div>
@@ -803,7 +803,7 @@ Revision History</h1>
 <div class="line">    task_t *waiting_send;      <span class="comment">// Tasks blocked on send</span></div>
 <div class="line">    task_t *waiting_recv;      <span class="comment">// Tasks blocked on receive</span></div>
 <div class="line">} ipc_queue_t;</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md96"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md135"></a>
 3.8.3 Queue Operations</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -817,7 +817,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>ipc_queue_count()</code>   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">N/A   </td><td class="markdownTableBodyNone">O(1)   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md97"></a>
+<h3><a class="anchor" id="autotoc_md136"></a>
 3.8.4 Mutex Design</h3>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
 <div class="line">    <span class="keyword">volatile</span> int32_t count;    <span class="comment">// Current count (signed for mutex)</span></div>
@@ -826,7 +826,7 @@ Revision History</h1>
 <div class="line">    task_t *owner;             <span class="comment">// For mutex: current owner</span></div>
 <div class="line">    uint8_t original_priority; <span class="comment">// For priority inheritance</span></div>
 <div class="line">} ipc_sem_t;</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md98"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md137"></a>
 3.8.5 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -843,12 +843,12 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Bounded operations   </td><td class="markdownTableBodyNone">HLR-KRN-046 (planned)   </td></tr>
 </table>
 <hr  />
-<h2><a class="anchor" id="autotoc_md100"></a>
+<h2><a class="anchor" id="autotoc_md139"></a>
 3.9 AI Runtime Component (Planned)</h2>
-<h3><a class="anchor" id="autotoc_md101"></a>
+<h3><a class="anchor" id="autotoc_md140"></a>
 3.9.1 Design Overview</h3>
 <p>The AI Runtime provides deterministic neural network inference with certifiable properties.</p>
-<h3><a class="anchor" id="autotoc_md102"></a>
+<h3><a class="anchor" id="autotoc_md141"></a>
 3.9.2 Architecture</h3>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    AI RUNTIME ARCHITECTURE                   │</div>
@@ -884,7 +884,7 @@ Revision History</h1>
 <div class="line">│  └─────────────────────────────────────────────────────┘    │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md103"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md142"></a>
 3.9.3 Model Structure</h3>
 <div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
 <div class="line">    uint32_t magic;            <span class="comment">// &quot;ICAR&quot; (0x52414349)</span></div>
@@ -908,7 +908,7 @@ Revision History</h1>
 <div class="line">    uint32_t bias_offset;      <span class="comment">// Bias offset</span></div>
 <div class="line">    uint16_t params[8];        <span class="comment">// Operator-specific params</span></div>
 <div class="line">} ai_layer_t;</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md104"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md143"></a>
 3.9.4 Operator Specifications</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -928,7 +928,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Concat   </td><td class="markdownTableBodyNone">int8   </td><td class="markdownTableBodyNone">int8   </td><td class="markdownTableBodyNone">O(N)   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md105"></a>
+<h3><a class="anchor" id="autotoc_md144"></a>
 3.9.5 Determinism Guarantees</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -944,7 +944,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Integrity   </td><td class="markdownTableBodyNone">CRC32 on model load   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md106"></a>
+<h3><a class="anchor" id="autotoc_md145"></a>
 3.9.6 Requirements Traceability</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -965,9 +965,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Static buffers   </td><td class="markdownTableBodyNone">HLR-AI-013   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md108"></a>
+<h1><a class="anchor" id="autotoc_md147"></a>
 4. Memory Architecture</h1>
-<h2><a class="anchor" id="autotoc_md109"></a>
+<h2><a class="anchor" id="autotoc_md148"></a>
 4.1 Memory Map (STM32H750)</h2>
 <div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
 <div class="line">│                    MEMORY MAP (STM32H750)                    │</div>
@@ -1009,18 +1009,195 @@ Revision History</h1>
 <div class="line">│  0x30048000 └─────────────────────────────────────┘         │</div>
 <div class="line">│                                                              │</div>
 <div class="line">└─────────────────────────────────────────────────────────────┘</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md110"></a>
-4.2 Stack Allocation</h2>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md149"></a>
+4.2 MPU Protection Architecture</h2>
+<h3><a class="anchor" id="autotoc_md150"></a>
+4.2.1 Overview</h3>
+<p>ICARUS OS implements hardware-enforced memory protection using the ARM Cortex-M7 Memory Protection Unit (MPU). The protection model provides:</p><ul>
+<li><b>Privilege separation</b>: Kernel runs privileged, tasks run unprivileged</li>
+<li><b>Code protection</b>: ITCM is read-only to prevent code modification</li>
+<li><b>Data isolation</b>: DTCM is privileged-only to protect kernel data</li>
+<li><b>Task isolation</b>: Each task's data region is isolated from other tasks</li>
+<li><b>SVC call gates</b>: Controlled kernel service access via Supervisor Calls</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md151"></a>
+4.2.2 MPU Region Configuration</h3>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Region   </th><th class="markdownTableHeadNone">Base Address   </th><th class="markdownTableHeadNone">Size   </th><th class="markdownTableHeadNone">Access   </th><th class="markdownTableHeadNone">Purpose   </th><th class="markdownTableHeadNone">Implements    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0   </td><td class="markdownTableBodyNone">0x00000000   </td><td class="markdownTableBodyNone">64 KB   </td><td class="markdownTableBodyNone">PRIV_RO_URO   </td><td class="markdownTableBodyNone">ITCM code (read-only for all)   </td><td class="markdownTableBodyNone">HLR-KRN-063, HLR-KRN-066    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">1   </td><td class="markdownTableBodyNone">0x90000000   </td><td class="markdownTableBodyNone">8 MB   </td><td class="markdownTableBodyNone">PRIV_RO_URO   </td><td class="markdownTableBodyNone">QSPI Flash (read-only)   </td><td class="markdownTableBodyNone">HLR-KRN-066    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">2   </td><td class="markdownTableBodyNone">DISABLED   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">Reserved (was ITCM_PRIV)   </td><td class="markdownTableBodyNone">-    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">3   </td><td class="markdownTableBodyNone">DISABLED   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">Reserved   </td><td class="markdownTableBodyNone">-    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">4   </td><td class="markdownTableBodyNone">Dynamic   </td><td class="markdownTableBodyNone">2 KB   </td><td class="markdownTableBodyNone">PRIV_RW_URW   </td><td class="markdownTableBodyNone">Task data (reconfigured on switch)   </td><td class="markdownTableBodyNone">HLR-KRN-065, HLR-KRN-071    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">5   </td><td class="markdownTableBodyNone">0x20000000   </td><td class="markdownTableBodyNone">128 KB   </td><td class="markdownTableBodyNone">PRIV_RO   </td><td class="markdownTableBodyNone">DTCM kernel data (privileged-only)   </td><td class="markdownTableBodyNone">HLR-KRN-064, HLR-KRN-070    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">6   </td><td class="markdownTableBodyNone">0x24000000   </td><td class="markdownTableBodyNone">512 KB   </td><td class="markdownTableBodyNone">FULL_ACCESS   </td><td class="markdownTableBodyNone">RAM_D1 (shared buffers)   </td><td class="markdownTableBodyNone">-    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">7   </td><td class="markdownTableBodyNone">0x30000000   </td><td class="markdownTableBodyNone">256 KB   </td><td class="markdownTableBodyNone">FULL_ACCESS   </td><td class="markdownTableBodyNone">RAM_D2 (DMA, display)   </td><td class="markdownTableBodyNone">-   </td></tr>
+</table>
+<h3><a class="anchor" id="autotoc_md152"></a>
+4.2.3 Memory Region Details</h3>
+<p><b>Region 0: ITCM Code Protection</b> </p><div class="fragment"><div class="line">r.BaseAddress      = 0x00000000;</div>
+<div class="line">r.Size             = MPU_REGION_SIZE_64KB;</div>
+<div class="line">r.AccessPermission = MPU_REGION_PRIV_RO_URO;  <span class="comment">// Read-only for all</span></div>
+<div class="line">r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;</div>
+</div><!-- fragment --><ul>
+<li>Contains kernel functions marked with <code>ITCM_FUNC</code> macro</li>
+<li>Read-only prevents code modification attacks</li>
+<li>Executable by all (ARM MPU limitation: cannot restrict execution by privilege level)</li>
+<li>Protection enforced by DTCM isolation (kernel functions fault when accessing kernel data from unprivileged mode)</li>
+</ul>
+<p><b>Region 4: Task Data Isolation</b> </p><div class="fragment"><div class="line"><span class="comment">// Reconfigured on every context switch</span></div>
+<div class="line">r.BaseAddress      = task-&gt;data_base;  <span class="comment">// 2KB-aligned</span></div>
+<div class="line">r.Size             = MPU_REGION_SIZE_2KB;</div>
+<div class="line">r.AccessPermission = MPU_REGION_PRIV_RW_URW;  <span class="comment">// Full access for current task</span></div>
+</div><!-- fragment --><ul>
+<li>Each task has 2KB data region in <code>data_pool</code> (RAM_D2)</li>
+<li>MPU reconfigured on context switch to grant access only to current task</li>
+<li>Prevents cross-task memory corruption</li>
+<li>Verified by MPU_REDTEAM stress test</li>
+</ul>
+<p><b>Region 5: DTCM Kernel Data Protection</b> </p><div class="fragment"><div class="line">r.BaseAddress      = 0x20000000;</div>
+<div class="line">r.Size             = MPU_REGION_SIZE_128KB;</div>
+<div class="line">r.AccessPermission = MPU_REGION_PRIV_RO;  <span class="comment">// Privileged-only</span></div>
+</div><!-- fragment --><ul>
+<li>Contains kernel data structures: <code>task_list</code>, <code>semaphore_list</code>, <code>pipe_list</code>, <code>os_tick_count</code></li>
+<li>Unprivileged tasks cannot read or write</li>
+<li>Forces use of SVC call gates for kernel services</li>
+<li>Prevents direct kernel function calls from working</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md153"></a>
+4.2.4 Privilege Separation Model</h3>
+<div class="fragment"><div class="line">┌─────────────────────────────────────────────────────────────┐</div>
+<div class="line">│                    PRIVILEGE ARCHITECTURE                    │</div>
+<div class="line">├─────────────────────────────────────────────────────────────┤</div>
+<div class="line">│                                                              │</div>
+<div class="line">│  PRIVILEGED MODE (Handler/SVC)                              │</div>
+<div class="line">│  ┌────────────────────────────────────────────────────────┐ │</div>
+<div class="line">│  │  • Kernel functions (__os_* prefix)                    │ │</div>
+<div class="line">│  │  • Exception handlers (SysTick, PendSV, MemManage)    │ │</div>
+<div class="line">│  │  • SVC dispatcher                                      │ │</div>
+<div class="line">│  │  • MPU configuration                                   │ │</div>
+<div class="line">│  │  • Access to DTCM (kernel data)                       │ │</div>
+<div class="line">│  │  • Access to ITCM (kernel code)                       │ │</div>
+<div class="line">│  └────────────────────────────────────────────────────────┘ │</div>
+<div class="line">│                           ▲                                  │</div>
+<div class="line">│                           │ SVC instruction                  │</div>
+<div class="line">│                           │ (controlled transition)          │</div>
+<div class="line">│  ┌────────────────────────┴───────────────────────────────┐ │</div>
+<div class="line">│  │  SVC CALL GATES (os_* wrappers)                       │ │</div>
+<div class="line">│  │  • os_semaphore_wait() → SVC 29                       │ │</div>
+<div class="line">│  │  • os_semaphore_signal() → SVC 30                     │ │</div>
+<div class="line">│  │  • os_pipe_send() → SVC 31                            │ │</div>
+<div class="line">│  │  • os_pipe_receive() → SVC 32                         │ │</div>
+<div class="line">│  │  • os_get_task_name() → SVC 37                        │ │</div>
+<div class="line">│  └────────────────────────────────────────────────────────┘ │</div>
+<div class="line">│                           ▲                                  │</div>
+<div class="line">│                           │ Function call                    │</div>
+<div class="line">│                           │                                  │</div>
+<div class="line">│  UNPRIVILEGED MODE (Thread)                                 │</div>
+<div class="line">│  ┌────────────────────────┴───────────────────────────────┐ │</div>
+<div class="line">│  │  • User task code                                      │ │</div>
+<div class="line">│  │  • Task local variables (stack)                       │ │</div>
+<div class="line">│  │  • Task data region (2KB, MPU Region 4)               │ │</div>
+<div class="line">│  │  • Shared buffers (RAM_D1, RAM_D2)                    │ │</div>
+<div class="line">│  │  • NO access to DTCM (kernel data)                    │ │</div>
+<div class="line">│  │  • Read-only access to ITCM (kernel code)             │ │</div>
+<div class="line">│  └────────────────────────────────────────────────────────┘ │</div>
+<div class="line">│                                                              │</div>
+<div class="line">└─────────────────────────────────────────────────────────────┘</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md154"></a>
+4.2.5 SVC Call Gates</h3>
+<p>All kernel services are accessed via SVC (Supervisor Call) instructions:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">SVC #   </th><th class="markdownTableHeadNone">Function   </th><th class="markdownTableHeadNone">Purpose   </th><th class="markdownTableHeadNone">Implements    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">29   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#a18191128c44ae720080796d624703b1a" title="Check if semaphore can accept a feed (SVC call gate)">sem_can_feed()</a></code>   </td><td class="markdownTableBodyNone">Check if semaphore can accept feed   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">30   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#acf4fde0a59cf2d02540b1f9291777a46" title="Check if semaphore can be consumed (SVC call gate)">sem_can_consume()</a></code>   </td><td class="markdownTableBodyNone">Check if semaphore can be consumed   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">31   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#ae1628133b43861aa63a84fbbe8cc8fb9" title="Increment semaphore count (SVC call gate)">sem_increment()</a></code>   </td><td class="markdownTableBodyNone">Increment semaphore count   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">32   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8h.html#a466f1ae24fd5bb5a6a06fe2812d72985" title="Decrement semaphore count (SVC call gate)">sem_decrement()</a></code>   </td><td class="markdownTableBodyNone">Decrement semaphore count   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">33   </td><td class="markdownTableBodyNone"><code>pipe_can_send()</code>   </td><td class="markdownTableBodyNone">Check if pipe can accept data   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">34   </td><td class="markdownTableBodyNone"><code>pipe_can_receive()</code>   </td><td class="markdownTableBodyNone">Check if pipe has data   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">35   </td><td class="markdownTableBodyNone"><code>pipe_write()</code>   </td><td class="markdownTableBodyNone">Write data to pipe   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">36   </td><td class="markdownTableBodyNone"><code>pipe_read()</code>   </td><td class="markdownTableBodyNone">Read data from pipe   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">37   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#a9c1dcfc8374cf120e7e803bf280e98fe" title="Get task name by index (safe from unprivileged mode)">os_get_task_name()</a></code>   </td><td class="markdownTableBodyNone">Get current task name   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">38   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#addbeb7e8c9632ff09882f378769756e8" title="Get number of created tasks (safe from unprivileged mode)">os_get_num_created_tasks()</a></code>   </td><td class="markdownTableBodyNone">Get task count   </td><td class="markdownTableBodyNone">HLR-KRN-067    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">39   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8h.html#adaa94248e5bada064318aa8db9920e39" title="Check if OS is running (safe from unprivileged mode)">os_is_running()</a></code>   </td><td class="markdownTableBodyNone">Check if OS is running   </td><td class="markdownTableBodyNone">HLR-KRN-067   </td></tr>
+</table>
+<h3><a class="anchor" id="autotoc_md155"></a>
+4.2.6 Fault Handling</h3>
+<p>The MemManage fault handler provides graceful recovery from memory protection violations:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="stm32h7xx__it_8h.html#a3150f74512510287a942624aa9b44cc5">MemManage_Handler</a>(<span class="keywordtype">void</span>) {</div>
+<div class="line">    <span class="comment">// Check fault type</span></div>
+<div class="line">    <span class="keywordtype">bool</span> is_daccviol = (CFSR &amp; SCB_CFSR_DACCVIOL_Msk) != 0;  <span class="comment">// Data access</span></div>
+<div class="line">    <span class="keywordtype">bool</span> is_iaccviol = (CFSR &amp; SCB_CFSR_IACCVIOL_Msk) != 0;  <span class="comment">// Instruction fetch</span></div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Check privilege level</span></div>
+<div class="line">    <span class="keywordtype">bool</span> from_psp = (LR &amp; 0x4) != 0;  <span class="comment">// From unprivileged task</span></div>
+<div class="line">    </div>
+<div class="line">    <span class="keywordflow">if</span> (is_daccviol &amp;&amp; !is_iaccviol &amp;&amp; from_psp) {</div>
+<div class="line">        <span class="comment">// Recoverable: skip faulting instruction</span></div>
+<div class="line">        advance_pc_by_instruction_length();</div>
+<div class="line">        clear_fault_status();</div>
+<div class="line">        <span class="keywordflow">return</span>;  <span class="comment">// Task continues</span></div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// Non-recoverable: halt with LED blink code</span></div>
+<div class="line">    halt_with_4_blinks();</div>
+<div class="line">}</div>
+<div class="ttc" id="astm32h7xx__it_8h_html_a3150f74512510287a942624aa9b44cc5"><div class="ttname"><a href="stm32h7xx__it_8h.html#a3150f74512510287a942624aa9b44cc5">MemManage_Handler</a></div><div class="ttdeci">void MemManage_Handler(void)</div><div class="ttdoc">This function handles Memory management fault.</div><div class="ttdef"><b>Definition</b> <a href="stm32h7xx__it_8c_source.html#l00159">stm32h7xx_it.c:159</a></div></div>
+</div><!-- fragment --><p><b>Fault Recovery Policy:</b></p><ul>
+<li><b>Data access violations (DACCVIOL)</b> from unprivileged tasks: Recoverable, skip instruction</li>
+<li><b>Instruction fetch violations (IACCVIOL)</b>: Non-recoverable, system halt</li>
+<li><b>Faults from privileged code</b>: Non-recoverable, system halt</li>
+</ul>
+<p>Implements: HLR-KRN-081, HLR-KRN-082, HLR-KRN-083</p>
+<h3><a class="anchor" id="autotoc_md156"></a>
+4.2.7 Protection Verification</h3>
+<p>MPU protection is verified by stress tests:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Test   </th><th class="markdownTableHeadNone">Purpose   </th><th class="markdownTableHeadNone">Expected Result   </th><th class="markdownTableHeadNone">Implements    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_redteam_task</code>   </td><td class="markdownTableBodyNone">Cross-task memory attack   </td><td class="markdownTableBodyNone">Faults, shows [PROTECTED]   </td><td class="markdownTableBodyNone">HLR-KRN-071    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>mpu_itcm_write_test</code>   </td><td class="markdownTableBodyNone">ITCM write attempt   </td><td class="markdownTableBodyNone">Faults, shows [WRITE PROTECTED]   </td><td class="markdownTableBodyNone">HLR-KRN-066    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>mpu_dtcm_attack_task</code>   </td><td class="markdownTableBodyNone">DTCM read attempt   </td><td class="markdownTableBodyNone">Faults, shows [DTCM PROTECTED]   </td><td class="markdownTableBodyNone">HLR-KRN-070    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>mpu_kernel_bypass_test</code>   </td><td class="markdownTableBodyNone">Direct kernel function call   </td><td class="markdownTableBodyNone">Faults, shows [DTCM PROTECTED]   </td><td class="markdownTableBodyNone">HLR-KRN-070   </td></tr>
+</table>
+<p>All tests run continuously and display real-time status via USB CDC terminal.</p>
+<h2><a class="anchor" id="autotoc_md157"></a>
+4.3 Stack Allocation</h2>
 <div class="fragment"><div class="line"><span class="preprocessor">#define MAX_TASKS 16</span></div>
 <div class="line"><span class="preprocessor">#define STACK_WORDS 512  </span><span class="comment">// 2KB per task</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Static allocation - no malloc</span></div>
-<div class="line"><span class="keyword">static</span> uint32_t <a class="code hl_variable" href="icarus__task_8c.html#af4db58804ddc215c4658ab49265b263a">stack_pool</a>[MAX_TASKS][STACK_WORDS];</div>
-<div class="line"><span class="keyword">static</span> task_t <a class="code hl_variable" href="group__KERNEL__DATA.html#ga9fc2fc5244cef6cf252d0412ec1aa16e">task_pool</a>[MAX_TASKS];</div>
-<div class="line">task_t* <a class="code hl_variable" href="group__KERNEL__DATA.html#ga65791d9b09fd58a688a93b20c1370848">task_list</a>[MAX_TASKS];</div>
-<div class="ttc" id="agroup__KERNEL__DATA_html_ga65791d9b09fd58a688a93b20c1370848"><div class="ttname"><a href="group__KERNEL__DATA.html#ga65791d9b09fd58a688a93b20c1370848">task_list</a></div><div class="ttdeci">icarus_task_t * task_list[128]</div><div class="ttdoc">Array of pointers to all task control blocks.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00092">icarus_task.c:92</a></div></div>
-<div class="ttc" id="agroup__KERNEL__DATA_html_ga9fc2fc5244cef6cf252d0412ec1aa16e"><div class="ttname"><a href="group__KERNEL__DATA.html#ga9fc2fc5244cef6cf252d0412ec1aa16e">task_pool</a></div><div class="ttdeci">static icarus_task_t task_pool[128]</div><div class="ttdoc">Static pool of task control blocks.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00101">icarus_task.c:101</a></div></div>
-<div class="ttc" id="aicarus__task_8c_html_af4db58804ddc215c4658ab49265b263a"><div class="ttname"><a href="icarus__task_8c.html#af4db58804ddc215c4658ab49265b263a">stack_pool</a></div><div class="ttdeci">static uint32_t stack_pool[128][512]</div><div class="ttdoc">Static stack pool for all tasks.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00169">icarus_task.c:169</a></div></div>
+<div class="line"><span class="keyword">static</span> uint32_t <a class="code hl_variable" href="kernel_8c.html#af4db58804ddc215c4658ab49265b263a">stack_pool</a>[MAX_TASKS][STACK_WORDS];</div>
+<div class="line"><span class="keyword">static</span> task_t <a class="code hl_variable" href="kernel_8c.html#a9fc2fc5244cef6cf252d0412ec1aa16e">task_pool</a>[MAX_TASKS];</div>
+<div class="line">task_t* <a class="code hl_variable" href="kernel_8h.html#a65791d9b09fd58a688a93b20c1370848">task_list</a>[MAX_TASKS];</div>
+<div class="ttc" id="akernel_8c_html_a9fc2fc5244cef6cf252d0412ec1aa16e"><div class="ttname"><a href="kernel_8c.html#a9fc2fc5244cef6cf252d0412ec1aa16e">task_pool</a></div><div class="ttdeci">static icarus_task_t task_pool[128]</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00054">kernel.c:54</a></div></div>
+<div class="ttc" id="akernel_8c_html_af4db58804ddc215c4658ab49265b263a"><div class="ttname"><a href="kernel_8c.html#af4db58804ddc215c4658ab49265b263a">stack_pool</a></div><div class="ttdeci">static uint32_t stack_pool[128][512]</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00079">kernel.c:79</a></div></div>
+<div class="ttc" id="akernel_8h_html_a65791d9b09fd58a688a93b20c1370848"><div class="ttname"><a href="kernel_8h.html#a65791d9b09fd58a688a93b20c1370848">task_list</a></div><div class="ttdeci">icarus_task_t * task_list[128]</div><div class="ttdoc">Array of pointers to all task control blocks.</div><div class="ttdef"><b>Definition</b> <a href="kernel_8c_source.html#l00050">kernel.c:50</a></div></div>
 </div><!-- fragment --><table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Task Type   </th><th class="markdownTableHeadNone">Stack Size   </th><th class="markdownTableHeadNone">Location    </th></tr>
@@ -1031,8 +1208,8 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">AI inference   </td><td class="markdownTableBodyNone">4 KB (planned)   </td><td class="markdownTableBodyNone">DTCM   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md111"></a>
-4.3 AI Memory Budget</h2>
+<h2><a class="anchor" id="autotoc_md158"></a>
+4.4 AI Memory Budget</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Component   </th><th class="markdownTableHeadNone">Size   </th><th class="markdownTableHeadNone">Location    </th></tr>
@@ -1048,82 +1225,82 @@ Revision History</h1>
 <td class="markdownTableBodyNone">Scratch buffer   </td><td class="markdownTableBodyNone">Model-dependent   </td><td class="markdownTableBodyNone">AXI SRAM   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md113"></a>
+<h1><a class="anchor" id="autotoc_md160"></a>
 5. Interface Design</h1>
-<h2><a class="anchor" id="autotoc_md114"></a>
+<h2><a class="anchor" id="autotoc_md161"></a>
 5.1 Kernel API Summary</h2>
 <div class="fragment"><div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// INITIALIZATION</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09">os_init</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09">os_init</a>(<span class="keywordtype">void</span>);</div>
 <div class="line">    <span class="comment">// Initialize kernel state, register system tasks</span></div>
 <div class="line">    <span class="comment">// Must be called before os_start()</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-001</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#a19c7111cf2121a69331d99dabe3e9df0">os_start</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="kernel_8h.html#a19c7111cf2121a69331d99dabe3e9df0">os_start</a>(<span class="keywordtype">void</span>);</div>
 <div class="line">    <span class="comment">// Start scheduler, never returns</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-010</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// TASK MANAGEMENT</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#afaa47eee07d9632189e536d1ea70a1bf">os_register_task</a>(<span class="keywordtype">void</span> (*function)(<span class="keywordtype">void</span>), <span class="keyword">const</span> <span class="keywordtype">char</span> *name);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="task_8h.html#afaa47eee07d9632189e536d1ea70a1bf">os_register_task</a>(<span class="keywordtype">void</span> (*function)(<span class="keywordtype">void</span>), <span class="keyword">const</span> <span class="keywordtype">char</span> *name);</div>
 <div class="line">    <span class="comment">// Register task using internal pool</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-001, HLR-KRN-002, HLR-KRN-003</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558">os_create_task</a>(task_t *task, <span class="keywordtype">void</span> (*function)(<span class="keywordtype">void</span>),</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="task_8h.html#a041d15fb5184f477a215121b6dd356a9">os_create_task</a>(task_t *task, <span class="keywordtype">void</span> (*function)(<span class="keywordtype">void</span>),</div>
 <div class="line">                    uint32_t *stack, uint32_t stack_size,</div>
 <div class="line">                    <span class="keyword">const</span> <span class="keywordtype">char</span> *name);</div>
 <div class="line">    <span class="comment">// Create task with external storage</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-001, HLR-KRN-002, HLR-KRN-003</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384">os_exit_task</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="task_8h.html#ab4bf1721d39bdb129876691cf1a4f384">os_exit_task</a>(<span class="keywordtype">void</span>);</div>
 <div class="line">    <span class="comment">// Exit current task (called automatically on return)</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-004</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde">os_kill_process</a>(uint8_t task_index);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde">os_kill_process</a>(uint8_t task_index);</div>
 <div class="line">    <span class="comment">// Terminate another task</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-005, HLR-KRN-006</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// SCHEDULING</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="icarus__task_8h.html#a02d2fa79b4b720c7906a7262740db686">os_yield</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="kernel_8h.html#a02d2fa79b4b720c7906a7262740db686">os_yield</a>(<span class="keywordtype">void</span>);</div>
 <div class="line">    <span class="comment">// Voluntarily give up CPU</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-013</span></div>
 <div class="line"> </div>
-<div class="line">uint32_t <a class="code hl_function" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(uint32_t ticks);</div>
+<div class="line">uint32_t <a class="code hl_function" href="kernel_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a>(uint32_t ticks);</div>
 <div class="line">    <span class="comment">// Non-blocking sleep (task yields)</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-021</span></div>
 <div class="line"> </div>
-<div class="line">uint32_t <a class="code hl_function" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a>(uint32_t ticks);</div>
+<div class="line">uint32_t <a class="code hl_function" href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a>(uint32_t ticks);</div>
 <div class="line">    <span class="comment">// Blocking sleep (busy wait)</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-022</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// INFORMATION</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line">uint32_t <a class="code hl_function" href="icarus__task_8h.html#a9ad054a9f7ba66763a95b010bc55f949">os_get_tick_count</a>(<span class="keywordtype">void</span>);</div>
+<div class="line">uint32_t <a class="code hl_function" href="scheduler_8h.html#a9ad054a9f7ba66763a95b010bc55f949">os_get_tick_count</a>(<span class="keywordtype">void</span>);</div>
 <div class="line">    <span class="comment">// Get current tick count</span></div>
 <div class="line">    <span class="comment">// Implements: HLR-KRN-023</span></div>
 <div class="line"> </div>
-<div class="line">uint8_t <a class="code hl_function" href="icarus__task_8h.html#ae2e7057f265bec1758ecf2bab3218362">os_get_running_task_count</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="icarus__task_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c">os_get_current_task_name</a>(<span class="keywordtype">void</span>);</div>
-<div class="line">uint32_t <a class="code hl_function" href="icarus__task_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f">os_get_task_ticks_remaining</a>(<span class="keywordtype">void</span>);</div>
-<div class="ttc" id="aicarus__task_8h_html_a02d2fa79b4b720c7906a7262740db686"><div class="ttname"><a href="icarus__task_8h.html#a02d2fa79b4b720c7906a7262740db686">os_yield</a></div><div class="ttdeci">void os_yield(void)</div><div class="ttdoc">Voluntarily yield CPU to scheduler.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00661">icarus_task.c:661</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a19c7111cf2121a69331d99dabe3e9df0"><div class="ttname"><a href="icarus__task_8h.html#a19c7111cf2121a69331d99dabe3e9df0">os_start</a></div><div class="ttdeci">void os_start(void)</div><div class="ttdoc">Start the ICARUS scheduler.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00844">icarus_task.c:844</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a3475de8a0fed26a55e0c5d78cd475558"><div class="ttname"><a href="icarus__task_8h.html#a3475de8a0fed26a55e0c5d78cd475558">os_create_task</a></div><div class="ttdeci">void os_create_task(icarus_task_t *task, void(*function)(void), uint32_t *stack, uint32_t stack_size, const char *name)</div><div class="ttdoc">Create a task with explicit stack allocation.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l01072">icarus_task.c:1072</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a430c31fe0fe318b1b6d88a57ceb9647f"><div class="ttname"><a href="icarus__task_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f">os_get_task_ticks_remaining</a></div><div class="ttdeci">uint32_t os_get_task_ticks_remaining(void)</div><div class="ttdoc">Get remaining ticks in current time slice.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00599">icarus_task.c:599</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a46c46da5f59be89a652ffd2fd0e7e05c"><div class="ttname"><a href="icarus__task_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c">os_get_current_task_name</a></div><div class="ttdeci">const char * os_get_current_task_name(void)</div><div class="ttdoc">Get name of currently executing task.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00566">icarus_task.c:566</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a6cc2e63d83267ff5059bf0a76b302a09"><div class="ttname"><a href="icarus__task_8h.html#a6cc2e63d83267ff5059bf0a76b302a09">os_init</a></div><div class="ttdeci">void os_init(void)</div><div class="ttdoc">Initialize the ICARUS kernel.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00443">icarus_task.c:443</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a8f901685f4b0a3eb8900850de554152e"><div class="ttname"><a href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a></div><div class="ttdeci">uint32_t task_blocking_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep with interrupts disabled (blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00750">icarus_task.c:750</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_a9ad054a9f7ba66763a95b010bc55f949"><div class="ttname"><a href="icarus__task_8h.html#a9ad054a9f7ba66763a95b010bc55f949">os_get_tick_count</a></div><div class="ttdeci">uint32_t os_get_tick_count(void)</div><div class="ttdoc">Get current system tick count.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00519">icarus_task.c:519</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_ab4bf1721d39bdb129876691cf1a4f384"><div class="ttname"><a href="icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384">os_exit_task</a></div><div class="ttdeci">void os_exit_task(void)</div><div class="ttdoc">Terminate current task normally.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00888">icarus_task.c:888</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified number of ticks (non-blocking)</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00708">icarus_task.c:708</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_ae2e7057f265bec1758ecf2bab3218362"><div class="ttname"><a href="icarus__task_8h.html#ae2e7057f265bec1758ecf2bab3218362">os_get_running_task_count</a></div><div class="ttdeci">uint8_t os_get_running_task_count(void)</div><div class="ttdoc">Get number of active tasks.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00540">icarus_task.c:540</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_aea3f8267eb6dccaa4bc4e175ddebcdde"><div class="ttname"><a href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde">os_kill_process</a></div><div class="ttdeci">void os_kill_process(uint8_t task_index)</div><div class="ttdoc">Terminate another task.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l00942">icarus_task.c:942</a></div></div>
-<div class="ttc" id="aicarus__task_8h_html_afaa47eee07d9632189e536d1ea70a1bf"><div class="ttname"><a href="icarus__task_8h.html#afaa47eee07d9632189e536d1ea70a1bf">os_register_task</a></div><div class="ttdeci">void os_register_task(void(*function)(void), const char *name)</div><div class="ttdoc">Register a task with automatic stack allocation.</div><div class="ttdef"><b>Definition</b> <a href="icarus__task_8c_source.html#l01162">icarus_task.c:1162</a></div></div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md115"></a>
+<div class="line">uint8_t <a class="code hl_function" href="scheduler_8h.html#ae2e7057f265bec1758ecf2bab3218362">os_get_running_task_count</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="kernel_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c">os_get_current_task_name</a>(<span class="keywordtype">void</span>);</div>
+<div class="line">uint32_t <a class="code hl_function" href="scheduler_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f">os_get_task_ticks_remaining</a>(<span class="keywordtype">void</span>);</div>
+<div class="ttc" id="akernel_8h_html_a02d2fa79b4b720c7906a7262740db686"><div class="ttname"><a href="kernel_8h.html#a02d2fa79b4b720c7906a7262740db686">os_yield</a></div><div class="ttdeci">void os_yield(void)</div><div class="ttdoc">Voluntarily yield CPU to scheduler.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00243">svc.c:243</a></div></div>
+<div class="ttc" id="akernel_8h_html_a19c7111cf2121a69331d99dabe3e9df0"><div class="ttname"><a href="kernel_8h.html#a19c7111cf2121a69331d99dabe3e9df0">os_start</a></div><div class="ttdeci">void os_start(void)</div><div class="ttdoc">Start the ICARUS scheduler.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00234">svc.c:234</a></div></div>
+<div class="ttc" id="akernel_8h_html_a46c46da5f59be89a652ffd2fd0e7e05c"><div class="ttname"><a href="kernel_8h.html#a46c46da5f59be89a652ffd2fd0e7e05c">os_get_current_task_name</a></div><div class="ttdeci">const char * os_get_current_task_name(void)</div><div class="ttdoc">Get name of currently executing task.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00307">svc.c:307</a></div></div>
+<div class="ttc" id="akernel_8h_html_a6cc2e63d83267ff5059bf0a76b302a09"><div class="ttname"><a href="kernel_8h.html#a6cc2e63d83267ff5059bf0a76b302a09">os_init</a></div><div class="ttdeci">void os_init(void)</div><div class="ttdoc">Initialize the ICARUS kernel.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00233">svc.c:233</a></div></div>
+<div class="ttc" id="akernel_8h_html_ac3bac781800873509713328e27b5ada4"><div class="ttname"><a href="kernel_8h.html#ac3bac781800873509713328e27b5ada4">task_active_sleep</a></div><div class="ttdeci">uint32_t task_active_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep for specified ticks (cooperative, via SVC)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00254">svc.c:254</a></div></div>
+<div class="ttc" id="ascheduler_8h_html_a430c31fe0fe318b1b6d88a57ceb9647f"><div class="ttname"><a href="scheduler_8h.html#a430c31fe0fe318b1b6d88a57ceb9647f">os_get_task_ticks_remaining</a></div><div class="ttdeci">uint32_t os_get_task_ticks_remaining(void)</div><div class="ttdoc">Get remaining ticks in current time slice.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00345">svc.c:345</a></div></div>
+<div class="ttc" id="ascheduler_8h_html_a8f901685f4b0a3eb8900850de554152e"><div class="ttname"><a href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e">task_blocking_sleep</a></div><div class="ttdeci">uint32_t task_blocking_sleep(uint32_t ticks)</div><div class="ttdoc">Sleep with scheduler disabled (blocking)</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00274">svc.c:274</a></div></div>
+<div class="ttc" id="ascheduler_8h_html_a9ad054a9f7ba66763a95b010bc55f949"><div class="ttname"><a href="scheduler_8h.html#a9ad054a9f7ba66763a95b010bc55f949">os_get_tick_count</a></div><div class="ttdeci">uint32_t os_get_tick_count(void)</div><div class="ttdoc">Get current system tick count.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00288">svc.c:288</a></div></div>
+<div class="ttc" id="ascheduler_8h_html_ae2e7057f265bec1758ecf2bab3218362"><div class="ttname"><a href="scheduler_8h.html#ae2e7057f265bec1758ecf2bab3218362">os_get_running_task_count</a></div><div class="ttdeci">uint8_t os_get_running_task_count(void)</div><div class="ttdoc">Get number of active tasks.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00326">svc.c:326</a></div></div>
+<div class="ttc" id="atask_8h_html_a041d15fb5184f477a215121b6dd356a9"><div class="ttname"><a href="task_8h.html#a041d15fb5184f477a215121b6dd356a9">os_create_task</a></div><div class="ttdeci">void os_create_task(icarus_task_t *task, void(*function)(void), uint32_t *stack, uint32_t stack_size, uint32_t *data, const char *name)</div><div class="ttdoc">Create a task with explicit stack allocation.</div><div class="ttdef"><b>Definition</b> <a href="task_8c_source.html#l00027">task.c:27</a></div></div>
+<div class="ttc" id="atask_8h_html_ab4bf1721d39bdb129876691cf1a4f384"><div class="ttname"><a href="task_8h.html#ab4bf1721d39bdb129876691cf1a4f384">os_exit_task</a></div><div class="ttdeci">void os_exit_task(void)</div><div class="ttdoc">Terminate current task normally.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00368">svc.c:368</a></div></div>
+<div class="ttc" id="atask_8h_html_aea3f8267eb6dccaa4bc4e175ddebcdde"><div class="ttname"><a href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde">os_kill_process</a></div><div class="ttdeci">void os_kill_process(uint8_t task_index)</div><div class="ttdoc">Terminate another task by index.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00408">svc.c:408</a></div></div>
+<div class="ttc" id="atask_8h_html_afaa47eee07d9632189e536d1ea70a1bf"><div class="ttname"><a href="task_8h.html#afaa47eee07d9632189e536d1ea70a1bf">os_register_task</a></div><div class="ttdeci">void os_register_task(void(*function)(void), const char *name)</div><div class="ttdoc">Register a task with automatic stack allocation.</div><div class="ttdef"><b>Definition</b> <a href="svc_8c_source.html#l00390">svc.c:390</a></div></div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md162"></a>
 5.2 BSP Interface Summary</h2>
 <div class="fragment"><div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// PLATFORM ABSTRACTION (Current)</span></div>
@@ -1135,45 +1312,45 @@ Revision History</h1>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// GPIO</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="bsp__led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9">LED_Blink</a>(uint32_t on_ticks, uint32_t off_ticks);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9">LED_Blink</a>(uint32_t on_ticks, uint32_t off_ticks);</div>
 <div class="line">    <span class="comment">// Implements: HLR-BSP-010</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// COMMUNICATION</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line">int32_t <a class="code hl_function" href="bsp__i2c_8h.html#a9d06812ba5c631eb19fe9eacf8111013">platform_write</a>(<span class="keywordtype">void</span> *handle, uint8_t reg,</div>
+<div class="line">int32_t <a class="code hl_function" href="retarget__hal_8c.html#a9d06812ba5c631eb19fe9eacf8111013">platform_write</a>(<span class="keywordtype">void</span> *handle, uint8_t reg,</div>
 <div class="line">                       uint8_t *data, uint16_t len);</div>
-<div class="line">int32_t <a class="code hl_function" href="bsp__i2c_8h.html#ae6a9af4efd48b19aa917b0b2fe5240f4">platform_read</a>(<span class="keywordtype">void</span> *handle, uint8_t reg,</div>
+<div class="line">int32_t <a class="code hl_function" href="retarget__hal_8c.html#ae6a9af4efd48b19aa917b0b2fe5240f4">platform_read</a>(<span class="keywordtype">void</span> *handle, uint8_t reg,</div>
 <div class="line">                      uint8_t *data, uint16_t len);</div>
 <div class="line">    <span class="comment">// Implements: HLR-BSP-011</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
 <div class="line"><span class="comment">// DISPLAY</span></div>
 <div class="line"><span class="comment">// ═══════════════════════════════════════════════════════════</span></div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="bsp__display_8h.html#a407d5033a6f0198221c8a9081d7e807e">display_init</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="bsp__display_8h.html#a7520bc2f8594614588d9d31f3415d0fb">display_render_bar</a>(uint8_t row, <span class="keyword">const</span> <span class="keywordtype">char</span> *task_name,</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="display_8h.html#a407d5033a6f0198221c8a9081d7e807e">display_init</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="display_8h.html#a7520bc2f8594614588d9d31f3415d0fb">display_render_bar</a>(uint8_t row, <span class="keyword">const</span> <span class="keywordtype">char</span> *task_name,</div>
 <div class="line">                        uint32_t elapsed_ticks, uint32_t period_ticks);</div>
-<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="bsp__display_8h.html#a40122382f60e1f27a4483c193578628e">display_render_banner</a>(uint8_t row, <span class="keyword">const</span> <span class="keywordtype">char</span> *task_name,</div>
+<div class="line"><span class="keywordtype">void</span> <a class="code hl_function" href="display_8h.html#a40122382f60e1f27a4483c193578628e">display_render_banner</a>(uint8_t row, <span class="keyword">const</span> <span class="keywordtype">char</span> *task_name,</div>
 <div class="line">                           <span class="keywordtype">bool</span> is_on);</div>
 <div class="line">    <span class="comment">// Implements: HLR-BSP-014</span></div>
-<div class="ttc" id="absp__display_8h_html_a40122382f60e1f27a4483c193578628e"><div class="ttname"><a href="bsp__display_8h.html#a40122382f60e1f27a4483c193578628e">display_render_banner</a></div><div class="ttdeci">void display_render_banner(uint8_t row, const char *task_name, bool is_on)</div><div class="ttdoc">Render on/off banner (heartbeat indicator)</div><div class="ttdef"><b>Definition</b> <a href="display_8c_source.html#l00292">display.c:292</a></div></div>
-<div class="ttc" id="absp__display_8h_html_a407d5033a6f0198221c8a9081d7e807e"><div class="ttname"><a href="bsp__display_8h.html#a407d5033a6f0198221c8a9081d7e807e">display_init</a></div><div class="ttdeci">void display_init(void)</div><div class="ttdoc">Initialize terminal display.</div><div class="ttdef"><b>Definition</b> <a href="display_8c_source.html#l00610">display.c:610</a></div></div>
-<div class="ttc" id="absp__display_8h_html_a7520bc2f8594614588d9d31f3415d0fb"><div class="ttname"><a href="bsp__display_8h.html#a7520bc2f8594614588d9d31f3415d0fb">display_render_bar</a></div><div class="ttdeci">void display_render_bar(uint8_t row, const char *task_name, uint32_t elapsed_ticks, uint32_t period_ticks)</div><div class="ttdoc">Render horizontal progress bar.</div><div class="ttdef"><b>Definition</b> <a href="display_8c_source.html#l00235">display.c:235</a></div></div>
-<div class="ttc" id="absp__i2c_8h_html_a9d06812ba5c631eb19fe9eacf8111013"><div class="ttname"><a href="bsp__i2c_8h.html#a9d06812ba5c631eb19fe9eacf8111013">platform_write</a></div><div class="ttdeci">int32_t platform_write(void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len)</div><div class="ttdoc">Platform write function for IMU driver.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00201">retarget_hal.c:201</a></div></div>
-<div class="ttc" id="absp__i2c_8h_html_ae6a9af4efd48b19aa917b0b2fe5240f4"><div class="ttname"><a href="bsp__i2c_8h.html#ae6a9af4efd48b19aa917b0b2fe5240f4">platform_read</a></div><div class="ttdeci">int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)</div><div class="ttdoc">Platform read function for IMU driver.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00227">retarget_hal.c:227</a></div></div>
-<div class="ttc" id="absp__led_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="bsp__led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00167">retarget_hal.c:167</a></div></div>
-<div class="ttc" id="absp__led_8h_html_aa28f70c71c6ebece40f0623e877b9fd9"><div class="ttname"><a href="bsp__led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9">LED_Blink</a></div><div class="ttdeci">void LED_Blink(uint32_t on_ticks, uint32_t off_ticks)</div><div class="ttdoc">Blink LED with specified timing.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00153">retarget_hal.c:153</a></div></div>
-<div class="ttc" id="absp__led_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="bsp__led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00178">retarget_hal.c:178</a></div></div>
-<div class="ttc" id="aretarget__hal_8h_html_af5ea8985a12feedc3ac25fbb50712183"><div class="ttname"><a href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init</a></div><div class="ttdeci">void hal_init(void)</div><div class="ttdoc">Initialize all hardware abstraction layer components.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00261">retarget_hal.c:261</a></div></div>
+<div class="ttc" id="adisplay_8h_html_a40122382f60e1f27a4483c193578628e"><div class="ttname"><a href="display_8h.html#a40122382f60e1f27a4483c193578628e">display_render_banner</a></div><div class="ttdeci">void display_render_banner(uint8_t row, const char *task_name, bool is_on)</div><div class="ttdoc">Render a simple flashing banner (on/off indicator)</div><div class="ttdef"><b>Definition</b> <a href="display_8c_source.html#l00293">display.c:293</a></div></div>
+<div class="ttc" id="adisplay_8h_html_a407d5033a6f0198221c8a9081d7e807e"><div class="ttname"><a href="display_8h.html#a407d5033a6f0198221c8a9081d7e807e">display_init</a></div><div class="ttdeci">void display_init(void)</div><div class="ttdoc">Initialize terminal display - clear screen and print header.</div><div class="ttdef"><b>Definition</b> <a href="display_8c_source.html#l00611">display.c:611</a></div></div>
+<div class="ttc" id="adisplay_8h_html_a7520bc2f8594614588d9d31f3415d0fb"><div class="ttname"><a href="display_8h.html#a7520bc2f8594614588d9d31f3415d0fb">display_render_bar</a></div><div class="ttdeci">void display_render_bar(uint8_t row, const char *task_name, uint32_t elapsed_ticks, uint32_t period_ticks)</div><div class="ttdoc">Render a progress bar on a fixed row.</div><div class="ttdef"><b>Definition</b> <a href="display_8c_source.html#l00236">display.c:236</a></div></div>
+<div class="ttc" id="aled_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="led_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00107">retarget_hal.c:107</a></div></div>
+<div class="ttc" id="aled_8h_html_aa28f70c71c6ebece40f0623e877b9fd9"><div class="ttname"><a href="led_8h.html#aa28f70c71c6ebece40f0623e877b9fd9">LED_Blink</a></div><div class="ttdeci">void LED_Blink(uint32_t on_ticks, uint32_t off_ticks)</div><div class="ttdoc">Blink LED with specified timing.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00093">retarget_hal.c:93</a></div></div>
+<div class="ttc" id="aled_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="led_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00118">retarget_hal.c:118</a></div></div>
+<div class="ttc" id="aretarget__hal_8c_html_a9d06812ba5c631eb19fe9eacf8111013"><div class="ttname"><a href="retarget__hal_8c.html#a9d06812ba5c631eb19fe9eacf8111013">platform_write</a></div><div class="ttdeci">int32_t platform_write(void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len)</div><div class="ttdoc">Platform write function for LSM9DS1 IMU driver.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00141">retarget_hal.c:141</a></div></div>
+<div class="ttc" id="aretarget__hal_8c_html_ae6a9af4efd48b19aa917b0b2fe5240f4"><div class="ttname"><a href="retarget__hal_8c.html#ae6a9af4efd48b19aa917b0b2fe5240f4">platform_read</a></div><div class="ttdeci">int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)</div><div class="ttdoc">Platform read function for LSM9DS1 IMU driver.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00167">retarget_hal.c:167</a></div></div>
+<div class="ttc" id="aretarget__hal_8h_html_af5ea8985a12feedc3ac25fbb50712183"><div class="ttname"><a href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init</a></div><div class="ttdeci">void hal_init(void)</div><div class="ttdoc">Initialize all hardware abstraction layer components.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00201">retarget_hal.c:201</a></div></div>
 </div><!-- fragment --><hr  />
-<h1><a class="anchor" id="autotoc_md117"></a>
+<h1><a class="anchor" id="autotoc_md164"></a>
 6. Design Traceability Matrix</h1>
-<h2><a class="anchor" id="autotoc_md118"></a>
+<h2><a class="anchor" id="autotoc_md165"></a>
 6.1 Requirements → Design Traceability</h2>
 <p>This matrix traces each requirement to its design element(s).</p>
-<h3><a class="anchor" id="autotoc_md119"></a>
+<h3><a class="anchor" id="autotoc_md166"></a>
 6.1.1 Kernel Requirements</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -1185,9 +1362,9 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">HLR-KRN-003   </td><td class="markdownTableBodyNone">stack_pool[], task_t.stack_base   </td><td class="markdownTableBodyNone">3.2.4   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">HLR-KRN-004   </td><td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
+<td class="markdownTableBodyNone">HLR-KRN-004   </td><td class="markdownTableBodyNone"><a class="el" href="task_8h.html#ab4bf1721d39bdb129876691cf1a4f384" title="Terminate current task normally.">os_exit_task()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">HLR-KRN-005   </td><td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task.">os_kill_process()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
+<td class="markdownTableBodyNone">HLR-KRN-005   </td><td class="markdownTableBodyNone"><a class="el" href="task_8h.html#aea3f8267eb6dccaa4bc4e175ddebcdde" title="Terminate another task by index.">os_kill_process()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-KRN-006   </td><td class="markdownTableBodyNone">task_index &gt; 0 check   </td><td class="markdownTableBodyNone">3.2   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -1199,7 +1376,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-KRN-012   </td><td class="markdownTableBodyNone">TICKS_PER_TASK constant   </td><td class="markdownTableBodyNone">3.1.3   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">HLR-KRN-013   </td><td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#a02d2fa79b4b720c7906a7262740db686" title="Voluntarily yield CPU to scheduler.">os_yield()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
+<td class="markdownTableBodyNone">HLR-KRN-013   </td><td class="markdownTableBodyNone"><a class="el" href="kernel_8h.html#a02d2fa79b4b720c7906a7262740db686" title="Voluntarily yield CPU to scheduler.">os_yield()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-KRN-014   </td><td class="markdownTableBodyNone">task_t.task_priority   </td><td class="markdownTableBodyNone">3.2.2   </td><td class="markdownTableBodyNone">🔲 Planned    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -1207,11 +1384,11 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-KRN-020   </td><td class="markdownTableBodyNone">os_tick_count   </td><td class="markdownTableBodyNone">3.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">HLR-KRN-021   </td><td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified number of ticks (non-blocking)">task_active_sleep()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
+<td class="markdownTableBodyNone">HLR-KRN-021   </td><td class="markdownTableBodyNone"><a class="el" href="kernel_8h.html#ac3bac781800873509713328e27b5ada4" title="Sleep for specified ticks (cooperative, via SVC)">task_active_sleep()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">HLR-KRN-022   </td><td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with interrupts disabled (blocking)">task_blocking_sleep()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
+<td class="markdownTableBodyNone">HLR-KRN-022   </td><td class="markdownTableBodyNone"><a class="el" href="scheduler_8h.html#a8f901685f4b0a3eb8900850de554152e" title="Sleep with scheduler disabled (blocking)">task_blocking_sleep()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">HLR-KRN-023   </td><td class="markdownTableBodyNone"><a class="el" href="icarus__task_8h.html#a9ad054a9f7ba66763a95b010bc55f949" title="Get current system tick count.">os_get_tick_count()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
+<td class="markdownTableBodyNone">HLR-KRN-023   </td><td class="markdownTableBodyNone"><a class="el" href="scheduler_8h.html#a9ad054a9f7ba66763a95b010bc55f949" title="Get current system tick count.">os_get_tick_count()</a>   </td><td class="markdownTableBodyNone">5.1   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-KRN-024   </td><td class="markdownTableBodyNone">Tick-based wake check   </td><td class="markdownTableBodyNone">3.1.2   </td><td class="markdownTableBodyNone">✅    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -1259,7 +1436,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-KRN-061   </td><td class="markdownTableBodyNone">Watchdog integration   </td><td class="markdownTableBodyNone">-   </td><td class="markdownTableBodyNone">🔲 Planned   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md120"></a>
+<h3><a class="anchor" id="autotoc_md167"></a>
 6.1.2 BSP Requirements</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -1285,7 +1462,7 @@ Revision History</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">HLR-BSP-020   </td><td class="markdownTableBodyNone">SysTick_Config()   </td><td class="markdownTableBodyNone">3.1   </td><td class="markdownTableBodyNone">✅   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md121"></a>
+<h3><a class="anchor" id="autotoc_md168"></a>
 6.1.3 AI Runtime Requirements</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -1317,25 +1494,25 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">HLR-AI-031   </td><td class="markdownTableBodyNone">Confidence scores   </td><td class="markdownTableBodyNone">3.7.2   </td><td class="markdownTableBodyNone">🔲 Planned   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md122"></a>
+<h2><a class="anchor" id="autotoc_md169"></a>
 6.2 Design → Code Traceability</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Design Element   </th><th class="markdownTableHeadNone">Source File   </th><th class="markdownTableHeadNone">Function/Symbol    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Scheduler   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">SysTick_Handler, schedule_next_task    </td></tr>
+<td class="markdownTableBodyNone">Scheduler   </td><td class="markdownTableBodyNone"><code><a class="el" href="scheduler_8c.html" title="ICARUS Scheduler Implementation.">icarus/scheduler.c</a></code>   </td><td class="markdownTableBodyNone">SysTick-driven scheduling, <code>schedule_next_task</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Task Manager   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">os_create_task, os_kill_process    </td></tr>
+<td class="markdownTableBodyNone">Task Manager   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8c.html" title="ICARUS Task Management Implementation.">icarus/task.c</a></code>   </td><td class="markdownTableBodyNone">os_create_task, os_kill_process    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Context Switch   </td><td class="markdownTableBodyNone"><code>kernel/context_switch.s</code>   </td><td class="markdownTableBodyNone">context_switch, start_cold_task    </td></tr>
+<td class="markdownTableBodyNone">Context Switch   </td><td class="markdownTableBodyNone"><code><a class="el" href="context__switch_8s.html">icarus/context_switch.s</a></code>   </td><td class="markdownTableBodyNone">context_switch, start_cold_task    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Critical Section   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">enter_critical, exit_critical    </td></tr>
+<td class="markdownTableBodyNone">Critical Section   </td><td class="markdownTableBodyNone"><code><a class="el" href="kernel_8c.html" title="ICARUS Kernel Core Implementation.">icarus/kernel.c</a></code>   </td><td class="markdownTableBodyNone"><code>__enter_critical</code> / <code>__exit_critical</code> (via SVC)    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Semaphores   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">semaphore_init, semaphore_feed, semaphore_consume    </td></tr>
+<td class="markdownTableBodyNone">Semaphores   </td><td class="markdownTableBodyNone"><code><a class="el" href="semaphore_8c.html" title="ICARUS Semaphore Implementation.">icarus/semaphore.c</a></code>   </td><td class="markdownTableBodyNone">semaphore_init, semaphore_feed, semaphore_consume    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Message Pipes   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">pipe_init, pipe_enqueue, pipe_dequeue    </td></tr>
+<td class="markdownTableBodyNone">Message Pipes   </td><td class="markdownTableBodyNone"><code><a class="el" href="pipe_8c.html" title="ICARUS Message Pipe Implementation.">icarus/pipe.c</a></code>   </td><td class="markdownTableBodyNone">pipe_init, pipe_enqueue, pipe_dequeue    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Print Buffer   </td><td class="markdownTableBodyNone"><code>kernel/task.c</code>   </td><td class="markdownTableBodyNone">enqueue_print_buffer, dequeue_print_buffer    </td></tr>
+<td class="markdownTableBodyNone">Print Buffer   </td><td class="markdownTableBodyNone"><code><a class="el" href="task_8c.html" title="ICARUS Task Management Implementation.">icarus/task.c</a></code>   </td><td class="markdownTableBodyNone">enqueue_print_buffer, dequeue_print_buffer    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">BSP Init   </td><td class="markdownTableBodyNone"><code><a class="el" href="retarget__hal_8c.html" title="ICARUS OS Hardware Abstraction Layer Implementation.">bsp/retarget_hal.c</a></code>   </td><td class="markdownTableBodyNone">hal_init    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -1345,7 +1522,7 @@ Revision History</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Interrupts   </td><td class="markdownTableBodyNone"><code><a class="el" href="stm32h7xx__it_8c.html" title="Interrupt Service Routines.">bsp/stm32h7xx_it.c</a></code>   </td><td class="markdownTableBodyNone">SysTick_Handler, PendSV_Handler   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md123"></a>
+<h2><a class="anchor" id="autotoc_md170"></a>
 6.3 Traceability Summary</h2>
 <p>This matrix covers High-Level Requirements (HLR) only. Performance (PRF) and Safety (SAF) requirements are traced separately in the SRS.</p>
 <table class="markdownTable">
@@ -1361,9 +1538,9 @@ Revision History</h1>
 <td class="markdownTableBodyNone"><b>Total</b>   </td><td class="markdownTableBodyNone"><b>74</b>   </td><td class="markdownTableBodyNone"><b>74</b>   </td><td class="markdownTableBodyNone"><b>41</b>   </td><td class="markdownTableBodyNone"><b>55%</b>   </td></tr>
 </table>
 <hr  />
-<h1><a class="anchor" id="autotoc_md125"></a>
+<h1><a class="anchor" id="autotoc_md172"></a>
 7. Design Verification</h1>
-<h2><a class="anchor" id="autotoc_md126"></a>
+<h2><a class="anchor" id="autotoc_md173"></a>
 7.1 Design Review Checklist</h2>
 <ul class="check">
 <li class="unchecked">All requirements have corresponding design elements</li>
@@ -1389,7 +1566,7 @@ Revision History</h1>
 <ul class="check">
 <li class="unchecked">Error handling is defined</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md127"></a>
+<h2><a class="anchor" id="autotoc_md174"></a>
 7.2 Design Metrics</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -1411,7 +1588,7 @@ Revision History</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

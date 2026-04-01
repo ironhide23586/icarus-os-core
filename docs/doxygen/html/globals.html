@@ -100,9 +100,49 @@ $(function(){initNavTree('globals.html',''); initResizable(true); });
 <div class="textblock">Here is a list of all functions, variables, defines, enums, and typedefs with links to the files they belong to:</div>
 
 <h3><a id="index__5F" name="index__5F"></a>- _ -</h3><ul>
-<li>__init_pipe()&#160;:&#160;<a class="el" href="icarus__task_8c.html#ae6035fbc6053dd01db344bb253547b97">icarus_task.c</a></li>
-<li>__init_sem()&#160;:&#160;<a class="el" href="icarus__task_8c.html#aa64d9eaeed79c9c7b707d37767619750">icarus_task.c</a></li>
+<li>__enter_critical()&#160;:&#160;<a class="el" href="kernel_8h.html#a868e1481be53459c3d2bd9c3521ad3c8">kernel.h</a>, <a class="el" href="kernel_8c.html#a868e1481be53459c3d2bd9c3521ad3c8">kernel.c</a></li>
+<li>__exit_critical()&#160;:&#160;<a class="el" href="kernel_8h.html#a17291ae9fa4296f05950cd2a93023184">kernel.h</a>, <a class="el" href="kernel_8c.html#a17291ae9fa4296f05950cd2a93023184">kernel.c</a></li>
+<li>__init_pipe()&#160;:&#160;<a class="el" href="kernel_8c.html#ae6035fbc6053dd01db344bb253547b97">kernel.c</a></li>
+<li>__init_sem()&#160;:&#160;<a class="el" href="kernel_8c.html#aa64d9eaeed79c9c7b707d37767619750">kernel.c</a></li>
 <li>__io_putchar()&#160;:&#160;<a class="el" href="retarget__stdio_8c.html#abc513dd972081ae765b6949a62872eb7">retarget_stdio.c</a></li>
+<li>__kernel_get_data()&#160;:&#160;<a class="el" href="kernel_8h.html#aa7273d31946990b8e5a2fd39a52f49e1">kernel.h</a>, <a class="el" href="kernel_8c.html#aa7273d31946990b8e5a2fd39a52f49e1">kernel.c</a></li>
+<li>__kernel_get_stack()&#160;:&#160;<a class="el" href="kernel_8h.html#acca35ca6c4807905a970a6c96742453d">kernel.h</a>, <a class="el" href="kernel_8c.html#acca35ca6c4807905a970a6c96742453d">kernel.c</a></li>
+<li>__kernel_protected_data()&#160;:&#160;<a class="el" href="kernel_8h.html#a0ad3008d24813a7a2a8f3b9e3f208d30">kernel.h</a>, <a class="el" href="kernel_8c.html#a0ad3008d24813a7a2a8f3b9e3f208d30">kernel.c</a></li>
+<li>__os_exit_task()&#160;:&#160;<a class="el" href="task_8h.html#a338fcdefbc8c2eb5b31aebaf00538545">task.h</a>, <a class="el" href="task_8c.html#a338fcdefbc8c2eb5b31aebaf00538545">task.c</a></li>
+<li>__os_get_current_task_name()&#160;:&#160;<a class="el" href="scheduler_8h.html#a92018fd8a430142e476bb8878cc2a6aa">scheduler.h</a>, <a class="el" href="scheduler_8c.html#a92018fd8a430142e476bb8878cc2a6aa">scheduler.c</a></li>
+<li>__os_get_num_created_tasks()&#160;:&#160;<a class="el" href="scheduler_8h.html#a4e6df3871838291403b534434b01dcc4">scheduler.h</a>, <a class="el" href="kernel_8c.html#a4e6df3871838291403b534434b01dcc4">kernel.c</a></li>
+<li>__os_get_running_task_count()&#160;:&#160;<a class="el" href="scheduler_8h.html#a358f1b2217c2f59aa0fdca22675c6e1f">scheduler.h</a>, <a class="el" href="scheduler_8c.html#a358f1b2217c2f59aa0fdca22675c6e1f">scheduler.c</a></li>
+<li>__os_get_task_name()&#160;:&#160;<a class="el" href="scheduler_8h.html#ab041c0199bf4e0f154eb99a491d7fb3d">scheduler.h</a>, <a class="el" href="kernel_8c.html#ab041c0199bf4e0f154eb99a491d7fb3d">kernel.c</a></li>
+<li>__os_get_task_ticks_remaining()&#160;:&#160;<a class="el" href="scheduler_8h.html#af43d357d1f95bc72d702a6b9636b0a0b">scheduler.h</a>, <a class="el" href="scheduler_8c.html#af43d357d1f95bc72d702a6b9636b0a0b">scheduler.c</a></li>
+<li>__os_get_tick_count()&#160;:&#160;<a class="el" href="scheduler_8h.html#a0b700e30b0445944dcf1c14de7dfeaf7">scheduler.h</a>, <a class="el" href="scheduler_8c.html#a0b700e30b0445944dcf1c14de7dfeaf7">scheduler.c</a></li>
+<li>__os_init()&#160;:&#160;<a class="el" href="kernel_8h.html#a7527d734591e15bf53d81012c43d8395">kernel.h</a>, <a class="el" href="kernel_8c.html#a7527d734591e15bf53d81012c43d8395">kernel.c</a></li>
+<li>__os_is_running()&#160;:&#160;<a class="el" href="scheduler_8h.html#aa01a923462d25eb680dabdae3f0b3ec9">scheduler.h</a>, <a class="el" href="kernel_8c.html#aa01a923462d25eb680dabdae3f0b3ec9">kernel.c</a></li>
+<li>__os_kill_process()&#160;:&#160;<a class="el" href="task_8h.html#a27ebba62ba3f33f8465189681d914bda">task.h</a>, <a class="el" href="task_8c.html#a27ebba62ba3f33f8465189681d914bda">task.c</a></li>
+<li>__os_register_task()&#160;:&#160;<a class="el" href="task_8h.html#aa13bce6acb7ef114759cf9c79553cf1f">task.h</a>, <a class="el" href="task_8c.html#aa13bce6acb7ef114759cf9c79553cf1f">task.c</a></li>
+<li>__os_start()&#160;:&#160;<a class="el" href="kernel_8h.html#aa87d7707ef5fa7b4952c141080837d3c">kernel.h</a>, <a class="el" href="kernel_8c.html#aa87d7707ef5fa7b4952c141080837d3c">kernel.c</a></li>
+<li>__os_task_suicide()&#160;:&#160;<a class="el" href="task_8h.html#af8f6497678ff5035a32f5d1cbc7dc6b5">task.h</a>, <a class="el" href="task_8c.html#af8f6497678ff5035a32f5d1cbc7dc6b5">task.c</a></li>
+<li>__os_yield()&#160;:&#160;<a class="el" href="scheduler_8h.html#af152347ef9ef0788f03d34865d175a8e">scheduler.h</a>, <a class="el" href="scheduler_8c.html#af152347ef9ef0788f03d34865d175a8e">scheduler.c</a></li>
+<li>__pipe_can_dequeue()&#160;:&#160;<a class="el" href="pipe_8h.html#ab9315e12c817b2ca99c151bfde85db87">pipe.h</a>, <a class="el" href="pipe_8c.html#ab9315e12c817b2ca99c151bfde85db87">pipe.c</a></li>
+<li>__pipe_can_enqueue()&#160;:&#160;<a class="el" href="pipe_8h.html#af5186bd27f198d33624cdffe8f34fe69">pipe.h</a>, <a class="el" href="pipe_8c.html#af5186bd27f198d33624cdffe8f34fe69">pipe.c</a></li>
+<li>__pipe_dequeue()&#160;:&#160;<a class="el" href="pipe_8h.html#a98719afd43caa83c0c19a28d3cd1b308">pipe.h</a>, <a class="el" href="pipe_8c.html#a98719afd43caa83c0c19a28d3cd1b308">pipe.c</a></li>
+<li>__pipe_enqueue()&#160;:&#160;<a class="el" href="pipe_8h.html#a95076f8c0003dbc51657f2de6a360a87">pipe.h</a>, <a class="el" href="pipe_8c.html#a95076f8c0003dbc51657f2de6a360a87">pipe.c</a></li>
+<li>__pipe_get_count()&#160;:&#160;<a class="el" href="pipe_8h.html#aa6ff8fdf5881fc678b4effed7064690e">pipe.h</a>, <a class="el" href="pipe_8c.html#aa6ff8fdf5881fc678b4effed7064690e">pipe.c</a></li>
+<li>__pipe_get_max_count()&#160;:&#160;<a class="el" href="pipe_8h.html#a8e08ff84d91b4e71a9b7f81e51a1712f">pipe.h</a>, <a class="el" href="pipe_8c.html#a8e08ff84d91b4e71a9b7f81e51a1712f">pipe.c</a></li>
+<li>__pipe_init()&#160;:&#160;<a class="el" href="pipe_8h.html#aad23d03c948eb7ee9716c248b3d86993">pipe.h</a>, <a class="el" href="pipe_8c.html#aad23d03c948eb7ee9716c248b3d86993">pipe.c</a></li>
+<li>__pipe_read_bytes()&#160;:&#160;<a class="el" href="pipe_8h.html#abb00d702f558fcac62362b094bd44129">pipe.h</a>, <a class="el" href="pipe_8c.html#abb00d702f558fcac62362b094bd44129">pipe.c</a></li>
+<li>__pipe_write_bytes()&#160;:&#160;<a class="el" href="pipe_8h.html#ab67d259ec00c80153ed2d215ba064221">pipe.h</a>, <a class="el" href="pipe_8c.html#ab67d259ec00c80153ed2d215ba064221">pipe.c</a></li>
+<li>__sem_can_consume()&#160;:&#160;<a class="el" href="semaphore_8h.html#a9b7023c13566b9f5c7909a8c81b52bdf">semaphore.h</a>, <a class="el" href="semaphore_8c.html#a9b7023c13566b9f5c7909a8c81b52bdf">semaphore.c</a></li>
+<li>__sem_can_feed()&#160;:&#160;<a class="el" href="semaphore_8h.html#adc57fde207c860e355af3475e08d1b43">semaphore.h</a>, <a class="el" href="semaphore_8c.html#adc57fde207c860e355af3475e08d1b43">semaphore.c</a></li>
+<li>__sem_decrement()&#160;:&#160;<a class="el" href="semaphore_8h.html#a7011cdc7dbf2d1d535ceeec4521ee347">semaphore.h</a>, <a class="el" href="semaphore_8c.html#a7011cdc7dbf2d1d535ceeec4521ee347">semaphore.c</a></li>
+<li>__sem_increment()&#160;:&#160;<a class="el" href="semaphore_8h.html#ae2c5f73d8bff1d4b8ba281c0b9b38b25">semaphore.h</a>, <a class="el" href="semaphore_8c.html#ae2c5f73d8bff1d4b8ba281c0b9b38b25">semaphore.c</a></li>
+<li>__semaphore_consume()&#160;:&#160;<a class="el" href="semaphore_8h.html#aea1152bde20bc5eb2492ad929f9510ea">semaphore.h</a>, <a class="el" href="semaphore_8c.html#aea1152bde20bc5eb2492ad929f9510ea">semaphore.c</a></li>
+<li>__semaphore_feed()&#160;:&#160;<a class="el" href="semaphore_8h.html#a921366397d22b4022485f186187914b4">semaphore.h</a>, <a class="el" href="semaphore_8c.html#a921366397d22b4022485f186187914b4">semaphore.c</a></li>
+<li>__semaphore_get_count()&#160;:&#160;<a class="el" href="semaphore_8h.html#a21be01fe1d9a5b7ac8272b533716f68e">semaphore.h</a>, <a class="el" href="semaphore_8c.html#a21be01fe1d9a5b7ac8272b533716f68e">semaphore.c</a></li>
+<li>__semaphore_get_max_count()&#160;:&#160;<a class="el" href="semaphore_8h.html#a41c49e8faed997b9f65dd487f8a8dd42">semaphore.h</a>, <a class="el" href="semaphore_8c.html#a41c49e8faed997b9f65dd487f8a8dd42">semaphore.c</a></li>
+<li>__semaphore_init()&#160;:&#160;<a class="el" href="semaphore_8h.html#abb2d798207ed7f23619b914c828b8478">semaphore.h</a>, <a class="el" href="semaphore_8c.html#abb2d798207ed7f23619b914c828b8478">semaphore.c</a></li>
+<li>__task_active_sleep()&#160;:&#160;<a class="el" href="scheduler_8h.html#ae90ec9ddd1dc71c809e17435717823f9">scheduler.h</a>, <a class="el" href="scheduler_8c.html#ae90ec9ddd1dc71c809e17435717823f9">scheduler.c</a></li>
+<li>__task_blocking_sleep()&#160;:&#160;<a class="el" href="scheduler_8h.html#a101a26dd46ded7d1e198cd6840d0a191">scheduler.h</a>, <a class="el" href="scheduler_8c.html#a101a26dd46ded7d1e198cd6840d0a191">scheduler.c</a></li>
+<li>__task_busy_wait()&#160;:&#160;<a class="el" href="scheduler_8h.html#ae64f18590d0ae5e328c99b99adb252eb">scheduler.h</a>, <a class="el" href="scheduler_8c.html#ae64f18590d0ae5e328c99b99adb252eb">scheduler.c</a></li>
 <li>__weak&#160;:&#160;<a class="el" href="group__LSM9DS1.html#ga5181eb756a197a06d1c4ed1f40a065bc">lsm9ds1_reg.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -110,7 +150,7 @@ $(function(){initNavTree('globals.html',''); initResizable(true); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

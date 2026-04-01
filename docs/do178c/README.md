@@ -42,9 +42,11 @@ docs/do178c/
 | A-7: Deactivated Code Analysis | `verification/deactivated_code.md` | ✅ Initial |
 | A-5: Test Traceability | `verification/test_traceability.md` | ✅ Initial |
 
-## Recent Updates (MPU Protection - Branch: feature/mpu-protection)
+## Recent updates (MPU protection)
 
-### Memory Protection Features Implemented
+The following memory protection features are implemented on the main development line and documented in the SRS/SDD:
+
+### Memory protection features implemented
 
 The following memory protection features have been implemented and documented:
 
@@ -69,9 +71,9 @@ The following memory protection features have been implemented and documented:
    - Kernel functions run in privileged mode
    - Enforced by ARM Cortex-M7 privilege levels
 
-5. **SVC Call Gates (HLR-KRN-067)**
-   - All kernel services accessed via SVC instructions
-   - 11 SVC call gates implemented (SVCs 29-39)
+5. **SVC call gates (HLR-KRN-067)**
+   - Kernel services are invoked from unprivileged code via SVC (40 SVC IDs, 0–39, see `svc.h`)
+   - IDs 29–39 cover atomic DTCM read/write helpers (`sem_can_*`, `pipe_can_*`, etc.)
    - Controlled transition between privilege levels
 
 6. **Fault Handling (HLR-KRN-081, HLR-KRN-082, HLR-KRN-083)**

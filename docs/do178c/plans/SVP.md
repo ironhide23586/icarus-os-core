@@ -306,13 +306,12 @@ See `ICARUS-VER-002 Deactivated Code Analysis` for complete list.
 
 | Component | Statement | Functions | Status |
 |-----------|-----------|-----------|--------|
-| kernel/task.c | 73.8% | 83.3% | Host tests complete |
-| bsp/display.c | 83.5% | 100% | Host tests complete |
-| bsp/retarget_hal.c | 96.2% | 100% | Host tests complete |
-| bsp/stm32h7xx_it.c | 53.6% | 40% | Target tests needed |
-| **Overall** | **79.3%** | **77.6%** | In progress |
+| `Core/Src/icarus/*.c` (aggregate) | ~91% stmt | ~90% fn | Host Unity tests (see `verification/coverage_analysis.md`) |
+| bsp/display.c | ~94% | 100% | Host tests |
+| bsp/stm32h7xx_it.c | ~63% | 40% | Fault paths: target / review |
+| **Overall (filtered host report)** | **91.1%** | **89.5%** | Regenerate with `tests/make coverage-summary` |
 
-**Adjusted (excluding deactivated):** ~100%
+**Adjusted (excluding justified deactivated code):** Documented in `deactivated_code.md` and refreshed with each baseline.
 
 ---
 
@@ -427,9 +426,9 @@ make clean test              # Run all tests
 make coverage-summary        # Show coverage summary
 make coverage-html           # Generate HTML report
 
-# Expected output:
-# 76 Tests 0 Failures 0 Ignored
-# Coverage: 79.3% lines, 77.6% functions
+# Expected output (example, will evolve):
+# 140 Tests 0 Failures 0 Ignored
+# ~91% lines, ~89.5% functions (host, filtered kernel+BSP)
 ```
 
 ### 8.2 Integration Test Execution
@@ -467,23 +466,23 @@ fi
 ### 9.1 Test Results Format
 
 ```
-Test Run: ICARUS-TR-2025-01-26-001
-Date: 2025-01-26
-Environment: Host (macOS, GCC 14.x)
+Test Run: ICARUS-TR-<date>-001
+Date: <run date>
+Environment: Host (macOS, GCC)
 Configuration: Debug, HOST_TEST defined
 
 Results:
-  Total:    76
-  Passed:   76
-  Failed:   0
-  Ignored:  0
+  Total:    140    (run `cd tests && make test` for live count)
+  Passed:   <n>
+  Failed:   <n>
+  Ignored:  <n>
 
 Coverage:
-  Lines:     79.3% (341/430)
-  Functions: 77.6% (38/49)
+  Lines:     ~91% (714/784, host filtered kernel+BSP)
+  Functions: ~89.5% (102/114)
   
-Deactivated Code: 11 functions (see VER-002)
-Adjusted Coverage: ~100%
+Deactivated Code: see VER-002 (deactivated_code.md)
+Adjusted Coverage: refer to coverage_analysis.md §5
 ```
 
 ### 9.2 Verification Matrix

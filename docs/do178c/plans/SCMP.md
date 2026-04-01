@@ -60,7 +60,7 @@ This plan covers:
 | Git | Version control | Local + GitHub |
 | GitHub | Repository hosting, PRs, issues | github.com |
 | GitHub Actions | CI/CD automation | .github/workflows/ |
-| Make/CMake | Build automation | Makefile, CMakeLists.txt |
+| Make | Build automation | `build/Makefile`, `tests/Makefile` |
 
 ---
 
@@ -200,7 +200,7 @@ For critical fixes:
 | Component | Specification |
 |-----------|---------------|
 | OS | Linux (CI), macOS/Windows (dev) |
-| Compiler | ARM GCC 12.x |
+| Compiler | ARM GCC 13.3+ / 14.3+ (`arm-none-eabi-gcc`) |
 | Build Tool | GNU Make 4.x |
 | Container | Docker (optional, for reproducibility) |
 

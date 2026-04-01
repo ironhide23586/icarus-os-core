@@ -105,7 +105,7 @@ $(function(){initNavTree('gpio_8h.html',''); initResizable(true); });
 
 <p>This file contains all the function prototypes for the <a class="el" href="gpio_8c.html" title="This file provides code for the configuration of all used GPIO pins.">gpio.c</a> file.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;main.h&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="bsp_2config_8h_source.html">bsp/config.h</a>&quot;</code><br />
 </div>
 <p><a href="gpio_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -139,7 +139,6 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Configure pins PC14-OSC32_IN (OSC32_IN) ------&gt; RCC_OSC32_IN PC15-OSC32_OUT (OSC32_OUT) ------&gt; RCC_OSC32_OUT PH0-OSC_IN (PH0) ------&gt; RCC_OSC_IN PH1-OSC_OUT (PH1) ------&gt; RCC_OSC_OUT PA13 (JTMS/SWDIO) ------&gt; DEBUG_JTMS-SWDIO PA14 (JTCK/SWCLK) ------&gt; DEBUG_JTCK-SWCLK. </p>
-<p>Initialize all GPIO pins. </p>
 <p>&lt; Output Push Pull Mode <br  />
 </p>
 <p>&lt; No Pull-up or Pull-down activation <br  />
@@ -159,6 +158,10 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="gpio_8c_source.html#l00043">43</a> of file <a class="el" href="gpio_8c_source.html">gpio.c</a>.</p>
 
+<p class="reference">References <a class="el" href="bsp_2config_8h_source.html#l00135">E3_GPIO_Port</a>, <a class="el" href="bsp_2config_8h_source.html#l00134">E3_Pin</a>, <a class="el" href="bsp_2config_8h_source.html#l00137">KEY_GPIO_Port</a>, <a class="el" href="bsp_2config_8h_source.html#l00136">KEY_Pin</a>, <a class="el" href="bsp_2config_8h_source.html#l00138">LCD_CS_Pin</a>, and <a class="el" href="bsp_2config_8h_source.html#l00140">LCD_WR_RS_Pin</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="retarget__hal_8c_source.html#l00201">hal_init()</a>.</p>
+
 </div>
 </div>
 </div><!-- contents -->
@@ -167,7 +170,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_e2489e887f17afa3cbc07a4ec152cdd2.html">Inc</a></li><li class="navelem"><a class="el" href="dir_f7835850016de063b8ae418a1221d9cd.html">bsp</a></li><li class="navelem"><a class="el" href="gpio_8h.html">gpio.h</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>

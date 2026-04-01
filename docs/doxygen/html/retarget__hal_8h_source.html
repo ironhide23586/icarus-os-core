@@ -112,60 +112,64 @@ $(function(){initNavTree('retarget__hal_8h_source.html',''); initResizable(true)
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment"> * INCLUDES</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment"> * ========================================================================= */</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &quot;main.h&quot;</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &quot;<a class="code" href="i2c_8h.html">i2c.h</a>&quot;</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &quot;<a class="code" href="rtc_8h.html">rtc.h</a>&quot;</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &quot;<a class="code" href="spi_8h.html">spi.h</a>&quot;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="tim_8h.html">tim.h</a>&quot;</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">// #include &quot;main.h&quot;</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &quot;<a class="code" href="i2c_8h.html">bsp/i2c.h</a>&quot;</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &quot;<a class="code" href="rtc_8h.html">bsp/rtc.h</a>&quot;</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &quot;<a class="code" href="spi_8h.html">bsp/spi.h</a>&quot;</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="timer_8h.html">bsp/timer.h</a>&quot;</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &quot;usb_device.h&quot;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &quot;<a class="code" href="gpio_8h.html">gpio.h</a>&quot;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &quot;<a class="code" href="gpio_8h.html">bsp/gpio.h</a>&quot;</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &quot;lcd.h&quot;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;<a class="code" href="lsm9ds1__reg_8h.html">lsm9ds1_reg.h</a>&quot;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment">/* ============================================================================</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment"> * CONFIGURATION</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment"> * ========================================================================= */</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="retarget__hal_8h.html#a4e82ca2ba13b27956bb88419bda25e65">   51</a></span><span class="preprocessor">#define IMU_ADDRESS 0x6B</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">/* ============================================================================</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment"> * HAL INITIALIZATION API</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment"> * ========================================================================= */</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">/* ============================================================================</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment"> * LED CONTROL API</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment"> * ========================================================================= */</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#a39fb4c3ebd79176d785e55008efb4c06">LED_Blink</a>(uint32_t Hdelay, uint32_t Ldelay);</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#endif </span><span class="comment">/* INC_BSP_RETARGET_HAL_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;<a class="code" href="lsm9ds1__reg_8h.html">bsp/lsm9ds1_reg.h</a>&quot;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;<a class="code" href="bsp_2config_8h.html">bsp/config.h</a>&quot;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;<a class="code" href="mpu_8h.html">bsp/mpu.h</a>&quot;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment">/* ============================================================================</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment"> * CONFIGURATION</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment"> * ========================================================================= */</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="retarget__hal_8h.html#a4e82ca2ba13b27956bb88419bda25e65">   53</a></span><span class="preprocessor">#define IMU_ADDRESS 0x6B</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">/* ============================================================================</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment"> * HAL INITIALIZATION API</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment"> * ========================================================================= */</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">/* ============================================================================</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment"> * LED CONTROL API</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment"> * ========================================================================= */</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#a39fb4c3ebd79176d785e55008efb4c06">LED_Blink</a>(uint32_t Hdelay, uint32_t Ldelay);</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="keywordtype">void</span> <a class="code hl_function" href="retarget__hal_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>}</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="preprocessor">#endif </span><span class="comment">/* INC_BSP_RETARGET_HAL_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="absp_2config_8h_html"><div class="ttname"><a href="bsp_2config_8h.html">config.h</a></div></div>
 <div class="ttc" id="agpio_8h_html"><div class="ttname"><a href="gpio_8h.html">gpio.h</a></div><div class="ttdoc">This file contains all the function prototypes for the gpio.c file.</div></div>
 <div class="ttc" id="ai2c_8h_html"><div class="ttname"><a href="i2c_8h.html">i2c.h</a></div><div class="ttdoc">This file contains all the function prototypes for the i2c.c file.</div></div>
 <div class="ttc" id="alsm9ds1__reg_8h_html"><div class="ttname"><a href="lsm9ds1__reg_8h.html">lsm9ds1_reg.h</a></div><div class="ttdoc">This file contains all the functions prototypes for the lsm9ds1_reg.c driver.</div></div>
-<div class="ttc" id="aretarget__hal_8h_html_a39fb4c3ebd79176d785e55008efb4c06"><div class="ttname"><a href="retarget__hal_8h.html#a39fb4c3ebd79176d785e55008efb4c06">LED_Blink</a></div><div class="ttdeci">void LED_Blink(uint32_t Hdelay, uint32_t Ldelay)</div><div class="ttdoc">Blink LED with specified on/off timing.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00153">retarget_hal.c:153</a></div></div>
-<div class="ttc" id="aretarget__hal_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="retarget__hal_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on (active high)</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00167">retarget_hal.c:167</a></div></div>
-<div class="ttc" id="aretarget__hal_8h_html_af5ea8985a12feedc3ac25fbb50712183"><div class="ttname"><a href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init</a></div><div class="ttdeci">void hal_init(void)</div><div class="ttdoc">Initialize all hardware abstraction layer components.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00261">retarget_hal.c:261</a></div></div>
-<div class="ttc" id="aretarget__hal_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="retarget__hal_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00178">retarget_hal.c:178</a></div></div>
+<div class="ttc" id="ampu_8h_html"><div class="ttname"><a href="mpu_8h.html">mpu.h</a></div></div>
+<div class="ttc" id="aretarget__hal_8h_html_a39fb4c3ebd79176d785e55008efb4c06"><div class="ttname"><a href="retarget__hal_8h.html#a39fb4c3ebd79176d785e55008efb4c06">LED_Blink</a></div><div class="ttdeci">void LED_Blink(uint32_t Hdelay, uint32_t Ldelay)</div><div class="ttdoc">Blink LED with specified on/off timing.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00093">retarget_hal.c:93</a></div></div>
+<div class="ttc" id="aretarget__hal_8h_html_a94ffebcdd3b5bbbf9a89e9f9ab52028d"><div class="ttname"><a href="retarget__hal_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d">LED_On</a></div><div class="ttdeci">void LED_On(void)</div><div class="ttdoc">Turn LED on (active high)</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00107">retarget_hal.c:107</a></div></div>
+<div class="ttc" id="aretarget__hal_8h_html_af5ea8985a12feedc3ac25fbb50712183"><div class="ttname"><a href="retarget__hal_8h.html#af5ea8985a12feedc3ac25fbb50712183">hal_init</a></div><div class="ttdeci">void hal_init(void)</div><div class="ttdoc">Initialize all hardware abstraction layer components.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00201">retarget_hal.c:201</a></div></div>
+<div class="ttc" id="aretarget__hal_8h_html_af842f9996045107cd0841a4f0707fc65"><div class="ttname"><a href="retarget__hal_8h.html#af842f9996045107cd0841a4f0707fc65">LED_Off</a></div><div class="ttdeci">void LED_Off(void)</div><div class="ttdoc">Turn LED off.</div><div class="ttdef"><b>Definition</b> <a href="retarget__hal_8c_source.html#l00118">retarget_hal.c:118</a></div></div>
 <div class="ttc" id="artc_8h_html"><div class="ttname"><a href="rtc_8h.html">rtc.h</a></div><div class="ttdoc">This file contains all the function prototypes for the rtc.c file.</div></div>
 <div class="ttc" id="aspi_8h_html"><div class="ttname"><a href="spi_8h.html">spi.h</a></div><div class="ttdoc">This file contains all the function prototypes for the spi.c file.</div></div>
-<div class="ttc" id="atim_8h_html"><div class="ttname"><a href="tim_8h.html">tim.h</a></div><div class="ttdoc">This file contains all the function prototypes for the tim.c file.</div></div>
+<div class="ttc" id="atimer_8h_html"><div class="ttname"><a href="timer_8h.html">timer.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c6310732a22f63c0c2fc5595561e68f1.html">Core</a></li><li class="navelem"><a class="el" href="dir_e2489e887f17afa3cbc07a4ec152cdd2.html">Inc</a></li><li class="navelem"><a class="el" href="dir_f7835850016de063b8ae418a1221d9cd.html">bsp</a></li><li class="navelem"><a class="el" href="retarget__hal_8h.html">retarget_hal.h</a></li>
-    <li class="footer">Generated on Fri Jan 30 2026 22:07:47 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
+    <li class="footer">Generated on Wed Apr 1 2026 18:05:49 for ICARUS OS (Intelligent Cooperative Architecture for Real-time Unified Systems) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0 </li>
   </ul>
 </div>
 </body>
