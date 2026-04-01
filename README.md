@@ -404,6 +404,161 @@ To switch to the IPC dashboard / stress-test view, flip the compile-time flags d
 
 ---
 
+## Running on the WeAct STM32H750VBT6
+
+ICARUS OS is developed and tested on the **WeAct Studio STM32H750VBT6** mini development board. This section walks through the full hardware setup, from unboxing to seeing the ICARUS Runner game on your terminal.
+
+### What You Need
+
+| Item | Notes |
+|------|-------|
+| WeAct STM32H750VBT6 board | V3.0 or later; ships with 8 MB W25Q64 QSPI flash |
+| USB-C cable | Data-capable (not charge-only) |
+| Computer | macOS, Linux, or Windows with WSL |
+| ARM GCC toolchain | `arm-none-eabi-gcc` 13.3+ (see [Prerequisites](#prerequisites)) |
+| `dfu-util` | For USB DFU flashing (`brew install dfu-util` / `apt install dfu-util`) |
+
+Optional: ST-Link V2 or J-Link debugger (SWD header on board) for step-through debugging.
+
+### Board Layout Reference
+
+```
+         ┌───────────────────────────────┐
+ USB-C ──┤                               │
+         │  [BOOT]            [K1/USER]  │◄── PC13 (game jump button)
+         │                               │
+         │   STM32H750VBT6               │
+         │   ARM Cortex-M7 @ 480 MHz     │
+         │   128 KB Flash + 1 MB RAM     │
+         │                               │
+         │  [RESET]         [LED PE3]    │◄── Heartbeat / fault blink
+         │                               │
+         │  ┌─────────┐    ┌─────────┐   │
+         │  │  QSPI   │    │ ST7735  │   │◄── 0.96" LCD (SPI4)
+         │  │  Flash   │    │  LCD    │   │
+         │  └─────────┘    └─────────┘   │
+         │                               │
+         │  SWD ●●●●                     │◄── Optional debugger header
+         └───────────────────────────────┘
+```
+
+### Step 1 — Install Toolchain
+
+**macOS:**
+```bash
+brew install arm-none-eabi-gcc dfu-util
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt update
+sudo apt install gcc-arm-none-eabi dfu-util
+```
+
+**Windows (WSL):**
+```bash
+sudo apt install gcc-arm-none-eabi dfu-util
+```
+
+Verify:
+```bash
+arm-none-eabi-gcc --version   # should show 13.x or 14.x
+dfu-util --version
+```
+
+### Step 2 — Build the Firmware
+
+```bash
+git clone https://github.com/ironhide23586/icarus-os-core.git
+cd icarus-os-core
+bash build/rebuild.sh
+```
+
+A successful build prints a size summary and produces `build/icarus_os.elf`, `.hex`, and `.bin`.
+
+### Step 3 — Enter DFU Mode
+
+The WeAct board has a built-in USB DFU bootloader — no external debugger required.
+
+1. **Hold** the **BOOT** button (the one closer to the USB connector).
+2. **Press and release** the **RESET** button while still holding BOOT.
+3. **Release** the BOOT button.
+
+The board is now in DFU mode. Confirm with:
+```bash
+dfu-util -l
+```
+You should see a line containing `Found DFU: [0483:df11]`.
+
+### Step 4 — Flash
+
+```bash
+bash build/flash.sh
+```
+
+This converts the ELF to a raw binary and writes it to internal flash at `0x08000000`. The script auto-resets the board when done.
+
+Alternatively, if you have an ST-Link connected:
+```bash
+st-flash --format ihex write build/icarus_os.hex
+```
+
+Or with OpenOCD:
+```bash
+openocd -f interface/stlink.cfg -f target/stm32h7x.cfg \
+  -c "program build/icarus_os.elf verify reset exit"
+```
+
+### Step 5 — Connect to the Terminal
+
+After flashing, the board resets and ICARUS OS starts. The USB-C connection enumerates as a CDC Virtual COM Port.
+
+**Quick connect (macOS):**
+```bash
+bash icarus_terminal.sh
+```
+
+**Manual connect:**
+```bash
+# Find the device
+ls /dev/cu.usbmodem*      # macOS
+ls /dev/ttyACM*            # Linux
+
+# Open a terminal (115200 8N1)
+screen /dev/cu.usbmodem* 115200       # macOS
+screen /dev/ttyACM0 115200            # Linux
+```
+
+> **Tip:** If no device appears after a few seconds, unplug and replug the USB cable, or press RESET. The USB CDC enumeration takes ~1 second after boot.
+
+You should see the **ICARUS Runner** game running — press **K1** (the user button near the top-right corner) to jump.
+
+### Pin Map Summary
+
+| Function | Pin | Peripheral | Used For |
+|----------|-----|------------|----------|
+| LED | PE3 | GPIO | Heartbeat indicator / fault blink |
+| User button (K1) | PC13 | GPIO | Game jump, interactive demo input |
+| LCD CS | PE11 | GPIO | ST7735 chip select |
+| LCD DC | PE13 | GPIO | ST7735 data/command |
+| LCD SCK | PE12 | SPI4 | ST7735 clock |
+| LCD MOSI | PE14 | SPI4 | ST7735 data |
+| IMU SCL | PB10 | I2C2 | LSM9DS1 clock (reserved) |
+| IMU SDA | PB11 | I2C2 | LSM9DS1 data (reserved) |
+| USB D+/D- | PA11/PA12 | USB OTG FS | CDC serial output |
+
+### Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `dfu-util` doesn't see the board | Re-do the BOOT + RESET sequence; make sure the USB cable supports data |
+| No serial device after flash | Press RESET; try a different USB port; check `dmesg` (Linux) |
+| Game doesn't render properly | Ensure your terminal is at least 80 columns wide; use a VT100-compatible emulator |
+| LCD shows old logo or blank | The LCD init runs at boot — if the board brown-outs, try a powered USB hub |
+| `arm-none-eabi-gcc: command not found` | Ensure the toolchain is in your `PATH` |
+
+---
+
 ## Overview
 
 ICARUS OS is a lightweight, preemptive real-time operating system kernel designed for ARM Cortex-M7 microcontrollers (specifically STM32H750VBT6). The kernel provides deterministic task scheduling, hardware-enforced memory protection, and a comprehensive API for safety-critical embedded applications.
