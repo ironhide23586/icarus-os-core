@@ -17,7 +17,7 @@
  *      - HCLK: 240 MHz (AHB)
  *      - APB1/APB2/APB3/APB4: 120 MHz
  *      - HSE: 25 MHz external crystal
- *      - LSE: 32.768 kHz for RTC
+ *      - RTC: driven from LSI (see rtc.c; avoids fragile LSE after warm reset)
  *
  * @par Memory Protection:
  *      - Region 0: QSPI 256MB - No access (background)
@@ -255,7 +255,6 @@ void hal_init(void) {
  *
  * @details Configures the complete clock tree:
  *          - HSE: 25MHz external crystal
- *          - LSE: 32.768kHz for RTC
  *          - HSI48: 48MHz for USB
  *          - PLL: 480MHz SYSCLK from HSE
  *
@@ -294,18 +293,15 @@ void SystemClock_Config(void)
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
-  /** Configure LSE Drive Capability
-  */
-  HAL_PWR_EnableBkUpAccess();
-  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_MEDIUMHIGH);
-
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
+  *
+  * @note LSE is intentionally excluded: it is not required for PLL/USB and can
+  *       fail or stall after resets that retain the RTC backup domain (e.g. IWDG),
+  *       which would trap the CPU in Error_Handler() before USB enumerates.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSE
-                              |RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48 | RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
