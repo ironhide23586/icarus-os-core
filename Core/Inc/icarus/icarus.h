@@ -30,6 +30,8 @@ extern "C" {
 #include "icarus/cdc_rx.h"
 #include "icarus/event.h"
 #include "icarus/crc.h"
+#include "icarus/fs.h"
+#include "icarus/tables.h"
 
 #ifdef __cplusplus
 }
