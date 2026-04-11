@@ -301,6 +301,31 @@ void SVC_Handler_C(uint32_t *stack_frame) {
             stack_frame[0] = (uint32_t)__tbl_count();
             break;
 
+        /* ---- Task lifecycle extensions ---- */
+        case SVC_OS_RESTART_TASK:
+            __os_restart_task((uint8_t)arg0);
+            break;
+
+        /* ---- Timed semaphore ---- */
+        case SVC_SEMAPHORE_CONSUME_TIMEOUT:
+            stack_frame[0] = (uint32_t)__semaphore_consume_timeout(
+                (uint8_t)arg0, arg1);
+            break;
+
+        /* ---- Task diagnostics ---- */
+        case SVC_GET_TASK_STATE:
+            stack_frame[0] = (uint32_t)__os_get_task_state((uint8_t)arg0);
+            break;
+        case SVC_GET_TASK_DISPATCH_COUNT:
+            stack_frame[0] = __os_get_task_dispatch_count((uint8_t)arg0);
+            break;
+        case SVC_GET_STACK_WATERMARK:
+            stack_frame[0] = __os_get_stack_watermark((uint8_t)arg0);
+            break;
+        case SVC_UPDATE_STACK_WATERMARK:
+            __os_update_stack_watermark((uint8_t)arg0);
+            break;
+
         default:
             break;
     }
@@ -527,6 +552,23 @@ void os_kill_process(uint8_t task_index) {
 #endif
 }
 
+/**
+ * @brief Restart a killed/finished task in-place (cold restart)
+ */
+void os_restart_task(uint8_t task_index) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "svc %1\n"
+        :
+        : "r" ((uint32_t)task_index), "I" (SVC_OS_RESTART_TASK)
+        : "r0"
+    );
+#else
+    __os_restart_task(task_index);
+#endif
+}
+
 /* ============================================================================
  * KERNEL DATA WRAPPERS
  * ========================================================================= */
@@ -629,6 +671,13 @@ bool semaphore_feed(uint8_t semaphore_idx) {
  */
 bool semaphore_consume(uint8_t semaphore_idx) {
     return __semaphore_consume(semaphore_idx);
+}
+
+/**
+ * @brief Decrement semaphore count with timeout
+ */
+bool semaphore_consume_timeout(uint8_t semaphore_idx, uint32_t max_ticks) {
+    return __semaphore_consume_timeout(semaphore_idx, max_ticks);
 }
 
 /**
@@ -992,6 +1041,83 @@ uint8_t os_is_running(void) {
     return result;
 #else
     return __os_is_running();
+#endif
+}
+
+/**
+ * @brief Get a task's current state
+ */
+icarus_task_state_t os_get_task_state(uint8_t task_idx) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)task_idx), "I" (SVC_GET_TASK_STATE)
+        : "r0"
+    );
+    return (icarus_task_state_t)result;
+#else
+    return __os_get_task_state(task_idx);
+#endif
+}
+
+/**
+ * @brief Get a task's dispatch count
+ */
+uint32_t os_get_task_dispatch_count(uint8_t task_idx) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)task_idx), "I" (SVC_GET_TASK_DISPATCH_COUNT)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_get_task_dispatch_count(task_idx);
+#endif
+}
+
+/**
+ * @brief Get a task's stack high-water mark
+ */
+uint32_t os_get_stack_watermark(uint8_t task_idx) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)task_idx), "I" (SVC_GET_STACK_WATERMARK)
+        : "r0"
+    );
+    return result;
+#else
+    return __os_get_stack_watermark(task_idx);
+#endif
+}
+
+/**
+ * @brief Scan and update a task's stack watermark
+ */
+void os_update_stack_watermark(uint8_t task_idx) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "svc %1\n"
+        :
+        : "r" ((uint32_t)task_idx), "I" (SVC_UPDATE_STACK_WATERMARK)
+        : "r0"
+    );
+#else
+    __os_update_stack_watermark(task_idx);
 #endif
 }
 

@@ -107,16 +107,28 @@ extern "C" {
 #define SVC_TBL_GET_DESCRIPTOR          55  /* return descriptor pointer     */
 #define SVC_TBL_COUNT                   56  /* uint8_t: registered count     */
 
+/* Task lifecycle extensions                                                 */
+#define SVC_OS_RESTART_TASK             57  /* restart killed/finished task   */
+
+/* Timed semaphore wait                                                      */
+#define SVC_SEMAPHORE_CONSUME_TIMEOUT   58  /* bool: acquire with timeout    */
+
+/* Task diagnostics                                                          */
+#define SVC_GET_TASK_STATE              59  /* icarus_task_state_t           */
+#define SVC_GET_TASK_DISPATCH_COUNT     60  /* uint32_t: dispatch counter    */
+#define SVC_GET_STACK_WATERMARK         61  /* uint32_t: min free words      */
+#define SVC_UPDATE_STACK_WATERMARK      62  /* void: scan + update           */
+
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_TBL_COUNT <= 255,
+_Static_assert(SVC_UPDATE_STACK_WATERMARK <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-_Static_assert(SVC_TBL_COUNT >= SVC_KERNEL_PROTECTED_DATA,
-               "SVC_TBL_COUNT must be >= all other SVC numbers");
+_Static_assert(SVC_UPDATE_STACK_WATERMARK >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_UPDATE_STACK_WATERMARK must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)
