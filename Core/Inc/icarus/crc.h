@@ -6,6 +6,14 @@
  *          no final XOR. Suitable for CCSDS Space Packet integrity
  *          checks and small flash record protection.
  *
+ *          On STM32H7 target, backed by the on-chip CRC peripheral
+ *          (AHB4 bus, configurable polynomial), lazy-initialised on
+ *          the first call. Under HOST_TEST a portable bytewise loop
+ *          is used so unit tests run unchanged off-target.
+ *
+ *          Thread-safe: each call wraps a critical section because the
+ *          CRC peripheral has internal state.
+ *
  * @author  Souham Biswas
  * @date    2026
  *
