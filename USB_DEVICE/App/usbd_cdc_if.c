@@ -22,7 +22,14 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+/*
+ * Route received bytes into the kernel CDC RX ring buffer so any RTOS
+ * task can drain them via cdc_rx_read_byte() / cdc_rx_available().
+ * The ring buffer lives in DTCM_DATA_PRIV, the producer here is in the
+ * privileged USB CDC ISR context, and the consumer goes through the
+ * SVC gates declared in icarus/cdc_rx.h.
+ */
+#include "icarus/cdc_rx.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -261,6 +268,16 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
+  /*
+   * Push received bytes into the kernel cdc_rx ring before re-arming
+   * the endpoint, so any RTOS task that calls cdc_rx_read_byte() can
+   * drain them. __cdc_rx_push() is the privileged variant — we are
+   * already in the USB CDC ISR (privileged handler context) so we
+   * call it directly without going through an SVC.
+   */
+  if (Len != NULL && *Len > 0U) {
+    __cdc_rx_push(Buf, *Len);
+  }
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
