@@ -72,8 +72,9 @@ The following memory protection features have been implemented and documented:
    - Enforced by ARM Cortex-M7 privilege levels
 
 5. **SVC call gates (HLR-KRN-067)**
-   - Kernel services are invoked from unprivileged code via SVC (40 SVC IDs, 0–39, see `svc.h`)
+   - Kernel services are invoked from unprivileged code via SVC (57 SVC IDs, 0–56, see `svc.h`)
    - IDs 29–39 cover atomic DTCM read/write helpers (`sem_can_*`, `pipe_can_*`, etc.)
+   - IDs 40–56 are the v0.3.0 shared service module gates (cdc_rx, event, tables — see SDD §3.10)
    - Controlled transition between privilege levels
 
 6. **Fault Handling (HLR-KRN-081, HLR-KRN-082, HLR-KRN-083)**
@@ -83,9 +84,26 @@ The following memory protection features have been implemented and documented:
 
 ### Documentation Updates
 
-- **SRS.md**: Added 14 new memory protection requirements (HLR-KRN-063 through HLR-KRN-086)
-- **SDD.md**: Added comprehensive MPU Protection Architecture section (4.2)
-- **SVP.md**: Added Memory Protection Tests section (4.5) with verification procedures
+- **SRS.md**: Added 14 memory protection requirements (HLR-KRN-063 through HLR-KRN-086) plus 16 shared-module requirements (HLR-KRN-090 through HLR-KRN-094.3)
+- **SDD.md**: Added comprehensive MPU Protection Architecture section (4.2) and shared service modules section (3.10)
+- **SVP.md**: Added Memory Protection Tests section (4.5) with verification procedures; the v0.3.0 shared modules add 56 new host-side unit tests across `test_crc.c`, `test_cdc_rx.c`, `test_event.c`, `test_fs.c`, `test_tables.c`
+
+## Recent updates (v0.3.0 shared service modules)
+
+The v0.3.0 release adds five reusable kernel modules with the same
+MPU-aware ITCM/DTCM_PRIV/SVC-gate hardening pattern used by
+semaphore.c and pipe.c:
+
+| Module | SVC range | Backing storage | Tests |
+|---|---|---|---|
+| `icarus/cdc_rx.h` (USB CDC RX ring) | 40–42 | DTCM_PRIV | 7 |
+| `icarus/event.h` (event ring + squelch) | 43–48 | DTCM_PRIV | 9 |
+| `icarus/crc.h` (CRC16-CCITT, HW peripheral) | n/a | n/a (pure fn) | 8 |
+| `icarus/fs.h` (flat-file FS, 32 KB) | n/a | regular SRAM | 16 |
+| `icarus/tables.h` (ground-loadable tables) | 49–56 | DTCM_PRIV | 16 |
+
+See `design/SDD.md` §3.10 for the per-module design and
+`requirements/SRS.md` §3.1.8 for the requirement set.
 
 ## Design Assurance Level (DAL)
 

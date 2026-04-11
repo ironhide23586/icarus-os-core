@@ -143,19 +143,40 @@ Coverage reports show:
 
 ### Current Tests
 
-- `test_task_basic.c` - Basic task management tests
-  - Print buffer operations
-  - Critical sections
-  - Tick counting
-  - Busy wait
+The kernel host suite is **196 tests** as of v0.3.0, organised across
+six source files in `tests/src/`:
+
+| File | Tests | Coverage |
+|------|------:|----------|
+| `test_task.c` | 140 | Kernel core: scheduler, task lifecycle, semaphores, pipes, critical sections, SVC gates, MPU helpers — single Unity entry point (`main()`) |
+| `test_crc.c` | 8 | `crc16_ccitt` bytewise loop (HW peripheral path is short-circuited under HOST_TEST) — canonical CCITT-FALSE vector + edge cases |
+| `test_cdc_rx.c` | 7 | SPSC ring buffer fill/drain, FIFO order, capacity overflow, wraparound, empty/zero-length corner cases |
+| `test_event.c` | 9 | Generic event ring init/emit/drain, per-module squelch filtering, payload truncation, partial drain, full-ring overwrite |
+| `test_fs.c` | 16 | Filesystem create/open/write/read/delete/list/stats; duplicate-name rejection; full-disk; oversized writes; offset reads; invalid handles |
+| `test_tables.c` | 16 | Table engine register/load/activate/dump; schema CRC mismatch; activate-callback rejection; chunked load; descriptor query |
+
+`test_task.c` owns the single Unity `main()` entry point. Each
+per-module file declares an aggregator `void run_<module>_tests(void)`
+which `test_task.c` calls after the existing kernel tests, so a
+single `make test` runs the whole suite.
+
+### Coverage
+
+Latest baseline (v0.3.0):
+- **Lines:** 91.8% (1081 of 1178)
+- **Functions:** 92.5% (149 of 161)
+
+Run `make COVERAGE=yes clean test coverage-summary` to recompute
+locally; HTML reports land at `build/coverage/html/index.html`.
 
 ### Adding New Tests
 
 1. Create `tests/src/test_<feature>.c`
-2. Include Unity and kernel headers
-3. Implement `setUp()` and `tearDown()` if needed
-4. Write test functions with `test_` prefix
-5. Add to `main()` with `RUN_TEST()`
+2. Include `unity.h` and the kernel headers you're testing
+3. Write test functions with the `test_` prefix
+4. Add an aggregator `void run_<feature>_tests(void) { RUN_TEST(...); }`
+5. Declare the aggregator in `test_task.c` near the top of `main()`
+   and invoke it after the existing tests
 6. Run: `make test`
 
 ## Integration with Main Build
