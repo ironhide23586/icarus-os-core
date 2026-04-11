@@ -201,9 +201,11 @@ void SVC_Handler_C(uint32_t *stack_frame) {
         case SVC_CDC_RX_INIT:
             __cdc_rx_init();
             break;
-        case SVC_CDC_RX_READ_BYTE:
-            stack_frame[0] = (uint32_t)__cdc_rx_read_byte((uint8_t *)(uintptr_t)arg0);
+        case SVC_CDC_RX_READ_BYTE: {
+            bool ok = __cdc_rx_read_byte((uint8_t *)(uintptr_t)arg0);
+            stack_frame[0] = (uint32_t)ok;
             break;
+        }
         case SVC_CDC_RX_AVAILABLE:
             stack_frame[0] = __cdc_rx_available();
             break;
@@ -229,15 +231,19 @@ void SVC_Handler_C(uint32_t *stack_frame) {
         case SVC_EVENT_SET_SQUELCH:
             __event_set_squelch((uint8_t)arg0, (event_severity_t)arg1);
             break;
-        case SVC_EVENT_GET_SQUELCH:
-            stack_frame[0] = (uint32_t)__event_get_squelch((uint8_t)arg0);
+        case SVC_EVENT_GET_SQUELCH: {
+            event_severity_t sq = __event_get_squelch((uint8_t)arg0);
+            stack_frame[0] = (uint32_t)sq;
             break;
-        case SVC_EVENT_DRAIN:
-            stack_frame[0] = (uint32_t)__event_drain(
+        }
+        case SVC_EVENT_DRAIN: {
+            bool ok = __event_drain(
                 (event_entry_t *)(uintptr_t)arg0,
                 (uint8_t)arg1,
                 (uint8_t *)(uintptr_t)stack_frame[2]);
+            stack_frame[0] = (uint32_t)ok;
             break;
+        }
         case SVC_EVENT_GET_COUNT:
             stack_frame[0] = __event_get_count();
             break;
@@ -246,40 +252,51 @@ void SVC_Handler_C(uint32_t *stack_frame) {
         case SVC_TBL_INIT:
             __tbl_init();
             break;
-        case SVC_TBL_REGISTER:
-            stack_frame[0] = (uint32_t)__tbl_register(
+        case SVC_TBL_REGISTER: {
+            bool ok = __tbl_register(
                 (const tbl_descriptor_t *)(uintptr_t)arg0);
+            stack_frame[0] = (uint32_t)ok;
             break;
-        case SVC_TBL_LOAD:
-            stack_frame[0] = (uint32_t)__tbl_load(
+        }
+        case SVC_TBL_LOAD: {
+            bool ok = __tbl_load(
                 (tbl_id_t)arg0,
                 (const uint8_t *)(uintptr_t)arg1,
                 (uint16_t)stack_frame[2],
                 (uint16_t)stack_frame[3]);
+            stack_frame[0] = (uint32_t)ok;
             break;
-        case SVC_TBL_ACTIVATE_PREPARE:
-            stack_frame[0] = (uint32_t)__tbl_activate_prepare(
+        }
+        case SVC_TBL_ACTIVATE_PREPARE: {
+            bool ok = __tbl_activate_prepare(
                 (tbl_id_t)arg0,
                 (uint8_t *)(uintptr_t)arg1,
                 (uint16_t *)(uintptr_t)stack_frame[2],
                 (tbl_activate_fn *)(uintptr_t)stack_frame[3]);
+            stack_frame[0] = (uint32_t)ok;
             break;
-        case SVC_TBL_ACTIVATE_COMMIT:
-            stack_frame[0] = (uint32_t)__tbl_activate_commit(
+        }
+        case SVC_TBL_ACTIVATE_COMMIT: {
+            bool ok = __tbl_activate_commit(
                 (tbl_id_t)arg0,
                 (const uint8_t *)(uintptr_t)arg1,
                 (uint16_t)stack_frame[2]);
+            stack_frame[0] = (uint32_t)ok;
             break;
-        case SVC_TBL_DUMP:
-            stack_frame[0] = (uint32_t)(int32_t)__tbl_dump(
+        }
+        case SVC_TBL_DUMP: {
+            int16_t n = __tbl_dump(
                 (tbl_id_t)arg0,
                 (uint8_t *)(uintptr_t)arg1,
                 (uint16_t)stack_frame[2]);
+            stack_frame[0] = (uint32_t)(int32_t)n;
             break;
-        case SVC_TBL_GET_DESCRIPTOR:
-            stack_frame[0] = (uint32_t)(uintptr_t)__tbl_get_descriptor(
-                (tbl_id_t)arg0);
+        }
+        case SVC_TBL_GET_DESCRIPTOR: {
+            const tbl_descriptor_t *d = __tbl_get_descriptor((tbl_id_t)arg0);
+            stack_frame[0] = (uint32_t)(uintptr_t)d;
             break;
+        }
         case SVC_TBL_COUNT:
             stack_frame[0] = (uint32_t)__tbl_count();
             break;
