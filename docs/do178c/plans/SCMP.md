@@ -1,10 +1,10 @@
 # Software Configuration Management Plan (SCMP)
 
-**Document ID:** ICARUS-SCMP-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-SCMP-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | v0.2.0 release: kernel sources relocated from `kernel/` to `Core/Src/icarus/` (and `Core/Inc/icarus/`); CI list expanded for the MPU verification artefacts (red-team attack tasks, fault recovery logs) |
+| 0.3 | 2026-04-11 | Souham Biswas | v0.3.0 release: configuration items expanded to include the five shared service modules (`cdc_rx`, `event`, `crc`, `fs`, `tables`) and their host test files (`test_cdc_rx.c`, `test_event.c`, `test_crc.c`, `test_fs.c`, `test_tables.c`); standalone-build targets `make -C build` and `make -C tests` are the canonical configuration baselines |
 
 ---
 

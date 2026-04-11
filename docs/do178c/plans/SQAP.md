@@ -1,10 +1,10 @@
 # Software Quality Assurance Plan (SQAP)
 
-**Document ID:** ICARUS-SQAP-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-SQAP-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | v0.2.0 release: cppcheck-clean policy + 140-test minimum threshold for the host suite added to the gate criteria; MPU red-team verification logs added as quality artefacts |
+| 0.3 | 2026-04-11 | Souham Biswas | v0.3.0 release: minimum host suite threshold raised to 196 tests with ≥ 91% line / ≥ 92% function coverage; quality gate now requires the standalone kernel build to pass under `arm-none-eabi-gcc -O2 -Wall -Wextra -Werror=bad-function-cast`; per-module test files (`test_<module>.c`) for any new shared kernel module are required as part of the merge checklist |
 
 ---
 

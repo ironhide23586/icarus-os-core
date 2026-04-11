@@ -1,10 +1,10 @@
 # Software Development Plan (SDP)
 
-**Document ID:** ICARUS-SDP-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-SDP-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | v0.2.0 release: privilege-separation development discipline (DTCM_DATA_PRIV / ITCM_FUNC / SVC call gates) added to the coding-standard subset and the design-review checklist |
+| 0.3 | 2026-04-11 | Souham Biswas | v0.3.0 release: shared-module pattern formalised — every new kernel module must follow the `__`-prefixed privileged implementation + `svc.c` thread-mode wrapper convention used by `semaphore`, `pipe`, `cdc_rx`, `event`, and `tables`. CRC16 helper now uses the on-chip CRC peripheral on AHB4 with a HOST_TEST fallback; HW peripheral usage added to the development checklist for any future module that has a HW analogue |
 
 ---
 
