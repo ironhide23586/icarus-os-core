@@ -199,16 +199,17 @@ void test_os_init(void) {
 	TEST_ASSERT_EQUAL(0, current_task_index);
 	TEST_ASSERT_EQUAL(ICARUS_TICKS_PER_TASK, current_task_ticks_remaining);
 	
-	// os_init registers 2 system tasks (idle and heartbeat)
-	TEST_ASSERT_EQUAL(2, num_created_tasks);
-	
+	// os_init registers 1 system task (the keepalive idle task). The
+	// heartbeat task was deliberately disabled in kernel.c when the
+	// interactive demo landed (commit 3c27b5c) — the registration line
+	// is commented out at Core/Src/icarus/kernel.c:244.
+	TEST_ASSERT_EQUAL(1, num_created_tasks);
+
 	// Verify task_list was initialized
 	TEST_ASSERT_NOT_NULL(task_list[0]);
-	TEST_ASSERT_NOT_NULL(task_list[1]);
-	
-	// Verify system task names
+
+	// Verify system task name
 	TEST_ASSERT_EQUAL_STRING("ICARUS_KEEPALIVE_TASK", task_list[0]->name);
-	TEST_ASSERT_EQUAL_STRING(">ICARUS_HEARTBEAT<", task_list[1]->name);
 }
 
 // Test: os_register_task
