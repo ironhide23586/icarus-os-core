@@ -3,6 +3,109 @@
 All notable changes to ICARUS OS are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.3.0] - 2026-04-11
+
+### Added
+
+- **CDC RX ring buffer** (`icarus/cdc_rx.h` / `cdc_rx.c`) — generic SPSC USB
+  CDC receive ring buffer (512 B). Producer is the USB CDC ISR; consumer is
+  any RTOS task. Backing store in `DTCM_DATA_PRIV`, hot path in `ITCM_FUNC`,
+  thread-mode reads through SVC gates.
+- **Generic event ring buffer + per-module severity squelch** (`icarus/event.h`
+  / `event.c`) — 32-slot ring of compact 16-byte event entries with a 16-entry
+  squelch table. Transport-agnostic: drains into a caller-provided buffer
+  via `event_drain()`. Emission via `os_event(module_id, severity, event_id,
+  payload, len)`. Silent (no logging dependency).
+- **CRC16-CCITT helper** (`icarus/crc.h` / `crc.c`) — `crc16_ccitt(data, len)`
+  with poly 0x1021, init 0xFFFF. **Hardware-accelerated** on STM32H7 via the
+  on-chip CRC peripheral (AHB4 bus, configurable polynomial), lazy-initialised
+  on first call. Approximately 4× faster than the bytewise software loop on
+  the buffer sizes used by downstream consumers. Portable bytewise fallback
+  under `HOST_TEST`.
+- **Internal RAM-backed flat-file filesystem** (`icarus/fs.h` / `fs.c`) — 16
+  files × 2 KB = 32 KB total, with create/open/write/read/delete/list/stats.
+  On-disk format opaque so a real flash backend can be substituted later
+  without changing the public API.
+- **Generic ground-loadable table engine** (`icarus/tables.h` / `tables.c`)
+  — registry of up to 8 tables, each with a staging buffer and an active
+  buffer (double-buffered swap). Tables validated by schema CRC and CRC16
+  data checksum, then committed via a registered activate callback.
+  `tbl_activate` is split across two SVCs (`prepare` + `commit`) so the
+  user activate callback runs in unprivileged thread mode against a stack
+  scratch copy — never sees DTCM_PRIV.
+- **17 new SVC numbers (40–56)** — `SVC_CDC_RX_*` (40–42), `SVC_EVENT_*`
+  (43–48), `SVC_TBL_*` (49–56). All routed through `SVC_Handler_C`. Each
+  module's public API in `svc.c` follows the existing wrapper pattern (asm
+  `svc %imm` on target, direct `__` call under `HOST_TEST`).
+- **Showcase demo** (`Core/Src/showcase_tasks.c`, `Core/Inc/showcase_tasks.h`)
+  — three sleep-and-poll tasks (`sensor_task`, `ground_task`, `shell_task`)
+  that drive every public entry point of the new modules together. Gated
+  behind `ENABLE_SHOWCASE` in `main.c` (default off so the existing game
+  demo stays primary). When enabled the firmware grows ~2.5 KB text + 33 KB
+  bss for the three task stacks.
+
+### Changed
+
+- **`Core/Inc/icarus/icarus.h` umbrella header** now also exports
+  `cdc_rx.h`, `event.h`, `crc.h`, `fs.h`, and `tables.h`, so a single
+  `#include "icarus/icarus.h"` makes the new modules available alongside
+  kernel/scheduler/task/semaphore/pipe.
+- **Kernel host test suite** (`tests/Makefile`) gained the new module
+  sources (`cdc_rx.c`, `event.c`, `crc.c`, `fs.c`, `tables.c`). The host
+  build now links the entire kernel surface — previously the new modules
+  were not in `KERNEL_SRC` so `make -C tests` would fail with undefined
+  `__cdc_rx_*` / `__os_event` / `__tbl_*` references when the OBC consumer
+  reached for them.
+- **`__os_init`**: only one system task is registered now (`ICARUS_KEEPALIVE_TASK`).
+  The heartbeat task line is commented out at `Core/Src/icarus/kernel.c:244`
+  for the interactive demo. Test `test_os_init` was updated to match.
+
+### Fixed
+
+- **`test_os_init` host test** was asserting `num_created_tasks == 2` and
+  probing `task_list[1] / ">ICARUS_HEARTBEAT<"`, causing `make -C tests` to
+  report 140/141 passing on every dev rebuild. Heartbeat task has been
+  disabled since 0.2.0; test now expects 1 system task.
+- **`-Werror=bad-function-cast` warnings in `svc.c`** — eight new SVC
+  dispatch arms (cdc_rx_read_byte, event_get_squelch, event_drain, all
+  five tbl_*) cast function-call results directly to `uint32_t`, which the
+  standalone kernel build's stricter warnings caught. Each cast now goes
+  via an intermediate variable.
+
+### Hardening
+
+- **MPU compatibility for new modules** — `cdc_rx`, `event`, and `tables`
+  follow the kernel's existing `semaphore` / `pipe` pattern: backing data
+  in `DTCM_DATA_PRIV`, hot functions in `ITCM_FUNC`, public entry points
+  split into `__`-prefixed privileged implementations + thread-mode
+  wrappers that issue SVC instructions. Once the MPU is locked priv-only,
+  unprivileged tasks reach these modules through the SVC gates exactly as
+  they do for semaphores and pipes.
+  - `cdc_rx`: 156 B ITCM / 520 B DTCM_PRIV
+  - `event`:  336 B ITCM / 536 B DTCM_PRIV
+  - `tables`: 796 B ITCM / 8.3 KB DTCM_PRIV
+  - `crc`:    pure function, ITCM only
+  - `fs`:     32 KB store stays in regular SRAM (won't fit DTCM); functions
+    use the standard `enter_critical()` / `exit_critical()` pattern. The
+    deliberate trade-off is documented in `fs.c`.
+- **`cdc_rx_push` ISR fast path** — the public wrapper calls
+  `__cdc_rx_push` directly without an SVC because the USB CDC ISR is
+  already in privileged handler context, and issuing an SVC from a
+  high-priority interrupt would either fault or cause a priority
+  inversion. Mirrors the pattern used by `pipe_enqueue`.
+- **`tbl_activate` priv↔thread split** — the registered activate callback
+  is user code that may issue further SVCs, so it cannot run inside the
+  SVC handler. The wrapper splits the operation across two SVCs:
+  `__tbl_activate_prepare` (validate + copy staging into a thread-mode
+  scratch buffer), the user callback runs in thread mode against the
+  scratch copy, then `__tbl_activate_commit` (copy scratch into the active
+  buffer). The active buffer never moves until the callback succeeds.
+- **`os_event` 5-arg packing** — `module_id`, `severity`, `event_id`,
+  `payload`, `payload_len` packs into three SVC registers as
+  `R0 = (event_id << 16) | (severity << 8) | module_id`, `R1 = payload`,
+  `R2 = payload_len`, staying inside the AAPCS R0–R3 budget without
+  spilling to the caller's stack.
+
 ## [0.2.0] - 2026-04-01
 
 ### Added
