@@ -32,6 +32,7 @@ extern "C" {
 #include "icarus/crc.h"
 #include "icarus/fs.h"
 #include "icarus/tables.h"
+#include "icarus/sb.h"
 
 #ifdef __cplusplus
 }
