@@ -33,7 +33,7 @@ extern "C" {
  * @param pipe_capacity_bytes Maximum bytes the pipe can hold
  * @return true on success, false on error
  */
-bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
+bool pipe_init(uint8_t pipe_idx, uint16_t pipe_capacity_bytes);
 
 /**
  * @brief Enqueue bytes to pipe
@@ -62,14 +62,14 @@ bool pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
  * @param pipe_idx Pipe index
  * @return Current count, or 0 if invalid
  */
-uint8_t pipe_get_count(uint8_t pipe_idx);
+uint16_t pipe_get_count(uint8_t pipe_idx);
 
 /**
  * @brief Get pipe capacity
  * @param pipe_idx Pipe index
  * @return Maximum capacity, or 0 if invalid
  */
-uint8_t pipe_get_max_count(uint8_t pipe_idx);
+uint16_t pipe_get_max_count(uint8_t pipe_idx);
 
 /* ============================================================================
  * SVC CALL GATES (MPU Protection)
@@ -117,11 +117,11 @@ void pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
 
-bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes);
+bool __pipe_init(uint8_t pipe_idx, uint16_t pipe_capacity_bytes);
 bool __pipe_enqueue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
 bool __pipe_dequeue(uint8_t pipe_idx, uint8_t* message, uint8_t message_bytes);
-uint8_t __pipe_get_count(uint8_t pipe_idx);
-uint8_t __pipe_get_max_count(uint8_t pipe_idx);
+uint16_t __pipe_get_count(uint8_t pipe_idx);
+uint16_t __pipe_get_max_count(uint8_t pipe_idx);
 bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes);
 bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes);
 void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes);

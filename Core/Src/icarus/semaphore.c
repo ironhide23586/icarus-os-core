@@ -101,6 +101,45 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx) {
 }
 
 /**
+ * @brief  Privileged implementation of semaphore_consume_timeout.
+ *
+ * @details Spins with task_active_sleep(1) checking sem_can_consume()
+ *          each tick.  Returns false if max_ticks elapse without the
+ *          semaphore becoming available.  max_ticks == 0 is a non-blocking
+ *          try (check once, return immediately).
+ *
+ * @param  semaphore_idx  Semaphore index.
+ * @param  max_ticks      Maximum ticks to wait.
+ * @retval true   Acquired.
+ * @retval false  Timeout or invalid.
+ */
+ITCM_FUNC bool __semaphore_consume_timeout(uint8_t semaphore_idx,
+                                            uint32_t max_ticks) {
+#ifdef HOST_TEST
+    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
+        !semaphore_list[semaphore_idx]->engaged) {
+        return false;
+    }
+#else
+    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES) {
+        return false;
+    }
+#endif
+
+    uint32_t waited = 0;
+    while (!sem_can_consume(semaphore_idx)) {
+        if (waited >= max_ticks) {
+            return false;
+        }
+        task_active_sleep(1);
+        waited++;
+    }
+
+    sem_decrement(semaphore_idx);
+    return true;
+}
+
+/**
  * @brief Privileged implementation of semaphore_get_count
  * @note  Internal function - use semaphore_get_count() wrapper
  */

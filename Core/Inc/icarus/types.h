@@ -129,6 +129,8 @@ typedef struct {
     /* ---- Additional metadata ---- */
     icarus_task_priority_t task_priority;       /**< Task priority level */
     char name[ICARUS_MAX_TASK_NAME_LEN];        /**< Human-readable task name */
+    uint32_t dispatch_count;                    /**< Times this task has been dispatched */
+    uint32_t stack_watermark;                   /**< Minimum free stack words observed */
 } icarus_task_t;
 
 /* ============================================================================
@@ -166,10 +168,10 @@ typedef struct {
  */
 typedef struct {
     bool engaged;               /**< true if pipe is initialized and active */
-    uint8_t count;              /**< Current number of bytes in buffer */
-    uint8_t max_count;          /**< Maximum buffer capacity in bytes */
-    uint8_t enqueue_idx;        /**< Write index (circular) */
-    uint8_t dequeue_idx;        /**< Read index (circular) */
+    uint16_t count;             /**< Current number of bytes in buffer */
+    uint16_t max_count;         /**< Maximum buffer capacity in bytes */
+    uint16_t enqueue_idx;       /**< Write index (circular) */
+    uint16_t dequeue_idx;       /**< Read index (circular) */
     uint32_t tick_updated_at;   /**< Last modification timestamp */
     uint8_t buffer[ICARUS_MAX_MESSAGE_BYTES];  /**< Circular message buffer */
 } icarus_pipe_t;

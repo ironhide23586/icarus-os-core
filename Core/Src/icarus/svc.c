@@ -678,7 +678,7 @@ uint32_t semaphore_get_max_count(uint8_t semaphore_idx) {
 /**
  * @brief Initialize a message pipe
  */
-bool pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
+bool pipe_init(uint8_t pipe_idx, uint16_t pipe_capacity_bytes) {
 #ifndef HOST_TEST
     uint32_t result;
     __asm__ volatile (
@@ -714,9 +714,9 @@ bool pipe_dequeue(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
 /**
  * @brief Get current byte count in pipe
  */
-uint8_t pipe_get_count(uint8_t pipe_idx) {
+uint16_t pipe_get_count(uint8_t pipe_idx) {
 #ifndef HOST_TEST
-    uint8_t result;
+    uint16_t result;
     __asm__ volatile (
         "mov r0, %1\n"
         "svc %2\n"
@@ -734,9 +734,9 @@ uint8_t pipe_get_count(uint8_t pipe_idx) {
 /**
  * @brief Get pipe capacity
  */
-uint8_t pipe_get_max_count(uint8_t pipe_idx) {
+uint16_t pipe_get_max_count(uint8_t pipe_idx) {
 #ifndef HOST_TEST
-    uint8_t result;
+    uint16_t result;
     __asm__ volatile (
         "mov r0, %1\n"
         "svc %2\n"

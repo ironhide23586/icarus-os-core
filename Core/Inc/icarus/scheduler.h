@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "icarus/types.h"
 
 /* ============================================================================
  * TASK SCHEDULING
@@ -106,6 +107,37 @@ uint8_t os_get_num_created_tasks(void);
  */
 uint8_t os_is_running(void);
 
+/**
+ * @brief  Get a task's current state (safe from unprivileged mode).
+ * @param  task_idx  Task index (0 to num_created_tasks-1).
+ * @return Task state, or TASK_STATE_FINISHED if index is invalid.
+ * @note   Uses SVC to read task_list from DTCM in privileged mode.
+ */
+icarus_task_state_t os_get_task_state(uint8_t task_idx);
+
+/**
+ * @brief  Get a task's dispatch count (times scheduled to run).
+ * @param  task_idx  Task index.
+ * @return Dispatch count, or 0 if index is invalid.
+ */
+uint32_t os_get_task_dispatch_count(uint8_t task_idx);
+
+/**
+ * @brief  Get a task's stack high-water mark (minimum free words).
+ * @param  task_idx  Task index.
+ * @return Minimum free stack words observed, or 0 if invalid.
+ * @note   The watermark is updated lazily — call os_update_stack_watermark()
+ *         to force a scan.
+ */
+uint32_t os_get_stack_watermark(uint8_t task_idx);
+
+/**
+ * @brief  Scan a task's stack for the sentinel pattern and update
+ *         the watermark field in the TCB.
+ * @param  task_idx  Task index.
+ */
+void os_update_stack_watermark(uint8_t task_idx);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -121,6 +153,10 @@ uint32_t __os_get_task_ticks_remaining(void);
 const char* __os_get_task_name(uint8_t task_idx);
 uint8_t __os_get_num_created_tasks(void);
 uint8_t __os_is_running(void);
+icarus_task_state_t __os_get_task_state(uint8_t task_idx);
+uint32_t __os_get_task_dispatch_count(uint8_t task_idx);
+uint32_t __os_get_stack_watermark(uint8_t task_idx);
+void __os_update_stack_watermark(uint8_t task_idx);
 
 #ifdef __cplusplus
 }

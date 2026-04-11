@@ -67,6 +67,19 @@ void os_kill_process(uint8_t task_index);
  */
 void os_task_suicide(void);
 
+/**
+ * @brief  Restart a killed or finished task (cold restart from entry point).
+ *
+ * @details Re-initializes the task's stack frame from its original function
+ *          pointer and stack base.  The task re-enters the scheduler as if
+ *          freshly created — no new stack slot is allocated.
+ *
+ * @param  task_index  Index of the task to restart (1-based; 0 is idle).
+ * @pre    Task must be in TASK_STATE_KILLED or TASK_STATE_FINISHED.
+ * @post   Task state is TASK_STATE_COLD, ready for scheduling.
+ */
+void os_restart_task(uint8_t task_index);
+
 /* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
@@ -75,6 +88,7 @@ void __os_register_task(void (*function)(void), const char *name);
 void __os_exit_task(void);
 void __os_kill_process(uint8_t task_index);
 void __os_task_suicide(void);
+void __os_restart_task(uint8_t task_index);
 
 #ifdef __cplusplus
 }

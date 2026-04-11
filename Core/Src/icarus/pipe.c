@@ -32,7 +32,7 @@
  * @note  Internal function - use pipe_init() wrapper
  * @note  Runs in SVC handler — already atomic, no critical section needed
  */
-ITCM_FUNC bool __pipe_init(uint8_t pipe_idx, uint8_t pipe_capacity_bytes) {
+ITCM_FUNC bool __pipe_init(uint8_t pipe_idx, uint16_t pipe_capacity_bytes) {
     if (pipe_idx < ICARUS_MAX_MESSAGE_QUEUES &&
         pipe_capacity_bytes > 0 &&
         pipe_capacity_bytes <= ICARUS_MAX_MESSAGE_BYTES) {
@@ -120,7 +120,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
  * @brief Privileged implementation of pipe_get_count
  * @note  Internal function - use pipe_get_count() wrapper
  */
-ITCM_FUNC uint8_t __pipe_get_count(uint8_t pipe_idx) {
+ITCM_FUNC uint16_t __pipe_get_count(uint8_t pipe_idx) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
@@ -132,7 +132,7 @@ ITCM_FUNC uint8_t __pipe_get_count(uint8_t pipe_idx) {
  * @brief Privileged implementation of pipe_get_max_count
  * @note  Internal function - use pipe_get_max_count() wrapper
  */
-ITCM_FUNC uint8_t __pipe_get_max_count(uint8_t pipe_idx) {
+ITCM_FUNC uint16_t __pipe_get_max_count(uint8_t pipe_idx) {
     if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
         !message_pipe_list[pipe_idx]->engaged) {
         return 0;
@@ -183,8 +183,8 @@ ITCM_FUNC void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t me
         message_pipe_list[pipe_idx]->buffer[
             message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
         message_pipe_list[pipe_idx]->enqueue_idx =
-            (uint8_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1) %
-            message_pipe_list[pipe_idx]->max_count;
+            (uint16_t)((message_pipe_list[pipe_idx]->enqueue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count);
         message_pipe_list[pipe_idx]->count++;
     }
 
@@ -206,8 +206,8 @@ ITCM_FUNC void __pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t mes
         message[i] = message_pipe_list[pipe_idx]->buffer[
             message_pipe_list[pipe_idx]->dequeue_idx];
         message_pipe_list[pipe_idx]->dequeue_idx =
-            (uint8_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1) %
-            message_pipe_list[pipe_idx]->max_count;
+            (uint16_t)((message_pipe_list[pipe_idx]->dequeue_idx + 1) %
+            message_pipe_list[pipe_idx]->max_count);
         message_pipe_list[pipe_idx]->count--;
     }
 

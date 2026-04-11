@@ -54,6 +54,17 @@ bool semaphore_feed(uint8_t semaphore_idx);
 bool semaphore_consume(uint8_t semaphore_idx);
 
 /**
+ * @brief  Decrement semaphore count with timeout (timed P / wait).
+ *
+ * @param  semaphore_idx  Semaphore index.
+ * @param  max_ticks      Maximum ticks to wait.  0 = non-blocking try.
+ *
+ * @retval true   Semaphore was acquired within the timeout.
+ * @retval false  Timeout expired without acquiring, or invalid index.
+ */
+bool semaphore_consume_timeout(uint8_t semaphore_idx, uint32_t max_ticks);
+
+/**
  * @brief Get current semaphore count
  * @param semaphore_idx Semaphore index
  * @return Current count, or 0 if invalid
@@ -110,6 +121,7 @@ void sem_decrement(uint8_t semaphore_idx);
 bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count);
 bool __semaphore_feed(uint8_t semaphore_idx);
 bool __semaphore_consume(uint8_t semaphore_idx);
+bool __semaphore_consume_timeout(uint8_t semaphore_idx, uint32_t max_ticks);
 uint32_t __semaphore_get_count(uint8_t semaphore_idx);
 uint32_t __semaphore_get_max_count(uint8_t semaphore_idx);
 bool __sem_can_feed(uint8_t semaphore_idx);

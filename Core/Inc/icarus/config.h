@@ -68,9 +68,12 @@ extern "C" {
 #define ICARUS_MAX_MESSAGE_QUEUES   64
 
 /**
- * @brief Maximum bytes per message in a pipe
+ * @brief Maximum bytes per message pipe buffer
+ * @note  Widened to 512 to support Software Bus and CFDP PDU routing.
+ *        Each pipe uses this as the static buffer size regardless of
+ *        the capacity set at pipe_init() time.
  */
-#define ICARUS_MAX_MESSAGE_BYTES    128
+#define ICARUS_MAX_MESSAGE_BYTES    512
 
 /**
  * @brief Stack size per task in 32-bit words
