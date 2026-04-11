@@ -29,6 +29,7 @@ extern "C" {
 #include "icarus/pipe.h"
 #include "icarus/cdc_rx.h"
 #include "icarus/event.h"
+#include "icarus/crc.h"
 
 #ifdef __cplusplus
 }
