@@ -44,6 +44,7 @@ extern "C" {
 #include "bsp/cdc.h"        /* USB CDC raw write helper */
 #include "bsp/display.h"    /* Terminal display driver */
 #include "bsp/led.h"        /* LED control */
+#include "bsp/button.h"     /* User button (K1) */
 #include "bsp/iwdg.h"       /* Independent watchdog (IWDG1) */
 #include "bsp/error.h"      /* Error handling */
 
