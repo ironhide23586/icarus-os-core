@@ -56,6 +56,14 @@ ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
 
     task->stack_pointer = stack_top;
     task->data_pointer = data;
+    task->dispatch_count = 0;
+    task->stack_watermark = stack_size;  /* full stack = max free */
+
+    /* Fill stack with sentinel pattern for watermark detection */
+    for (uint32_t i = 0; i < stack_size - 16; i++) {
+        stack[i] = 0xDEADC0DEu;
+    }
+
     num_created_tasks++;
 }
 
@@ -130,4 +138,55 @@ ITCM_FUNC void __os_task_suicide(void)
     printf("[INFO] %s committed suicide\r\n",
            task_list[current_task_index]->name);
     __os_kill_process(current_task_index);
+}
+
+/**
+ * @brief  Privileged implementation of os_restart_task.
+ *
+ * @details Re-initializes a killed/finished task's stack frame from its
+ *          original function pointer and stack base.  The task re-enters
+ *          the scheduler as if freshly created — no new stack slot is
+ *          allocated, no memory is leaked.
+ *
+ * @param  task_index  Index of the task to restart (1-based).
+ * @pre    Task must be in TASK_STATE_KILLED or TASK_STATE_FINISHED.
+ */
+ITCM_FUNC void __os_restart_task(uint8_t task_index)
+{
+    if (task_index >= num_created_tasks || task_index == 0) {
+        return;
+    }
+
+    icarus_task_t *t = task_list[task_index];
+
+    if (t->task_state != TASK_STATE_KILLED &&
+        t->task_state != TASK_STATE_FINISHED) {
+        return;
+    }
+
+    /* Re-fill stack with sentinel for watermark tracking */
+    for (uint32_t i = 0; i < t->stack_size - 16; i++) {
+        t->stack_base[i] = 0xDEADC0DEu;
+    }
+
+    /* Re-initialize the exception frame — same as os_create_task */
+    uint32_t *stack_top = t->stack_base + t->stack_size - 1;
+
+    *(stack_top--) = 0x01000000;                          /* xPSR */
+    *(stack_top--) = (uint32_t)(uintptr_t)t->function;    /* PC   */
+    *(stack_top--) = (uint32_t)(uintptr_t)os_exit_task;   /* LR   */
+    *(stack_top--) = 0;                                   /* R12  */
+    *(stack_top--) = 0;                                   /* R3   */
+    *(stack_top--) = 0;                                   /* R2   */
+    *(stack_top--) = 0;                                   /* R1   */
+    *(stack_top)   = 0;                                   /* R0   */
+
+    t->stack_pointer      = stack_top;
+    t->task_state         = TASK_STATE_COLD;
+    t->global_tick_paused = 0;
+    t->ticks_to_pause     = 0;
+    t->dispatch_count     = 0;
+    t->stack_watermark    = t->stack_size;
+
+    running_task_count++;
 }

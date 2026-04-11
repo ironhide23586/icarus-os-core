@@ -141,7 +141,7 @@ static inline ITCM_FUNC void __init_sem(uint8_t semaphore_idx, uint32_t semaphor
     semaphore_list[semaphore_idx]->engaged = should_engage;
 }
 
-static inline ITCM_FUNC void __init_pipe(uint8_t message_pipe_idx, uint8_t max_messages,
+static inline ITCM_FUNC void __init_pipe(uint8_t message_pipe_idx, uint16_t max_messages,
                                bool should_engage)
 {
     message_pipe_list[message_pipe_idx]->count = 0;
@@ -350,4 +350,63 @@ ITCM_FUNC uint8_t __os_get_num_created_tasks(void) {
  */
 ITCM_FUNC uint8_t __os_is_running(void) {
     return os_running;
+}
+
+/**
+ * @brief  Privileged implementation of os_get_task_state.
+ * @param  task_idx  Task index.
+ * @return Task state enum value.
+ */
+ITCM_FUNC icarus_task_state_t __os_get_task_state(uint8_t task_idx) {
+    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+        return TASK_STATE_FINISHED;
+    }
+    return task_list[task_idx]->task_state;
+}
+
+/**
+ * @brief  Privileged implementation of os_get_task_dispatch_count.
+ * @param  task_idx  Task index.
+ * @return Dispatch count.
+ */
+ITCM_FUNC uint32_t __os_get_task_dispatch_count(uint8_t task_idx) {
+    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+        return 0;
+    }
+    return task_list[task_idx]->dispatch_count;
+}
+
+/**
+ * @brief  Privileged implementation of os_get_stack_watermark.
+ * @param  task_idx  Task index.
+ * @return Minimum free stack words observed.
+ */
+ITCM_FUNC uint32_t __os_get_stack_watermark(uint8_t task_idx) {
+    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+        return 0;
+    }
+    return task_list[task_idx]->stack_watermark;
+}
+
+/**
+ * @brief  Scan a task's stack from the base upward for the sentinel
+ *         pattern (0xDEADC0DE) and update the watermark.
+ * @param  task_idx  Task index.
+ */
+ITCM_FUNC void __os_update_stack_watermark(uint8_t task_idx) {
+    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+        return;
+    }
+    icarus_task_t *t = task_list[task_idx];
+    uint32_t free_words = 0;
+    for (uint32_t i = 0; i < t->stack_size; i++) {
+        if (t->stack_base[i] == 0xDEADC0DEu) {
+            free_words++;
+        } else {
+            break;
+        }
+    }
+    if (free_words < t->stack_watermark) {
+        t->stack_watermark = free_words;
+    }
 }
