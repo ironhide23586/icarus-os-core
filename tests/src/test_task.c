@@ -2015,6 +2015,7 @@ extern void run_cdc_rx_tests(void);
 extern void run_event_tests(void);
 extern void run_fs_tests(void);
 extern void run_tables_tests(void);
+extern void run_iwdg_tests(void);
 
 // Test runner
 int main(void) {
@@ -2216,6 +2217,9 @@ int main(void) {
 	run_event_tests();
 	run_fs_tests();
 	run_tables_tests();
+
+	/* BSP additions */
+	run_iwdg_tests();
 
 	return UNITY_END();
 }

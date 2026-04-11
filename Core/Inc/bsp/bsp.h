@@ -43,6 +43,7 @@ extern "C" {
 #include "bsp/usb.h"        /* USB CDC driver */
 #include "bsp/display.h"    /* Terminal display driver */
 #include "bsp/led.h"        /* LED control */
+#include "bsp/iwdg.h"       /* Independent watchdog (IWDG1) */
 #include "bsp/error.h"      /* Error handling */
 
 /* ============================================================================
