@@ -27,6 +27,7 @@ extern "C" {
 #include "icarus/task.h"
 #include "icarus/semaphore.h"
 #include "icarus/pipe.h"
+#include "icarus/cdc_rx.h"
 
 #ifdef __cplusplus
 }
