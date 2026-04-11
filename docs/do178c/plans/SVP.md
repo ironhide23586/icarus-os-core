@@ -1,10 +1,10 @@
 # Software Verification Plan (SVP)
 
-**Document ID:** ICARUS-SVP-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-SVP-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Added §4.5 Memory Protection Tests with red-team attack vectors and fault recovery verification |
+| 0.3 | 2026-04-11 | Souham Biswas | Added §4.6 Shared Service Module Tests for the v0.3.0 modules; updated §5.4 coverage baseline (91.8% line / 92.5% function across 196 host tests) |
 
 ---
 
@@ -254,6 +256,36 @@ MPU_BYPASS: attempts=4 faults=30 [DTCM PROTECTED]
 - Fault address and PC captured for analysis
 - System remains stable after multiple faults
 
+### 4.6 Shared Service Module Tests (v0.3.0)
+
+**Scope:** Verify the five v0.3.0 shared service modules
+(`cdc_rx`, `event`, `crc`, `fs`, `tables`) against their HLR-KRN-09x
+requirements.
+
+**Location:** `tests/src/test_<module>.c`. Each file declares an
+aggregator `void run_<module>_tests(void)` which `test_task.c`
+calls from `main()` after the existing kernel tests.
+
+| File | Tests | Verifies | Notes |
+|---|---:|---|---|
+| `test_crc.c` | 8 | HLR-KRN-092, .1, .2 | Canonical CCITT-FALSE vector ("123456789" → 0x29B1), single-byte vectors, NULL/zero-length, repeatability, single-bit and length sensitivity. The HW peripheral path is short-circuited under HOST_TEST so the host suite verifies the portable bytewise fallback. |
+| `test_cdc_rx.c` | 7 | HLR-KRN-090, .1, .2 | Init clears head/tail; push/drain FIFO order; 600-byte overflow into a 512-byte ring fills exactly to capacity-1; wraparound across the buffer end; zero-length push and read-on-empty are no-ops. |
+| `test_event.c` | 9 | HLR-KRN-091, .1, .2, .3 | Init resets ring + squelch; emit/drain roundtrip preserving module_id, severity, event_id, payload; per-module squelch drops below-threshold events; module_id ≥ MAX dropped silently; payload >12 B truncated; partial drains preserve FIFO order; ring overflow caps at the maximum count. |
+| `test_fs.c` | 16 | HLR-KRN-093, .1, .2 | Init/create/open/write/read/delete/list/stats; duplicate-name and invalid-name rejection; full-disk rejection; oversized-write rejection; offset reads; invalid-handle writes. |
+| `test_tables.c` | 16 | HLR-KRN-094, .1, .2, .3 | Register/load/activate/dump roundtrip; NULL/duplicate/invalid-size register rejection; load against unknown id; load overflow; activate without load; schema_crc mismatch rejected before callback fires; activate-callback returning false leaves the active buffer untouched (verifying the priv↔thread split); chunked load reassembly. |
+
+**Test Execution:**
+- All 56 new tests run as part of the standard `make -C tests` host
+  build alongside the existing kernel suite.
+- Aggregators are wired into `test_task.c`'s single Unity entry point
+  via `extern` declarations followed by `run_<module>_tests()` calls
+  after the existing tests.
+
+**Pass criteria (v0.3.0 baseline):** 196/196 host tests passing,
+zero failures. The previous baseline was 140/140 — the +56 tests
+brought total kernel coverage back to 91.8% line / 92.5% function
+after the new modules expanded the coverage denominator.
+
 
 ---
 
@@ -306,10 +338,10 @@ See `ICARUS-VER-002 Deactivated Code Analysis` for complete list.
 
 | Component | Statement | Functions | Status |
 |-----------|-----------|-----------|--------|
-| `Core/Src/icarus/*.c` (aggregate) | ~91% stmt | ~90% fn | Host Unity tests (see `verification/coverage_analysis.md`) |
+| `Core/Src/icarus/*.c` (aggregate) | ~92% stmt | ~92% fn | Host Unity tests (see `verification/coverage_analysis.md`); includes the v0.3.0 shared modules `cdc_rx`, `event`, `crc`, `fs`, `tables` |
 | bsp/display.c | ~94% | 100% | Host tests |
 | bsp/stm32h7xx_it.c | ~63% | 40% | Fault paths: target / review |
-| **Overall (filtered host report)** | **91.1%** | **89.5%** | Regenerate with `tests/make coverage-summary` |
+| **Overall (filtered host report, v0.3.0 baseline)** | **91.8%** | **92.5%** | 196 host tests; regenerate with `tests/make coverage-summary` |
 
 **Adjusted (excluding justified deactivated code):** Documented in `deactivated_code.md` and refreshed with each baseline.
 

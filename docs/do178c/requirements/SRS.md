@@ -1,10 +1,10 @@
 # Software Requirements Specification (SRS)
 
-**Document ID:** ICARUS-SRS-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-SRS-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Added 14 memory protection requirements (HLR-KRN-063 to HLR-KRN-086) |
+| 0.3 | 2026-04-11 | Souham Biswas | Added 5 shared service module requirements (HLR-KRN-090 to HLR-KRN-094): CDC RX ring buffer, event ring + squelch, CRC16 helper, internal filesystem, ground-loadable table engine |
 
 ---
 
@@ -162,6 +164,35 @@ The following system-level requirements are allocated to ICARUS OS:
 | HLR-KRN-084 | The kernel shall support watchdog integration | Should | Planned |
 | HLR-KRN-085 | The kernel shall log fault information for diagnostics | Should | ✅ Implemented |
 | HLR-KRN-086 | The kernel shall support fault recovery (task restart) | Could | Planned |
+
+#### 3.1.8 Shared Service Modules
+
+The shared service modules provide reusable kernel infrastructure for
+serial input buffering, structured event logging, integrity checks,
+scratch storage, and ground-loadable configuration tables. All five
+follow the kernel's MPU-aware privilege-separation pattern (DTCM_PRIV
+backing data, ITCM hot path, SVC-gated public API). See SDD §3.10 for
+the detailed design.
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| HLR-KRN-090 | The kernel shall provide a single-producer / single-consumer USB CDC receive ring buffer with capacity ≥ 256 bytes, callable from a privileged ISR producer and an unprivileged thread-mode consumer | Must | ✅ Implemented |
+| HLR-KRN-090.1 | The CDC RX ring buffer shall not block the USB ISR — overflow shall silently drop incoming bytes rather than wait | Must | ✅ Implemented |
+| HLR-KRN-090.2 | Thread-mode consumer reads of the CDC RX ring shall route through SVC gates so the ring data may live in privileged-only DTCM | Must | ✅ Implemented |
+| HLR-KRN-091 | The kernel shall provide a generic structured event ring buffer with per-module severity squelch filtering | Must | ✅ Implemented |
+| HLR-KRN-091.1 | Event entries shall be fixed at 16 bytes (header + ≤12 byte payload) for deterministic memory budget | Must | ✅ Implemented |
+| HLR-KRN-091.2 | The event module shall be transport-agnostic — it shall drain into a caller-provided buffer rather than encoding any specific telemetry format | Must | ✅ Implemented |
+| HLR-KRN-091.3 | Event emission shall be O(1) and non-blocking; ring overflow shall overwrite the oldest entry rather than block the producer | Must | ✅ Implemented |
+| HLR-KRN-092 | The kernel shall provide a CRC16-CCITT helper (polynomial 0x1021, initial value 0xFFFF, no reflection) | Must | ✅ Implemented |
+| HLR-KRN-092.1 | On STM32H7 target, the CRC16 helper shall use the on-chip CRC peripheral on the AHB4 bus rather than a software loop | Should | ✅ Implemented |
+| HLR-KRN-092.2 | A portable software fallback shall be available under HOST_TEST so unit tests run unchanged off-target | Must | ✅ Implemented |
+| HLR-KRN-093 | The kernel shall provide a minimal flat-file storage layer with create/open/read/write/delete/list/stats operations | Must | ✅ Implemented |
+| HLR-KRN-093.1 | The filesystem shall support at least 16 named files of at least 2 KB each, totalling at least 32 KB capacity | Must | ✅ Implemented |
+| HLR-KRN-093.2 | The on-disk format shall be opaque to allow a real flash backend to be substituted later without changing the public API | Should | ✅ Implemented |
+| HLR-KRN-094 | The kernel shall provide a generic ground-loadable table engine with double-buffered staging/active swap | Must | ✅ Implemented |
+| HLR-KRN-094.1 | Table activation shall be gated by both a schema CRC and a data CRC16; mismatches shall reject the activation atomically | Must | ✅ Implemented |
+| HLR-KRN-094.2 | The activate callback registered by a table producer shall execute in unprivileged thread mode against a stack scratch copy of the staged bytes — never against the live DTCM_PRIV staging buffer | Must | ✅ Implemented |
+| HLR-KRN-094.3 | The active table buffer shall not be modified until the activate callback returns success | Must | ✅ Implemented |
 
 ---
 

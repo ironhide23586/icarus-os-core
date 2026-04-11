@@ -1,7 +1,7 @@
 # Test Traceability Matrix
 
 **Document ID:** ICARUS-VER-003  
-**Version:** 0.1  
+**Version:** 0.3
 **Date:** 2026-04-01  
 **Status:** Draft  
 **Classification:** Public (Open Source)  
@@ -152,6 +152,48 @@ Requirements (HLR/LLR) → Test Cases → Source Code
 | SVC-008 | SVC get_num_tasks shall return created count | `test_os_get_num_created_tasks_svc` | `SVC_Handler_C()` |
 | SVC-009 | SVC os_is_running shall return running flag | `test_os_is_running_svc` | `SVC_Handler_C()` |
 
+### 3.13 Kernel - CRC16-CCITT helper *(v0.3.0)*
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| HLR-KRN-092 | Provide CRC16-CCITT (poly 0x1021, init 0xFFFF) | `test_crc16_ccitt_canonical_vector` | `crc16_ccitt()` |
+| HLR-KRN-092.1 | Use STM32H7 on-chip CRC peripheral on target | covered by target smoke test (HW path short-circuited under HOST_TEST) | `crc16_ccitt()` |
+| HLR-KRN-092.2 | Provide HOST_TEST fallback | `test_crc16_ccitt_canonical_vector`, `test_crc16_ccitt_single_byte_zero`, `test_crc16_ccitt_single_byte_ff`, `test_crc16_ccitt_zero_length`, `test_crc16_ccitt_null_data`, `test_crc16_ccitt_repeatable`, `test_crc16_ccitt_sensitive_to_single_bit`, `test_crc16_ccitt_length_sensitive` | `crc16_ccitt()` |
+
+### 3.14 Kernel - CDC RX ring buffer *(v0.3.0)*
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| HLR-KRN-090 | Provide SPSC USB CDC receive ring buffer | `test_cdc_rx_init_empty`, `test_cdc_rx_push_and_drain`, `test_cdc_rx_fifo_order` | `cdc_rx_init()`, `cdc_rx_push()`, `cdc_rx_read_byte()` |
+| HLR-KRN-090.1 | Non-blocking; overflow drops bytes silently | `test_cdc_rx_fills_to_capacity` | `cdc_rx_push()` |
+| HLR-KRN-090.2 | Reads route through SVC gates so ring may live in DTCM_PRIV | `test_cdc_rx_wrap_around`, `test_cdc_rx_push_zero_length`, `test_cdc_rx_read_byte_when_empty` | `cdc_rx_read_byte()`, `cdc_rx_available()` |
+
+### 3.15 Kernel - Event ring + per-module squelch *(v0.3.0)*
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| HLR-KRN-091 | Provide structured event ring buffer + squelch | `test_event_init_clears_state`, `test_event_emit_one_increments_count`, `test_event_drain_returns_what_was_emitted` | `event_init()`, `os_event()`, `event_drain()` |
+| HLR-KRN-091.1 | Fixed 16-byte event entries | `test_event_drain_returns_what_was_emitted`, `test_event_payload_truncated_to_12` | `event_entry_t`, `os_event()` |
+| HLR-KRN-091.2 | Transport-agnostic drain | `test_event_drain_partial`, `test_event_drain_empty_ring_returns_false` | `event_drain()` |
+| HLR-KRN-091.3 | O(1) non-blocking emit; ring overflow overwrites oldest | `test_event_squelch_drops_low_severity`, `test_event_invalid_module_id_dropped`, `test_event_drain_full_ring` | `os_event()` |
+
+### 3.16 Kernel - Internal flat-file filesystem *(v0.3.0)*
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| HLR-KRN-093 | Provide create/open/read/write/delete/list/stats | `test_fs_init_clean_state`, `test_fs_create_basic`, `test_fs_open_existing`, `test_fs_open_missing_fails`, `test_fs_write_read_roundtrip`, `test_fs_write_appends`, `test_fs_delete_existing`, `test_fs_delete_missing_fails`, `test_fs_list`, `test_fs_stats_after_writes`, `test_fs_read_offset` | `fs_init/create/open/write/read/delete/list/stats` |
+| HLR-KRN-093.1 | At least 16 files × 2 KB = 32 KB capacity | `test_fs_create_full_disk`, `test_fs_write_overflow_rejected`, `test_fs_create_duplicate_fails`, `test_fs_create_invalid_name`, `test_fs_write_invalid_handle` | `fs_create()`, `fs_write()` |
+| HLR-KRN-093.2 | Opaque on-disk format | covered by API contract — exercised across the full test set | n/a |
+
+### 3.17 Kernel - Ground-loadable table engine *(v0.3.0)*
+
+| Req ID | Requirement | Test Case(s) | Source Function |
+|--------|-------------|--------------|-----------------|
+| HLR-KRN-094 | Provide table engine with double-buffered swap | `test_tbl_init_clears_registry`, `test_tbl_register_basic`, `test_tbl_register_null_fails`, `test_tbl_register_duplicate_fails`, `test_tbl_register_invalid_size_fails`, `test_tbl_load_unknown_id_fails`, `test_tbl_load_null_data_fails`, `test_tbl_load_overflow_rejected`, `test_tbl_dump_returns_active`, `test_tbl_dump_unknown_id_fails`, `test_tbl_chunked_load`, `test_tbl_get_descriptor_unknown` | `tbl_init/register/load/dump/get_descriptor/count` |
+| HLR-KRN-094.1 | Schema CRC + data CRC16 gated activation | `test_tbl_activate_schema_crc_mismatch`, `test_tbl_activate_round_trip` | `tbl_activate()` |
+| HLR-KRN-094.2 | Activate callback runs in thread mode against scratch copy | `test_tbl_activate_round_trip` (verifies the callback observes the staged bytes via the scratch buffer) | `tbl_activate()` |
+| HLR-KRN-094.3 | Active buffer immutable until callback OKs | `test_tbl_activate_callback_rejection`, `test_tbl_activate_without_load_fails` | `tbl_activate()` |
+
 ## 4. Test Case Summary
 
 Run `cd tests && make test` to obtain current pass/fail results.
@@ -165,12 +207,17 @@ Run `cd tests && make test` to obtain current pass/fail results.
 | Kernel - Message Pipes | 19 |
 | Kernel - Print Buffer | 5 |
 | Kernel - SVC Dispatch | 11 |
+| Kernel - CRC16-CCITT helper *(v0.3.0)* | 8 |
+| Kernel - CDC RX ring buffer *(v0.3.0)* | 7 |
+| Kernel - Event ring + squelch *(v0.3.0)* | 9 |
+| Kernel - Internal filesystem *(v0.3.0)* | 16 |
+| Kernel - Ground-loadable table engine *(v0.3.0)* | 16 |
 | BSP - Display | 21 |
 | BSP - LED | 4 |
 | BSP - Platform I/O | 7 |
 | BSP - Standard I/O | 3 |
 | BSP - Interrupts | 8 |
-| **Total** | **~140** |
+| **Total** | **196** |
 
 > **Note:** counts above are approximate; the canonical test count comes from the
 > Unity runner output at test execution time.
@@ -201,3 +248,4 @@ The following requirements require target integration testing:
 |---------|------|--------|---------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
 | 0.2 | 2026-04-01 | Souham Biswas | Added SVC tests; updated counts to ~140; reconciled semaphore/pipe test names |
+| 0.3 | 2026-04-11 | Souham Biswas | Added 56 host tests for the v0.3.0 shared modules across `test_crc.c` (8), `test_cdc_rx.c` (7), `test_event.c` (9), `test_fs.c` (16), and `test_tables.c` (16); total bumped 140 → 196 |

@@ -1,10 +1,10 @@
 # Software Design Description (SDD)
 
-**Document ID:** ICARUS-SDD-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-SDD-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Added MPU protection architecture (§4.2), DTCM/ITCM placement, SVC call-gate dispatch model |
+| 0.3 | 2026-04-11 | Souham Biswas | Added shared service modules (CDC RX, event ring, CRC16, internal filesystem, table engine) to the component summary; SVC count grew 40 → 57; HW CRC peripheral integration noted; tbl_activate priv↔thread split documented |
 
 ---
 
@@ -103,6 +105,12 @@ This document covers:
 | Context Switch | ✅ Implemented | `Core/Src/icarus/context_switch.s` | ARM assembly context save/restore |
 | Semaphores | ✅ Implemented | `Core/Src/icarus/semaphore.c` | Bounded counting semaphores |
 | Message pipes (IPC) | ✅ Implemented | `Core/Src/icarus/pipe.c` | FIFO byte-stream queues (see `pipe.h`) |
+| SVC dispatcher | ✅ Implemented | `Core/Src/icarus/svc.c` | 57 numbered call gates between unprivileged tasks and privileged kernel state |
+| **CDC RX ring buffer** | ✅ Implemented (v0.3) | `Core/Src/icarus/cdc_rx.c` | 512 B SPSC USB CDC receive ring; producer is the privileged USB ISR, consumer is any RTOS task. Backing data in `DTCM_DATA_PRIV`, hot path in `ITCM_FUNC`, thread-mode reads through SVC gates 40–42. |
+| **Event ring + squelch** | ✅ Implemented (v0.3) | `Core/Src/icarus/event.c` | 32-slot ring of compact 16-byte event entries with a 16-entry per-module severity squelch. Transport-agnostic (drains into a caller-provided buffer). SVC gates 43–48. |
+| **CRC16-CCITT helper** | ✅ Implemented (v0.3) | `Core/Src/icarus/crc.c` | `crc16_ccitt(data, len)` with poly 0x1021, init 0xFFFF. **Hardware-accelerated** on STM32H7 via the on-chip CRC peripheral on the AHB4 bus, lazy-initialised on first call. Portable bytewise fallback under HOST_TEST. |
+| **Internal flat-file filesystem** | ✅ Implemented (v0.3) | `Core/Src/icarus/fs.c` | 16 files × 2 KB = 32 KB RAM-backed store with create/open/write/read/delete/list/stats. Functions placed in ITCM; the 32 KB store stays in regular SRAM (won't fit DTCM). |
+| **Ground-loadable table engine** | ✅ Implemented (v0.3) | `Core/Src/icarus/tables.c` | Registry of up to 8 tables with double-buffered staging/active swap. CRC-validated load / activate / dump with a registered activate callback that runs in unprivileged thread mode against a stack scratch copy. SVC gates 49–56. |
 | AI Runtime | 🔲 Planned | TBD | Deterministic inference |
 | BSP - GPIO | ✅ Implemented | `bsp/gpio.c` | Digital I/O |
 | BSP - I2C | ✅ Implemented | `bsp/i2c.c` | I2C communication |
@@ -819,6 +827,155 @@ typedef struct {
 | int8/int16 types | HLR-AI-011, HLR-AI-014, HLR-AI-015 |
 | wcet_us field | HLR-AI-012 |
 | Static buffers | HLR-AI-013 |
+
+### 3.10 Shared Service Modules (v0.3.0)
+
+The shared service modules provide reusable kernel infrastructure that
+sits at the same architectural level as the IPC primitives but addresses
+domains common to most flight-software applications: serial input
+buffering, structured event logging, integrity checks, scratch storage,
+and ground-loadable configuration tables.
+
+All five modules follow the kernel's existing privilege-separation
+pattern: backing data lives in `DTCM_DATA_PRIV`, hot functions are
+placed in `ITCM_FUNC`, and every public entry point that an unprivileged
+task may call is split into a `__`-prefixed privileged implementation
+plus an `svc.c` wrapper that issues a numbered SVC instruction. Under
+`HOST_TEST` the wrappers short-circuit straight to the `__`
+implementation so the host suite needs no special-casing.
+
+#### 3.10.1 CDC RX Ring Buffer (`Core/Src/icarus/cdc_rx.c`)
+
+| Property | Value |
+|---|---|
+| Backing storage | 512 B ring + head/tail cursors in `.dtcm_priv` |
+| Hot path placement | `.itcm` |
+| SVC numbers | 40 (`SVC_CDC_RX_INIT`), 41 (`SVC_CDC_RX_READ_BYTE`), 42 (`SVC_CDC_RX_AVAILABLE`) |
+| ISR producer path | `cdc_rx_push` calls `__cdc_rx_push` directly (no SVC) — the USB CDC ISR is already in privileged handler context |
+
+Single-producer / single-consumer lock-free ring buffer for incoming
+serial data over the kernel's USB CDC class. The producer is the
+`CDC_Receive_FS` callback which executes in the privileged USB ISR; the
+consumer is any RTOS task draining bytes via `cdc_rx_read_byte`. No
+locking is needed for the ring head/tail because aligned 32-bit writes
+are atomic on Cortex-M7 and the producer/consumer roles are fixed.
+
+#### 3.10.2 Event Ring + Per-Module Squelch (`Core/Src/icarus/event.c`)
+
+| Property | Value |
+|---|---|
+| Backing storage | 32 × 16-byte entries + 16 squelch bytes + cursors in `.dtcm_priv` |
+| Hot path placement | `.itcm` |
+| SVC numbers | 43–48 (init, os_event, set/get_squelch, drain, get_count) |
+| Drain semantics | FIFO; oldest entries first; partial drains supported |
+
+A transport-agnostic structured event ring. Producers call
+`os_event(module_id, severity, event_id, payload, payload_len)` which
+packs the event into a fixed 16-byte slot. Per-module severity squelch
+filters at emission time so dropped events never consume ring slots.
+Downstream consumers drain entries into a caller-provided buffer via
+`event_drain` and decide independently how to ship them (CCSDS
+telemetry, file logging, etc); the kernel module itself has no
+transport coupling.
+
+The five user-level args of `os_event` pack into three SVC registers
+as `R0 = (event_id << 16) | (severity << 8) | module_id`,
+`R1 = payload pointer`, `R2 = payload_len`, staying inside the AAPCS
+R0–R3 budget without spilling to the caller's stack.
+
+#### 3.10.3 CRC16-CCITT Helper (`Core/Src/icarus/crc.c`)
+
+| Property | Value |
+|---|---|
+| Polynomial | 0x1021 |
+| Initial value | 0xFFFF |
+| Hardware backend | STM32H7 on-chip CRC peripheral on the AHB4 bus, lazy-initialised on first call |
+| Host fallback | Portable bytewise loop under `HOST_TEST` |
+| Thread safety | Each call wraps a critical section because the CRC peripheral has internal state shared across tasks |
+| Placement | `ITCM_FUNC`; no SVC gate (the peripheral access itself is `enter_critical()`-protected) |
+
+Common dependency for CCSDS Space Packet integrity checks and small
+flash record protection. The hardware path is approximately 4× faster
+than the bytewise software loop on the buffer sizes used by downstream
+consumers (kvstore record validation, table-services data CRC).
+
+#### 3.10.4 Internal Flat-File Filesystem (`Core/Src/icarus/fs.c`)
+
+| Property | Value |
+|---|---|
+| Capacity | 16 files × 2 KB = 32 KB total |
+| Backing storage | Static byte array in regular SRAM (32 KB will not fit DTCM) |
+| Hot path placement | `.itcm` |
+| Concurrency | `enter_critical()` / `exit_critical()` around table mutations |
+
+A minimal flat-file storage layer with `create / open / write / read /
+delete / list / stats`. The on-disk format is opaque so a real flash
+backend can be wired in later without changing the public API.
+
+The 32 KB store is the only shared module that does **not** live in
+`DTCM_DATA_PRIV` — it would consume a quarter of the entire DTCM
+budget, which is uneconomic given the kernel control state already
+allocated there. The deliberate trade-off is documented in the source
+header. If MPU lockdown becomes a hard requirement for the filesystem
+data, the alternatives are (a) shrink to ≤ 16 KB and move into DTCM,
+or (b) place the store in RAM_D2 with an MPU region carved out per
+caller.
+
+#### 3.10.5 Ground-Loadable Table Engine (`Core/Src/icarus/tables.c`)
+
+| Property | Value |
+|---|---|
+| Capacity | Up to 8 registered tables, each ≤ 512 B |
+| Backing storage | 8 × `tbl_slot_t` (≈ 1056 B each) in `.dtcm_priv`, total ≈ 8.3 KB |
+| Hot path placement | `.itcm` |
+| SVC numbers | 49 (init), 50 (register), 51 (load), 52 (activate_prepare), 53 (activate_commit), 54 (dump), 55 (get_descriptor), 56 (count) |
+| Activate callback | Runs in unprivileged thread mode against a stack scratch copy — never sees `DTCM_PRIV` |
+
+Generic ground-loadable table engine. Tables are validated by schema
+CRC and CRC16 data checksum, then committed via a registered activate
+callback. Application-specific table identifiers (e.g. FDIR rules,
+scheduler slots, limit-checker watchpoints) live in downstream
+consumers; the engine itself is generic.
+
+`tbl_activate` is the only call in any of the new modules that must
+straddle privileged and unprivileged execution: the registered activate
+callback is user code that may issue further SVCs, so it cannot run
+inside the SVC handler. The wrapper splits the operation across two
+SVCs:
+
+```
+__tbl_activate_prepare()  ── SVC 52: validate + copy staging into a
+                                     thread-mode scratch buffer
+user activate(scratch)    ── runs in thread mode, no SVC
+__tbl_activate_commit()   ── SVC 53: copy scratch into the active buffer
+```
+
+The active buffer never moves until the callback succeeds, so a
+rejecting callback leaves the previous configuration in place
+atomically.
+
+#### 3.10.6 Section Footprint Summary
+
+```
+cdc_rx.o    .itcm  =   156 B   .dtcm_priv =    520 B
+event.o     .itcm  =   336 B   .dtcm_priv =    536 B
+tables.o    .itcm  =   796 B   .dtcm_priv =  8 484 B
+crc.o       .itcm  ≈    96 B   .dtcm_priv =      0 B   (pure function)
+fs.o        .itcm  ≈ 1 100 B   regular SRAM = 32 KB    (32 KB store)
+```
+
+The DTCM total grows by ≈ 9.6 KB on top of the existing kernel
+control state — well within the 128 KB budget.
+
+#### 3.10.7 Traceability
+
+| Design Element | Implements Requirement |
+|---|---|
+| `cdc_rx_*` | HLR-KRN-090 |
+| `os_event` / `event_drain` / squelch | HLR-KRN-091 |
+| `crc16_ccitt` (HW peripheral) | HLR-KRN-092 |
+| `fs_*` (16-file flat store) | HLR-KRN-093 |
+| `tbl_load` / `tbl_activate` / `tbl_dump` | HLR-KRN-094 |
 
 
 ---

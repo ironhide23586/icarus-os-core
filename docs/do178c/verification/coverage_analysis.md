@@ -1,10 +1,10 @@
 # Structural Coverage Analysis Report
 
-**Document ID:** ICARUS-VER-001  
-**Version:** 0.2  
-**Date:** 2026-04-01  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-VER-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ## 1. Purpose
 
@@ -19,9 +19,14 @@ This analysis covers host-based unit testing of kernel and BSP sources under `Co
 | Kernel core | `Core/Src/icarus/kernel.c` | Initialization, critical sections, lifecycle |
 | Scheduler | `Core/Src/icarus/scheduler.c` | Preemption and scheduling |
 | Tasks | `Core/Src/icarus/task.c` | Task control blocks, yields, sleep |
-| SVC | `Core/Src/icarus/svc.c` | Supervisor call dispatch |
+| SVC | `Core/Src/icarus/svc.c` | Supervisor call dispatch (57 numbered services) |
 | Semaphores | `Core/Src/icarus/semaphore.c` | Counting semaphores |
 | Pipes | `Core/Src/icarus/pipe.c` | Byte-stream IPC |
+| **CDC RX** | `Core/Src/icarus/cdc_rx.c` | USB CDC receive ring buffer (v0.3.0) |
+| **Event ring** | `Core/Src/icarus/event.c` | Generic event ring + per-module squelch (v0.3.0) |
+| **CRC16** | `Core/Src/icarus/crc.c` | CRC16-CCITT helper, HW peripheral on target (v0.3.0) |
+| **Filesystem** | `Core/Src/icarus/fs.c` | Internal flat-file filesystem (v0.3.0) |
+| **Tables** | `Core/Src/icarus/tables.c` | Ground-loadable table engine (v0.3.0) |
 | Display BSP | `Core/Src/bsp/display.c` | Terminal / GUI helpers |
 | I/O BSP | `Core/Src/bsp/retarget_stdio.c` | Stdio retarget |
 | HAL BSP | `Core/Src/bsp/retarget_hal.c` | HAL glue for tests |
@@ -36,32 +41,38 @@ This analysis covers host-based unit testing of kernel and BSP sources under `Co
 
 ### 3.1 Summary
 
-Figures below were produced with `cd tests && make coverage-summary` on 2026-04-01 (macOS, Homebrew `lcov`, after excluding mocks, `unity.c`, and `test_task.c` per the project Makefile filters).
+Figures below were produced with `cd tests && make COVERAGE=yes clean test coverage-summary` on 2026-04-11 (macOS, Homebrew `lcov`, after excluding mocks, `unity.c`, and `test_task.c` per the project Makefile filters).
 
 | Metric | Achieved | Required (DAL C) | Required (DAL B) | Required (DAL A) |
 |--------|----------|------------------|------------------|------------------|
-| Statement Coverage | 91.1% | 100%* | 100% | 100% |
-| Decision Coverage | TBD | - | 100% | 100% |
-| MC/DC Coverage | TBD | - | - | 100% |
+| Statement Coverage | 91.8% | 100%* | 100% | 100% |
+| Function Coverage  | 92.5% | 100%* | 100% | 100% |
+| Decision Coverage  | TBD   | -     | 100% | 100% |
+| MC/DC Coverage     | TBD   | -     | -    | 100% |
 
 *With justified deactivated/dead code exclusions
 
 ### 3.2 Per-file coverage (instrumented lines)
 
-| File | Lines hit / total | Line % | Function % |
-|------|-------------------|--------|------------|
-| `icarus/task.c` | 59/59 | 100% | 100% |
-| `icarus/pipe.c` | 85/91 | 93.4% | 100% |
-| `icarus/svc.c` | 83/89 | 93.3% | 92.5% |
-| `icarus/semaphore.c` | 64/68 | 94.1% | 100% |
-| `icarus/kernel.c` | 75/88 | 85.2% | 84.6% |
-| `icarus/scheduler.c` | 34/42 | 81.0% | 100% |
-| `bsp/display.c` | 220/233 | 94.4% | 100% |
-| `bsp/retarget_hal.c` | 70/74 | 94.6% | 100% |
-| `bsp/retarget_stdio.c` | 9/12 | 75.0% | 100% |
-| `bsp/stm32h7xx_it.c` | 15/24 | 62.5% | 40.0% |
-| `bsp/error.c` | 0/4 | 0.0% | 0.0% |
-| **Total (filtered)** | **714/784** | **91.1%** | **89.5%** |
+| File | Line % | Lines | Function % | Functions | Notes |
+|------|-------:|------:|-----------:|----------:|-------|
+| `icarus/task.c` | 100.0% | 59 | 100.0% | 5 | |
+| `icarus/crc.c` | **100.0%** | 15 | 100.0% | 1 | v0.3.0 — HW path short-circuited under HOST_TEST |
+| `icarus/cdc_rx.c` | **96.4%** | 28 | 100.0% | 4 | v0.3.0 |
+| `icarus/svc.c` | 95.7% | 139 | 94.7% | 57 | Grew with the 17 new SVC dispatch arms |
+| `icarus/semaphore.c` | 94.1% | 68 | 100.0% | 9 | |
+| `icarus/pipe.c` | 93.4% | 91 | 100.0% | 9 | |
+| `icarus/event.c` | **92.5%** | 67 | 100.0% | 6 | v0.3.0 |
+| `icarus/fs.c` | **92.1%** | 139 | 100.0% | 10 | v0.3.0 |
+| `icarus/tables.c` | **89.8%** | 98 | 100.0% | 9 | v0.3.0 |
+| `icarus/kernel.c` | 85.2% | 88 | 84.6% | 13 | |
+| `icarus/scheduler.c` | 81.0% | 42 | 100.0% | 8 | |
+| `bsp/display.c` | 94.4% | 233 | 100.0% | 10 | |
+| `bsp/retarget_hal.c` | 94.4% | 71 | 100.0% | 8 | |
+| `bsp/retarget_stdio.c` | 75.0% | 12 | 100.0% | 1 | |
+| `bsp/stm32h7xx_it.c` | 62.5% | 24 | 40.0% | 10 | Fault paths target/review |
+| `bsp/error.c` | 0.0% | 4 | 0.0% | 1 | Halt routine |
+| **Total (filtered)** | **91.8%** | **1178** | **92.5%** | **161** | |
 
 ### 3.3 Partially covered or deactivated areas
 
@@ -94,7 +105,7 @@ Re-run after changes. Example command:
 cd tests && make test
 ```
 
-The suite defines **140** tests; record pass/fail counts from your baseline run in verification records.
+The suite defines **196** tests as of v0.3.0 (140 in `test_task.c` plus 56 in the per-module aggregator files `test_crc.c`, `test_cdc_rx.c`, `test_event.c`, `test_fs.c`, `test_tables.c`); record pass/fail counts from your baseline run in verification records.
 
 ## 5. Coverage gap analysis
 

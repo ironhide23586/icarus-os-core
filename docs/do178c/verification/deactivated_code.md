@@ -1,10 +1,10 @@
 # Deactivated Code Analysis
 
-**Document ID:** ICARUS-VER-002  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-VER-002
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ## 1. Purpose
 
@@ -271,3 +271,5 @@ All identified deactivated code has been analyzed and justified. The deactivated
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Reviewed against v0.2.0 MPU additions; no new deactivated paths introduced (red-team attack tasks are exercised at runtime, not deactivated) |
+| 0.3 | 2026-04-11 | Souham Biswas | Reviewed against v0.3.0 shared service modules. The HW CRC peripheral path in `crc.c` is `#ifndef HOST_TEST` — it is *not* deactivated code; it is target-only and exercised by on-target smoke tests with the corresponding HOST_TEST fallback covered by host unit tests. The `cdc_rx_push` ISR-direct path in the public wrapper is also target-active and exercised by the USB CDC class driver on hardware. No newly deactivated branches in the v0.3.0 modules. |

@@ -1,10 +1,10 @@
 # Plan for Software Aspects of Certification (PSAC)
 
-**Document ID:** ICARUS-PSAC-001  
-**Version:** 0.1  
-**Date:** 2025-01-26  
-**Status:** Draft  
-**Classification:** Public (Open Source)  
+**Document ID:** ICARUS-PSAC-001
+**Version:** 0.3
+**Date:** 2026-04-11
+**Status:** Draft
+**Classification:** Public (Open Source)
 
 ---
 
@@ -23,6 +23,8 @@
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
+| 0.2 | 2026-04-01 | Souham Biswas | Aligned with v0.2.0 release: MPU-based memory protection added to the certification scope; SVC call gates expanded to 40 numbered services; supersedes the original "no MPU" assumption |
+| 0.3 | 2026-04-11 | Souham Biswas | Aligned with v0.3.0 release: shared service modules (CDC RX, event ring, CRC16 with HW peripheral, internal filesystem, ground-loadable table engine) added to the certification scope; SVC call gates expanded 40 → 57; software identification updated to track the new requirement set HLR-KRN-090..094 |
 
 ---
 
