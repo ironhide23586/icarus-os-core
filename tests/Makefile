@@ -24,7 +24,12 @@ KERNEL_SRC = \
 	$(PROJECT_ROOT)/Core/Src/icarus/task.c \
 	$(PROJECT_ROOT)/Core/Src/icarus/semaphore.c \
 	$(PROJECT_ROOT)/Core/Src/icarus/pipe.c \
-	$(PROJECT_ROOT)/Core/Src/icarus/svc.c
+	$(PROJECT_ROOT)/Core/Src/icarus/svc.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/cdc_rx.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/event.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/crc.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/fs.c \
+	$(PROJECT_ROOT)/Core/Src/icarus/tables.c
 BSP_SRC = \
 	$(PROJECT_ROOT)/Core/Src/bsp/error.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_stdio.c \

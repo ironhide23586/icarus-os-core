@@ -30,6 +30,7 @@
 #include "main.h"
 #include "interactive_tasks.h"
 #include "game/game.h"
+#include "showcase_tasks.h"
 
 /* ============================================================================
  * CONFIGURATION
@@ -58,6 +59,14 @@
  * @note  Set to 1 to enable the game, 0 to disable
  */
 #define ENABLE_GAME         1
+
+/**
+ * @brief Enable shared-modules showcase (crc + cdc_rx + event + fs + tables)
+ * @note  Set to 1 to register the showcase tasks, 0 to disable. Cannot
+ *        run alongside the game when the LCD display is in use; intended
+ *        as a standalone smoke test of the recently extracted modules.
+ */
+#define ENABLE_SHOWCASE     0
 
 /** @brief ANSI escape code to show cursor (used in error path) */
 #define ANSI_SHOW_CURSOR()  printf("\033[?25h")
@@ -105,6 +114,10 @@ int main(void)
 
 #if ENABLE_GAME
     game_init();
+#endif
+
+#if ENABLE_SHOWCASE
+    showcase_tasks_init();
 #endif
 
     os_start();
