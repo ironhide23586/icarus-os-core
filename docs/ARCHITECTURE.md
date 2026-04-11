@@ -1,8 +1,8 @@
 # ICARUS OS Architecture
 
-**Version:** 0.1.0  
-**Target:** STM32H750VBT6 (ARM Cortex-M7 @ 480MHz)  
-**Author:** Souham Biswas  
+**Version:** 0.3.0
+**Target:** STM32H750VBT6 (ARM Cortex-M7 @ 480MHz)
+**Author:** Souham Biswas
 **Date:** 2026
 
 ## Table of Contents
@@ -35,19 +35,22 @@ ICARUS OS is a preemptive real-time operating system kernel designed for safety-
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    APPLICATION LAYER                         │
-│  User tasks, game logic, demo applications                   │
+│  User tasks, game logic, demo applications, showcase tasks   │
 ├─────────────────────────────────────────────────────────────┤
 │                      RTOS API LAYER                          │
-│  Semaphores, Pipes, Task Management                          │
+│  Semaphores, Pipes, Tasks                                    │
+│  CDC RX ring · Event ring + squelch · CRC16 (HW-accelerated) │
+│  Internal flat-file FS · Ground-loadable table engine        │
 ├─────────────────────────────────────────────────────────────┤
 │                      KERNEL LAYER                            │
-│  Scheduler, Context Switch, SVC Handler, MPU Manager         │
+│  Scheduler, Context Switch, SVC Handler (57 gates),          │
+│  MPU Manager                                                 │
 ├─────────────────────────────────────────────────────────────┤
 │                   BOARD SUPPORT PACKAGE                      │
 │  GPIO, SPI, I2C, USB, Display, RTC, Timer                    │
 ├─────────────────────────────────────────────────────────────┤
 │                    HARDWARE LAYER                            │
-│  STM32H750VBT6 (Cortex-M7, MPU, NVIC, SysTick)             │
+│  STM32H750VBT6 (Cortex-M7, MPU, NVIC, SysTick, CRC unit)     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -56,16 +59,45 @@ ICARUS OS is a preemptive real-time operating system kernel designed for safety-
 
 ### Core Components
 
-The ICARUS kernel consists of six primary components:
+The ICARUS kernel consists of six primary components plus a set of
+shared service modules:
 
 1. **Kernel Core** (`Core/Src/icarus/kernel.c`, `Core/Inc/icarus/kernel.h`) - System initialization and state management
 2. **Scheduler** (`scheduler.c/h`) - Task selection and time-slicing
 3. **Task Manager** (`task.c/h`) - Task lifecycle and registration
 4. **Context Switch** (`context_switch.s`) - Low-level task switching
-5. **SVC Handler** (`svc.c/h`) - Privilege separation and call gates
-6. **IPC Manager** (`semaphore.c/h`, `pipe.c/h`) - Inter-process communication  
+5. **SVC Handler** (`svc.c/h`) - Privilege separation and call gates (57 SVC numbers)
+6. **IPC Manager** (`semaphore.c/h`, `pipe.c/h`) - Inter-process communication
 
-Headers and sources live under `Core/Inc/icarus/` and `Core/Src/icarus/` (not `kernel/`).
+**Shared service modules** (added in v0.3.0, all reachable through
+`#include "icarus/icarus.h"`):
+
+7. **CDC RX ring buffer** (`cdc_rx.c/h`) - 512 B SPSC USB CDC receive ring;
+   producer is the privileged USB ISR, consumer is any RTOS task. Backing
+   data in `DTCM_DATA_PRIV`, hot path in `ITCM_FUNC`, thread-mode reads
+   through SVC gates 40–42.
+8. **Event ring + squelch** (`event.c/h`) - 32-slot ring of compact 16-byte
+   event entries with a 16-entry per-module severity squelch. Transport-
+   agnostic (drains into a caller-provided buffer). SVC gates 43–48.
+9. **CRC16-CCITT helper** (`crc.c/h`) - `crc16_ccitt(data, len)` with poly
+   0x1021. **Hardware-accelerated** on STM32H7 via the on-chip CRC
+   peripheral on the AHB4 bus, lazy-initialised on first call;
+   approximately 4× faster than the bytewise software loop. Portable
+   bytewise fallback under `HOST_TEST`.
+10. **Internal flat-file filesystem** (`fs.c/h`) - 16 files × 2 KB = 32 KB
+    RAM-backed store. Functions placed in ITCM. The store itself stays in
+    regular SRAM (32 KB won't fit DTCM); the deliberate trade-off is
+    documented in `fs.c`.
+11. **Ground-loadable table engine** (`tables.c/h`) - Registry of up to 8
+    tables, each with a staging buffer and an active buffer. CRC-validated
+    load / activate / dump with a registered activate callback. The
+    `tbl_activate` operation is split across two SVCs (`prepare` +
+    `commit`) so the user callback runs in unprivileged thread mode against
+    a stack scratch copy without ever touching `DTCM_PRIV` directly.
+    SVC gates 49–56.
+
+Headers and sources live under `Core/Inc/icarus/` and `Core/Src/icarus/`
+(not `kernel/`).
 
 ### Kernel State
 
