@@ -41,6 +41,7 @@ extern "C" {
 #include "bsp/timer.h"      /* Timer/PWM driver */
 #include "bsp/rtc.h"        /* Real-Time Clock driver */
 #include "bsp/usb.h"        /* USB CDC driver */
+#include "bsp/cdc.h"        /* USB CDC raw write helper */
 #include "bsp/display.h"    /* Terminal display driver */
 #include "bsp/led.h"        /* LED control */
 #include "bsp/iwdg.h"       /* Independent watchdog (IWDG1) */

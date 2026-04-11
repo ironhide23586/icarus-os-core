@@ -36,7 +36,8 @@ BSP_SRC = \
 	$(PROJECT_ROOT)/Core/Src/bsp/retarget_hal.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/stm32h7xx_it.c \
 	$(PROJECT_ROOT)/Core/Src/bsp/display.c \
-	$(PROJECT_ROOT)/Core/Src/bsp/iwdg.c
+	$(PROJECT_ROOT)/Core/Src/bsp/iwdg.c \
+	$(PROJECT_ROOT)/Core/Src/bsp/cdc.c
 # Note: gpio.c, tim.c, i2c.c, spi.c, rtc.c are STM32CubeMX-generated initialization code
 # Note: context_switch.s is assembly and cannot be tested on host (requires ARM hardware)
 
