@@ -2008,10 +2008,18 @@ void test_os_is_running_svc(void) {
 	TEST_ASSERT_TRUE(os_is_running());
 }
 
+/* Aggregator runners defined in tests/src/test_<module>.c — declared
+ * here so test_task.c remains the single Unity entry point. */
+extern void run_crc_tests(void);
+extern void run_cdc_rx_tests(void);
+extern void run_event_tests(void);
+extern void run_fs_tests(void);
+extern void run_tables_tests(void);
+
 // Test runner
 int main(void) {
 	UNITY_BEGIN();
-	
+
 	// Basic tests
 	// DISABLED: test_enqueue_print_buffer_basic - enqueue_print_buffer commented out
 	// DISABLED: test_enqueue_print_buffer_full - enqueue_print_buffer commented out
@@ -2201,6 +2209,13 @@ int main(void) {
 	RUN_TEST(test_os_get_task_name_svc);
 	RUN_TEST(test_os_get_num_created_tasks_svc);
 	RUN_TEST(test_os_is_running_svc);
-	
+
+	/* Shared modules added in v0.3.0 */
+	run_crc_tests();
+	run_cdc_rx_tests();
+	run_event_tests();
+	run_fs_tests();
+	run_tables_tests();
+
 	return UNITY_END();
 }
