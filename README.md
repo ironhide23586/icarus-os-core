@@ -35,7 +35,7 @@ A minimal, deterministic real-time kernel for Cortex-M designed to support DO-17
 | Metric | Status |
 |--------|--------|
 | **Test Coverage** | 91.8% line, 92.5% function (host, see `tests/`) |
-| **Unit Tests** | 196 Unity tests — run `cd tests && make test` |
+| **Unit Tests** | 213 Unity tests — run `cd tests && make test` |
 | **Static Analysis** | cppcheck clean |
 | **Certification Target** | DO-178C DAL C |
 | **Coding Standard** | MISRA C:2012 subset |
@@ -580,13 +580,18 @@ ICARUS is designed to be the first open-source RTOS with:
 - **Deterministic Context Switching**: Assembly-optimized context save/restore using PendSV with MPU reconfiguration
 - **Task State Management**: Full lifecycle support (COLD, READY, RUNNING, BLOCKED, KILLED, FINISHED)
 - **Bounded Semaphores**: Counting semaphores with blocking feed/consume for producer-consumer patterns
-- **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages up to 128 bytes
+- **Message Queues (Pipes)**: FIFO byte-stream IPC with blocking enqueue/dequeue, supports multi-byte messages up to 512 bytes
 - **Active Sleep**: Cooperative sleep that allows other tasks to run
 - **Blocking Sleep**: Busy-wait sleep for critical timing
 - **Up to 128 Tasks**: Configurable task pool with 2KB stack and 2KB data region per task
 - **64 Semaphores & 64 Pipes**: Rich IPC primitives for complex applications
+- **Task Restart**: `os_restart_task()` cold-restarts killed/finished tasks in-place
+- **Timed Semaphore Wait**: `semaphore_consume_timeout()` with configurable tick deadline
+- **Task Diagnostics**: Per-task dispatch count, stack high-water mark (`0xDEADC0DE` sentinel), and SVC-gated state query
 
-#### Shared Modules (v0.3.0)
+#### Shared Modules (v0.3.0+)
+- **Software Bus** (`icarus/sb.h`): Lightweight pub/sub message router. 32 routes × 4 subscribers per message ID. Best-effort delivery via kernel pipes — if a subscriber's pipe is full the message is silently dropped. Route table in DTCM_DATA_PRIV, hot path in ITCM_FUNC.
+- **Background Checksum** (`icarus/cs.h`): Periodic CRC16-CCITT integrity scanner over up to 8 registered memory regions. Baselines captured at registration; mismatches reported through a user-supplied callback. HW CRC self-test (expected 0x29B1). Region table in DTCM_DATA_PRIV, functions in ITCM_FUNC.
 - **CDC RX Ring Buffer** (`icarus/cdc_rx.h`): Generic SPSC USB CDC receive ring (512 B). Producer is the USB ISR, consumer is any RTOS task. Backing store in DTCM_PRIV, hot path in ITCM, thread-mode reads through SVC gates.
 - **Generic Event Ring + Squelch** (`icarus/event.h`): 32-slot ring of compact 16-byte event entries with a 16-entry per-module severity squelch. Transport-agnostic — drains into a caller-provided buffer. Emission via `os_event(module_id, severity, event_id, payload, len)`.
 - **CRC16-CCITT Helper** (`icarus/crc.h`): `crc16_ccitt(data, len)` with poly 0x1021. **Hardware-accelerated** on STM32H7 via the on-chip CRC peripheral (AHB4 bus, configurable polynomial), lazy-initialised on first call. ~4× faster than the bytewise software loop. Portable bytewise fallback under HOST_TEST.
@@ -621,7 +626,7 @@ ICARUS is designed to be the first open-source RTOS with:
 
 #### Development & Quality
 - **MISRA C Compliant**: Follows MISRA C:2012 coding standards
-- **Comprehensive Unit Tests**: 140+ Unity tests; run `cd tests && make coverage-summary` for current line/function coverage on the host build
+- **Comprehensive Unit Tests**: 213 Unity tests; run `cd tests && make coverage-summary` for current line/function coverage on the host build
 - **Static Analysis**: cppcheck clean, zero warnings
 - **Standalone Build System**: Makefile-based build without IDE dependency
 - **Memory Map Visualizer**: Interactive web tool for analyzing linker output
@@ -652,14 +657,17 @@ ICARUS OS is structured in layers, from low-level hardware abstraction to high-l
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │  CDC RX ring │  │  Event ring  │  │  CRC16 (HW)  │      │
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
-│  ┌──────────────┐  ┌──────────────┐                        │
-│  │  Filesystem  │  │ Table Engine │                        │
-│  └──────────────┘  └──────────────┘                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  Filesystem  │  │ Table Engine │  │ Software Bus │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│  ┌──────────────┐                                          │
+│  │ Bg Checksum  │                                          │
+│  └──────────────┘                                          │
 ├─────────────────────────────────────────────────────────────┤
 │                      KERNEL LAYER                            │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │  Scheduler   │  │ Context      │  │  SVC Handler │      │
-│  │ (Round-Robin)│  │ Switch (ASM) │  │  (57 gates)  │      │
+│  │ (Round-Robin)│  │ Switch (ASM) │  │  (63 gates)  │      │
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │ Task Manager │  │ IPC Manager  │  │ MPU Manager  │      │
@@ -672,6 +680,9 @@ ICARUS OS is structured in layers, from low-level hardware abstraction to high-l
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │   GPIO/LED   │  │   SPI/I2C    │  │    Timer     │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  IWDG (WDG)  │  │ Button (K1)  │  │  CDC Write   │      │
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
 ├─────────────────────────────────────────────────────────────┤
 │                    HARDWARE LAYER                            │
@@ -693,12 +704,14 @@ icarus-os-core/
 │   │   │   ├── task.h       # Task management
 │   │   │   ├── semaphore.h  # Semaphore API
 │   │   │   ├── pipe.h       # Message pipe API
-│   │   │   ├── svc.h        # SVC definitions (57 call gates)
+│   │   │   ├── svc.h        # SVC definitions (63 call gates)
 │   │   │   ├── cdc_rx.h     # USB CDC receive ring buffer
 │   │   │   ├── event.h      # Generic event ring + per-module squelch
 │   │   │   ├── crc.h        # CRC16-CCITT (HW-accelerated on STM32H7)
 │   │   │   ├── fs.h         # Internal flat-file filesystem
 │   │   │   ├── tables.h     # Ground-loadable table engine
+│   │   │   ├── sb.h         # Software Bus (pub/sub message router)
+│   │   │   ├── cs.h         # Background Checksum integrity monitor
 │   │   │   ├── types.h      # Core data structures (TCB, etc.)
 │   │   │   └── config.h     # Configuration constants
 │   │   ├── bsp/             # Board support package headers
@@ -710,7 +723,10 @@ icarus-os-core/
 │   │   │   ├── spi.h        # SPI driver (LCD)
 │   │   │   ├── rtc.h        # Real-time clock
 │   │   │   ├── timer.h      # Timer/PWM
-│   │   │   └── usb.h        # USB CDC
+│   │   │   ├── usb.h        # USB CDC
+│   │   │   ├── iwdg.h       # Independent Watchdog (IWDG1)
+│   │   │   ├── button.h     # K1 user button
+│   │   │   └── cdc.h        # CDC raw write helper
 │   │   ├── game/            # ICARUS Runner game headers
 │   │   │   ├── game.h       # Game API
 │   │   │   ├── game_config.h # Game constants
@@ -733,6 +749,8 @@ icarus-os-core/
 │   │   │   ├── crc.c        # CRC16-CCITT (HW peripheral on target)
 │   │   │   ├── fs.c         # Internal flat-file filesystem
 │   │   │   ├── tables.c     # Ground-loadable table engine (DTCM_PRIV / ITCM)
+│   │   │   ├── sb.c         # Software Bus (DTCM_PRIV / ITCM)
+│   │   │   ├── cs.c         # Background Checksum (DTCM_PRIV / ITCM)
 │   │   │   └── context_switch.s # Assembly context switch
 │   │   ├── bsp/             # BSP implementation
 │   │   ├── game/            # Game implementation
@@ -897,7 +915,7 @@ ICARUS OS implements comprehensive hardware-enforced memory protection using the
 
 **Solution:** SVC call gates that read/write kernel state atomically in privileged mode.
 
-**57 SVC Numbers Defined:**
+**63 SVC Numbers Defined:**
 
 | SVC Range | Purpose | Examples |
 |-----------|---------|----------|
@@ -908,6 +926,9 @@ ICARUS OS implements comprehensive hardware-enforced memory protection using the
 | 40-42 | CDC RX ring buffer | cdc_rx_init, cdc_rx_read_byte, cdc_rx_available |
 | 43-48 | Event ring + squelch | event_init, os_event, event_set/get_squelch, event_drain, event_get_count |
 | 49-56 | Table engine | tbl_init, tbl_register, tbl_load, tbl_activate_prepare/commit, tbl_dump, tbl_get_descriptor, tbl_count |
+| 57 | Task restart | os_restart_task |
+| 58 | Timed semaphore | semaphore_consume_timeout |
+| 59-62 | Task diagnostics | os_get_task_state, os_get_task_dispatch_count, os_get/update_stack_watermark |
 
 **Spinning Pattern with Call Gates:**
 ```c
@@ -1064,7 +1085,7 @@ ICARUS OS is being developed to support DO-178C DAL C certification objectives. 
 |-----------|--------|
 | Static analysis (cppcheck) | ✅ Complete |
 | MISRA C:2012 subset | ✅ Complete |
-| Unit testing (Unity) | ✅ 140 tests |
+| Unit testing (Unity) | ✅ 213 tests |
 | Line coverage | ✅ ~91% (host `lcov`, kernel+BSP under test) |
 | Function coverage | ✅ ~89.5% |
 | Requirements traceability | ✅ SRS complete |
@@ -1099,8 +1120,8 @@ ICARUS OS is in active development with core functionality complete and undergoi
 - ✅ Hardware-enforced memory protection (MPU with 8 regions)
 - ✅ Task management (128 tasks, 2KB stack + 2KB data each)
 - ✅ Semaphores (64 max, counting with blocking operations)
-- ✅ Message pipes (64 max, FIFO with up to 128-byte messages)
-- ✅ SVC call gates (57 gates for privilege separation)
+- ✅ Message pipes (64 max, FIFO with up to 512-byte messages)
+- ✅ SVC call gates (63 gates for privilege separation)
 - ✅ Context switching with MPU reconfiguration
 - ✅ Fault recovery with LED blink decoder
 - ✅ Terminal GUI with real-time visualization
@@ -1110,7 +1131,7 @@ ICARUS OS is in active development with core functionality complete and undergoi
 - ✅ Demo tasks (12 producer/consumer patterns)
 - ✅ Stress testing (19 tasks, 10+ min stability)
 - ✅ Showcase demo (3 tasks exercising all five shared modules end-to-end)
-- ✅ Unit testing (196 tests; 91.8% statement coverage on exercised kernel/BSP sources — see `tests/README.md`)
+- ✅ Unit testing (213 tests; 91.8% statement coverage on exercised kernel/BSP sources — see `tests/README.md`)
 - ✅ Static analysis (cppcheck clean)
 - ✅ MISRA C:2012 compliance
 - ✅ DO-178C documentation (plans, requirements, design, verification)

@@ -1,8 +1,8 @@
 # Software Design Description (SDD)
 
 **Document ID:** ICARUS-SDD-001
-**Version:** 0.3
-**Date:** 2026-04-11
+**Version:** 0.4
+**Date:** 2026-06-15
 **Status:** Draft
 **Classification:** Public (Open Source)
 
@@ -25,6 +25,7 @@
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
 | 0.2 | 2026-04-01 | Souham Biswas | Added MPU protection architecture (§4.2), DTCM/ITCM placement, SVC call-gate dispatch model |
 | 0.3 | 2026-04-11 | Souham Biswas | Added shared service modules (CDC RX, event ring, CRC16, internal filesystem, table engine) to the component summary; SVC count grew 40 → 57; HW CRC peripheral integration noted; tbl_activate priv↔thread split documented |
+| 0.4 | 2026-06-15 | Souham Biswas | Added Software Bus and Background Checksum modules (§3.10.8, §3.10.9); SVC count grew 57 → 63; new RTOS primitives (restart, timed sem, wider pipes, task diagnostics); new BSP modules (IWDG, button, CDC write) |
 
 ---
 
@@ -105,12 +106,17 @@ This document covers:
 | Context Switch | ✅ Implemented | `Core/Src/icarus/context_switch.s` | ARM assembly context save/restore |
 | Semaphores | ✅ Implemented | `Core/Src/icarus/semaphore.c` | Bounded counting semaphores |
 | Message pipes (IPC) | ✅ Implemented | `Core/Src/icarus/pipe.c` | FIFO byte-stream queues (see `pipe.h`) |
-| SVC dispatcher | ✅ Implemented | `Core/Src/icarus/svc.c` | 57 numbered call gates between unprivileged tasks and privileged kernel state |
+| SVC dispatcher | ✅ Implemented | `Core/Src/icarus/svc.c` | 63 numbered call gates between unprivileged tasks and privileged kernel state |
 | **CDC RX ring buffer** | ✅ Implemented (v0.3) | `Core/Src/icarus/cdc_rx.c` | 512 B SPSC USB CDC receive ring; producer is the privileged USB ISR, consumer is any RTOS task. Backing data in `DTCM_DATA_PRIV`, hot path in `ITCM_FUNC`, thread-mode reads through SVC gates 40–42. |
 | **Event ring + squelch** | ✅ Implemented (v0.3) | `Core/Src/icarus/event.c` | 32-slot ring of compact 16-byte event entries with a 16-entry per-module severity squelch. Transport-agnostic (drains into a caller-provided buffer). SVC gates 43–48. |
 | **CRC16-CCITT helper** | ✅ Implemented (v0.3) | `Core/Src/icarus/crc.c` | `crc16_ccitt(data, len)` with poly 0x1021, init 0xFFFF. **Hardware-accelerated** on STM32H7 via the on-chip CRC peripheral on the AHB4 bus, lazy-initialised on first call. Portable bytewise fallback under HOST_TEST. |
 | **Internal flat-file filesystem** | ✅ Implemented (v0.3) | `Core/Src/icarus/fs.c` | 16 files × 2 KB = 32 KB RAM-backed store with create/open/write/read/delete/list/stats. Functions placed in ITCM; the 32 KB store stays in regular SRAM (won't fit DTCM). |
 | **Ground-loadable table engine** | ✅ Implemented (v0.3) | `Core/Src/icarus/tables.c` | Registry of up to 8 tables with double-buffered staging/active swap. CRC-validated load / activate / dump with a registered activate callback that runs in unprivileged thread mode against a stack scratch copy. SVC gates 49–56. |
+| **Software Bus** | ✅ Implemented (v0.4) | `Core/Src/icarus/sb.c` | Lightweight pub/sub message router. 32 routes × 4 subscribers per message ID. Best-effort delivery via kernel pipes — if a subscriber's pipe is full the message is silently dropped. Route table in `DTCM_DATA_PRIV`, hot path in `ITCM_FUNC`. Uses existing pipe SVC gates. |
+| **Background Checksum** | ✅ Implemented (v0.4) | `Core/Src/icarus/cs.c` | Periodic CRC16-CCITT integrity scanner over up to 8 memory regions. Baselines captured at registration; mismatches reported through a user-supplied callback. HW CRC self-test (0x29B1). Region table in `DTCM_DATA_PRIV`, functions in `ITCM_FUNC`. |
+| BSP - IWDG watchdog | ✅ Implemented (v0.4) | `bsp/iwdg.c` | Independent Watchdog abstraction: init, refresh, reset-reason query, flag clear |
+| BSP - K1 button | ✅ Implemented (v0.4) | `bsp/button.c` | Raw read of K1 user button (PC13, active low) |
+| BSP - CDC write | ✅ Implemented (v0.4) | `bsp/cdc.c` | CDC_Write / CDC_WriteString with busy-retry via task_active_sleep |
 | AI Runtime | 🔲 Planned | TBD | Deterministic inference |
 | BSP - GPIO | ✅ Implemented | `bsp/gpio.c` | Digital I/O |
 | BSP - I2C | ✅ Implemented | `bsp/i2c.c` | I2C communication |
@@ -524,14 +530,14 @@ The message pipe component implements FIFO byte-stream communication channels be
 
 ```c
 #define MAX_MESSAGE_QUEUES 32
-#define MAX_PIPE_CAPACITY 128
+#define MAX_PIPE_CAPACITY 512
 
 typedef struct {
     uint8_t buffer[MAX_PIPE_CAPACITY];  // Circular buffer storage
-    uint8_t head;                       // Read index
-    uint8_t tail;                       // Write index
-    uint8_t count;                      // Current bytes in pipe
-    uint8_t capacity;                   // Maximum bytes (≤128)
+    uint16_t head;                      // Read index
+    uint16_t tail;                      // Write index
+    uint16_t count;                     // Current bytes in pipe
+    uint16_t capacity;                  // Maximum bytes (≤512)
     bool engaged;                       // Pipe is initialized
 } message_pipe_t;
 
@@ -608,7 +614,7 @@ pipe_dequeue(pipe_idx):
 | Property | Value | Rationale |
 |----------|-------|-----------|
 | Ordering | FIFO | HLR-KRN-047 |
-| Capacity | 1-128 bytes | HLR-KRN-053 |
+| Capacity | 1-512 bytes | HLR-KRN-053 |
 | Message size | Variable (1-N bytes) | HLR-KRN-048 |
 | Blocking | Cooperative (task_active_sleep) | HLR-KRN-050 |
 | Atomicity | Critical sections | Data integrity |
@@ -976,6 +982,97 @@ control state — well within the 128 KB budget.
 | `crc16_ccitt` (HW peripheral) | HLR-KRN-092 |
 | `fs_*` (16-file flat store) | HLR-KRN-093 |
 | `tbl_load` / `tbl_activate` / `tbl_dump` | HLR-KRN-094 |
+
+#### 3.10.8 Software Bus (`Core/Src/icarus/sb.c`)
+
+| Property | Value |
+|---|---|
+| Route table | 32 entries × 4 subscriber slots each in `.dtcm_priv` |
+| Hot path placement | `.itcm` |
+| SVC numbers | None (uses existing pipe SVC gates for the underlying IPC) |
+| Thread safety | `enter_critical()` / `exit_critical()` around route table mutations |
+
+Lightweight publish/subscribe message router built on top of the kernel
+pipe IPC. Tasks subscribe to 16-bit message IDs; publishers push
+messages by ID and the bus copies the payload into every subscriber's
+pipe automatically.
+
+Each route entry maps a `sb_msg_id_t` to up to `SB_MAX_SUBS_PER_MSG`
+(4) pipe indices. Publishing iterates the subscriber list and calls
+`pipe_can_enqueue` + `pipe_write_bytes` for each subscriber. If a
+subscriber's pipe is full the message is silently dropped for that
+subscriber — the publisher is never blocked (best-effort delivery).
+
+Zero dynamic allocation: the route table is a static array of 32
+`sb_route_t` structs in DTCM_DATA_PRIV. Subscribe/unsubscribe
+operations are O(n) in the route count; publish is O(subscribers).
+
+```
+sb_subscribe(msg_id, pipe_idx)
+    ├─ Find or create route entry for msg_id
+    ├─ Reject if route table full or subscriber limit reached
+    └─ Store (msg_id, pipe_idx) pair
+
+sb_publish(msg_id, data, len)
+    ├─ Find route entry for msg_id
+    ├─ For each subscriber pipe:
+    │   ├─ pipe_can_enqueue(pipe_idx, len)?
+    │   │   ├─ Yes → pipe_write_bytes(pipe_idx, data, len); delivered++
+    │   │   └─ No  → skip (best-effort drop)
+    └─ Return delivered count
+```
+
+#### 3.10.9 Background Checksum Integrity Monitor (`Core/Src/icarus/cs.c`)
+
+| Property | Value |
+|---|---|
+| Region table | 8 × `cs_region_t` in `.dtcm_priv` |
+| Hot path placement | `.itcm` |
+| SVC numbers | None (called from privileged task context or via existing critical-section pattern) |
+| CRC backend | `crc16_ccitt()` from `icarus/crc.h` (HW-accelerated on target) |
+| Self-test | On `cs_init()`: CRC16 of `"123456789"` must equal 0x29B1 |
+| Thread safety | `enter_critical()` / `exit_critical()` around all public functions |
+
+Periodically computes CRC16-CCITT over registered memory regions and
+compares against baseline values captured at registration time. Typical
+use: monitor flash code segments, critical data tables, and SRAM guard
+patterns to detect bit-flips from radiation (SEU) or software
+corruption.
+
+Each region is described by a `cs_region_t` struct containing the start
+address, size, baseline CRC, and an enabled flag. `cs_add_region`
+computes the baseline CRC immediately from the current memory contents.
+`cs_check_all` iterates all enabled regions, recomputes the CRC, and
+invokes the user-supplied mismatch callback for any failures.
+
+```
+cs_add_region(idx, addr, size)
+    ├─ Validate idx < CS_MAX_REGIONS, addr != NULL, size > 0
+    ├─ Store addr, size in region table
+    ├─ Compute baseline = crc16_ccitt(addr, size)
+    └─ Set enabled = true
+
+cs_check_all()
+    ├─ For each enabled region:
+    │   ├─ actual = crc16_ccitt(region.addr, region.size)
+    │   ├─ actual == region.baseline?
+    │   │   ├─ Yes → pass
+    │   │   └─ No  → invoke mismatch_callback(idx, expected, actual); failures++
+    └─ Return failure count
+```
+
+#### 3.10.10 Traceability (v0.4.0 additions)
+
+| Design Element | Implements Requirement |
+|---|---|
+| `sb_init` / `sb_subscribe` / `sb_publish` | HLR-KRN-095 |
+| `cs_init` / `cs_add_region` / `cs_check_all` | HLR-KRN-096 |
+| `os_restart_task` | HLR-KRN-097 |
+| `semaphore_consume_timeout` | HLR-KRN-098 |
+| `dispatch_count` / `stack_watermark` / `os_get_task_state` | HLR-KRN-099 |
+| `IWDG_Init` / `IWDG_Refresh` / `IWDG_WasReset` | HLR-BSP-025 |
+| `Button_IsPressed` | HLR-BSP-026 |
+| `CDC_Write` / `CDC_WriteString` | HLR-BSP-027 |
 
 
 ---

@@ -3,6 +3,63 @@
 All notable changes to ICARUS OS are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.4.0] - 2026-06-15
+
+### Added
+
+- **Software Bus** (`icarus/sb.h` / `sb.c`) — lightweight pub/sub message
+  router built on top of kernel pipes. 32 routes × 4 subscribers per message
+  ID. Best-effort delivery: if a subscriber's pipe is full the message is
+  silently dropped for that subscriber. Route table in `DTCM_DATA_PRIV`,
+  hot-path functions in `ITCM_FUNC`. API: `sb_init`, `sb_subscribe`,
+  `sb_unsubscribe`, `sb_publish`, `sb_subscriber_count`, `sb_route_count`.
+- **Background Checksum integrity monitor** (`icarus/cs.h` / `cs.c`) —
+  periodic CRC16-CCITT scanner over up to 8 registered memory regions.
+  Baselines captured at registration time; mismatches reported through a
+  user-supplied callback. Hardware CRC self-test on init (expected 0x29B1).
+  Region table in `DTCM_DATA_PRIV`, functions in `ITCM_FUNC`. API:
+  `cs_init`, `cs_set_callback`, `cs_add_region`, `cs_enable`,
+  `cs_rebaseline`, `cs_check_all`, `cs_get_region`, `cs_region_count`.
+- **`os_restart_task(task_index)`** — cold-restart a killed or finished task
+  in-place from its original entry point. No new stack slot is allocated;
+  the task re-enters the scheduler as `TASK_STATE_COLD`. SVC 57.
+- **`semaphore_consume_timeout(idx, max_ticks)`** — timed semaphore wait.
+  Returns `false` if the semaphore is not acquired within `max_ticks`
+  (0 = non-blocking try). SVC 58.
+- **`os_get_task_state(task_index)`** — SVC-gated query (SVC 59) returning
+  the current `icarus_task_state_t` for any task index.
+- **`os_get_task_dispatch_count(task_index)`** — per-task scheduling counter
+  (SVC 60). Incremented each time the scheduler selects the task.
+- **`os_get_stack_watermark(task_index)`** / **`os_update_stack_watermark(task_index)`**
+  — stack high-water mark tracking using a `0xDEADC0DE` sentinel pattern.
+  `os_update_stack_watermark` scans the stack and updates the TCB field;
+  `os_get_stack_watermark` returns the cached minimum free words. SVC 61–62.
+- **BSP: IWDG watchdog** (`bsp/iwdg.h` / `iwdg.c`) — thin wrapper around
+  the STM32H7 Independent Watchdog (IWDG1). `IWDG_Init`, `IWDG_Refresh`,
+  `IWDG_WasReset`, `IWDG_ClearResetFlag`.
+- **BSP: K1 user button** (`bsp/button.h` / `button.c`) — `Button_IsPressed()`
+  raw read of the K1 button on PC13 (active low).
+- **BSP: CDC raw write helper** (`bsp/cdc.h` / `cdc.c`) — `CDC_Write` and
+  `CDC_WriteString` for pushing raw bytes to the USB CDC IN endpoint with
+  busy-retry via `task_active_sleep`.
+- **6 new SVC numbers (57–62)** — `SVC_OS_RESTART_TASK` (57),
+  `SVC_SEMAPHORE_CONSUME_TIMEOUT` (58), `SVC_GET_TASK_STATE` (59),
+  `SVC_GET_TASK_DISPATCH_COUNT` (60), `SVC_GET_STACK_WATERMARK` (61),
+  `SVC_UPDATE_STACK_WATERMARK` (62). All routed through `SVC_Handler_C`.
+
+### Changed
+
+- **Pipe capacity widened** — `ICARUS_MAX_MESSAGE_BYTES` increased from 128
+  to 512 bytes; pipe internal counters widened from `uint8_t` to `uint16_t`
+  to support the larger buffers. Enables Software Bus and CFDP PDU routing.
+- **`dispatch_count` field added to TCB** — tracks how many times each task
+  has been scheduled. Useful for load-balance diagnostics.
+- **`stack_watermark` field added to TCB** — minimum free stack words
+  observed, updated lazily via `os_update_stack_watermark()`. Stack is
+  painted with `0xDEADC0DE` sentinel at creation time.
+- **SVC count grew 57 → 63** (IDs 0–62).
+- **`icarus/icarus.h` umbrella header** now also exports `sb.h` and `cs.h`.
+
 ## [0.3.0] - 2026-04-11
 
 ### Added

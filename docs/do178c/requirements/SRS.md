@@ -1,8 +1,8 @@
 # Software Requirements Specification (SRS)
 
 **Document ID:** ICARUS-SRS-001
-**Version:** 0.3
-**Date:** 2026-04-11
+**Version:** 0.4
+**Date:** 2026-06-15
 **Status:** Draft
 **Classification:** Public (Open Source)
 
@@ -25,6 +25,7 @@
 | 0.1 | 2025-01-26 | Souham Biswas | Initial draft |
 | 0.2 | 2026-04-01 | Souham Biswas | Added 14 memory protection requirements (HLR-KRN-063 to HLR-KRN-086) |
 | 0.3 | 2026-04-11 | Souham Biswas | Added 5 shared service module requirements (HLR-KRN-090 to HLR-KRN-094): CDC RX ring buffer, event ring + squelch, CRC16 helper, internal filesystem, ground-loadable table engine |
+| 0.4 | 2026-06-15 | Souham Biswas | Added Software Bus (HLR-KRN-095), Background Checksum (HLR-KRN-096), task restart (HLR-KRN-097), timed semaphore (HLR-KRN-098), wider pipes (HLR-KRN-053 updated), task diagnostics (HLR-KRN-099), BSP watchdog/button/CDC write (HLR-BSP-025 to HLR-BSP-027) |
 
 ---
 
@@ -132,7 +133,7 @@ The following system-level requirements are allocated to ICARUS OS:
 | HLR-KRN-050 | Pipe operations shall block when full/empty | Must | ✅ Implemented |
 | HLR-KRN-051 | The kernel shall support up to ICARUS_MAX_SEMAPHORES (64) semaphores | Must | ✅ Implemented |
 | HLR-KRN-052 | The kernel shall support up to ICARUS_MAX_MESSAGE_QUEUES (64) pipes | Must | ✅ Implemented |
-| HLR-KRN-053 | Each pipe shall support up to 128 bytes capacity | Must | ✅ Implemented |
+| HLR-KRN-053 | Each pipe shall support up to 512 bytes capacity | Must | ✅ Implemented |
 
 #### 3.1.6 Memory Management
 
@@ -161,9 +162,9 @@ The following system-level requirements are allocated to ICARUS OS:
 | HLR-KRN-081 | The kernel shall handle MemManage faults from unprivileged tasks | Must | ✅ Implemented |
 | HLR-KRN-082 | The kernel shall recover from data access violations | Must | ✅ Implemented |
 | HLR-KRN-083 | The kernel shall halt on instruction fetch violations | Must | ✅ Implemented |
-| HLR-KRN-084 | The kernel shall support watchdog integration | Should | Planned |
+| HLR-KRN-084 | The kernel shall support watchdog integration | Should | ✅ Implemented |
 | HLR-KRN-085 | The kernel shall log fault information for diagnostics | Should | ✅ Implemented |
-| HLR-KRN-086 | The kernel shall support fault recovery (task restart) | Could | Planned |
+| HLR-KRN-086 | The kernel shall support fault recovery (task restart) | Could | ✅ Implemented |
 
 #### 3.1.8 Shared Service Modules
 
@@ -193,6 +194,21 @@ the detailed design.
 | HLR-KRN-094.1 | Table activation shall be gated by both a schema CRC and a data CRC16; mismatches shall reject the activation atomically | Must | ✅ Implemented |
 | HLR-KRN-094.2 | The activate callback registered by a table producer shall execute in unprivileged thread mode against a stack scratch copy of the staged bytes — never against the live DTCM_PRIV staging buffer | Must | ✅ Implemented |
 | HLR-KRN-094.3 | The active table buffer shall not be modified until the activate callback returns success | Must | ✅ Implemented |
+| HLR-KRN-095 | The kernel shall provide a lightweight pub/sub Software Bus that routes messages by ID to subscriber pipes | Must | ✅ Implemented |
+| HLR-KRN-095.1 | The Software Bus shall support at least 32 distinct message routes with up to 4 subscribers per route | Must | ✅ Implemented |
+| HLR-KRN-095.2 | Publishing shall be best-effort: if a subscriber's pipe is full the message shall be silently dropped for that subscriber without blocking the publisher | Must | ✅ Implemented |
+| HLR-KRN-095.3 | The Software Bus route table shall reside in DTCM_DATA_PRIV; hot-path functions shall be placed in ITCM_FUNC | Must | ✅ Implemented |
+| HLR-KRN-096 | The kernel shall provide a periodic background checksum integrity monitor using CRC16-CCITT over registered memory regions | Must | ✅ Implemented |
+| HLR-KRN-096.1 | The checksum monitor shall support at least 8 independently enabled memory regions with baselines captured at registration time | Must | ✅ Implemented |
+| HLR-KRN-096.2 | CRC mismatches shall be reported through a user-supplied callback invoked from within cs_check_all() | Must | ✅ Implemented |
+| HLR-KRN-096.3 | The checksum module shall perform a hardware CRC self-test at initialization (expected value 0x29B1) | Must | ✅ Implemented |
+| HLR-KRN-097 | The kernel shall provide os_restart_task(task_index) to cold-restart a killed or finished task in-place from its original entry point without allocating a new stack slot | Must | ✅ Implemented |
+| HLR-KRN-097.1 | os_restart_task shall only accept tasks in TASK_STATE_KILLED or TASK_STATE_FINISHED; the restarted task shall enter the scheduler as TASK_STATE_COLD | Must | ✅ Implemented |
+| HLR-KRN-098 | The kernel shall provide semaphore_consume_timeout(idx, max_ticks) for timed semaphore acquisition; 0 max_ticks shall be a non-blocking try | Must | ✅ Implemented |
+| HLR-KRN-098.1 | semaphore_consume_timeout shall return false if the semaphore is not acquired within max_ticks | Must | ✅ Implemented |
+| HLR-KRN-099 | The kernel shall provide per-task diagnostic fields: dispatch_count (scheduling counter) and stack_watermark (minimum free stack words using 0xDEADC0DE sentinel) | Must | ✅ Implemented |
+| HLR-KRN-099.1 | os_get_task_state(task_index) shall return the current task state via an SVC-gated query | Must | ✅ Implemented |
+| HLR-KRN-099.2 | os_update_stack_watermark(task_index) shall scan the task stack for the sentinel pattern and update the watermark field in the TCB | Must | ✅ Implemented |
 
 ---
 
@@ -227,6 +243,9 @@ the detailed design.
 | HLR-BSP-020 | The BSP shall configure SysTick for 1ms tick | Must | ✅ Implemented |
 | HLR-BSP-021 | The BSP shall support high-resolution timer | Should | Planned |
 | HLR-BSP-022 | The BSP shall support RTC for wall-clock time | Should | ✅ Implemented |
+| HLR-BSP-025 | The BSP shall provide an Independent Watchdog (IWDG) abstraction with init, refresh, reset-reason query, and flag clear | Must | ✅ Implemented |
+| HLR-BSP-026 | The BSP shall provide a K1 user button read function returning the raw active-low pin state | Must | ✅ Implemented |
+| HLR-BSP-027 | The BSP shall provide a CDC raw write helper (CDC_Write, CDC_WriteString) with busy-retry via task_active_sleep | Must | ✅ Implemented |
 
 ---
 
@@ -435,16 +454,20 @@ See `ICARUS-VER-003 Test Traceability Matrix` for complete mapping.
 
 | Category | Total | Implemented | Planned |
 |----------|-------|-------------|---------|
-| Kernel (KRN) | 53 | 40 | 13 |
-| BSP | 15 | 11 | 4 |
+| Kernel (KRN) | 69 | 58 | 11 |
+| BSP | 18 | 14 | 4 |
 | AI Runtime | 24 | 0 | 24 |
 | Performance | 18 | 14 | 4 |
 | Safety | 9 | 1 | 8 |
-| **Total** | **119** | **66** | **53** |
+| **Total** | **138** | **87** | **51** |
 
-> Counts include MPU/fault requirements HLR-KRN-060 through HLR-KRN-086 and
-> the updated IPC scalability numbers (PRF-022/023). Recount after adding or
-> removing requirements.
+> Counts include MPU/fault requirements HLR-KRN-060 through HLR-KRN-086,
+> shared service modules HLR-KRN-090 through HLR-KRN-094, Software Bus
+> (HLR-KRN-095), Background Checksum (HLR-KRN-096), task restart
+> (HLR-KRN-097), timed semaphore (HLR-KRN-098), task diagnostics
+> (HLR-KRN-099), BSP watchdog/button/CDC write (HLR-BSP-025 to
+> HLR-BSP-027), and the updated IPC scalability numbers (PRF-022/023).
+> Recount after adding or removing requirements.
 
 ---
 

@@ -39,15 +39,17 @@ ICARUS OS is a preemptive real-time operating system kernel designed for safety-
 ├─────────────────────────────────────────────────────────────┤
 │                      RTOS API LAYER                          │
 │  Semaphores, Pipes, Tasks                                    │
+│  Software Bus (pub/sub) · Background Checksum (CRC16 scan)  │
 │  CDC RX ring · Event ring + squelch · CRC16 (HW-accelerated) │
 │  Internal flat-file FS · Ground-loadable table engine        │
 ├─────────────────────────────────────────────────────────────┤
 │                      KERNEL LAYER                            │
-│  Scheduler, Context Switch, SVC Handler (57 gates),          │
+│  Scheduler, Context Switch, SVC Handler (63 gates),          │
 │  MPU Manager                                                 │
 ├─────────────────────────────────────────────────────────────┤
 │                   BOARD SUPPORT PACKAGE                      │
 │  GPIO, SPI, I2C, USB, Display, RTC, Timer                    │
+│  IWDG watchdog · K1 button · CDC raw write                   │
 ├─────────────────────────────────────────────────────────────┤
 │                    HARDWARE LAYER                            │
 │  STM32H750VBT6 (Cortex-M7, MPU, NVIC, SysTick, CRC unit)     │
@@ -66,7 +68,7 @@ shared service modules:
 2. **Scheduler** (`scheduler.c/h`) - Task selection and time-slicing
 3. **Task Manager** (`task.c/h`) - Task lifecycle and registration
 4. **Context Switch** (`context_switch.s`) - Low-level task switching
-5. **SVC Handler** (`svc.c/h`) - Privilege separation and call gates (57 SVC numbers)
+5. **SVC Handler** (`svc.c/h`) - Privilege separation and call gates (63 SVC numbers)
 6. **IPC Manager** (`semaphore.c/h`, `pipe.c/h`) - Inter-process communication
 
 **Shared service modules** (added in v0.3.0, all reachable through
@@ -95,6 +97,17 @@ shared service modules:
     `commit`) so the user callback runs in unprivileged thread mode against
     a stack scratch copy without ever touching `DTCM_PRIV` directly.
     SVC gates 49–56.
+12. **Software Bus** (`sb.c/h`) - Lightweight pub/sub message router built
+    on top of kernel pipes. 32 routes × 4 subscribers per message ID.
+    Best-effort delivery: if a subscriber's pipe is full the message is
+    silently dropped for that subscriber. Route table in `DTCM_DATA_PRIV`,
+    hot-path functions in `ITCM_FUNC`. Uses existing pipe SVC gates for
+    the underlying IPC.
+13. **Background Checksum integrity monitor** (`cs.c/h`) - Periodic
+    CRC16-CCITT scanner over up to 8 registered memory regions. Baselines
+    captured at registration time; mismatches reported through a
+    user-supplied callback. Hardware CRC self-test on init (expected
+    0x29B1). Region table in `DTCM_DATA_PRIV`, functions in `ITCM_FUNC`.
 
 Headers and sources live under `Core/Inc/icarus/` and `Core/Src/icarus/`
 (not `kernel/`).
