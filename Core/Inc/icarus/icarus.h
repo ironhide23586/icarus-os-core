@@ -28,6 +28,7 @@ extern "C" {
 #include "icarus/semaphore.h"
 #include "icarus/pipe.h"
 #include "icarus/cdc_rx.h"
+#include "icarus/event.h"
 
 #ifdef __cplusplus
 }
