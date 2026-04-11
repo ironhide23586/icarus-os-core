@@ -24,6 +24,10 @@
 #include "icarus/scheduler.h"
 #include "icarus/pipe.h"
 #include "icarus/semaphore.h"
+#include "icarus/cdc_rx.h"
+#include "icarus/event.h"
+#include "icarus/tables.h"
+#include <stddef.h>
 
 /* ============================================================================
  * SVC HANDLER (target only)
@@ -191,6 +195,93 @@ void SVC_Handler_C(uint32_t *stack_frame) {
             break;
         case SVC_OS_IS_RUNNING:
             stack_frame[0] = (uint32_t)__os_is_running();
+            break;
+
+        /* CDC RX ring buffer */
+        case SVC_CDC_RX_INIT:
+            __cdc_rx_init();
+            break;
+        case SVC_CDC_RX_READ_BYTE:
+            stack_frame[0] = (uint32_t)__cdc_rx_read_byte((uint8_t *)(uintptr_t)arg0);
+            break;
+        case SVC_CDC_RX_AVAILABLE:
+            stack_frame[0] = __cdc_rx_available();
+            break;
+
+        /* Event ring + squelch */
+        case SVC_EVENT_INIT:
+            __event_init();
+            break;
+        case SVC_OS_EVENT: {
+            /* arg0 packs (event_id << 16) | (severity << 8) | module_id
+             * arg1 = payload pointer
+             * stack_frame[2] = payload_len
+             * Packing keeps the SVC wrapper inside the AAPCS R0-R3 budget. */
+            uint8_t  module_id   = (uint8_t)(arg0 & 0xFF);
+            uint8_t  severity    = (uint8_t)((arg0 >> 8) & 0xFF);
+            uint16_t event_id    = (uint16_t)((arg0 >> 16) & 0xFFFF);
+            const void *payload  = (const void *)(uintptr_t)arg1;
+            uint8_t payload_len  = (uint8_t)stack_frame[2];
+            __os_event(module_id, (event_severity_t)severity, event_id,
+                       payload, payload_len);
+            break;
+        }
+        case SVC_EVENT_SET_SQUELCH:
+            __event_set_squelch((uint8_t)arg0, (event_severity_t)arg1);
+            break;
+        case SVC_EVENT_GET_SQUELCH:
+            stack_frame[0] = (uint32_t)__event_get_squelch((uint8_t)arg0);
+            break;
+        case SVC_EVENT_DRAIN:
+            stack_frame[0] = (uint32_t)__event_drain(
+                (event_entry_t *)(uintptr_t)arg0,
+                (uint8_t)arg1,
+                (uint8_t *)(uintptr_t)stack_frame[2]);
+            break;
+        case SVC_EVENT_GET_COUNT:
+            stack_frame[0] = __event_get_count();
+            break;
+
+        /* Ground-loadable table engine */
+        case SVC_TBL_INIT:
+            __tbl_init();
+            break;
+        case SVC_TBL_REGISTER:
+            stack_frame[0] = (uint32_t)__tbl_register(
+                (const tbl_descriptor_t *)(uintptr_t)arg0);
+            break;
+        case SVC_TBL_LOAD:
+            stack_frame[0] = (uint32_t)__tbl_load(
+                (tbl_id_t)arg0,
+                (const uint8_t *)(uintptr_t)arg1,
+                (uint16_t)stack_frame[2],
+                (uint16_t)stack_frame[3]);
+            break;
+        case SVC_TBL_ACTIVATE_PREPARE:
+            stack_frame[0] = (uint32_t)__tbl_activate_prepare(
+                (tbl_id_t)arg0,
+                (uint8_t *)(uintptr_t)arg1,
+                (uint16_t *)(uintptr_t)stack_frame[2],
+                (tbl_activate_fn *)(uintptr_t)stack_frame[3]);
+            break;
+        case SVC_TBL_ACTIVATE_COMMIT:
+            stack_frame[0] = (uint32_t)__tbl_activate_commit(
+                (tbl_id_t)arg0,
+                (const uint8_t *)(uintptr_t)arg1,
+                (uint16_t)stack_frame[2]);
+            break;
+        case SVC_TBL_DUMP:
+            stack_frame[0] = (uint32_t)(int32_t)__tbl_dump(
+                (tbl_id_t)arg0,
+                (uint8_t *)(uintptr_t)arg1,
+                (uint16_t)stack_frame[2]);
+            break;
+        case SVC_TBL_GET_DESCRIPTOR:
+            stack_frame[0] = (uint32_t)(uintptr_t)__tbl_get_descriptor(
+                (tbl_id_t)arg0);
+            break;
+        case SVC_TBL_COUNT:
+            stack_frame[0] = (uint32_t)__tbl_count();
             break;
 
         default:
@@ -884,5 +975,345 @@ uint8_t os_is_running(void) {
     return result;
 #else
     return __os_is_running();
+#endif
+}
+
+/* ============================================================================
+ * CDC RX RING BUFFER WRAPPERS
+ * ========================================================================= */
+
+/* Init: void → void. */
+void cdc_rx_init(void) {
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_CDC_RX_INIT));
+#else
+    __cdc_rx_init();
+#endif
+}
+
+/* Producer: called from the privileged USB CDC ISR. No SVC — the caller is
+ * already in privileged handler context, and issuing an SVC from a high-
+ * priority interrupt would cause a usage fault. */
+void cdc_rx_push(const uint8_t *data, uint32_t len) {
+    __cdc_rx_push(data, len);
+}
+
+bool cdc_rx_read_byte(uint8_t *out) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)(uintptr_t)out), "I" (SVC_CDC_RX_READ_BYTE)
+        : "r0"
+    );
+    return (bool)result;
+#else
+    return __cdc_rx_read_byte(out);
+#endif
+}
+
+uint32_t cdc_rx_available(void) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_CDC_RX_AVAILABLE)
+        : "r0"
+    );
+    return result;
+#else
+    return __cdc_rx_available();
+#endif
+}
+
+/* ============================================================================
+ * EVENT RING BUFFER WRAPPERS
+ * ========================================================================= */
+
+void event_init(void) {
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_EVENT_INIT));
+#else
+    __event_init();
+#endif
+}
+
+/* os_event packs five user-level args into three SVC registers (R0/R1/R2)
+ * to stay inside the AAPCS budget without spilling to the caller's stack:
+ *
+ *   R0  = (event_id << 16) | (severity << 8) | module_id
+ *   R1  = payload pointer
+ *   R2  = payload_len
+ */
+void os_event(uint8_t module_id, event_severity_t severity, uint16_t event_id,
+              const void *payload, uint8_t payload_len) {
+#ifndef HOST_TEST
+    uint32_t packed = ((uint32_t)event_id << 16)
+                    | ((uint32_t)((uint8_t)severity) << 8)
+                    | (uint32_t)module_id;
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "mov r1, %1\n"
+        "mov r2, %2\n"
+        "svc %3\n"
+        :
+        : "r" (packed), "r" ((uint32_t)(uintptr_t)payload),
+          "r" ((uint32_t)payload_len), "I" (SVC_OS_EVENT)
+        : "r0", "r1", "r2"
+    );
+#else
+    __os_event(module_id, severity, event_id, payload, payload_len);
+#endif
+}
+
+void event_set_squelch(uint8_t module_id, event_severity_t min_severity) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "mov r1, %1\n"
+        "svc %2\n"
+        :
+        : "r" ((uint32_t)module_id), "r" ((uint32_t)min_severity),
+          "I" (SVC_EVENT_SET_SQUELCH)
+        : "r0", "r1"
+    );
+#else
+    __event_set_squelch(module_id, min_severity);
+#endif
+}
+
+event_severity_t event_get_squelch(uint8_t module_id) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)module_id), "I" (SVC_EVENT_GET_SQUELCH)
+        : "r0"
+    );
+    return (event_severity_t)result;
+#else
+    return __event_get_squelch(module_id);
+#endif
+}
+
+bool event_drain(event_entry_t *out_buf, uint8_t max_entries,
+                 uint8_t *num_drained) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)(uintptr_t)out_buf),
+          "r" ((uint32_t)max_entries),
+          "r" ((uint32_t)(uintptr_t)num_drained),
+          "I" (SVC_EVENT_DRAIN)
+        : "r0", "r1", "r2"
+    );
+    return (bool)result;
+#else
+    return __event_drain(out_buf, max_entries, num_drained);
+#endif
+}
+
+uint32_t event_get_count(void) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_EVENT_GET_COUNT)
+        : "r0"
+    );
+    return result;
+#else
+    return __event_get_count();
+#endif
+}
+
+/* ============================================================================
+ * GROUND-LOADABLE TABLE ENGINE WRAPPERS
+ * ========================================================================= */
+
+void tbl_init(void) {
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_TBL_INIT));
+#else
+    __tbl_init();
+#endif
+}
+
+bool tbl_register(const tbl_descriptor_t *desc) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)(uintptr_t)desc), "I" (SVC_TBL_REGISTER)
+        : "r0"
+    );
+    return (bool)result;
+#else
+    return __tbl_register(desc);
+#endif
+}
+
+bool tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
+              uint16_t schema_crc) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "mov r3, %4\n"
+        "svc %5\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)id), "r" ((uint32_t)(uintptr_t)data),
+          "r" ((uint32_t)len), "r" ((uint32_t)schema_crc),
+          "I" (SVC_TBL_LOAD)
+        : "r0", "r1", "r2", "r3"
+    );
+    return (bool)result;
+#else
+    return __tbl_load(id, data, len, schema_crc);
+#endif
+}
+
+/* tbl_activate is the only call that must straddle priv ↔ thread mode: the
+ * registered activate callback runs in unprivileged thread mode between
+ * the prepare (validate + copy staging into a thread-mode scratch buffer)
+ * and the commit (copy scratch into the active buffer). This mirrors the
+ * pattern used by semaphore/pipe spin loops. */
+bool tbl_activate(tbl_id_t id) {
+    uint8_t                 scratch[TBL_MAX_SIZE];
+    uint16_t                scratch_len = 0;
+    tbl_activate_fn         activate_cb = NULL;
+    bool                    ok;
+
+#ifndef HOST_TEST
+    {
+        uint32_t result;
+        __asm__ volatile (
+            "mov r0, %1\n"
+            "mov r1, %2\n"
+            "mov r2, %3\n"
+            "mov r3, %4\n"
+            "svc %5\n"
+            "mov %0, r0\n"
+            : "=r" (result)
+            : "r" ((uint32_t)id),
+              "r" ((uint32_t)(uintptr_t)scratch),
+              "r" ((uint32_t)(uintptr_t)&scratch_len),
+              "r" ((uint32_t)(uintptr_t)&activate_cb),
+              "I" (SVC_TBL_ACTIVATE_PREPARE)
+            : "r0", "r1", "r2", "r3"
+        );
+        ok = (bool)result;
+    }
+#else
+    ok = __tbl_activate_prepare(id, scratch, &scratch_len, &activate_cb);
+#endif
+
+    if (!ok) {
+        return false;
+    }
+
+    /* Run the user activate callback in thread mode against the scratch
+     * copy. The active buffer is unchanged at this point. */
+    if (activate_cb) {
+        if (!activate_cb(scratch, scratch_len)) {
+            return false;
+        }
+    }
+
+#ifndef HOST_TEST
+    {
+        uint32_t result;
+        __asm__ volatile (
+            "mov r0, %1\n"
+            "mov r1, %2\n"
+            "mov r2, %3\n"
+            "svc %4\n"
+            "mov %0, r0\n"
+            : "=r" (result)
+            : "r" ((uint32_t)id),
+              "r" ((uint32_t)(uintptr_t)scratch),
+              "r" ((uint32_t)scratch_len),
+              "I" (SVC_TBL_ACTIVATE_COMMIT)
+            : "r0", "r1", "r2"
+        );
+        return (bool)result;
+    }
+#else
+    return __tbl_activate_commit(id, scratch, scratch_len);
+#endif
+}
+
+int16_t tbl_dump(tbl_id_t id, uint8_t *out, uint16_t max) {
+#ifndef HOST_TEST
+    int32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)id), "r" ((uint32_t)(uintptr_t)out),
+          "r" ((uint32_t)max), "I" (SVC_TBL_DUMP)
+        : "r0", "r1", "r2"
+    );
+    return (int16_t)result;
+#else
+    return __tbl_dump(id, out, max);
+#endif
+}
+
+const tbl_descriptor_t *tbl_get_descriptor(tbl_id_t id) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)id), "I" (SVC_TBL_GET_DESCRIPTOR)
+        : "r0"
+    );
+    return (const tbl_descriptor_t *)(uintptr_t)result;
+#else
+    return __tbl_get_descriptor(id);
+#endif
+}
+
+uint8_t tbl_count(void) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_TBL_COUNT)
+        : "r0"
+    );
+    return (uint8_t)result;
+#else
+    return __tbl_count();
 #endif
 }

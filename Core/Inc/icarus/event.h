@@ -105,6 +105,17 @@ bool event_drain(event_entry_t *out_buf, uint8_t max_entries,
  */
 uint32_t event_get_count(void);
 
+/* ---- Privileged implementations (internal — do not call directly) ----- */
+
+void __event_init(void);
+void __os_event(uint8_t module_id, event_severity_t severity, uint16_t event_id,
+                const void *payload, uint8_t payload_len);
+void __event_set_squelch(uint8_t module_id, event_severity_t min_severity);
+event_severity_t __event_get_squelch(uint8_t module_id);
+bool __event_drain(event_entry_t *out_buf, uint8_t max_entries,
+                   uint8_t *num_drained);
+uint32_t __event_get_count(void);
+
 #ifdef __cplusplus
 }
 #endif

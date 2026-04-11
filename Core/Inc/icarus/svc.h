@@ -84,16 +84,39 @@ extern "C" {
 #define SVC_GET_NUM_TASKS               38  /* uint8_t: num_created_tasks    */
 #define SVC_OS_IS_RUNNING               39  /* uint8_t: os_running flag      */
 
+/* CDC RX ring buffer (data in DTCM_PRIV)                                    */
+#define SVC_CDC_RX_INIT                 40  /* clear head/tail               */
+#define SVC_CDC_RX_READ_BYTE            41  /* bool: pop one byte if any     */
+#define SVC_CDC_RX_AVAILABLE            42  /* uint32_t: bytes available     */
+
+/* Event ring buffer + per-module squelch (data in DTCM_PRIV)                */
+#define SVC_EVENT_INIT                  43  /* clear ring + squelch          */
+#define SVC_OS_EVENT                    44  /* emit one entry                */
+#define SVC_EVENT_SET_SQUELCH           45  /* set per-module threshold      */
+#define SVC_EVENT_GET_SQUELCH           46  /* read per-module threshold     */
+#define SVC_EVENT_DRAIN                 47  /* copy entries into caller buf  */
+#define SVC_EVENT_GET_COUNT             48  /* uint32_t: ring fill           */
+
+/* Ground-loadable table engine (data in DTCM_PRIV)                          */
+#define SVC_TBL_INIT                    49  /* clear registry                */
+#define SVC_TBL_REGISTER                50  /* add a descriptor              */
+#define SVC_TBL_LOAD                    51  /* append bytes to staging       */
+#define SVC_TBL_ACTIVATE_PREPARE        52  /* validate + copy staging→tmp   */
+#define SVC_TBL_ACTIVATE_COMMIT         53  /* copy tmp→active               */
+#define SVC_TBL_DUMP                    54  /* copy active→caller buf        */
+#define SVC_TBL_GET_DESCRIPTOR          55  /* return descriptor pointer     */
+#define SVC_TBL_COUNT                   56  /* uint8_t: registered count     */
+
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_GET_NUM_TASKS <= 255,
+_Static_assert(SVC_TBL_COUNT <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-_Static_assert(SVC_GET_NUM_TASKS >= SVC_KERNEL_PROTECTED_DATA,
-               "SVC_GET_NUM_TASKS must be >= all other SVC numbers");
+_Static_assert(SVC_TBL_COUNT >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_TBL_COUNT must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)
