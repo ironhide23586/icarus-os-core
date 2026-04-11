@@ -123,6 +123,36 @@ const tbl_descriptor_t *tbl_get_descriptor(tbl_id_t id);
  */
 uint8_t  tbl_count(void);
 
+/* ---- Privileged implementations (internal — do not call directly) ----- */
+
+void                    __tbl_init(void);
+bool                    __tbl_register(const tbl_descriptor_t *desc);
+bool                    __tbl_load(tbl_id_t id, const uint8_t *data,
+                                   uint16_t len, uint16_t schema_crc);
+/**
+ * @brief  Validate a staged table and copy it into a caller-provided
+ *         scratch buffer for the activate callback. The active buffer
+ *         is not touched yet.
+ *
+ * @param  id             Table id.
+ * @param  out_data       Caller scratch buffer (must be ≥ TBL_MAX_SIZE).
+ * @param  out_len        [out] Number of bytes written to scratch.
+ * @param  out_activate   [out] Pointer to the user activate callback (or NULL).
+ * @return true on validation success; false otherwise.
+ */
+bool                    __tbl_activate_prepare(tbl_id_t id, uint8_t *out_data,
+                                               uint16_t *out_len,
+                                               tbl_activate_fn *out_activate);
+/**
+ * @brief  Commit a previously prepared table into the active buffer.
+ *         Called only after the user activate callback has succeeded.
+ */
+bool                    __tbl_activate_commit(tbl_id_t id, const uint8_t *data,
+                                              uint16_t len);
+int16_t                 __tbl_dump(tbl_id_t id, uint8_t *out, uint16_t max);
+const tbl_descriptor_t *__tbl_get_descriptor(tbl_id_t id);
+uint8_t                 __tbl_count(void);
+
 #ifdef __cplusplus
 }
 #endif

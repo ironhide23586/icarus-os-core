@@ -28,10 +28,32 @@ extern "C" {
 
 #define CDC_RX_BUF_SIZE 512
 
+/* ---- Public API (issue SVC into priv mode on target) ------------------- */
+
 void     cdc_rx_init(void);
-void     cdc_rx_push(const uint8_t *data, uint32_t len);
 bool     cdc_rx_read_byte(uint8_t *out);
 uint32_t cdc_rx_available(void);
+
+/* ---- Producer entry point ---------------------------------------------- */
+
+/**
+ * @brief  Append bytes to the ring buffer.
+ *
+ * @note   Designed for the privileged USB CDC ISR. The wrapper calls the
+ *         priv-mode implementation directly (no SVC) because issuing an
+ *         SVC from a high-priority interrupt is unsafe. Thread-mode
+ *         callers can use it too — the priv-mode access works because
+ *         the wrapper itself runs in handler / privileged context when
+ *         called from an ISR; on host tests it is just a direct call.
+ */
+void     cdc_rx_push(const uint8_t *data, uint32_t len);
+
+/* ---- Privileged implementations (internal — do not call directly) ----- */
+
+void     __cdc_rx_init(void);
+void     __cdc_rx_push(const uint8_t *data, uint32_t len);
+bool     __cdc_rx_read_byte(uint8_t *out);
+uint32_t __cdc_rx_available(void);
 
 #ifdef __cplusplus
 }

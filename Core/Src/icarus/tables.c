@@ -11,8 +11,18 @@
  *                                copies staging → active on success.
  *            3. tbl_dump()     — returns the *active* buffer contents.
  *
- *          Integrity uses crc16_ccitt() from icarus/crc.h. The engine is
- *          silent — no logging dependency.
+ *          Registry, staging, and active buffers all live in
+ *          DTCM_DATA_PRIV. Public access goes through SVC gates.
+ *
+ *          tbl_activate is split across two privileged calls so the
+ *          user activate callback can run in thread mode between them:
+ *
+ *            __tbl_activate_prepare()  — validate + copy staging into a
+ *                                        caller-provided scratch buffer
+ *            user activate(scratch)    — runs in thread mode, no SVC
+ *            __tbl_activate_commit()   — copy scratch into active
+ *
+ *          The engine itself is silent — no logging dependency.
  *
  * @author  Souham Biswas
  * @date    2026
@@ -42,21 +52,12 @@ typedef struct {
     uint16_t active_len;        /**< Bytes in active buffer (0 = none)        */
 } tbl_slot_t;
 
-static tbl_slot_t registry[TBL_MAX_REGISTERED];
-static uint8_t    reg_count;
+DTCM_DATA_PRIV static tbl_slot_t registry[TBL_MAX_REGISTERED];
+DTCM_DATA_PRIV static uint8_t    reg_count;
 
-/* ---- Init --------------------------------------------------------------- */
+/* ---- Helper: find slot by id (priv mode only) -------------------------- */
 
-void tbl_init(void) {
-    enter_critical();
-    memset(registry, 0, sizeof(registry));
-    reg_count = 0;
-    exit_critical();
-}
-
-/* ---- Helper: find slot by id -------------------------------------------- */
-
-static tbl_slot_t *find_slot(tbl_id_t id) {
+ITCM_FUNC static tbl_slot_t *find_slot(tbl_id_t id) {
     for (uint8_t i = 0; i < reg_count; i++) {
         if (registry[i].desc.id == id) {
             return &registry[i];
@@ -65,9 +66,14 @@ static tbl_slot_t *find_slot(tbl_id_t id) {
     return NULL;
 }
 
-/* ---- Register ----------------------------------------------------------- */
+/* ---- Privileged implementations ---------------------------------------- */
 
-bool tbl_register(const tbl_descriptor_t *desc) {
+ITCM_FUNC void __tbl_init(void) {
+    memset(registry, 0, sizeof(registry));
+    reg_count = 0;
+}
+
+ITCM_FUNC bool __tbl_register(const tbl_descriptor_t *desc) {
     if (!desc) {
         return false;
     }
@@ -77,12 +83,9 @@ bool tbl_register(const tbl_descriptor_t *desc) {
     if (desc->size == 0 || desc->size > TBL_MAX_SIZE) {
         return false;
     }
-
-    enter_critical();
     /* Reject duplicate id */
     for (uint8_t i = 0; i < reg_count; i++) {
         if (registry[i].desc.id == desc->id) {
-            exit_critical();
             return false;
         }
     }
@@ -91,15 +94,11 @@ bool tbl_register(const tbl_descriptor_t *desc) {
     memcpy(&slot->desc, desc, sizeof(tbl_descriptor_t));
     /* Ensure NUL termination of name */
     slot->desc.name[TBL_NAME_LEN - 1] = '\0';
-    exit_critical();
-
     return true;
 }
 
-/* ---- Load --------------------------------------------------------------- */
-
-bool tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
-              uint16_t schema_crc) {
+ITCM_FUNC bool __tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
+                          uint16_t schema_crc) {
     if (!data || len == 0) {
         return false;
     }
@@ -109,12 +108,10 @@ bool tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
         return false;
     }
 
-    enter_critical();
-
     /* First chunk (or re-load after a completed/failed activation): reset
        staging.  We consider staging "ready for reset" when either it is
        empty (staged_len == 0) or a previous full-size load has already been
-       validated (staged_valid == true, i.e. staged_len == desc.size). */
+       validated (staged_valid == true). */
     if (slot->staged_len == 0 || slot->staged_valid) {
         memset(slot->staging, 0, sizeof(slot->staging));
         slot->staged_len        = 0;
@@ -124,7 +121,6 @@ bool tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
 
     /* Bounds check */
     if ((uint32_t)slot->staged_len + len > TBL_MAX_SIZE) {
-        exit_critical();
         return false;
     }
 
@@ -137,65 +133,61 @@ bool tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
         slot->staged_valid    = true;
     }
 
-    exit_critical();
     return true;
 }
 
-/* ---- Activate ----------------------------------------------------------- */
+ITCM_FUNC bool __tbl_activate_prepare(tbl_id_t id, uint8_t *out_data,
+                                      uint16_t *out_len,
+                                      tbl_activate_fn *out_activate) {
+    if (!out_data || !out_len || !out_activate) {
+        return false;
+    }
 
-bool tbl_activate(tbl_id_t id) {
     tbl_slot_t *slot = find_slot(id);
     if (!slot) {
         return false;
     }
 
-    enter_critical();
-
     /* Step 1: size match */
     if (!slot->staged_valid || slot->staged_len != slot->desc.size) {
-        exit_critical();
         return false;
     }
 
     /* Step 2: schema CRC */
     if (slot->staged_schema_crc != slot->desc.schema_crc) {
-        exit_critical();
         return false;
     }
 
     /* Step 3: recompute data CRC for safety */
     uint16_t computed = crc16_ccitt(slot->staging, slot->staged_len);
     if (computed != slot->staged_data_crc) {
-        exit_critical();
         return false;
     }
 
-    /* Take local copies for the callback (released from critical before call) */
-    uint8_t  tmp[TBL_MAX_SIZE];
-    uint16_t tmp_len = slot->staged_len;
-    memcpy(tmp, slot->staging, tmp_len);
-
-    exit_critical();
-
-    /* Step 4: call activate callback */
-    if (slot->desc.activate) {
-        if (!slot->desc.activate(tmp, tmp_len)) {
-            return false;
-        }
-    }
-
-    /* Step 5: copy staging -> active */
-    enter_critical();
-    memcpy(slot->active, tmp, tmp_len);
-    slot->active_len = tmp_len;
-    exit_critical();
-
+    /* Step 4: copy into the caller-provided scratch buffer so the user
+     *         activate callback can run from thread mode without touching
+     *         DTCM_PRIV directly. */
+    memcpy(out_data, slot->staging, slot->staged_len);
+    *out_len      = slot->staged_len;
+    *out_activate = slot->desc.activate;
     return true;
 }
 
-/* ---- Dump --------------------------------------------------------------- */
+ITCM_FUNC bool __tbl_activate_commit(tbl_id_t id, const uint8_t *data,
+                                     uint16_t len) {
+    if (!data || len == 0 || len > TBL_MAX_SIZE) {
+        return false;
+    }
+    tbl_slot_t *slot = find_slot(id);
+    if (!slot) {
+        return false;
+    }
+    memcpy(slot->active, data, len);
+    slot->active_len = len;
+    return true;
+}
 
-int16_t tbl_dump(tbl_id_t id, uint8_t *out, uint16_t max) {
+ITCM_FUNC int16_t __tbl_dump(tbl_id_t id, uint8_t *out, uint16_t max) {
     if (!out || max == 0) {
         return -1;
     }
@@ -205,28 +197,22 @@ int16_t tbl_dump(tbl_id_t id, uint8_t *out, uint16_t max) {
         return -1;
     }
 
-    enter_critical();
     uint16_t len = slot->active_len;
     if (len == 0) {
-        exit_critical();
         return -1;
     }
     if (len > max) {
         len = max;
     }
     memcpy(out, slot->active, len);
-    exit_critical();
-
     return (int16_t)len;
 }
 
-/* ---- Descriptor query --------------------------------------------------- */
-
-const tbl_descriptor_t *tbl_get_descriptor(tbl_id_t id) {
+ITCM_FUNC const tbl_descriptor_t *__tbl_get_descriptor(tbl_id_t id) {
     tbl_slot_t *slot = find_slot(id);
     return slot ? &slot->desc : NULL;
 }
 
-uint8_t tbl_count(void) {
+ITCM_FUNC uint8_t __tbl_count(void) {
     return reg_count;
 }
