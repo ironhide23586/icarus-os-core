@@ -150,7 +150,7 @@ ITCM_FUNC bool __sb_unsubscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
     for (uint8_t i = 0u; i < r->count; i++) {
         if (r->pipes[i] == pipe_idx) {
             /* Compact: move last into this slot */
-            r->pipes[i] = r->pipes[r->count - 1];
+            r->pipes[i] = r->pipes[(uint8_t)(r->count - 1u)];
             r->count--;
             return true;
         }
@@ -199,7 +199,7 @@ ITCM_FUNC uint8_t __sb_publish(sb_msg_id_t msg_id, const uint8_t *data,
  */
 ITCM_FUNC uint8_t __sb_subscriber_count(sb_msg_id_t msg_id) {
     sb_route_t *r = find_route(msg_id);
-    return r ? r->count : 0;
+    return (r != NULL) ? r->count : 0u;
 }
 
 /**

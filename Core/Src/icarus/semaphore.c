@@ -188,7 +188,7 @@ ITCM_FUNC bool __sem_can_consume(uint8_t semaphore_idx) {
         (!semaphore_list[semaphore_idx]->engaged)) {
         return false;
     }
-    return semaphore_list[semaphore_idx]->count > 0;
+    return semaphore_list[semaphore_idx]->count > 0u;
 }
 
 /**

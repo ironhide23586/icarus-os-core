@@ -178,17 +178,17 @@ static void os_heartbeat_task(void)
     const char* task_name = os_get_current_task_name();
 #endif
 
-    while (1) {
-        if (os_is_running()) {  // Use SVC wrapper instead of direct DTCM access
+    while (1 != 0) {
+        if (os_is_running() != 0u) {
 #if ICARUS_ENABLE_HEARTBEAT_VIS
             display_render_banner(ROW_HEARTBEAT, task_name, true);
-            task_active_sleep(8);
+            (void)task_active_sleep(8);
             LED_On();
-            task_active_sleep(ICARUS_HEARTBEAT_ON_TICKS - 1);
+            (void)task_active_sleep(ICARUS_HEARTBEAT_ON_TICKS - 1);
             display_render_banner(ROW_HEARTBEAT, task_name, false);
-            task_active_sleep(8);
+            (void)task_active_sleep(8);
             LED_Off();
-            task_active_sleep(ICARUS_HEARTBEAT_OFF_TICKS - 1);
+            (void)task_active_sleep(ICARUS_HEARTBEAT_OFF_TICKS - 1);
 #else
             LED_Blink(ICARUS_HEARTBEAT_ON_TICKS, ICARUS_HEARTBEAT_OFF_TICKS);
 #endif
@@ -196,7 +196,7 @@ static void os_heartbeat_task(void)
 #if ICARUS_ENABLE_HEARTBEAT_VIS
             display_render_banner(ROW_HEARTBEAT, task_name, false);
 #endif
-            task_active_sleep(100);
+            (void)task_active_sleep(100);
         }
     }
 }
@@ -220,23 +220,23 @@ ITCM_FUNC void __os_init(void)
     current_cleanup_task_idx = -1;
     current_task_ticks_remaining = ticks_per_task;
 
-    for (i = 0; i < ICARUS_MAX_TASKS; i++) {
+    for (i = 0u; i < (uint8_t)ICARUS_MAX_TASKS; i++) {
         task_list[i] = &task_pool[i];
         cleanup_task_idx[i] = -1;
         data_pool_word_offsets[i] = 0;
     }
 
-    for (i = 0; i < ICARUS_MAX_SEMAPHORES; i++) {
+    for (i = 0u; i < (uint8_t)ICARUS_MAX_SEMAPHORES; i++) {
         semaphore_list[i] = &semaphore_pool[i];
         __init_sem(i, 0, false);
     }
 
-    for (i = 0; i < ICARUS_MAX_MESSAGE_QUEUES; i++) {
+    for (i = 0u; i < (uint8_t)ICARUS_MAX_MESSAGE_QUEUES; i++) {
         message_pipe_list[i] = &message_pipe_pool[i];
         __init_pipe(i, 0, false);
     }
 
-    for (i = 0; i < 16; i++) {
+    for (i = 0u; i < 16u; i++) {
         cpu_vregisters[i] = 0;
     }
 
@@ -293,7 +293,7 @@ ITCM_FUNC uint32_t* __kernel_get_data(uint8_t task_idx)
  * @note  Runs in SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC void* __kernel_protected_data(uint16_t num_words) {
-    if (((data_pool_word_offsets[current_task_index] + num_words) > ICARUS_DATA_WORDS) || (num_words == 0u)) {
+    if (((data_pool_word_offsets[current_task_index] + num_words) > (uint16_t)ICARUS_DATA_WORDS) || (num_words == 0u)) {
         return NULL;
     }
     uint16_t current_offset = data_pool_word_offsets[current_task_index];

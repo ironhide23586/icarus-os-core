@@ -77,10 +77,10 @@ ITCM_FUNC bool __tbl_register(const tbl_descriptor_t *desc) {
     if (!desc) {
         return false;
     }
-    if (reg_count >= TBL_MAX_REGISTERED) {
+    if (reg_count >= (uint8_t)TBL_MAX_REGISTERED) {
         return false;
     }
-    if (desc->size == 0 || desc->size > TBL_MAX_SIZE) {
+    if ((desc->size == 0u) || (desc->size > (uint16_t)TBL_MAX_SIZE)) {
         return false;
     }
     /* Reject duplicate id */
@@ -120,7 +120,7 @@ ITCM_FUNC bool __tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
     }
 
     /* Bounds check */
-    if ((uint32_t)slot->staged_len + len > TBL_MAX_SIZE) {
+    if (((uint32_t)slot->staged_len + (uint32_t)len) > (uint32_t)TBL_MAX_SIZE) {
         return false;
     }
 

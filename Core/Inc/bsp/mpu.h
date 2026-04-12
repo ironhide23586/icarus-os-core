@@ -97,7 +97,7 @@ extern "C" {
  * @brief Task data region size for MPU configuration
  * @note Derived from ICARUS_DATA_WORDS in config.h
  */
-#define TASK_DATA_SIZE_BYTES (ICARUS_DATA_WORDS * 4)
+#define TASK_DATA_SIZE_BYTES ((ICARUS_DATA_WORDS) * 4u)
 #define TASK_DATA_SIZE_MPU   BYTES_TO_MPU_SIZE(TASK_DATA_SIZE_BYTES)
 
 /**

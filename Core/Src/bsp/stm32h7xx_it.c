@@ -353,7 +353,7 @@ ITCM_FUNC void SysTick_Handler(void)
   
   os_tick_count++;
 
-  if (os_running && --current_task_ticks_remaining == 0 && scheduler_enabled) {
+  if ((os_running != 0u) && (--current_task_ticks_remaining == 0u) && (scheduler_enabled)) {
     current_task_ticks_remaining = ICARUS_TICKS_PER_TASK;  // Reset for next task
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
   }

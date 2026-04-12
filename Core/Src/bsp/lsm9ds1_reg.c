@@ -2959,7 +2959,7 @@ int32_t lsm9ds1_pin_notification_set(const stmdev_ctx_t *ctx_mag,
 
   if (ret == 0)
   {
-    int_cfg_m.iel = (uint8_t)(~val);
+    int_cfg_m.iel = (uint8_t)~(uint32_t)val;
     ret = lsm9ds1_write_reg(ctx_mag, LSM9DS1_INT_CFG_M,
                             (uint8_t *)&int_cfg_m, 1);
   }
@@ -3000,7 +3000,7 @@ int32_t lsm9ds1_pin_notification_get(const stmdev_ctx_t *ctx_mag,
                            (uint8_t *)&int_cfg_m, 1);
   }
 
-  switch (~int_cfg_m.iel & int_gen_cfg_g.lir_g & ctrl_reg4.lir_xl1)
+  switch ((uint8_t)((uint8_t)(~(uint32_t)int_cfg_m.iel) & int_gen_cfg_g.lir_g) & ctrl_reg4.lir_xl1)
   {
     case LSM9DS1_INT_LATCHED:
       *val = LSM9DS1_INT_LATCHED;
@@ -3154,7 +3154,7 @@ int32_t lsm9ds1_pin_polarity_set(const stmdev_ctx_t *ctx_mag,
 
   if (ret == 0)
   {
-    ctrl_reg8.h_lactive = (uint8_t)(~val);
+    ctrl_reg8.h_lactive = (uint8_t)~(uint32_t)val;
     ret = lsm9ds1_write_reg(ctx_imu, LSM9DS1_CTRL_REG8,
                             (uint8_t *)&ctrl_reg8, 1);
   }
@@ -3188,7 +3188,7 @@ int32_t lsm9ds1_pin_polarity_get(const stmdev_ctx_t *ctx_mag,
                            (uint8_t *)&ctrl_reg8, 1);
   }
 
-  switch (int_cfg_m.iea & (~ctrl_reg8.h_lactive))
+  switch ((uint8_t)(int_cfg_m.iea & (uint8_t)(~(uint32_t)ctrl_reg8.h_lactive)))
   {
     case LSM9DS1_ACTIVE_LOW:
       *val = LSM9DS1_ACTIVE_LOW;

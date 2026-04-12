@@ -28,7 +28,7 @@ ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
                     uint32_t *stack, uint32_t stack_size,
                     uint32_t *data, const char *name)
 {
-    if (running_task_count >= ICARUS_MAX_TASKS) {
+    if (running_task_count >= (uint8_t)ICARUS_MAX_TASKS) {
         return;
     }
 
@@ -40,10 +40,10 @@ ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
     task->global_tick_paused = 0;
     task->ticks_to_pause = 0;
 
-    (void)strncpy(task->name, name, ICARUS_MAX_TASK_NAME_LEN);
+    (void)strncpy(task->name, name, (size_t)ICARUS_MAX_TASK_NAME_LEN);
     task->name[ICARUS_MAX_TASK_NAME_LEN - 1] = '\0';
 
-    uint32_t *stack_top = stack + stack_size - 1;
+    uint32_t *stack_top = &stack[stack_size - 1u];
 
     *(stack_top--) = 0x01000000;                      /* xPSR */
     *(stack_top--) = (uint32_t)(uintptr_t)function;   /* PC */
@@ -60,7 +60,7 @@ ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
     task->stack_watermark = stack_size;  /* full stack = max free */
 
     /* Fill stack with sentinel pattern for watermark detection */
-    for (uint32_t i = 0; i < stack_size - 16; i++) {
+    for (uint32_t i = 0u; i < (stack_size - 16u); i++) {
         stack[i] = 0xDEADC0DEu;
     }
 
@@ -74,8 +74,8 @@ ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
 ITCM_FUNC void __os_register_task(void (*function)(void), const char *name)
 {
     os_create_task(task_list[num_created_tasks], function,
-                   __kernel_get_stack(num_created_tasks), 
-                   ICARUS_STACK_WORDS, 
+                   __kernel_get_stack(num_created_tasks),
+                   (uint32_t)ICARUS_STACK_WORDS,
                    __kernel_get_data(num_created_tasks), name);
 }
 
@@ -91,7 +91,7 @@ ITCM_FUNC void __os_exit_task(void)
 {
     task_list[current_task_index]->task_state = TASK_STATE_FINISHED;
 
-    if (running_task_count > 0) {
+    if (running_task_count > 0u) {
         running_task_count--;
     }
 
@@ -109,13 +109,13 @@ ITCM_FUNC void __os_exit_task(void)
  */
 ITCM_FUNC void __os_kill_process(uint8_t task_index)
 {
-    if (task_index >= num_created_tasks || task_index == 0) {
+    if ((task_index >= num_created_tasks) || (task_index == 0u)) {
         return;  /* Cannot kill task 0 (idle task) or invalid indices */
     }
 
     task_list[task_index]->task_state = TASK_STATE_KILLED;
 
-    if (running_task_count > 0) {
+    if (running_task_count > 0u) {
         running_task_count--;
     }
 
@@ -153,24 +153,24 @@ ITCM_FUNC void __os_task_suicide(void)
  */
 ITCM_FUNC void __os_restart_task(uint8_t task_index)
 {
-    if (task_index >= num_created_tasks || task_index == 0) {
+    if ((task_index >= num_created_tasks) || (task_index == 0u)) {
         return;
     }
 
     icarus_task_t *t = task_list[task_index];
 
-    if (t->task_state != TASK_STATE_KILLED &&
-        t->task_state != TASK_STATE_FINISHED) {
+    if ((t->task_state != TASK_STATE_KILLED) &&
+        (t->task_state != TASK_STATE_FINISHED)) {
         return;
     }
 
     /* Re-fill stack with sentinel for watermark tracking */
-    for (uint32_t i = 0; i < t->stack_size - 16; i++) {
+    for (uint32_t i = 0u; i < (t->stack_size - 16u); i++) {
         t->stack_base[i] = 0xDEADC0DEu;
     }
 
     /* Re-initialize the exception frame — same as os_create_task */
-    uint32_t *stack_top = t->stack_base + t->stack_size - 1;
+    uint32_t *stack_top = &t->stack_base[t->stack_size - 1u];
 
     *(stack_top--) = 0x01000000;                          /* xPSR */
     *(stack_top--) = (uint32_t)(uintptr_t)t->function;    /* PC   */

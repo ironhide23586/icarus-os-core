@@ -68,8 +68,9 @@ ITCM_FUNC const char *__os_get_current_task_name(void) {
         /* Copy name from DTCM to RAM_D1 buffer so unprivileged code can read it */
         const char *src = task_list[current_task_index]->name;
         char *dst = task_name_buffer;
+        const uint8_t name_max = (uint8_t)ICARUS_MAX_TASK_NAME_LEN - 1u;
         uint8_t i = 0u;
-        while ((i < (uint8_t)(ICARUS_MAX_TASK_NAME_LEN - 1)) && (src[i] != '\0')) {
+        while ((i < name_max) && (src[i] != '\0')) {
             dst[i] = src[i];
             i++;
         }

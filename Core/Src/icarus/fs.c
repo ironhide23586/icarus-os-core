@@ -102,7 +102,7 @@ ITCM_FUNC bool __fs_create(const char *name, fs_file_t *out) {
         return false;
     }
 
-    (void)strncpy(fs_table[slot].name, name, FS_MAX_NAME_LEN - 1u);
+    (void)strncpy(fs_table[slot].name, name, (size_t)FS_MAX_NAME_LEN - 1u);
     fs_table[slot].name[FS_MAX_NAME_LEN - 1] = '\0';
     fs_table[slot].size = 0u;
     fs_table[slot].used = true;
@@ -260,9 +260,10 @@ ITCM_FUNC void __fs_stats(fs_stats_t *out) {
         }
     }
 
-    out->total_bytes = FS_TOTAL_BYTES;
+    const uint32_t total = (uint32_t)((uint32_t)FS_MAX_FILES * (uint32_t)FS_MAX_FILE_SIZE);
+    out->total_bytes = total;
     out->used_bytes  = used;
-    out->free_bytes  = FS_TOTAL_BYTES - used;
+    out->free_bytes  = total - used;
     out->file_count  = count;
 }
 

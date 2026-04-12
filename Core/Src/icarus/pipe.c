@@ -183,7 +183,7 @@ ITCM_FUNC void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t me
         message_pipe_list[pipe_idx]->buffer[
             message_pipe_list[pipe_idx]->enqueue_idx] = message[i];
         message_pipe_list[pipe_idx]->enqueue_idx =
-            (uint16_t)((message_pipe_list[pipe_idx]->enqueue_idx + 1) %
+            (uint16_t)(((uint16_t)(message_pipe_list[pipe_idx]->enqueue_idx + 1u)) %
             message_pipe_list[pipe_idx]->max_count);
         message_pipe_list[pipe_idx]->count++;
     }
@@ -206,7 +206,7 @@ ITCM_FUNC void __pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t mes
         message[i] = message_pipe_list[pipe_idx]->buffer[
             message_pipe_list[pipe_idx]->dequeue_idx];
         message_pipe_list[pipe_idx]->dequeue_idx =
-            (uint16_t)((message_pipe_list[pipe_idx]->dequeue_idx + 1) %
+            (uint16_t)(((uint16_t)(message_pipe_list[pipe_idx]->dequeue_idx + 1u)) %
             message_pipe_list[pipe_idx]->max_count);
         message_pipe_list[pipe_idx]->count--;
     }

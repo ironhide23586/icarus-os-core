@@ -92,9 +92,9 @@ static void CPU_CACHE_Enable(void)
  */
 void LED_Blink(uint32_t Hdelay, uint32_t Ldelay) {
 	HAL_GPIO_WritePin(E3_GPIO_Port,E3_Pin,GPIO_PIN_SET);
-	task_active_sleep(Hdelay - 1);
+	(void)task_active_sleep(Hdelay - 1u);
 	HAL_GPIO_WritePin(E3_GPIO_Port,E3_Pin,GPIO_PIN_RESET);
-	task_active_sleep(Ldelay-1);
+	(void)task_active_sleep(Ldelay - 1u);
 }
 
 /**

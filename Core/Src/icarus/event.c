@@ -49,8 +49,9 @@ ITCM_FUNC void __os_event(uint8_t module_id, event_severity_t severity,
     if ((uint8_t)severity < (uint8_t)squelch[module_id]) {
         return;
     }
-    if (payload_len > 12u) {
-        payload_len = 12u;
+    uint8_t pl_len = payload_len;
+    if (pl_len > 12u) {
+        pl_len = 12u;
     }
 
     event_entry_t *entry = &ring[ring_head];
@@ -59,8 +60,8 @@ ITCM_FUNC void __os_event(uint8_t module_id, event_severity_t severity,
     entry->event_id  = event_id;
 
     (void)memset(entry->payload, 0, sizeof(entry->payload));
-    if ((payload != NULL) && (payload_len > 0u)) {
-        (void)memcpy(entry->payload, payload, payload_len);
+    if ((payload != NULL) && (pl_len > 0u)) {
+        (void)memcpy(entry->payload, payload, pl_len);
     }
 
     ring_head = (ring_head + 1u) % (uint32_t)EVENT_RING_SIZE;

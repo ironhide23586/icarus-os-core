@@ -46,13 +46,13 @@
  */
 
 /** @brief Move cursor to specified row and column (1-indexed) */
-#define ANSI_GOTO(row, col) printf("\033[%d;%dH", (row), (col))
+#define ANSI_GOTO(row, col) (void)printf("\033[%d;%dH", (row), (col))
 
 /** @brief Show terminal cursor */
-#define ANSI_SHOW_CURSOR()  printf("\033[?25h")
+#define ANSI_SHOW_CURSOR()  (void)printf("\033[?25h")
 
 /** @brief Hide terminal cursor */
-#define ANSI_HIDE_CURSOR()  printf("\033[?25l")
+#define ANSI_HIDE_CURSOR()  (void)printf("\033[?25l")
 
 /** @brief Reset all text attributes */
 #define ANSI_RESET      "\033[0m"
@@ -131,20 +131,21 @@ void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len,
     }
 
     // Clamp length to max
-    if (len > MSG_HISTORY_MAX_BYTES) {
-        len = MSG_HISTORY_MAX_BYTES;
+    uint8_t clamped_len = len;
+    if (clamped_len > (uint8_t)MSG_HISTORY_MAX_BYTES) {
+        clamped_len = (uint8_t)MSG_HISTORY_MAX_BYTES;
     }
-    
+
     // Add entry at head position
     msg_history_entry_t* entry = &hist->entries[hist->head];
-    (void)memcpy(entry->data, data, len);
-    entry->len = len;
+    (void)memcpy(entry->data, data, clamped_len);
+    entry->len = clamped_len;
     entry->source_id = source_id;
     entry->is_send = is_send;
-    
+
     // Advance head (circular)
-    hist->head = (uint8_t)(hist->head + 1) % MSG_HISTORY_LEN;
-    if (hist->count < MSG_HISTORY_LEN) {
+    hist->head = (uint8_t)((uint8_t)(hist->head + 1u) % (uint8_t)MSG_HISTORY_LEN);
+    if (hist->count < (uint8_t)MSG_HISTORY_LEN) {
         hist->count++;
     }
 }
@@ -177,46 +178,50 @@ void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, c
     
     // Header - use ASCII for compatibility
     ANSI_GOTO(row, col);
-    printf(ANSI_CYAN ANSI_BOLD "+---%s---+" ANSI_RESET, label);
-    
+    (void)printf(ANSI_CYAN ANSI_BOLD "+---%s---+" ANSI_RESET, label);
+
     // Calculate starting index (oldest entry)
     uint8_t start_idx;
-    if (hist->count < MSG_HISTORY_LEN) {
-        start_idx = 0;
+    if (hist->count < (uint8_t)MSG_HISTORY_LEN) {
+        start_idx = 0u;
     } else {
         start_idx = hist->head;
     }
-    
+
     // Render each history entry
-    for (uint8_t i = 0; i < MSG_HISTORY_LEN; i++) {
-        ANSI_GOTO(row + 1 + i, col);
-        
+    for (uint8_t i = 0u; i < (uint8_t)MSG_HISTORY_LEN; i++) {
+        int goto_row = (int)row + 1 + (int)i;
+        ANSI_GOTO(goto_row, col);
+
         if (i < hist->count) {
-            uint8_t idx = (start_idx + i) % MSG_HISTORY_LEN;
+            uint8_t idx = (uint8_t)((start_idx + i) % (uint8_t)MSG_HISTORY_LEN);
             msg_history_entry_t* entry = &hist->entries[idx];
-            
+
             if (entry->is_send) {
-                printf(ANSI_GREEN "|>P%d:", entry->source_id);
+                (void)printf(ANSI_GREEN "|>P%d:", entry->source_id);
             } else {
-                printf(ANSI_MAGENTA "|<C%d:", entry->source_id);
+                (void)printf(ANSI_MAGENTA "|<C%d:", entry->source_id);
             }
-            
-            if (entry->len == 1) {
-                printf("%3d" ANSI_RESET "|", entry->data[0]);
+
+            if (entry->len == 1u) {
+                (void)printf("%3d" ANSI_RESET "|", entry->data[0]);
             } else {
-                for (uint8_t j = 0; j < entry->len && j < 3; j++) {
-                    printf("%02X", entry->data[j]);
+                for (uint8_t j = 0u; (j < entry->len) && (j < 3u); j++) {
+                    (void)printf("%02X", entry->data[j]);
                 }
-                printf(ANSI_RESET "|");
+                (void)printf(ANSI_RESET "|");
             }
         } else {
-            printf("|        |");
+            (void)printf("|        |");
         }
     }
-    
+
     // Footer
-    ANSI_GOTO(row + MSG_HISTORY_LEN + 1, col);
-    printf(ANSI_CYAN "+---------+" ANSI_RESET);
+    {
+        int footer_row = (int)row + (int)MSG_HISTORY_LEN + 1;
+        ANSI_GOTO(footer_row, col);
+    }
+    (void)printf(ANSI_CYAN "+---------+" ANSI_RESET);
 }
 
 /**
@@ -241,43 +246,45 @@ void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, c
  */
 void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_ticks, uint32_t period_ticks) {
     // Guard against division by zero
-    if (period_ticks == 0) {
-        period_ticks = 1;
+    uint32_t period = period_ticks;
+    if (period == 0u) {
+        period = 1u;
     }
-    
+
     // Clamp elapsed to period to avoid overflow
-    if (elapsed_ticks > period_ticks) {
-        elapsed_ticks = period_ticks;
+    uint32_t elapsed = elapsed_ticks;
+    if (elapsed > period) {
+        elapsed = period;
     }
-    
+
     // Calculate filled portion (0 to BAR_WIDTH)
     // cppcheck-suppress zerodivcond
-    // period_ticks is guaranteed > 0 by guard above, but cppcheck can't track this
-    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
-    if (filled > BAR_WIDTH) {
-        filled = BAR_WIDTH;
+    // period is guaranteed > 0 by guard above, but cppcheck can't track this
+    uint32_t filled = (elapsed * (uint32_t)BAR_WIDTH) / period;
+    if (filled > (uint32_t)BAR_WIDTH) {
+        filled = (uint32_t)BAR_WIDTH;
     }
-    
+
     // Move cursor to start of this task's row
     ANSI_GOTO(row, 1);
-    
+
     // Print task name and opening bracket
-    printf("[%s] ", task_name ? task_name : "unknown");
-    
+    (void)printf("[%s] ", (task_name != NULL) ? task_name : "unknown");
+
     // Render bar: filled portion, then empty portion
-    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+    for (uint32_t i = 0u; i < (uint32_t)BAR_WIDTH; i++) {
         if (i < filled) {
-            printf("█");  // Full block for filled
+            (void)printf("█");  // Full block for filled
         } else {
-            printf("─");  // Horizontal line for empty
+            (void)printf("─");  // Horizontal line for empty
         }
     }
-    
+
     // Print period in ticks (right-aligned)
-    printf(" %4" PRIu32 " / %4" PRIu32 " ticks", elapsed_ticks, period_ticks);
-    
+    (void)printf(" %4" PRIu32 " / %4" PRIu32 " ticks", elapsed, period);
+
     // Clear to end of line to avoid leftover characters
-    printf("\033[K");
+    (void)printf("\033[K");
 }
 
 /**
@@ -299,20 +306,20 @@ void display_render_bar(uint8_t row, const char* task_name, uint32_t elapsed_tic
 void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
     // Move cursor to start of this task's row
     ANSI_GOTO(row, 1);
-    
+
     if (is_on) {
         // Show banner when LED is on
-        printf("[%s] ", task_name);
+        (void)printf("[%s] ", task_name);
         // Print a visual indicator (filled blocks)
-        for (uint32_t i = 0; i < BAR_WIDTH - 20; i++) {
-            printf("★");
+        for (uint32_t i = 0u; i < ((uint32_t)BAR_WIDTH - 20u); i++) {
+            (void)printf("★");
         }
-        printf(" [%s]", task_name);
+        (void)printf(" [%s]", task_name);
         // Clear to end of line to remove any leftover characters
-        printf("\033[K");
+        (void)printf("\033[K");
     } else {
         // Clear the entire line when LED is off
-        printf("\033[K");  // Clear from cursor to end of line
+        (void)printf("\033[K");  // Clear from cursor to end of line
     }
 }
 
@@ -343,44 +350,56 @@ void display_render_banner(uint8_t row, const char* task_name, bool is_on) {
  * @note    Division by zero is guarded (max_count forced to 1 if 0)
  */
 void display_render_vbar(uint8_t start_row, uint8_t col, uint32_t count, uint32_t max_count) {
-    if (max_count == 0) {
-        max_count = 1;
+    uint32_t mc = max_count;
+    if (mc == 0u) {
+        mc = 1u;
     }
-    if (count > max_count) {
-        count = max_count;
+    uint32_t cnt = count;
+    if (cnt > mc) {
+        cnt = mc;
     }
-    
-    uint32_t filled_rows = (count * VBAR_HEIGHT) / max_count;
-    if (filled_rows > VBAR_HEIGHT) {
-        filled_rows = VBAR_HEIGHT;
+
+    uint32_t filled_rows = (cnt * (uint32_t)VBAR_HEIGHT) / mc;
+    if (filled_rows > (uint32_t)VBAR_HEIGHT) {
+        filled_rows = (uint32_t)VBAR_HEIGHT;
     }
-    
+
     // Label
-    ANSI_GOTO(start_row - 1, col);
-    printf(ANSI_CYAN "SEM" ANSI_RESET);
-    
+    {
+        int label_row = (int)start_row - 1;
+        ANSI_GOTO(label_row, col);
+    }
+    (void)printf(ANSI_CYAN "SEM" ANSI_RESET);
+
     // Top border
     ANSI_GOTO(start_row, col);
-    printf("+---+");
-    
+    (void)printf("+---+");
+
     // Bar rows (fill from bottom)
-    for (uint8_t i = 0; i < VBAR_HEIGHT; i++) {
-        ANSI_GOTO(start_row + 1 + i, col);
-        uint8_t row_from_bottom = VBAR_HEIGHT - 1 - i;
-        if (row_from_bottom < filled_rows) {
-            printf(ANSI_GREEN "|###|" ANSI_RESET);
+    for (uint8_t i = 0u; i < (uint8_t)VBAR_HEIGHT; i++) {
+        int bar_row = (int)start_row + 1 + (int)i;
+        ANSI_GOTO(bar_row, col);
+        uint8_t row_from_bottom = (uint8_t)((uint8_t)VBAR_HEIGHT - 1u) - i;
+        if ((uint32_t)row_from_bottom < filled_rows) {
+            (void)printf(ANSI_GREEN "|###|" ANSI_RESET);
         } else {
-            printf("|   |");
+            (void)printf("|   |");
         }
     }
-    
+
     // Bottom border
-    ANSI_GOTO(start_row + VBAR_HEIGHT + 1, col);
-    printf("+---+");
-    
+    {
+        int bottom_row = (int)start_row + (int)VBAR_HEIGHT + 1;
+        ANSI_GOTO(bottom_row, col);
+    }
+    (void)printf("+---+");
+
     // Count label
-    ANSI_GOTO(start_row + VBAR_HEIGHT + 2, col);
-    printf("%2" PRIu32 "/%2" PRIu32, count, max_count);
+    {
+        int count_row = (int)start_row + (int)VBAR_HEIGHT + 2;
+        ANSI_GOTO(count_row, col);
+    }
+    (void)printf("%2" PRIu32 "/%2" PRIu32, cnt, mc);
 }
 
 /**
@@ -414,51 +433,65 @@ void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
                          uint8_t last_sent, uint8_t last_recv,
                          bool show_sent, bool show_recv) {
     // Guard against division by zero
-    if (max_count == 0) {
-        max_count = 1;
+    uint8_t mc = max_count;
+    if (mc == 0u) {
+        mc = 1u;
     }
-    if (count > max_count) {
-        count = max_count;
+    uint8_t cnt = count;
+    if (cnt > mc) {
+        cnt = mc;
     }
-    
+
     // Calculate fill percentage for horizontal bar
-    uint8_t bar_width = 8;
-    uint8_t filled = (uint8_t) (count * bar_width) / max_count;
-    
+    uint8_t bar_width = 8u;
+    uint8_t filled = (uint8_t)((uint8_t)(cnt * bar_width) / mc);
+
     // Draw label
     ANSI_GOTO(start_row, col);
-    printf("\033[36m%s\033[0m", label);  // Cyan label
-    
-    // Draw queue visualization: [████────] 
-    ANSI_GOTO(start_row + 1, col);
-    printf("[");
-    for (uint8_t i = 0; i < bar_width; i++) {
+    (void)printf("\033[36m%s\033[0m", label);  // Cyan label
+
+    // Draw queue visualization: [████────]
+    {
+        int q_row = (int)start_row + 1;
+        ANSI_GOTO(q_row, col);
+    }
+    (void)printf("[");
+    for (uint8_t i = 0u; i < bar_width; i++) {
         if (i < filled) {
-            printf("\033[33m█\033[0m");  // Yellow filled
+            (void)printf("\033[33m█\033[0m");  // Yellow filled
         } else {
-            printf("─");
+            (void)printf("─");
         }
     }
-    printf("]");
-    
+    (void)printf("]");
+
     // Draw count
-    ANSI_GOTO(start_row + 2, col);
-    printf("%2d/%2d", count, max_count);
-    
-    // Draw sent indicator with arrow animation
-    ANSI_GOTO(start_row + 3, col);
-    if (show_sent) {
-        printf("\033[32m→%3d\033[0m", last_sent);  // Green arrow + value
-    } else {
-        printf("     ");
+    {
+        int cnt_row = (int)start_row + 2;
+        ANSI_GOTO(cnt_row, col);
     }
-    
-    // Draw received indicator
-    ANSI_GOTO(start_row + 4, col);
-    if (show_recv) {
-        printf("\033[35m←%3d\033[0m", last_recv);  // Magenta arrow + value
+    (void)printf("%2d/%2d", cnt, mc);
+
+    // Draw sent indicator with arrow animation
+    {
+        int sent_row = (int)start_row + 3;
+        ANSI_GOTO(sent_row, col);
+    }
+    if (show_sent) {
+        (void)printf("\033[32m→%3d\033[0m", last_sent);  // Green arrow + value
     } else {
-        printf("     ");
+        (void)printf("     ");
+    }
+
+    // Draw received indicator
+    {
+        int recv_row = (int)start_row + 4;
+        ANSI_GOTO(recv_row, col);
+    }
+    if (show_recv) {
+        (void)printf("\033[35m←%3d\033[0m", last_recv);  // Magenta arrow + value
+    } else {
+        (void)printf("     ");
     }
 }
 
@@ -480,48 +513,50 @@ void display_render_pipe(uint8_t start_row, uint8_t col, const char* label,
  *     [producer] ████████████────────  160/2000 →[42]
  * @endverbatim
  */
-void display_render_producer(uint8_t row, const char* task_name, 
+void display_render_producer(uint8_t row, const char* task_name,
                              uint32_t elapsed_ticks, uint32_t period_ticks,
                              uint8_t msg_value, bool show_msg) {
     // Guard against division by zero
-    if (period_ticks == 0) {
-        period_ticks = 1;
+    uint32_t period = period_ticks;
+    if (period == 0u) {
+        period = 1u;
     }
-    if (elapsed_ticks > period_ticks) {
-        elapsed_ticks = period_ticks;
+    uint32_t elapsed = elapsed_ticks;
+    if (elapsed > period) {
+        elapsed = period;
     }
-    
-    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
-    if (filled > BAR_WIDTH) {
-        filled = BAR_WIDTH;
+
+    uint32_t filled = (elapsed * (uint32_t)BAR_WIDTH) / period;
+    if (filled > (uint32_t)BAR_WIDTH) {
+        filled = (uint32_t)BAR_WIDTH;
     }
-    
+
     ANSI_GOTO(row, 1);
-    
+
     // Task name with producer color (green)
-    printf("\033[32m[%s]\033[0m ", task_name ? task_name : "unknown");
-    
+    (void)printf("\033[32m[%s]\033[0m ", (task_name != NULL) ? task_name : "unknown");
+
     // Progress bar
-    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+    for (uint32_t i = 0u; i < (uint32_t)BAR_WIDTH; i++) {
         if (i < filled) {
-            printf("\033[32m█\033[0m");  // Green filled
+            (void)printf("\033[32m█\033[0m");  // Green filled
         } else {
-            printf("─");
+            (void)printf("─");
         }
     }
-    
+
     // Timing info
-    printf(" %4" PRIu32 "/%4" PRIu32, elapsed_ticks, period_ticks);
-    
+    (void)printf(" %4" PRIu32 "/%4" PRIu32, elapsed, period);
+
     // Message indicator with animation
     if (show_msg) {
         // Flash effect: show arrow and value
-        printf(" \033[32;1m→[%3d]\033[0m", msg_value);
+        (void)printf(" \033[32;1m→[%3d]\033[0m", msg_value);
     } else {
-        printf("        ");
+        (void)printf("        ");
     }
-    
-    printf("\033[K");
+
+    (void)printf("\033[K");
 }
 
 /**
@@ -546,44 +581,46 @@ void display_render_consumer(uint8_t row, const char* task_name,
                              uint32_t elapsed_ticks, uint32_t period_ticks,
                              uint8_t msg_value, bool show_msg) {
     // Guard against division by zero
-    if (period_ticks == 0) {
-        period_ticks = 1;
+    uint32_t period = period_ticks;
+    if (period == 0u) {
+        period = 1u;
     }
-    if (elapsed_ticks > period_ticks) {
-        elapsed_ticks = period_ticks;
+    uint32_t elapsed = elapsed_ticks;
+    if (elapsed > period) {
+        elapsed = period;
     }
-    
-    uint32_t filled = (elapsed_ticks * BAR_WIDTH) / period_ticks;
-    if (filled > BAR_WIDTH) {
-        filled = BAR_WIDTH;
+
+    uint32_t filled = (elapsed * (uint32_t)BAR_WIDTH) / period;
+    if (filled > (uint32_t)BAR_WIDTH) {
+        filled = (uint32_t)BAR_WIDTH;
     }
-    
+
     ANSI_GOTO(row, 1);
-    
+
     // Task name with consumer color (magenta)
-    printf("\033[35m[%s]\033[0m ", task_name ? task_name : "unknown");
-    
+    (void)printf("\033[35m[%s]\033[0m ", (task_name != NULL) ? task_name : "unknown");
+
     // Progress bar
-    for (uint32_t i = 0; i < BAR_WIDTH; i++) {
+    for (uint32_t i = 0u; i < (uint32_t)BAR_WIDTH; i++) {
         if (i < filled) {
-            printf("\033[35m█\033[0m");  // Magenta filled
+            (void)printf("\033[35m█\033[0m");  // Magenta filled
         } else {
-            printf("─");
+            (void)printf("─");
         }
     }
-    
+
     // Timing info
-    printf(" %4" PRIu32 "/%4" PRIu32, elapsed_ticks, period_ticks);
-    
+    (void)printf(" %4" PRIu32 "/%4" PRIu32, elapsed, period);
+
     // Message indicator with animation
     if (show_msg) {
         // Flash effect: show arrow and value
-        printf(" \033[35;1m←[%3d]\033[0m", msg_value);
+        (void)printf(" \033[35;1m←[%3d]\033[0m", msg_value);
     } else {
-        printf("        ");
+        (void)printf("        ");
     }
-    
-    printf("\033[K");
+
+    (void)printf("\033[K");
 }
 
 /**
@@ -622,7 +659,7 @@ void display_init(void) {
     initialized = 1u;
     
     // Clear screen and move to top
-    printf("\033[2J");      // Clear entire screen
+    (void)printf("\033[2J");      // Clear entire screen
     ANSI_HIDE_CURSOR();    // Hide cursor
     ANSI_GOTO(ROW_HEADER, 1);
     
@@ -637,51 +674,51 @@ void display_init(void) {
 
     // Top border
     ANSI_GOTO(ROW_HEADER, 1);
-    printf("\033[2K");
-    printf("┌──────────────────────────────────────────────────────────────┐");
+    (void)printf("\033[2K");
+    (void)printf("┌──────────────────────────────────────────────────────────────┐");
 
     // ICARUS logo line 1
     ANSI_GOTO(ROW_HEADER + 1, 1);
-    printf("\033[2K");
-    printf("│   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │");
+    (void)printf("\033[2K");
+    (void)printf("│   ██╗ ██████╗  █████╗ ██████╗ ██╗   ██╗ ██████╗              │");
 
     // ICARUS logo line 2
     ANSI_GOTO(ROW_HEADER + 2, 1);
-    printf("\033[2K");
-    printf("│   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │");
+    (void)printf("\033[2K");
+    (void)printf("│   ██║██╔════╝ ██╔══██╗██╔══██╗██║   ██║██╔════╝              │");
 
     // ICARUS logo line 3
     ANSI_GOTO(ROW_HEADER + 3, 1);
-    printf("\033[2K");
-    printf("│   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │");
+    (void)printf("\033[2K");
+    (void)printf("│   ██║██║      ███████║██████╔╝██║   ██║╚█████╗               │");
 
     // ICARUS logo line 4
     ANSI_GOTO(ROW_HEADER + 4, 1);
-    printf("\033[2K");
-    printf("│   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │");
+    (void)printf("\033[2K");
+    (void)printf("│   ██║██║      ██╔══██║██╔══██╗██║   ██║ ╚═══██╗              │");
 
     // ICARUS logo line 5
     ANSI_GOTO(ROW_HEADER + 5, 1);
-    printf("\033[2K");
-    printf("│   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │");
+    (void)printf("\033[2K");
+    (void)printf("│   ██║╚██████╗ ██║  ██║██║  ██║╚██████╔╝██████╔╝              │");
 
     // ICARUS logo line 6
     ANSI_GOTO(ROW_HEADER + 6, 1);
-    printf("\033[2K");
-    printf("│   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │");
+    (void)printf("\033[2K");
+    (void)printf("│   ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝               │");
 
     // Subtitle / metadata
     ANSI_GOTO(ROW_HEADER + 7, 1);
-    printf("\033[2K");
-    printf("│   Preemptive Kernel • ARMv7E-M • STM32H750                   │");
+    (void)printf("\033[2K");
+    (void)printf("│   Preemptive Kernel • ARMv7E-M • STM32H750                   │");
 
     // Bottom border
     ANSI_GOTO(ROW_SEPARATOR, 1);
-    printf("\033[2K");
-    printf("└──────────────────────────────────────────────────────────────┘");
+    (void)printf("\033[2K");
+    (void)printf("└──────────────────────────────────────────────────────────────┘");
 
     // TEST: Simple message after header
-    printf("\r\nDTCM Protection Active - System Running\r\n");
+    (void)printf("\r\nDTCM Protection Active - System Running\r\n");
     return;  // TEMPORARY: Skip task iteration to isolate issue
 
     
@@ -696,27 +733,27 @@ void display_init(void) {
     // User tasks start from index 2
     
     uint8_t num_tasks = os_get_num_created_tasks();
-    uint8_t user_task_count = 0;
-    
-    for (uint8_t i = 0; i < num_tasks && user_task_count < 3; i++) {
+    uint8_t user_task_count = 0u;
+
+    for (uint8_t i = 0u; (i < num_tasks) && (user_task_count < 3u); i++) {
         // Get task name via SVC (safe with DTCM priv-only)
         const char* name = os_get_task_name(i);
-        
-        if (name != NULL && name[0] != '\0') {
+
+        if ((name != NULL) && (name[0] != '\0')) {
             // Skip system tasks (they start with "ICARUS_")
             if (strncmp(name, "ICARUS_", 7) != 0) {
                 // This is a user task
-                uint8_t row = ROW_TASK_A + user_task_count;
-                uint32_t period = TASK_A_PERIOD_TICKS;
+                uint8_t disp_row = (uint8_t)((uint8_t)ROW_TASK_A + user_task_count);
+                uint32_t period = (uint32_t)TASK_A_PERIOD_TICKS;
                 if (user_task_count == 1u) {
-                    period = TASK_B_PERIOD_TICKS;
+                    period = (uint32_t)TASK_B_PERIOD_TICKS;
                 } else if (user_task_count == 2u) {
-                    period = TASK_C_PERIOD_TICKS;
+                    period = (uint32_t)TASK_C_PERIOD_TICKS;
                 } else {
                     /* keep default */
                 }
-                
-                display_render_bar(row, name, 0, period);
+
+                display_render_bar(disp_row, name, 0u, period);
                 user_task_count++;
             }
         }

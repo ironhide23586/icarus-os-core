@@ -37,19 +37,21 @@ int __io_putchar(int ch) {
   buf[i++] = (uint8_t)ch;
 
   // Flush on newline or when buffer is full
-  if (ch == '\n' || i == sizeof(buf)) {
+  {
+    const uint8_t buf_size = (uint8_t)sizeof(buf);
+    if ((ch == (int)'\n') || (i >= buf_size)) {
 
-    uint8_t result = CDC_Transmit_FS(buf, i);
-    uint16_t retry_count = 0;
+      uint8_t result = CDC_Transmit_FS(buf, i);
+      uint16_t retry_count = 0u;
 
-    while (retry_count < 1000 && result == USBD_BUSY) {
-      result = CDC_Transmit_FS(buf, i);
-      task_blocking_sleep(1);
-      retry_count++;
+      while ((retry_count < 1000u) && (result == USBD_BUSY)) {
+        result = CDC_Transmit_FS(buf, i);
+        (void)task_blocking_sleep(1);
+        retry_count++;
+      }
+      i = 0;
     }
-    i = 0;
-    // task_blocking_sleep(10);
   }
-  
+
   return ch;
 }

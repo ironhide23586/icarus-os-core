@@ -73,11 +73,12 @@ bool CDC_Write(const uint8_t *data, uint16_t len) {
     if (data == NULL) {
         return false;
     }
-    if (len > CDC_HOST_SINK_SIZE) {
-        len = CDC_HOST_SINK_SIZE;
+    uint16_t write_len = len;
+    if (write_len > (uint16_t)CDC_HOST_SINK_SIZE) {
+        write_len = (uint16_t)CDC_HOST_SINK_SIZE;
     }
-    (void)memcpy(g_cdc_sink, data, len);
-    g_cdc_sink_len = len;
+    (void)memcpy(g_cdc_sink, data, write_len);
+    g_cdc_sink_len = write_len;
     return true;
 }
 
