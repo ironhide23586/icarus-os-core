@@ -96,7 +96,7 @@ void IWDG_Init(uint8_t prescaler, uint16_t reload) {
 }
 
 void IWDG_Refresh(void) {
-    if (g_iwdg_started) {
+    if (g_iwdg_started != 0u) {
         g_iwdg_refresh_count++;
     }
 }

@@ -33,7 +33,7 @@
  * @note  Runs in SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count) {
-    if (semaphore_idx < ICARUS_MAX_SEMAPHORES && semaphore_count > 0) {
+    if ((semaphore_idx < (uint8_t)ICARUS_MAX_SEMAPHORES) && (semaphore_count > 0u)) {
         if (!semaphore_list[semaphore_idx]->engaged) {
             semaphore_list[semaphore_idx]->count = semaphore_count;
             semaphore_list[semaphore_idx]->max_count = semaphore_count;
@@ -54,8 +54,8 @@ ITCM_FUNC bool __semaphore_init(uint8_t semaphore_idx, uint32_t semaphore_count)
 ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx) {
 #ifdef HOST_TEST
     /* In host tests, check validity directly (no MPU) */
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return false;
     }
 #else
@@ -66,7 +66,7 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx) {
 #endif
 
     while (!sem_can_feed(semaphore_idx)) {
-        task_active_sleep(1);
+        (void)task_active_sleep(1);
     }
 
     sem_increment(semaphore_idx);
@@ -81,8 +81,8 @@ ITCM_FUNC bool __semaphore_feed(uint8_t semaphore_idx) {
 ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx) {
 #ifdef HOST_TEST
     /* In host tests, check validity directly (no MPU) */
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return false;
     }
 #else
@@ -93,7 +93,7 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx) {
 #endif
 
     while (!sem_can_consume(semaphore_idx)) {
-        task_active_sleep(1);
+        (void)task_active_sleep(1);
     }
 
     sem_decrement(semaphore_idx);
@@ -116,8 +116,8 @@ ITCM_FUNC bool __semaphore_consume(uint8_t semaphore_idx) {
 ITCM_FUNC bool __semaphore_consume_timeout(uint8_t semaphore_idx,
                                             uint32_t max_ticks) {
 #ifdef HOST_TEST
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return false;
     }
 #else
@@ -131,7 +131,7 @@ ITCM_FUNC bool __semaphore_consume_timeout(uint8_t semaphore_idx,
         if (waited >= max_ticks) {
             return false;
         }
-        task_active_sleep(1);
+        (void)task_active_sleep(1);
         waited++;
     }
 
@@ -144,8 +144,8 @@ ITCM_FUNC bool __semaphore_consume_timeout(uint8_t semaphore_idx,
  * @note  Internal function - use semaphore_get_count() wrapper
  */
 ITCM_FUNC uint32_t __semaphore_get_count(uint8_t semaphore_idx) {
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return 0;
     }
     return semaphore_list[semaphore_idx]->count;
@@ -156,8 +156,8 @@ ITCM_FUNC uint32_t __semaphore_get_count(uint8_t semaphore_idx) {
  * @note  Internal function - use semaphore_get_max_count() wrapper
  */
 ITCM_FUNC uint32_t __semaphore_get_max_count(uint8_t semaphore_idx) {
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return 0;
     }
     return semaphore_list[semaphore_idx]->max_count;
@@ -170,8 +170,8 @@ ITCM_FUNC uint32_t __semaphore_get_max_count(uint8_t semaphore_idx) {
  *        from unprivileged thread mode once DTCM is priv-only.
  */
 ITCM_FUNC bool __sem_can_feed(uint8_t semaphore_idx) {
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return false;
     }
     return semaphore_list[semaphore_idx]->count <
@@ -184,8 +184,8 @@ ITCM_FUNC bool __sem_can_feed(uint8_t semaphore_idx) {
  *        Used by __semaphore_consume spin loop.
  */
 ITCM_FUNC bool __sem_can_consume(uint8_t semaphore_idx) {
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return false;
     }
     return semaphore_list[semaphore_idx]->count > 0;
@@ -197,8 +197,8 @@ ITCM_FUNC bool __sem_can_consume(uint8_t semaphore_idx) {
  *        Runs in privileged SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC void __sem_increment(uint8_t semaphore_idx) {
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return;
     }
     ++semaphore_list[semaphore_idx]->count;
@@ -211,8 +211,8 @@ ITCM_FUNC void __sem_increment(uint8_t semaphore_idx) {
  *        Runs in privileged SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC void __sem_decrement(uint8_t semaphore_idx) {
-    if (semaphore_idx >= ICARUS_MAX_SEMAPHORES ||
-        !semaphore_list[semaphore_idx]->engaged) {
+    if ((semaphore_idx >= (uint8_t)ICARUS_MAX_SEMAPHORES) ||
+        (!semaphore_list[semaphore_idx]->engaged)) {
         return;
     }
     --semaphore_list[semaphore_idx]->count;

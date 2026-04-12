@@ -40,7 +40,7 @@ ITCM_FUNC void os_create_task(icarus_task_t *task, void (*function)(void),
     task->global_tick_paused = 0;
     task->ticks_to_pause = 0;
 
-    strncpy(task->name, name, ICARUS_MAX_TASK_NAME_LEN);
+    (void)strncpy(task->name, name, ICARUS_MAX_TASK_NAME_LEN);
     task->name[ICARUS_MAX_TASK_NAME_LEN - 1] = '\0';
 
     uint32_t *stack_top = stack + stack_size - 1;
@@ -135,8 +135,8 @@ ITCM_FUNC void __os_kill_process(uint8_t task_index)
  */
 ITCM_FUNC void __os_task_suicide(void)
 {
-    printf("[INFO] %s committed suicide\r\n",
-           task_list[current_task_index]->name);
+    (void)printf("[INFO] %s committed suicide\r\n",
+                  task_list[current_task_index]->name);
     __os_kill_process(current_task_index);
 }
 

@@ -46,9 +46,9 @@ static uint8_t    fs_data[FS_MAX_FILES][FS_MAX_FILE_SIZE];
 
 /** @brief Find slot index for @p name, or -1 if not found. */
 static int16_t fs_find(const char *name) {
-    for (uint8_t i = 0; i < FS_MAX_FILES; i++) {
+    for (uint8_t i = 0u; i < (uint8_t)FS_MAX_FILES; i++) {
         if (fs_table[i].used &&
-            strncmp(fs_table[i].name, name, FS_MAX_NAME_LEN) == 0) {
+            (strncmp(fs_table[i].name, name, FS_MAX_NAME_LEN) == 0)) {
             return (int16_t)i;
         }
     }
@@ -57,7 +57,7 @@ static int16_t fs_find(const char *name) {
 
 /** @brief Find first free slot, or -1 if full. */
 static int16_t fs_free_slot(void) {
-    for (uint8_t i = 0; i < FS_MAX_FILES; i++) {
+    for (uint8_t i = 0u; i < (uint8_t)FS_MAX_FILES; i++) {
         if (!fs_table[i].used) {
             return (int16_t)i;
         }
@@ -74,8 +74,8 @@ static int16_t fs_free_slot(void) {
  * @details Zeroes the file table and data store.
  */
 ITCM_FUNC void __fs_init(void) {
-    memset(fs_table, 0, sizeof(fs_table));
-    memset(fs_data,  0, sizeof(fs_data));
+    (void)memset(fs_table, 0, sizeof(fs_table));
+    (void)memset(fs_data,  0, sizeof(fs_data));
 }
 
 /**
@@ -86,10 +86,10 @@ ITCM_FUNC void __fs_init(void) {
  * @retval false  Full, duplicate, or invalid name.
  */
 ITCM_FUNC bool __fs_create(const char *name, fs_file_t *out) {
-    if (!name || !out || name[0] == '\0') {
+    if ((name == NULL) || (out == NULL) || (name[0] == '\0')) {
         return false;
     }
-    if (strnlen(name, FS_MAX_NAME_LEN) >= FS_MAX_NAME_LEN) {
+    if (strnlen(name, FS_MAX_NAME_LEN) >= (size_t)FS_MAX_NAME_LEN) {
         return false;
     }
 
@@ -102,11 +102,11 @@ ITCM_FUNC bool __fs_create(const char *name, fs_file_t *out) {
         return false;
     }
 
-    strncpy(fs_table[slot].name, name, FS_MAX_NAME_LEN - 1);
+    (void)strncpy(fs_table[slot].name, name, FS_MAX_NAME_LEN - 1u);
     fs_table[slot].name[FS_MAX_NAME_LEN - 1] = '\0';
-    fs_table[slot].size = 0;
+    fs_table[slot].size = 0u;
     fs_table[slot].used = true;
-    memset(fs_data[slot], 0, FS_MAX_FILE_SIZE);
+    (void)memset(fs_data[slot], 0, FS_MAX_FILE_SIZE);
 
     out->slot  = (uint8_t)slot;
     out->valid = true;
@@ -122,7 +122,7 @@ ITCM_FUNC bool __fs_create(const char *name, fs_file_t *out) {
  * @retval false  File does not exist.
  */
 ITCM_FUNC bool __fs_open(const char *name, fs_file_t *out) {
-    if (!name || !out || name[0] == '\0') {
+    if ((name == NULL) || (out == NULL) || (name[0] == '\0')) {
         return false;
     }
 
@@ -144,21 +144,21 @@ ITCM_FUNC bool __fs_open(const char *name, fs_file_t *out) {
  * @retval false  Invalid handle, null data, or would exceed max size.
  */
 ITCM_FUNC bool __fs_write(fs_file_t *f, const uint8_t *data, uint16_t len) {
-    if (!f || !f->valid || !data || len == 0) {
+    if ((f == NULL) || (!f->valid) || (data == NULL) || (len == 0u)) {
         return false;
     }
 
     uint8_t slot = f->slot;
-    if (slot >= FS_MAX_FILES || !fs_table[slot].used) {
+    if ((slot >= (uint8_t)FS_MAX_FILES) || (!fs_table[slot].used)) {
         return false;
     }
 
     uint16_t current = fs_table[slot].size;
-    if ((uint32_t)current + len > FS_MAX_FILE_SIZE) {
+    if (((uint32_t)current + (uint32_t)len) > (uint32_t)FS_MAX_FILE_SIZE) {
         return false;
     }
 
-    memcpy(&fs_data[slot][current], data, len);
+    (void)memcpy(&fs_data[slot][current], data, len);
     fs_table[slot].size = (uint16_t)(current + len);
 
     return true;
@@ -174,13 +174,13 @@ ITCM_FUNC bool __fs_write(fs_file_t *f, const uint8_t *data, uint16_t len) {
  */
 ITCM_FUNC uint16_t __fs_read(fs_file_t *f, uint8_t *buf, uint16_t len,
                               uint16_t offset) {
-    if (!f || !f->valid || !buf || len == 0) {
-        return 0;
+    if ((f == NULL) || (!f->valid) || (buf == NULL) || (len == 0u)) {
+        return 0u;
     }
 
     uint8_t slot = f->slot;
-    if (slot >= FS_MAX_FILES || !fs_table[slot].used) {
-        return 0;
+    if ((slot >= (uint8_t)FS_MAX_FILES) || (!fs_table[slot].used)) {
+        return 0u;
     }
 
     uint16_t file_size = fs_table[slot].size;
@@ -191,7 +191,7 @@ ITCM_FUNC uint16_t __fs_read(fs_file_t *f, uint8_t *buf, uint16_t len,
     uint16_t available = (uint16_t)(file_size - offset);
     uint16_t to_read   = (len < available) ? len : available;
 
-    memcpy(buf, &fs_data[slot][offset], to_read);
+    (void)memcpy(buf, &fs_data[slot][offset], to_read);
 
     return to_read;
 }
@@ -203,7 +203,7 @@ ITCM_FUNC uint16_t __fs_read(fs_file_t *f, uint8_t *buf, uint16_t len,
  * @retval false  File does not exist.
  */
 ITCM_FUNC bool __fs_delete(const char *name) {
-    if (!name || name[0] == '\0') {
+    if ((name == NULL) || (name[0] == '\0')) {
         return false;
     }
 
@@ -212,8 +212,8 @@ ITCM_FUNC bool __fs_delete(const char *name) {
         return false;
     }
 
-    memset(&fs_table[slot], 0, sizeof(fs_entry_t));
-    memset(fs_data[slot],   0, FS_MAX_FILE_SIZE);
+    (void)memset(&fs_table[slot], 0, sizeof(fs_entry_t));
+    (void)memset(fs_data[slot],   0, FS_MAX_FILE_SIZE);
 
     return true;
 }
@@ -225,14 +225,14 @@ ITCM_FUNC bool __fs_delete(const char *name) {
  * @return Number of entries written.
  */
 ITCM_FUNC uint8_t __fs_list(fs_file_info_t *out, uint8_t max) {
-    if (!out || max == 0) {
-        return 0;
+    if ((out == NULL) || (max == 0u)) {
+        return 0u;
     }
 
-    uint8_t count = 0;
-    for (uint8_t i = 0; i < FS_MAX_FILES && count < max; i++) {
+    uint8_t count = 0u;
+    for (uint8_t i = 0u; (i < (uint8_t)FS_MAX_FILES) && (count < max); i++) {
         if (fs_table[i].used) {
-            strncpy(out[count].name, fs_table[i].name, FS_MAX_NAME_LEN);
+            (void)strncpy(out[count].name, fs_table[i].name, FS_MAX_NAME_LEN);
             out[count].name[FS_MAX_NAME_LEN - 1] = '\0';
             out[count].size = fs_table[i].size;
             count++;
@@ -247,13 +247,13 @@ ITCM_FUNC uint8_t __fs_list(fs_file_info_t *out, uint8_t max) {
  * @param[out] out  Aggregate filesystem statistics.
  */
 ITCM_FUNC void __fs_stats(fs_stats_t *out) {
-    if (!out) {
+    if (out == NULL) {
         return;
     }
 
-    uint32_t used = 0;
-    uint8_t  count = 0;
-    for (uint8_t i = 0; i < FS_MAX_FILES; i++) {
+    uint32_t used = 0u;
+    uint8_t  count = 0u;
+    for (uint8_t i = 0u; i < (uint8_t)FS_MAX_FILES; i++) {
         if (fs_table[i].used) {
             used += fs_table[i].size;
             count++;

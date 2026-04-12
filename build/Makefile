@@ -441,6 +441,44 @@ test-reports:
 		echo "  Expected: $$TEST_DIR/Makefile"; \
 	fi
 
+# MISRA C:2012 compliance check (kernel application code only)
+# Uses cppcheck --addon=misra with advisory-rule suppressions
+MISRA_SUPPRESSIONS = $(BUILD_DIR)/misra_suppressions.txt
+MISRA_SOURCES = \
+	$(wildcard $(CORE_BSP_SRC)/*.c) \
+	$(wildcard $(CORE_ICARUS_SRC)/*.c)
+
+MISRA_FLAGS = --addon=misra \
+	--std=c11 \
+	--enable=all \
+	--suppress=missingIncludeSystem \
+	--suppress=missingInclude \
+	--suppress=unusedFunction \
+	--suppress=constParameterPointer \
+	--suppress=staticFunction \
+	--suppressions-list=$(MISRA_SUPPRESSIONS) \
+	-I$(CORE_INC) \
+	-I$(CORE_BSP_INC) \
+	-I$(CORE_ICARUS_INC) \
+	-DHOST_TEST \
+	-DTEST \
+	-DSKIP_STATIC_ASSERTS \
+	--force
+
+misra:
+	@echo "Running MISRA C:2012 compliance check on kernel sources..."
+	@if ! command -v cppcheck >/dev/null 2>&1; then \
+		echo "ERROR: cppcheck not found. Install it with:"; \
+		echo "  macOS:   brew install cppcheck"; \
+		echo "  Ubuntu:  sudo apt-get install cppcheck"; \
+		exit 1; \
+	fi
+	@if [ ! -f "$(MISRA_SUPPRESSIONS)" ]; then \
+		echo "ERROR: $(MISRA_SUPPRESSIONS) not found."; \
+		exit 1; \
+	fi
+	@cppcheck $(MISRA_FLAGS) $(MISRA_SOURCES) 2>&1 | grep -i misra || echo "No MISRA violations found."
+
 # Run cppcheck and build (static analysis before compilation)
 check-build: cppcheck all
 
@@ -531,4 +569,4 @@ clean-doxygen:
 # Include dependency files
 -include $(DEP_FILES)
 
-.PHONY: all clean rebuild rebuild-script size flash build-and-flash rebuild-and-flash cppcheck cppcheck-html test-reports check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage doxygen clean-doxygen
+.PHONY: all clean rebuild rebuild-script size flash build-and-flash rebuild-and-flash cppcheck cppcheck-html test-reports check-build clean-cppcheck clean-all coverage coverage-html coverage-summary clean-coverage doxygen clean-doxygen misra

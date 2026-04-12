@@ -1751,7 +1751,9 @@ bool bkpram_write(const void *src, uint32_t offset, uint32_t len) {
     return (bool)result;
 #else
     (void)offset;
-    if (len == 0) return false;
+    if (len == 0u) {
+        return false;
+    }
     /* HOST_TEST: no BKPRAM hardware — treat as no-op success */
     (void)src;
     return true;

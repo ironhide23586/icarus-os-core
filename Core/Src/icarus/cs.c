@@ -89,7 +89,7 @@ ITCM_FUNC static bool cs_selftest(void) {
  *          result in cs_hw_ok.
  */
 ITCM_FUNC void __cs_init(void) {
-    memset(regions, 0, sizeof(regions));
+    (void)memset(regions, 0, sizeof(regions));
     mismatch_cb = NULL;
     cs_hw_ok = cs_selftest();
 }
@@ -117,7 +117,9 @@ ITCM_FUNC void __cs_set_callback(cs_mismatch_fn fn) {
  */
 ITCM_FUNC bool __cs_add_region(uint8_t idx, const uint8_t *addr,
                                 uint32_t size) {
-    if (idx >= CS_MAX_REGIONS || !addr || size == 0) return false;
+    if ((idx >= (uint8_t)CS_MAX_REGIONS) || (addr == NULL) || (size == 0u)) {
+        return false;
+    }
 
     regions[idx].addr       = addr;
     regions[idx].size       = size;
@@ -133,7 +135,9 @@ ITCM_FUNC bool __cs_add_region(uint8_t idx, const uint8_t *addr,
  * @param[in] enabled  Enable/disable flag.
  */
 ITCM_FUNC bool __cs_enable(uint8_t idx, bool enabled) {
-    if (idx >= CS_MAX_REGIONS || !regions[idx].registered) return false;
+    if ((idx >= (uint8_t)CS_MAX_REGIONS) || (!regions[idx].registered)) {
+        return false;
+    }
     regions[idx].enabled = enabled;
     return true;
 }
@@ -146,7 +150,9 @@ ITCM_FUNC bool __cs_enable(uint8_t idx, bool enabled) {
  *          monitored region.
  */
 ITCM_FUNC bool __cs_rebaseline(uint8_t idx) {
-    if (idx >= CS_MAX_REGIONS || !regions[idx].registered) return false;
+    if ((idx >= (uint8_t)CS_MAX_REGIONS) || (!regions[idx].registered)) {
+        return false;
+    }
     regions[idx].baseline = crc16_ccitt(regions[idx].addr,
                                         (uint16_t)regions[idx].size);
     return true;
@@ -166,21 +172,23 @@ ITCM_FUNC bool __cs_rebaseline(uint8_t idx) {
 ITCM_FUNC uint8_t __cs_check_all(void) {
     /* CRC engine self-test failure — report immediately */
     if (!cs_hw_ok) {
-        if (mismatch_cb) {
-            mismatch_cb(0xFF, 0, 0);
+        if (mismatch_cb != NULL) {
+            mismatch_cb(0xFFu, 0u, 0u);
         }
-        return 1;
+        return 1u;
     }
 
-    uint8_t failures = 0;
-    for (uint8_t i = 0; i < CS_MAX_REGIONS; i++) {
-        if (!regions[i].registered || !regions[i].enabled) continue;
+    uint8_t failures = 0u;
+    for (uint8_t i = 0u; i < (uint8_t)CS_MAX_REGIONS; i++) {
+        if ((!regions[i].registered) || (!regions[i].enabled)) {
+            continue;
+        }
 
         uint16_t actual = crc16_ccitt(regions[i].addr,
                                        (uint16_t)regions[i].size);
         if (actual != regions[i].baseline) {
             failures++;
-            if (mismatch_cb) {
+            if (mismatch_cb != NULL) {
                 mismatch_cb(i, regions[i].baseline, actual);
             }
         }
@@ -194,8 +202,12 @@ ITCM_FUNC uint8_t __cs_check_all(void) {
  * @param[out] out  Destination descriptor.
  */
 ITCM_FUNC bool __cs_get_region(uint8_t idx, cs_region_t *out) {
-    if (idx >= CS_MAX_REGIONS || !out) return false;
-    if (!regions[idx].registered) return false;
+    if ((idx >= (uint8_t)CS_MAX_REGIONS) || (out == NULL)) {
+        return false;
+    }
+    if (!regions[idx].registered) {
+        return false;
+    }
     out->addr     = regions[idx].addr;
     out->size     = regions[idx].size;
     out->baseline = regions[idx].baseline;
@@ -208,9 +220,11 @@ ITCM_FUNC bool __cs_get_region(uint8_t idx, cs_region_t *out) {
  * @return Number of registered (non-empty) region slots.
  */
 ITCM_FUNC uint8_t __cs_region_count(void) {
-    uint8_t n = 0;
-    for (uint8_t i = 0; i < CS_MAX_REGIONS; i++) {
-        if (regions[i].registered) n++;
+    uint8_t n = 0u;
+    for (uint8_t i = 0u; i < (uint8_t)CS_MAX_REGIONS; i++) {
+        if (regions[i].registered) {
+            n++;
+        }
     }
     return n;
 }

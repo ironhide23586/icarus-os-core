@@ -63,13 +63,13 @@ ITCM_FUNC uint8_t __os_get_running_task_count(void) {
  * @note  Copies name from DTCM to RAM_D1 buffer for unprivileged access
  */
 ITCM_FUNC const char *__os_get_current_task_name(void) {
-    if (current_task_index < num_created_tasks &&
-        task_list[current_task_index] != NULL) {
+    if ((current_task_index < num_created_tasks) &&
+        (task_list[current_task_index] != NULL)) {
         /* Copy name from DTCM to RAM_D1 buffer so unprivileged code can read it */
         const char *src = task_list[current_task_index]->name;
         char *dst = task_name_buffer;
-        uint8_t i = 0;
-        while (i < (ICARUS_MAX_TASK_NAME_LEN - 1) && src[i] != '\0') {
+        uint8_t i = 0u;
+        while ((i < (uint8_t)(ICARUS_MAX_TASK_NAME_LEN - 1)) && (src[i] != '\0')) {
             dst[i] = src[i];
             i++;
         }

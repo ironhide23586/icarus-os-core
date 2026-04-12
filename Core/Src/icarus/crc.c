@@ -94,14 +94,14 @@ ITCM_FUNC uint16_t crc16_ccitt(const uint8_t *data, uint16_t len) {
 #else /* HOST_TEST — portable bytewise loop */
 
 uint16_t crc16_ccitt(const uint8_t *data, uint16_t len) {
-    if (data == NULL || len == 0) {
+    if ((data == NULL) || (len == 0u)) {
         return 0xFFFFu;
     }
     uint16_t crc = 0xFFFFu;
-    for (uint16_t i = 0; i < len; i++) {
-        crc ^= (uint16_t)data[i] << 8;
-        for (uint8_t bit = 0; bit < 8; bit++) {
-            if (crc & 0x8000u) {
+    for (uint16_t i = 0u; i < len; i++) {
+        crc ^= (uint16_t)((uint16_t)data[i] << 8u);
+        for (uint8_t bit = 0u; bit < 8u; bit++) {
+            if ((crc & 0x8000u) != 0u) {
                 crc = (uint16_t)((crc << 1) ^ 0x1021u);
             } else {
                 crc = (uint16_t)(crc << 1);

@@ -25,6 +25,7 @@
 
 #include "icarus/cdc_rx.h"
 #include "icarus/config.h"
+#include <stddef.h>
 
 /* ---- Backing storage in DTCM_PRIV --------------------------------------- */
 
@@ -40,11 +41,11 @@ ITCM_FUNC void __cdc_rx_init(void) {
 }
 
 ITCM_FUNC void __cdc_rx_push(const uint8_t *data, uint32_t len) {
-    if (data == 0 || len == 0) {
+    if ((data == NULL) || (len == 0u)) {
         return;
     }
-    for (uint32_t i = 0; i < len; i++) {
-        uint32_t next = (rx_head + 1) % CDC_RX_BUF_SIZE;
+    for (uint32_t i = 0u; i < len; i++) {
+        uint32_t next = (rx_head + 1u) % (uint32_t)CDC_RX_BUF_SIZE;
         if (next == rx_tail) {
             break;
         }
@@ -54,17 +55,19 @@ ITCM_FUNC void __cdc_rx_push(const uint8_t *data, uint32_t len) {
 }
 
 ITCM_FUNC bool __cdc_rx_read_byte(uint8_t *out) {
-    if (out == 0 || rx_head == rx_tail) {
+    if ((out == NULL) || (rx_head == rx_tail)) {
         return false;
     }
     *out = rx_buf[rx_tail];
-    rx_tail = (rx_tail + 1) % CDC_RX_BUF_SIZE;
+    rx_tail = (rx_tail + 1u) % (uint32_t)CDC_RX_BUF_SIZE;
     return true;
 }
 
 ITCM_FUNC uint32_t __cdc_rx_available(void) {
     uint32_t h = rx_head;
     uint32_t t = rx_tail;
-    if (h >= t) return h - t;
-    return CDC_RX_BUF_SIZE - t + h;
+    if (h >= t) {
+        return h - t;
+    }
+    return ((uint32_t)CDC_RX_BUF_SIZE - t) + h;
 }

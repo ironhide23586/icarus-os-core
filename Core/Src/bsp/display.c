@@ -102,8 +102,10 @@
  * @post    hist->count == 0, hist->head == 0
  */
 void msg_history_init(msg_history_t* hist) {
-    if (hist == NULL) return;
-    memset(hist, 0, sizeof(msg_history_t));
+    if (hist == NULL) {
+        return;
+    }
+    (void)memset(hist, 0, sizeof(msg_history_t));
 }
 
 /**
@@ -124,8 +126,10 @@ void msg_history_init(msg_history_t* hist) {
  */
 void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len, 
                      uint8_t source_id, bool is_send) {
-    if (hist == NULL || data == NULL || len == 0) return;
-    
+    if ((hist == NULL) || (data == NULL) || (len == 0u)) {
+        return;
+    }
+
     // Clamp length to max
     if (len > MSG_HISTORY_MAX_BYTES) {
         len = MSG_HISTORY_MAX_BYTES;
@@ -133,7 +137,7 @@ void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len,
     
     // Add entry at head position
     msg_history_entry_t* entry = &hist->entries[hist->head];
-    memcpy(entry->data, data, len);
+    (void)memcpy(entry->data, data, len);
     entry->len = len;
     entry->source_id = source_id;
     entry->is_send = is_send;
@@ -167,7 +171,9 @@ void msg_history_add(msg_history_t* hist, const uint8_t* data, uint8_t len,
  * @endverbatim
  */
 void display_render_msg_history(uint8_t row, uint8_t col, msg_history_t* hist, const char* label) {
-    if (hist == NULL) return;
+    if (hist == NULL) {
+        return;
+    }
     
     // Header - use ASCII for compatibility
     ANSI_GOTO(row, col);
@@ -609,11 +615,11 @@ void display_render_consumer(uint8_t row, const char* task_name,
  * @endverbatim
  */
 void display_init(void) {
-    static uint8_t initialized = 0;
-    if (initialized) {
+    static uint8_t initialized = 0u;
+    if (initialized != 0u) {
         return;
     }
-    initialized = 1;
+    initialized = 1u;
     
     // Clear screen and move to top
     printf("\033[2J");      // Clear entire screen
@@ -702,8 +708,13 @@ void display_init(void) {
                 // This is a user task
                 uint8_t row = ROW_TASK_A + user_task_count;
                 uint32_t period = TASK_A_PERIOD_TICKS;
-                if (user_task_count == 1) period = TASK_B_PERIOD_TICKS;
-                else if (user_task_count == 2) period = TASK_C_PERIOD_TICKS;
+                if (user_task_count == 1u) {
+                    period = TASK_B_PERIOD_TICKS;
+                } else if (user_task_count == 2u) {
+                    period = TASK_C_PERIOD_TICKS;
+                } else {
+                    /* keep default */
+                }
                 
                 display_render_bar(row, name, 0, period);
                 user_task_count++;

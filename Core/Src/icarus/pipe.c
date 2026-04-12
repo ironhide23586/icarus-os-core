@@ -33,9 +33,9 @@
  * @note  Runs in SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC bool __pipe_init(uint8_t pipe_idx, uint16_t pipe_capacity_bytes) {
-    if (pipe_idx < ICARUS_MAX_MESSAGE_QUEUES &&
-        pipe_capacity_bytes > 0 &&
-        pipe_capacity_bytes <= ICARUS_MAX_MESSAGE_BYTES) {
+    if ((pipe_idx < (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) &&
+        (pipe_capacity_bytes > 0u) &&
+        (pipe_capacity_bytes <= (uint16_t)ICARUS_MAX_MESSAGE_BYTES)) {
 
         if (!message_pipe_list[pipe_idx]->engaged) {
             message_pipe_list[pipe_idx]->count = 0;
@@ -45,7 +45,7 @@ ITCM_FUNC bool __pipe_init(uint8_t pipe_idx, uint16_t pipe_capacity_bytes) {
             message_pipe_list[pipe_idx]->tick_updated_at = os_tick_count;
             message_pipe_list[pipe_idx]->engaged = true;
 
-            for (uint16_t i = 0; i < ICARUS_MAX_MESSAGE_BYTES; i++) {
+            for (uint16_t i = 0u; i < (uint16_t)ICARUS_MAX_MESSAGE_BYTES; i++) {
                 message_pipe_list[pipe_idx]->buffer[i] = 0;
             }
 
@@ -65,9 +65,9 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t *message,
                               uint8_t message_bytes) {
 #ifdef HOST_TEST
     /* In host tests, check validity directly (no MPU) */
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged ||
-        message_bytes > message_pipe_list[pipe_idx]->max_count) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged) ||
+        (message_bytes > message_pipe_list[pipe_idx]->max_count)) {
         return false;
     }
 #else
@@ -79,7 +79,7 @@ ITCM_FUNC bool __pipe_enqueue(uint8_t pipe_idx, uint8_t *message,
 
     /* pipe_can_enqueue checks engaged + free space via SVC (priv-safe) */
     while (!pipe_can_enqueue(pipe_idx, message_bytes)) {
-        task_active_sleep(1);
+        (void)task_active_sleep(1);
     }
 
     pipe_write_bytes(pipe_idx, message, message_bytes);
@@ -95,9 +95,9 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
                               uint8_t message_bytes) {
 #ifdef HOST_TEST
     /* In host tests, check validity directly (no MPU) */
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged ||
-        message_bytes > message_pipe_list[pipe_idx]->max_count) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged) ||
+        (message_bytes > message_pipe_list[pipe_idx]->max_count)) {
         return false;
     }
 #else
@@ -109,7 +109,7 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
 
     /* pipe_can_dequeue checks engaged + available bytes via SVC (priv-safe) */
     while (!pipe_can_dequeue(pipe_idx, message_bytes)) {
-        task_active_sleep(1);
+        (void)task_active_sleep(1);
     }
 
     pipe_read_bytes(pipe_idx, message, message_bytes);
@@ -121,8 +121,8 @@ ITCM_FUNC bool __pipe_dequeue(uint8_t pipe_idx, uint8_t *message,
  * @note  Internal function - use pipe_get_count() wrapper
  */
 ITCM_FUNC uint16_t __pipe_get_count(uint8_t pipe_idx) {
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged)) {
         return 0;
     }
     return message_pipe_list[pipe_idx]->count;
@@ -133,8 +133,8 @@ ITCM_FUNC uint16_t __pipe_get_count(uint8_t pipe_idx) {
  * @note  Internal function - use pipe_get_max_count() wrapper
  */
 ITCM_FUNC uint16_t __pipe_get_max_count(uint8_t pipe_idx) {
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged)) {
         return 0;
     }
     return message_pipe_list[pipe_idx]->max_count;
@@ -147,8 +147,8 @@ ITCM_FUNC uint16_t __pipe_get_max_count(uint8_t pipe_idx) {
  *        from unprivileged thread mode once DTCM is priv-only.
  */
 ITCM_FUNC bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged)) {
         return false;
     }
     return (message_pipe_list[pipe_idx]->max_count -
@@ -161,8 +161,8 @@ ITCM_FUNC bool __pipe_can_enqueue(uint8_t pipe_idx, uint8_t message_bytes) {
  *        Used by __pipe_dequeue spin loop.
  */
 ITCM_FUNC bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged)) {
         return false;
     }
     return message_pipe_list[pipe_idx]->count >= message_bytes;
@@ -174,8 +174,8 @@ ITCM_FUNC bool __pipe_can_dequeue(uint8_t pipe_idx, uint8_t message_bytes) {
  *        Runs in privileged SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged)) {
         return;
     }
 
@@ -197,8 +197,8 @@ ITCM_FUNC void __pipe_write_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t me
  *        Runs in privileged SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC void __pipe_read_bytes(uint8_t pipe_idx, uint8_t *message, uint8_t message_bytes) {
-    if (pipe_idx >= ICARUS_MAX_MESSAGE_QUEUES ||
-        !message_pipe_list[pipe_idx]->engaged) {
+    if ((pipe_idx >= (uint8_t)ICARUS_MAX_MESSAGE_QUEUES) ||
+        (!message_pipe_list[pipe_idx]->engaged)) {
         return;
     }
 

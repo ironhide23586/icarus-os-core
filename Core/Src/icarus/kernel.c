@@ -151,7 +151,7 @@ static inline ITCM_FUNC void __init_pipe(uint8_t message_pipe_idx, uint16_t max_
     message_pipe_list[message_pipe_idx]->tick_updated_at = os_tick_count;
     message_pipe_list[message_pipe_idx]->engaged = should_engage;
 
-    for (uint16_t i = 0; i < ICARUS_MAX_MESSAGE_BYTES; i++) {
+    for (uint16_t i = 0u; i < (uint16_t)ICARUS_MAX_MESSAGE_BYTES; i++) {
         message_pipe_list[message_pipe_idx]->buffer[i] = 0;
     }
 }
@@ -252,7 +252,7 @@ ITCM_FUNC void __os_init(void)
  */
 ITCM_FUNC void __os_start(void)
 {
-    if (num_created_tasks == 0 || num_created_tasks > ICARUS_MAX_TASKS) {
+    if ((num_created_tasks == 0u) || (num_created_tasks > (uint8_t)ICARUS_MAX_TASKS)) {
         return;
     }
     start_cold_task(task_list[current_task_index]);
@@ -293,8 +293,9 @@ ITCM_FUNC uint32_t* __kernel_get_data(uint8_t task_idx)
  * @note  Runs in SVC handler — already atomic, no critical section needed
  */
 ITCM_FUNC void* __kernel_protected_data(uint16_t num_words) {
-    if (data_pool_word_offsets[current_task_index] + num_words > ICARUS_DATA_WORDS || num_words == 0)
+    if (((data_pool_word_offsets[current_task_index] + num_words) > ICARUS_DATA_WORDS) || (num_words == 0u)) {
         return NULL;
+    }
     uint16_t current_offset = data_pool_word_offsets[current_task_index];
     data_pool_word_offsets[current_task_index] += num_words;
     uint32_t *ret_ptr = &data_pool[current_task_index][current_offset];
@@ -319,15 +320,17 @@ ITCM_FUNC const char* __os_get_task_name(uint8_t task_idx) {
     static char name_buffer[ICARUS_MAX_TASK_NAME_LEN];
 #endif
     
-    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+    if ((task_idx >= num_created_tasks) || (task_list[task_idx] == NULL)) {
         return NULL;
     }
-    
+
     /* Copy name from DTCM to RAM_D1 buffer */
     const char* src = task_list[task_idx]->name;
-    for (uint8_t i = 0; i < ICARUS_MAX_TASK_NAME_LEN; i++) {
+    for (uint8_t i = 0u; i < (uint8_t)ICARUS_MAX_TASK_NAME_LEN; i++) {
         name_buffer[i] = src[i];
-        if (src[i] == '\0') break;
+        if (src[i] == '\0') {
+            break;
+        }
     }
     name_buffer[ICARUS_MAX_TASK_NAME_LEN - 1] = '\0';  /* Ensure null termination */
     
@@ -358,7 +361,7 @@ ITCM_FUNC uint8_t __os_is_running(void) {
  * @return Task state enum value.
  */
 ITCM_FUNC icarus_task_state_t __os_get_task_state(uint8_t task_idx) {
-    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+    if ((task_idx >= num_created_tasks) || (task_list[task_idx] == NULL)) {
         return TASK_STATE_FINISHED;
     }
     return task_list[task_idx]->task_state;
@@ -370,7 +373,7 @@ ITCM_FUNC icarus_task_state_t __os_get_task_state(uint8_t task_idx) {
  * @return Dispatch count.
  */
 ITCM_FUNC uint32_t __os_get_task_dispatch_count(uint8_t task_idx) {
-    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+    if ((task_idx >= num_created_tasks) || (task_list[task_idx] == NULL)) {
         return 0;
     }
     return task_list[task_idx]->dispatch_count;
@@ -382,7 +385,7 @@ ITCM_FUNC uint32_t __os_get_task_dispatch_count(uint8_t task_idx) {
  * @return Minimum free stack words observed.
  */
 ITCM_FUNC uint32_t __os_get_stack_watermark(uint8_t task_idx) {
-    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+    if ((task_idx >= num_created_tasks) || (task_list[task_idx] == NULL)) {
         return 0;
     }
     return task_list[task_idx]->stack_watermark;
@@ -394,7 +397,7 @@ ITCM_FUNC uint32_t __os_get_stack_watermark(uint8_t task_idx) {
  * @param  task_idx  Task index.
  */
 ITCM_FUNC void __os_update_stack_watermark(uint8_t task_idx) {
-    if (task_idx >= num_created_tasks || task_list[task_idx] == NULL) {
+    if ((task_idx >= num_created_tasks) || (task_list[task_idx] == NULL)) {
         return;
     }
     icarus_task_t *t = task_list[task_idx];

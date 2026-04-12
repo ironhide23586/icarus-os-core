@@ -69,7 +69,7 @@ ITCM_FUNC static tbl_slot_t *find_slot(tbl_id_t id) {
 /* ---- Privileged implementations ---------------------------------------- */
 
 ITCM_FUNC void __tbl_init(void) {
-    memset(registry, 0, sizeof(registry));
+    (void)memset(registry, 0, sizeof(registry));
     reg_count = 0;
 }
 
@@ -90,8 +90,8 @@ ITCM_FUNC bool __tbl_register(const tbl_descriptor_t *desc) {
         }
     }
     tbl_slot_t *slot = &registry[reg_count++];
-    memset(slot, 0, sizeof(*slot));
-    memcpy(&slot->desc, desc, sizeof(tbl_descriptor_t));
+    (void)memset(slot, 0, sizeof(*slot));
+    (void)memcpy(&slot->desc, desc, sizeof(tbl_descriptor_t));
     /* Ensure NUL termination of name */
     slot->desc.name[TBL_NAME_LEN - 1] = '\0';
     return true;
@@ -99,12 +99,12 @@ ITCM_FUNC bool __tbl_register(const tbl_descriptor_t *desc) {
 
 ITCM_FUNC bool __tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
                           uint16_t schema_crc) {
-    if (!data || len == 0) {
+    if ((data == NULL) || (len == 0u)) {
         return false;
     }
 
     tbl_slot_t *slot = find_slot(id);
-    if (!slot) {
+    if (slot == NULL) {
         return false;
     }
 
@@ -112,8 +112,8 @@ ITCM_FUNC bool __tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
        staging.  We consider staging "ready for reset" when either it is
        empty (staged_len == 0) or a previous full-size load has already been
        validated (staged_valid == true). */
-    if (slot->staged_len == 0 || slot->staged_valid) {
-        memset(slot->staging, 0, sizeof(slot->staging));
+    if ((slot->staged_len == 0u) || slot->staged_valid) {
+        (void)memset(slot->staging, 0, sizeof(slot->staging));
         slot->staged_len        = 0;
         slot->staged_valid      = false;
         slot->staged_schema_crc = schema_crc;
@@ -124,7 +124,7 @@ ITCM_FUNC bool __tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
         return false;
     }
 
-    memcpy(&slot->staging[slot->staged_len], data, len);
+    (void)memcpy(&slot->staging[slot->staged_len], data, len);
     slot->staged_len = (uint16_t)(slot->staged_len + len);
 
     /* Mark valid and compute data CRC once we have a full descriptor-size load */
@@ -139,17 +139,17 @@ ITCM_FUNC bool __tbl_load(tbl_id_t id, const uint8_t *data, uint16_t len,
 ITCM_FUNC bool __tbl_activate_prepare(tbl_id_t id, uint8_t *out_data,
                                       uint16_t *out_len,
                                       tbl_activate_fn *out_activate) {
-    if (!out_data || !out_len || !out_activate) {
+    if ((out_data == NULL) || (out_len == NULL) || (out_activate == NULL)) {
         return false;
     }
 
     tbl_slot_t *slot = find_slot(id);
-    if (!slot) {
+    if (slot == NULL) {
         return false;
     }
 
     /* Step 1: size match */
-    if (!slot->staged_valid || slot->staged_len != slot->desc.size) {
+    if ((!slot->staged_valid) || (slot->staged_len != slot->desc.size)) {
         return false;
     }
 
@@ -167,7 +167,7 @@ ITCM_FUNC bool __tbl_activate_prepare(tbl_id_t id, uint8_t *out_data,
     /* Step 4: copy into the caller-provided scratch buffer so the user
      *         activate callback can run from thread mode without touching
      *         DTCM_PRIV directly. */
-    memcpy(out_data, slot->staging, slot->staged_len);
+    (void)memcpy(out_data, slot->staging, slot->staged_len);
     *out_len      = slot->staged_len;
     *out_activate = slot->desc.activate;
     return true;
@@ -175,36 +175,36 @@ ITCM_FUNC bool __tbl_activate_prepare(tbl_id_t id, uint8_t *out_data,
 
 ITCM_FUNC bool __tbl_activate_commit(tbl_id_t id, const uint8_t *data,
                                      uint16_t len) {
-    if (!data || len == 0 || len > TBL_MAX_SIZE) {
+    if ((data == NULL) || (len == 0u) || (len > (uint16_t)TBL_MAX_SIZE)) {
         return false;
     }
     tbl_slot_t *slot = find_slot(id);
-    if (!slot) {
+    if (slot == NULL) {
         return false;
     }
-    memcpy(slot->active, data, len);
+    (void)memcpy(slot->active, data, len);
     slot->active_len = len;
     return true;
 }
 
 ITCM_FUNC int16_t __tbl_dump(tbl_id_t id, uint8_t *out, uint16_t max) {
-    if (!out || max == 0) {
+    if ((out == NULL) || (max == 0u)) {
         return -1;
     }
 
     tbl_slot_t *slot = find_slot(id);
-    if (!slot) {
+    if (slot == NULL) {
         return -1;
     }
 
     uint16_t len = slot->active_len;
-    if (len == 0) {
+    if (len == 0u) {
         return -1;
     }
     if (len > max) {
         len = max;
     }
-    memcpy(out, slot->active, len);
+    (void)memcpy(out, slot->active, len);
     return (int16_t)len;
 }
 

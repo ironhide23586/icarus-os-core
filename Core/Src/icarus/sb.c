@@ -59,8 +59,8 @@ DTCM_DATA_PRIV static uint8_t route_used;
  * @note   Caller must hold critical section.
  */
 ITCM_FUNC static sb_route_t *find_route(sb_msg_id_t msg_id) {
-    for (uint8_t i = 0; i < route_used; i++) {
-        if (routes[i].used && routes[i].msg_id == msg_id) {
+    for (uint8_t i = 0u; i < route_used; i++) {
+        if (routes[i].used && (routes[i].msg_id == msg_id)) {
             return &routes[i];
         }
     }
@@ -73,9 +73,11 @@ ITCM_FUNC static sb_route_t *find_route(sb_msg_id_t msg_id) {
  * @note   Caller must hold critical section.
  */
 ITCM_FUNC static sb_route_t *alloc_route(void) {
-    if (route_used >= SB_MAX_ROUTES) return NULL;
+    if (route_used >= (uint8_t)SB_MAX_ROUTES) {
+        return NULL;
+    }
     sb_route_t *r = &routes[route_used++];
-    memset(r, 0, sizeof(*r));
+    (void)memset(r, 0, sizeof(*r));
     r->used = true;
     return r;
 }
@@ -89,7 +91,7 @@ ITCM_FUNC static sb_route_t *alloc_route(void) {
  * @details Zeroes the entire route table and resets the used counter.
  */
 ITCM_FUNC void __sb_init(void) {
-    memset(routes, 0, sizeof(routes));
+    (void)memset(routes, 0, sizeof(routes));
     route_used = 0;
 }
 
@@ -107,18 +109,24 @@ ITCM_FUNC void __sb_init(void) {
  */
 ITCM_FUNC bool __sb_subscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
     sb_route_t *r = find_route(msg_id);
-    if (!r) {
+    if (r == NULL) {
         r = alloc_route();
-        if (!r) return false;
+        if (r == NULL) {
+            return false;
+        }
         r->msg_id = msg_id;
     }
 
     /* Subscriber limit */
-    if (r->count >= SB_MAX_SUBS_PER_MSG) return false;
+    if (r->count >= (uint8_t)SB_MAX_SUBS_PER_MSG) {
+        return false;
+    }
 
     /* Reject duplicate */
-    for (uint8_t i = 0; i < r->count; i++) {
-        if (r->pipes[i] == pipe_idx) return false;
+    for (uint8_t i = 0u; i < r->count; i++) {
+        if (r->pipes[i] == pipe_idx) {
+            return false;
+        }
     }
 
     r->pipes[r->count++] = pipe_idx;
@@ -135,9 +143,11 @@ ITCM_FUNC bool __sb_subscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
  */
 ITCM_FUNC bool __sb_unsubscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
     sb_route_t *r = find_route(msg_id);
-    if (!r) return false;
+    if (r == NULL) {
+        return false;
+    }
 
-    for (uint8_t i = 0; i < r->count; i++) {
+    for (uint8_t i = 0u; i < r->count; i++) {
         if (r->pipes[i] == pipe_idx) {
             /* Compact: move last into this slot */
             r->pipes[i] = r->pipes[r->count - 1];
@@ -162,13 +172,17 @@ ITCM_FUNC bool __sb_unsubscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
  */
 ITCM_FUNC uint8_t __sb_publish(sb_msg_id_t msg_id, const uint8_t *data,
                                 uint8_t len) {
-    if (!data || len == 0) return 0;
+    if ((data == NULL) || (len == 0u)) {
+        return 0u;
+    }
 
     sb_route_t *r = find_route(msg_id);
-    if (!r) return 0;
+    if (r == NULL) {
+        return 0u;
+    }
 
-    uint8_t delivered = 0;
-    for (uint8_t i = 0; i < r->count; i++) {
+    uint8_t delivered = 0u;
+    for (uint8_t i = 0u; i < r->count; i++) {
         uint8_t pidx = r->pipes[i];
         if (__pipe_can_enqueue(pidx, len)) {
             __pipe_write_bytes(pidx, (uint8_t *)(uintptr_t)data, len);

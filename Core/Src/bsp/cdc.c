@@ -76,7 +76,7 @@ bool CDC_Write(const uint8_t *data, uint16_t len) {
     if (len > CDC_HOST_SINK_SIZE) {
         len = CDC_HOST_SINK_SIZE;
     }
-    memcpy(g_cdc_sink, data, len);
+    (void)memcpy(g_cdc_sink, data, len);
     g_cdc_sink_len = len;
     return true;
 }
@@ -100,7 +100,7 @@ void __cdc_host_set_fail(bool fail) {
 }
 
 void __cdc_host_reset_state(void) {
-    memset(g_cdc_sink, 0, sizeof(g_cdc_sink));
+    (void)memset(g_cdc_sink, 0, sizeof(g_cdc_sink));
     g_cdc_sink_len   = 0u;
     g_cdc_call_count = 0u;
     g_cdc_force_fail = false;
