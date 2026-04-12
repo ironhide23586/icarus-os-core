@@ -387,15 +387,15 @@
             <location file="../Core/Src/icarus/event.c" line="0" column="0"/>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
-            <location file="../Core/Src/icarus/svc.c" line="102" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/icarus/svc.c" line="104" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
             <symbol>ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
-            <location file="../Core/Src/icarus/svc.c" line="107" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/icarus/svc.c" line="109" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
             <symbol>ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
-            <location file="../Core/Src/icarus/svc.c" line="112" column="19" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/icarus/svc.c" line="114" column="19" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
             <symbol>ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;slot&apos; can be declared as pointer to const" verbose="Variable &apos;slot&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/tables.c">

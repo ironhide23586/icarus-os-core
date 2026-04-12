@@ -71,6 +71,7 @@
 /*---------- -----------*/
 #define USBD_DEBUG_LEVEL     0U
 /*---------- -----------*/
+#undef  USBD_LPM_ENABLED
 #define USBD_LPM_ENABLED     1U
 /*---------- -----------*/
 #define USBD_SELF_POWERED     1U
