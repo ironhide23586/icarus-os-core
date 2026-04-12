@@ -28,6 +28,8 @@
 #include "icarus/event.h"
 #include "icarus/tables.h"
 #include "icarus/cs.h"
+#include "icarus/sb.h"
+#include "icarus/fs.h"
 #include "bsp/mpu.h"
 #include <stddef.h>
 #include <string.h>
@@ -383,6 +385,81 @@ void SVC_Handler_C(uint32_t *stack_frame) {
             stack_frame[0] = (uint32_t)ok;
             break;
         }
+
+        /* ---- Software Bus ---- */
+        case SVC_SB_INIT:
+            __sb_init();
+            break;
+        case SVC_SB_SUBSCRIBE: {
+            bool ok = __sb_subscribe((sb_msg_id_t)arg0, (uint8_t)arg1);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_SB_UNSUBSCRIBE: {
+            bool ok = __sb_unsubscribe((sb_msg_id_t)arg0, (uint8_t)arg1);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_SB_PUBLISH: {
+            uint8_t n = __sb_publish((sb_msg_id_t)arg0,
+                                     (const uint8_t *)(uintptr_t)arg1,
+                                     (uint8_t)stack_frame[2]);
+            stack_frame[0] = (uint32_t)n;
+            break;
+        }
+        case SVC_SB_SUBSCRIBER_COUNT:
+            stack_frame[0] = (uint32_t)__sb_subscriber_count(
+                                 (sb_msg_id_t)arg0);
+            break;
+        case SVC_SB_ROUTE_COUNT:
+            stack_frame[0] = (uint32_t)__sb_route_count();
+            break;
+
+        /* ---- Filesystem ---- */
+        case SVC_FS_INIT:
+            __fs_init();
+            break;
+        case SVC_FS_CREATE: {
+            bool ok = __fs_create((const char *)(uintptr_t)arg0,
+                                  (fs_file_t *)(uintptr_t)arg1);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_FS_OPEN: {
+            bool ok = __fs_open((const char *)(uintptr_t)arg0,
+                                (fs_file_t *)(uintptr_t)arg1);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_FS_WRITE: {
+            bool ok = __fs_write((fs_file_t *)(uintptr_t)arg0,
+                                 (const uint8_t *)(uintptr_t)arg1,
+                                 (uint16_t)stack_frame[2]);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_FS_READ: {
+            uint16_t n = __fs_read((fs_file_t *)(uintptr_t)arg0,
+                                   (uint8_t *)(uintptr_t)arg1,
+                                   (uint16_t)stack_frame[2],
+                                   (uint16_t)stack_frame[3]);
+            stack_frame[0] = (uint32_t)n;
+            break;
+        }
+        case SVC_FS_DELETE: {
+            bool ok = __fs_delete((const char *)(uintptr_t)arg0);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_FS_LIST: {
+            uint8_t n = __fs_list((fs_file_info_t *)(uintptr_t)arg0,
+                                  (uint8_t)arg1);
+            stack_frame[0] = (uint32_t)n;
+            break;
+        }
+        case SVC_FS_STATS:
+            __fs_stats((fs_stats_t *)(uintptr_t)arg0);
+            break;
 
         default:
             break;

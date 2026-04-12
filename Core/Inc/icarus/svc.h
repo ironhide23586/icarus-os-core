@@ -132,16 +132,34 @@ extern "C" {
 /* Generic BKPRAM write gate (data in RAM_D3, priv-only by default MPU)   */
 #define SVC_BKPRAM_WRITE                71  /* bool: memcpy src→BKPRAM       */
 
+/* Software Bus (data in DTCM_PRIV)                                        */
+#define SVC_SB_INIT                     72  /* void: clear routes            */
+#define SVC_SB_SUBSCRIBE                73  /* bool: add (msg,pipe) binding  */
+#define SVC_SB_UNSUBSCRIBE              74  /* bool: remove binding          */
+#define SVC_SB_PUBLISH                  75  /* uint8_t: enqueue to all subs  */
+#define SVC_SB_SUBSCRIBER_COUNT         76  /* uint8_t: count for msg_id     */
+#define SVC_SB_ROUTE_COUNT              77  /* uint8_t: total route entries  */
+
+/* Filesystem (data in .bss, accessed via critical sections)               */
+#define SVC_FS_INIT                     78  /* void: clear table + data      */
+#define SVC_FS_CREATE                   79  /* bool: allocate new file       */
+#define SVC_FS_OPEN                     80  /* bool: open existing file      */
+#define SVC_FS_WRITE                    81  /* bool: append to file          */
+#define SVC_FS_READ                     82  /* uint16_t: read from offset    */
+#define SVC_FS_DELETE                   83  /* bool: remove by name          */
+#define SVC_FS_LIST                     84  /* uint8_t: enumerate files      */
+#define SVC_FS_STATS                    85  /* void: fill stats struct       */
+
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_BKPRAM_WRITE <= 255,
+_Static_assert(SVC_FS_STATS <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-_Static_assert(SVC_BKPRAM_WRITE >= SVC_KERNEL_PROTECTED_DATA,
-               "SVC_BKPRAM_WRITE must be >= all other SVC numbers");
+_Static_assert(SVC_FS_STATS >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_FS_STATS must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)

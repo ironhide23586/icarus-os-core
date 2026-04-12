@@ -108,6 +108,17 @@ uint8_t fs_list(fs_file_info_t *out, uint8_t max);
  */
 void fs_stats(fs_stats_t *out);
 
+/* ---- Privileged implementations (internal — do not call directly) ------ */
+
+void     __fs_init(void);
+bool     __fs_create(const char *name, fs_file_t *out);
+bool     __fs_open(const char *name, fs_file_t *out);
+bool     __fs_write(fs_file_t *f, const uint8_t *data, uint16_t len);
+uint16_t __fs_read(fs_file_t *f, uint8_t *buf, uint16_t len, uint16_t offset);
+bool     __fs_delete(const char *name);
+uint8_t  __fs_list(fs_file_info_t *out, uint8_t max);
+void     __fs_stats(fs_stats_t *out);
+
 #ifdef __cplusplus
 }
 #endif

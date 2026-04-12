@@ -118,9 +118,9 @@ ITCM_FUNC uint32_t __task_active_sleep(uint32_t ticks) {
  * @note  Spin-wait calls public SVC wrappers — only safe from thread mode
  */
 ITCM_FUNC uint32_t __task_blocking_sleep(uint32_t ticks) {
-    enter_critical();
+    __enter_critical();
     uint32_t delta = task_busy_wait(ticks);
-    exit_critical();
+    __exit_critical();
     return delta;
 }
 

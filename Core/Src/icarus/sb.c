@@ -13,10 +13,9 @@
  *          are the privileged implementations.
  *
  * @par Thread safety:
- *      Every public function is protected by enter_critical() /
- *      exit_critical().  Publishing holds the critical section for the
- *      duration of the subscriber iteration to guarantee atomic
- *      delivery semantics (all-or-skip, no partial state).
+ *      Every public function issues an SVC instruction to execute the
+ *      privileged implementation in handler mode.  The SVC handler is
+ *      non-preemptible, guaranteeing atomic access to the route table.
  *
  * @author  Souham Biswas
  * @date    2026
@@ -27,6 +26,7 @@
  */
 
 #include "icarus/icarus.h"
+#include "icarus/svc.h"
 #include <string.h>
 
 /* ============================================================================
@@ -197,49 +197,138 @@ ITCM_FUNC uint8_t __sb_route_count(void) {
 }
 
 /* ============================================================================
- * PUBLIC API (SVC wrappers with critical sections)
+ * PUBLIC API (SVC call gates — privileged access to DTCM_PRIV data)
  * ========================================================================= */
 
-/** @copydoc sb_init */
+/**
+ * @brief  Initialize the software bus via SVC gate.
+ * @details Clears all routes in privileged mode.
+ */
 void sb_init(void) {
-    enter_critical();
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_SB_INIT));
+#else
     __sb_init();
-    exit_critical();
+#endif
 }
 
-/** @copydoc sb_subscribe */
+/**
+ * @brief  Subscribe a pipe to a message ID via SVC gate.
+ * @param[in] msg_id    Message identifier.
+ * @param[in] pipe_idx  Kernel pipe index.
+ * @retval true   Subscription added.
+ * @retval false  Table full, limit hit, or duplicate.
+ */
 bool sb_subscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
-    enter_critical();
-    bool ok = __sb_subscribe(msg_id, pipe_idx);
-    exit_critical();
-    return ok;
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)msg_id), "r" ((uint32_t)pipe_idx),
+          "I" (SVC_SB_SUBSCRIBE)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __sb_subscribe(msg_id, pipe_idx);
+#endif
 }
 
-/** @copydoc sb_unsubscribe */
+/**
+ * @brief  Remove a subscription via SVC gate.
+ * @param[in] msg_id    Message identifier.
+ * @param[in] pipe_idx  Pipe to unsubscribe.
+ * @retval true   Subscription found and removed.
+ * @retval false  No matching subscription.
+ */
 bool sb_unsubscribe(sb_msg_id_t msg_id, uint8_t pipe_idx) {
-    enter_critical();
-    bool ok = __sb_unsubscribe(msg_id, pipe_idx);
-    exit_critical();
-    return ok;
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)msg_id), "r" ((uint32_t)pipe_idx),
+          "I" (SVC_SB_UNSUBSCRIBE)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __sb_unsubscribe(msg_id, pipe_idx);
+#endif
 }
 
-/** @copydoc sb_publish */
+/**
+ * @brief  Publish a message to all subscribers via SVC gate.
+ * @param[in] msg_id  Message identifier.
+ * @param[in] data    Payload bytes.
+ * @param[in] len     Payload length.
+ * @return Number of subscribers successfully enqueued to.
+ */
 uint8_t sb_publish(sb_msg_id_t msg_id, const uint8_t *data, uint8_t len) {
-    enter_critical();
-    uint8_t n = __sb_publish(msg_id, data, len);
-    exit_critical();
-    return n;
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)msg_id), "r" ((uint32_t)(uintptr_t)data),
+          "r" ((uint32_t)len), "I" (SVC_SB_PUBLISH)
+        : "r0", "r1", "r2"
+    );
+    return (uint8_t)result;
+#else
+    return __sb_publish(msg_id, data, len);
+#endif
 }
 
-/** @copydoc sb_subscriber_count */
+/**
+ * @brief  Return the subscriber count for a message ID via SVC gate.
+ * @param[in] msg_id  Message identifier.
+ * @return Active subscriber count, or 0 if no route exists.
+ */
 uint8_t sb_subscriber_count(sb_msg_id_t msg_id) {
-    enter_critical();
-    uint8_t n = __sb_subscriber_count(msg_id);
-    exit_critical();
-    return n;
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)msg_id), "I" (SVC_SB_SUBSCRIBER_COUNT)
+        : "r0"
+    );
+    return (uint8_t)result;
+#else
+    return __sb_subscriber_count(msg_id);
+#endif
 }
 
-/** @copydoc sb_route_count */
+/**
+ * @brief  Return the total route count via SVC gate.
+ * @return Number of distinct msg_ids with at least one subscriber.
+ */
 uint8_t sb_route_count(void) {
-    return route_used;
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_SB_ROUTE_COUNT)
+        : "r0"
+    );
+    return (uint8_t)result;
+#else
+    return __sb_route_count();
+#endif
 }
