@@ -27,6 +27,7 @@
 #include "icarus/cdc_rx.h"
 #include "icarus/event.h"
 #include "icarus/tables.h"
+#include "icarus/cs.h"
 #include <stddef.h>
 
 /* ============================================================================
@@ -324,6 +325,43 @@ void SVC_Handler_C(uint32_t *stack_frame) {
             break;
         case SVC_UPDATE_STACK_WATERMARK:
             __os_update_stack_watermark((uint8_t)arg0);
+            break;
+
+        /* ---- Checksum integrity monitor ---- */
+        case SVC_CS_INIT:
+            __cs_init();
+            break;
+        case SVC_CS_SET_CALLBACK:
+            __cs_set_callback((cs_mismatch_fn)(uintptr_t)arg0);
+            break;
+        case SVC_CS_ADD_REGION: {
+            bool ok = __cs_add_region((uint8_t)arg0,
+                                       (const uint8_t *)(uintptr_t)arg1,
+                                       stack_frame[2]);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_CS_ENABLE: {
+            bool ok = __cs_enable((uint8_t)arg0, (bool)arg1);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_CS_REBASELINE: {
+            bool ok = __cs_rebaseline((uint8_t)arg0);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_CS_CHECK_ALL:
+            stack_frame[0] = (uint32_t)__cs_check_all();
+            break;
+        case SVC_CS_GET_REGION: {
+            bool ok = __cs_get_region((uint8_t)arg0,
+                                       (cs_region_t *)(uintptr_t)arg1);
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
+        case SVC_CS_REGION_COUNT:
+            stack_frame[0] = (uint32_t)__cs_region_count();
             break;
 
         default:
@@ -1458,5 +1496,138 @@ uint8_t tbl_count(void) {
     return (uint8_t)result;
 #else
     return __tbl_count();
+#endif
+}
+
+/* ============================================================================
+ * CHECKSUM INTEGRITY MONITOR WRAPPERS
+ * ========================================================================= */
+
+void cs_init(void) {
+#ifndef HOST_TEST
+    __asm__ volatile ("svc %0\n" : : "I" (SVC_CS_INIT));
+#else
+    __cs_init();
+#endif
+}
+
+void cs_set_callback(cs_mismatch_fn fn) {
+#ifndef HOST_TEST
+    __asm__ volatile (
+        "mov r0, %0\n"
+        "svc %1\n"
+        :
+        : "r" ((uint32_t)(uintptr_t)fn), "I" (SVC_CS_SET_CALLBACK)
+        : "r0"
+    );
+#else
+    __cs_set_callback(fn);
+#endif
+}
+
+bool cs_add_region(uint8_t idx, const uint8_t *addr, uint32_t size) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)idx), "r" ((uint32_t)(uintptr_t)addr),
+          "r" (size), "I" (SVC_CS_ADD_REGION)
+        : "r0", "r1", "r2"
+    );
+    return (bool)result;
+#else
+    return __cs_add_region(idx, addr, size);
+#endif
+}
+
+bool cs_enable(uint8_t idx, bool enabled) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)idx), "r" ((uint32_t)enabled),
+          "I" (SVC_CS_ENABLE)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __cs_enable(idx, enabled);
+#endif
+}
+
+bool cs_rebaseline(uint8_t idx) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "svc %2\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)idx), "I" (SVC_CS_REBASELINE)
+        : "r0"
+    );
+    return (bool)result;
+#else
+    return __cs_rebaseline(idx);
+#endif
+}
+
+uint8_t cs_check_all(void) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_CS_CHECK_ALL)
+        : "r0"
+    );
+    return (uint8_t)result;
+#else
+    return __cs_check_all();
+#endif
+}
+
+bool cs_get_region(uint8_t idx, cs_region_t *out) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "svc %3\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)idx), "r" ((uint32_t)(uintptr_t)out),
+          "I" (SVC_CS_GET_REGION)
+        : "r0", "r1"
+    );
+    return (bool)result;
+#else
+    return __cs_get_region(idx, out);
+#endif
+}
+
+uint8_t cs_region_count(void) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "svc %1\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "I" (SVC_CS_REGION_COUNT)
+        : "r0"
+    );
+    return (uint8_t)result;
+#else
+    return __cs_region_count();
 #endif
 }
