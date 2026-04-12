@@ -98,7 +98,12 @@ extern "C" {
  * @note Derived from ICARUS_DATA_WORDS in config.h
  */
 #define TASK_DATA_SIZE_BYTES ((ICARUS_DATA_WORDS) * 4u)
-#define TASK_DATA_SIZE_MPU   BYTES_TO_MPU_SIZE(TASK_DATA_SIZE_BYTES)
+#define TASK_DATA_SIZE_MPU   MPU_REGION_SIZE_2KB
+
+#ifndef SKIP_STATIC_ASSERTS
+_Static_assert(TASK_DATA_SIZE_BYTES == 2048u,
+               "TASK_DATA_SIZE_BYTES changed — update TASK_DATA_SIZE_MPU");
+#endif
 
 /**
  * @brief   Configure Memory Protection Unit regions
