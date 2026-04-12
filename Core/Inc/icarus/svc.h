@@ -127,18 +127,21 @@ extern "C" {
 #define SVC_CS_REBASELINE               67  /* bool: recompute baseline      */
 #define SVC_CS_CHECK_ALL                68  /* uint8_t: scan all regions     */
 #define SVC_CS_GET_REGION               69  /* bool: read region descriptor  */
-#define SVC_CS_REGION_COUNT             70  /* uint8_t: registered count     */
+#define SVC_CS_REGION_COUNT             70
+
+/* Generic BKPRAM write gate (data in RAM_D3, priv-only by default MPU)   */
+#define SVC_BKPRAM_WRITE                71  /* bool: memcpy src→BKPRAM     */  /* uint8_t: registered count     */
 
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_CS_REGION_COUNT <= 255,
+_Static_assert(SVC_BKPRAM_WRITE <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-_Static_assert(SVC_CS_REGION_COUNT >= SVC_KERNEL_PROTECTED_DATA,
-               "SVC_CS_REGION_COUNT must be >= all other SVC numbers");
+_Static_assert(SVC_BKPRAM_WRITE >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_BKPRAM_WRITE must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)

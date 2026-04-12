@@ -138,6 +138,27 @@ uint32_t* kernel_get_data(uint8_t task_idx);
 void* kernel_protected_data(uint16_t num_words);
 
 /* ============================================================================
+ * BKPRAM WRITE GATE
+ * ========================================================================= */
+
+/**
+ * @brief  Copy data into battery-backed RAM (RAM_D3) via SVC.
+ *
+ * @details On target this issues an SVC that runs a validated memcpy in
+ *          privileged mode, allowing unprivileged tasks to persist data
+ *          into BKPRAM without an MPU region grant.  Under HOST_TEST the
+ *          call is a no-op that returns true.
+ *
+ * @param[in] src     Source buffer (caller-owned, any memory domain).
+ * @param[in] offset  Byte offset into BKPRAM (0 .. BSP_RAM_D3_SIZE-1).
+ * @param[in] len     Number of bytes to copy (must be > 0).
+ *
+ * @retval true   Write completed successfully.
+ * @retval false  Validation failed (offset+len exceeds BKPRAM, or len==0).
+ */
+bool bkpram_write(const void *src, uint32_t offset, uint32_t len);
+
+/* ============================================================================
  * PRIVILEGED IMPLEMENTATIONS (Internal - Do Not Call Directly)
  * ========================================================================= */
 

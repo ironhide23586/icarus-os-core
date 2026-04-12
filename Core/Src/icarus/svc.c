@@ -28,7 +28,9 @@
 #include "icarus/event.h"
 #include "icarus/tables.h"
 #include "icarus/cs.h"
+#include "bsp/mpu.h"
 #include <stddef.h>
+#include <string.h>
 
 /* ============================================================================
  * SVC HANDLER (target only)
@@ -366,6 +368,21 @@ void SVC_Handler_C(uint32_t *stack_frame) {
         case SVC_CS_REGION_COUNT:
             stack_frame[0] = (uint32_t)__cs_region_count();
             break;
+
+        /* ---- BKPRAM write gate ---- */
+        case SVC_BKPRAM_WRITE: {
+            const void *src = (const void *)(uintptr_t)arg0;
+            uint32_t offset = arg1;
+            uint32_t len    = stack_frame[2];
+            bool ok = false;
+            if (len > 0 && (offset + len) <= BSP_RAM_D3_SIZE &&
+                (offset + len) >= offset) {
+                memcpy((void *)(BSP_RAM_D3_BASE + offset), src, len);
+                ok = true;
+            }
+            stack_frame[0] = (uint32_t)ok;
+            break;
+        }
 
         default:
             break;
@@ -1632,5 +1649,34 @@ uint8_t cs_region_count(void) {
     return (uint8_t)result;
 #else
     return __cs_region_count();
+#endif
+}
+
+/* ============================================================================
+ * BKPRAM WRITE GATE
+ * ========================================================================= */
+
+/** @copydoc bkpram_write */
+bool bkpram_write(const void *src, uint32_t offset, uint32_t len) {
+#ifndef HOST_TEST
+    uint32_t result;
+    __asm__ volatile (
+        "mov r0, %1\n"
+        "mov r1, %2\n"
+        "mov r2, %3\n"
+        "svc %4\n"
+        "mov %0, r0\n"
+        : "=r" (result)
+        : "r" ((uint32_t)(uintptr_t)src), "r" (offset),
+          "r" (len), "I" (SVC_BKPRAM_WRITE)
+        : "r0", "r1", "r2"
+    );
+    return (bool)result;
+#else
+    (void)offset;
+    if (len == 0) return false;
+    /* HOST_TEST: no BKPRAM hardware — treat as no-op success */
+    (void)src;
+    return true;
 #endif
 }
