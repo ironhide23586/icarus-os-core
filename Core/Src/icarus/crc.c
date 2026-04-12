@@ -68,7 +68,7 @@ ITCM_FUNC uint16_t crc16_ccitt(const uint8_t *data, uint16_t len) {
         return 0xFFFFu;
     }
 
-    enter_critical();
+    __enter_critical();
 
     if (!crc_initialised) {
         crc_hw_init();
@@ -87,7 +87,7 @@ ITCM_FUNC uint16_t crc16_ccitt(const uint8_t *data, uint16_t len) {
 
     uint16_t crc = (uint16_t)(CRC->DR & 0xFFFFu);
 
-    exit_critical();
+    __exit_critical();
     return crc;
 }
 

@@ -119,16 +119,26 @@ extern "C" {
 #define SVC_GET_STACK_WATERMARK         61  /* uint32_t: min free words      */
 #define SVC_UPDATE_STACK_WATERMARK      62  /* void: scan + update           */
 
+/* Checksum integrity monitor (data in DTCM_PRIV)                            */
+#define SVC_CS_INIT                     63  /* void: clear regions           */
+#define SVC_CS_SET_CALLBACK             64  /* void: set mismatch callback   */
+#define SVC_CS_ADD_REGION               65  /* bool: register + baseline CRC */
+#define SVC_CS_ENABLE                   66  /* bool: enable/disable region   */
+#define SVC_CS_REBASELINE               67  /* bool: recompute baseline      */
+#define SVC_CS_CHECK_ALL                68  /* uint8_t: scan all regions     */
+#define SVC_CS_GET_REGION               69  /* bool: read region descriptor  */
+#define SVC_CS_REGION_COUNT             70  /* uint8_t: registered count     */
+
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION
  * ========================================================================= */
 
 /* SVC instruction encodes number in 1 byte (0-255) */
-_Static_assert(SVC_UPDATE_STACK_WATERMARK <= 255,
+_Static_assert(SVC_CS_REGION_COUNT <= 255,
                "Highest SVC number must fit in 8-bit immediate");
 
-_Static_assert(SVC_UPDATE_STACK_WATERMARK >= SVC_KERNEL_PROTECTED_DATA,
-               "SVC_UPDATE_STACK_WATERMARK must be >= all other SVC numbers");
+_Static_assert(SVC_CS_REGION_COUNT >= SVC_KERNEL_PROTECTED_DATA,
+               "SVC_CS_REGION_COUNT must be >= all other SVC numbers");
 
 /* ============================================================================
  * SVC HANDLER (called from assembly - target only)
