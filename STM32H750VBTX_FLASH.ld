@@ -230,6 +230,20 @@ SECTIONS
     _edtcm_obc = .;
   } >DTCMRAM
 
+  /* Battery-backed SRAM (RAM_D3, 64KB) for persistent state across resets.
+   * NOLOAD: startup must NOT zero this region — contents survive warm reset
+   * when VBAT backup regulator is enabled.  Application validates via magic
+   * word + CRC on boot to distinguish cold start from warm restart. */
+  .ram_d3 (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _sram_d3 = .;
+    *(.ram_d3)
+    *(.ram_d3*)
+    . = ALIGN(4);
+    _eram_d3 = .;
+  } >RAM_D3
+
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {

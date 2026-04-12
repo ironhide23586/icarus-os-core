@@ -155,10 +155,12 @@ extern "C" {
 #  define ITCM_FUNC       __attribute__((section(".itcm")))
 #  define DTCM_DATA_PRIV  __attribute__((section(".dtcm_priv")))
 #  define DTCM_DATA_OBC   __attribute__((section(".dtcm_obc")))
+#  define BKPRAM_DATA     __attribute__((section(".ram_d3")))
 #else
 #  define ITCM_FUNC
 #  define DTCM_DATA_PRIV
 #  define DTCM_DATA_OBC
+#  define BKPRAM_DATA
 #endif
 
 /* ============================================================================

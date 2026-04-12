@@ -222,6 +222,17 @@ void hal_init(void) {
   /* Configure the system clock */
   SystemClock_Config();
 
+#ifndef HOST_TEST
+  /* Enable backup SRAM (RAM_D3, 0x38000000, 64KB).
+   * Three steps required per RM0433:
+   *   1. Unlock backup domain writes (DBP bit in PWR_CR1)
+   *   2. Enable BKPRAM clock on AHB4
+   *   3. Enable VBAT backup regulator for retention across VDD loss */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_BKPRAM_CLK_ENABLE();
+  HAL_PWREx_EnableBkUpReg();
+#endif
+
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
 
