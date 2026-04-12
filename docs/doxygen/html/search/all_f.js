@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['icarus_20obc_0',['ICARUS OBC',['../index.html',1,'']]],
+  ['icarus_20os_0',['ICARUS OS',['../index.html',1,'']]],
   ['icarus_20os_1',['Support ICARUS OS',['../index.html#autotoc_md83',1,'']]],
   ['icarus_20os_20core_2',['ICARUS OS Core',['../index.html#autotoc_md0',1,'']]],
   ['icarus_20runner_20default_3',['Terminal GUI — ICARUS Runner (Default)',['../index.html#autotoc_md4',1,'']]],

@@ -1,0 +1,4 @@
+- [MPU layout and DTCM split](mpu_dtcm_split.md) — Region 5 SRD=0xF0 for kernel 64KB, Region 3 FULL_ACCESS for application 64KB
+- [BKPRAM no MPU region](bkpram_mpu_gap.md) — RAM_D3 (0x38000000) has no MPU region; unprivileged writes will fault
+- [CRC16 len truncation risk](crc16_len_truncation.md) — crc16_ccitt takes uint16_t len but callers pass uint32_t size
+- [Persist state struct](persist_state_struct.md) — persist_state_t needs _Static_assert and FDIR_NUM_FAULT_TYPES coupling

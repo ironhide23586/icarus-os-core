@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['icarus_20obc_0',['ICARUS OBC',['../index.html',1,'']]]
+  ['icarus_20os_0',['ICARUS OS',['../index.html',1,'']]]
 ];

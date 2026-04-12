@@ -838,7 +838,7 @@ typedef struct {
 
 The shared service modules provide reusable kernel infrastructure that
 sits at the same architectural level as the IPC primitives but addresses
-domains common to most flight-software applications: serial input
+domains common to most embedded applications: serial input
 buffering, structured event logging, integrity checks, scratch storage,
 and ground-loadable configuration tables.
 

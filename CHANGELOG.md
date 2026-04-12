@@ -111,7 +111,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   sources (`cdc_rx.c`, `event.c`, `crc.c`, `fs.c`, `tables.c`). The host
   build now links the entire kernel surface — previously the new modules
   were not in `KERNEL_SRC` so `make -C tests` would fail with undefined
-  `__cdc_rx_*` / `__os_event` / `__tbl_*` references when the OBC consumer
+  `__cdc_rx_*` / `__os_event` / `__tbl_*` references when the application consumer
   reached for them.
 - **`__os_init`**: only one system task is registered now (`ICARUS_KEEPALIVE_TASK`).
   The heartbeat task line is commented out at `Core/Src/icarus/kernel.c:244`

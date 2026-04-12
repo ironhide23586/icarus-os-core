@@ -24,7 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "ICARUS OBC", "index.html", [
+  [ "ICARUS OS", "index.html", [
     [ "ICARUS OS Core", "index.html#autotoc_md0", [
       [ "", "index.html#autotoc_md1", null ],
       [ "Highlights", "index.html#autotoc_md2", null ],
