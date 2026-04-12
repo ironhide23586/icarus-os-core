@@ -285,7 +285,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
     <div id="menu">
      <p><a href="index.html">Defects:</a> usbd_cdc_if.c</p>
-<a href="2.html#line-142"> constParameterCallback 142</a><a href="2.html#line-180"> constParameterCallback 180</a><a href="2.html#line-285"> constVariablePointer 285</a>
+<a href="2.html#line-149"> constParameterCallback 149</a><a href="2.html#line-150"> constParameterCallback 150</a><a href="2.html#line-187"> constParameterCallback 187</a><a href="2.html#line-268"> constParameterCallback 268</a><a href="2.html#line-302"> constVariablePointer 302</a>
     </div>
     <div id="content">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">  1</span>
@@ -615,7 +615,24 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/* USER CODE BEGIN Header */</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><a id="line-1" name="line-1"></a><span class="cm">/* USER CODE BEGIN Header */</span>
 <a id="line-2" name="line-2"></a><span class="cm">/**</span>
 <a id="line-3" name="line-3"></a><span class="cm">  ******************************************************************************</span>
 <a id="line-4" name="line-4"></a><span class="cm">  * @file           : usbd_cdc_if.c</span>
@@ -639,310 +656,327 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="line-22" name="line-22"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;usbd_cdc_if.h&quot;</span>
 <a id="line-23" name="line-23"></a>
 <a id="line-24" name="line-24"></a><span class="cm">/* USER CODE BEGIN INCLUDE */</span>
-<a id="line-25" name="line-25"></a>
-<a id="line-26" name="line-26"></a><span class="cm">/* USER CODE END INCLUDE */</span>
-<a id="line-27" name="line-27"></a>
-<a id="line-28" name="line-28"></a><span class="cm">/* Private typedef -----------------------------------------------------------*/</span>
-<a id="line-29" name="line-29"></a><span class="cm">/* Private define ------------------------------------------------------------*/</span>
-<a id="line-30" name="line-30"></a><span class="cm">/* Private macro -------------------------------------------------------------*/</span>
-<a id="line-31" name="line-31"></a>
-<a id="line-32" name="line-32"></a><span class="cm">/* USER CODE BEGIN PV */</span>
-<a id="line-33" name="line-33"></a><span class="cm">/* Private variables ---------------------------------------------------------*/</span>
+<a id="line-25" name="line-25"></a><span class="cm">/*</span>
+<a id="line-26" name="line-26"></a><span class="cm"> * Route received bytes into the kernel CDC RX ring buffer so any RTOS</span>
+<a id="line-27" name="line-27"></a><span class="cm"> * task can drain them via cdc_rx_read_byte() / cdc_rx_available().</span>
+<a id="line-28" name="line-28"></a><span class="cm"> * The ring buffer lives in DTCM_DATA_PRIV, the producer here is in the</span>
+<a id="line-29" name="line-29"></a><span class="cm"> * privileged USB CDC ISR context, and the consumer goes through the</span>
+<a id="line-30" name="line-30"></a><span class="cm"> * SVC gates declared in icarus/cdc_rx.h.</span>
+<a id="line-31" name="line-31"></a><span class="cm"> */</span>
+<a id="line-32" name="line-32"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;icarus/cdc_rx.h&quot;</span>
+<a id="line-33" name="line-33"></a><span class="cm">/* USER CODE END INCLUDE */</span>
 <a id="line-34" name="line-34"></a>
-<a id="line-35" name="line-35"></a><span class="cm">/* USER CODE END PV */</span>
-<a id="line-36" name="line-36"></a>
-<a id="line-37" name="line-37"></a><span class="cm">/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY</span>
-<a id="line-38" name="line-38"></a><span class="cm">  * @brief Usb device library.</span>
-<a id="line-39" name="line-39"></a><span class="cm">  * @{</span>
-<a id="line-40" name="line-40"></a><span class="cm">  */</span>
+<a id="line-35" name="line-35"></a><span class="cm">/* Private typedef -----------------------------------------------------------*/</span>
+<a id="line-36" name="line-36"></a><span class="cm">/* Private define ------------------------------------------------------------*/</span>
+<a id="line-37" name="line-37"></a><span class="cm">/* Private macro -------------------------------------------------------------*/</span>
+<a id="line-38" name="line-38"></a>
+<a id="line-39" name="line-39"></a><span class="cm">/* USER CODE BEGIN PV */</span>
+<a id="line-40" name="line-40"></a><span class="cm">/* Private variables ---------------------------------------------------------*/</span>
 <a id="line-41" name="line-41"></a>
-<a id="line-42" name="line-42"></a><span class="cm">/** @addtogroup USBD_CDC_IF</span>
-<a id="line-43" name="line-43"></a><span class="cm">  * @{</span>
-<a id="line-44" name="line-44"></a><span class="cm">  */</span>
-<a id="line-45" name="line-45"></a>
-<a id="line-46" name="line-46"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_TypesDefinitions USBD_CDC_IF_Private_TypesDefinitions</span>
-<a id="line-47" name="line-47"></a><span class="cm">  * @brief Private types.</span>
-<a id="line-48" name="line-48"></a><span class="cm">  * @{</span>
-<a id="line-49" name="line-49"></a><span class="cm">  */</span>
-<a id="line-50" name="line-50"></a>
-<a id="line-51" name="line-51"></a><span class="cm">/* USER CODE BEGIN PRIVATE_TYPES */</span>
+<a id="line-42" name="line-42"></a><span class="cm">/* USER CODE END PV */</span>
+<a id="line-43" name="line-43"></a>
+<a id="line-44" name="line-44"></a><span class="cm">/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY</span>
+<a id="line-45" name="line-45"></a><span class="cm">  * @brief Usb device library.</span>
+<a id="line-46" name="line-46"></a><span class="cm">  * @{</span>
+<a id="line-47" name="line-47"></a><span class="cm">  */</span>
+<a id="line-48" name="line-48"></a>
+<a id="line-49" name="line-49"></a><span class="cm">/** @addtogroup USBD_CDC_IF</span>
+<a id="line-50" name="line-50"></a><span class="cm">  * @{</span>
+<a id="line-51" name="line-51"></a><span class="cm">  */</span>
 <a id="line-52" name="line-52"></a>
-<a id="line-53" name="line-53"></a><span class="cm">/* USER CODE END PRIVATE_TYPES */</span>
-<a id="line-54" name="line-54"></a>
-<a id="line-55" name="line-55"></a><span class="cm">/**</span>
-<a id="line-56" name="line-56"></a><span class="cm">  * @}</span>
-<a id="line-57" name="line-57"></a><span class="cm">  */</span>
-<a id="line-58" name="line-58"></a>
-<a id="line-59" name="line-59"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_Defines USBD_CDC_IF_Private_Defines</span>
-<a id="line-60" name="line-60"></a><span class="cm">  * @brief Private defines.</span>
-<a id="line-61" name="line-61"></a><span class="cm">  * @{</span>
-<a id="line-62" name="line-62"></a><span class="cm">  */</span>
-<a id="line-63" name="line-63"></a>
-<a id="line-64" name="line-64"></a><span class="cm">/* USER CODE BEGIN PRIVATE_DEFINES */</span>
-<a id="line-65" name="line-65"></a><span class="cm">/* USER CODE END PRIVATE_DEFINES */</span>
-<a id="line-66" name="line-66"></a>
-<a id="line-67" name="line-67"></a><span class="cm">/**</span>
-<a id="line-68" name="line-68"></a><span class="cm">  * @}</span>
+<a id="line-53" name="line-53"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_TypesDefinitions USBD_CDC_IF_Private_TypesDefinitions</span>
+<a id="line-54" name="line-54"></a><span class="cm">  * @brief Private types.</span>
+<a id="line-55" name="line-55"></a><span class="cm">  * @{</span>
+<a id="line-56" name="line-56"></a><span class="cm">  */</span>
+<a id="line-57" name="line-57"></a>
+<a id="line-58" name="line-58"></a><span class="cm">/* USER CODE BEGIN PRIVATE_TYPES */</span>
+<a id="line-59" name="line-59"></a>
+<a id="line-60" name="line-60"></a><span class="cm">/* USER CODE END PRIVATE_TYPES */</span>
+<a id="line-61" name="line-61"></a>
+<a id="line-62" name="line-62"></a><span class="cm">/**</span>
+<a id="line-63" name="line-63"></a><span class="cm">  * @}</span>
+<a id="line-64" name="line-64"></a><span class="cm">  */</span>
+<a id="line-65" name="line-65"></a>
+<a id="line-66" name="line-66"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_Defines USBD_CDC_IF_Private_Defines</span>
+<a id="line-67" name="line-67"></a><span class="cm">  * @brief Private defines.</span>
+<a id="line-68" name="line-68"></a><span class="cm">  * @{</span>
 <a id="line-69" name="line-69"></a><span class="cm">  */</span>
 <a id="line-70" name="line-70"></a>
-<a id="line-71" name="line-71"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_Macros USBD_CDC_IF_Private_Macros</span>
-<a id="line-72" name="line-72"></a><span class="cm">  * @brief Private macros.</span>
-<a id="line-73" name="line-73"></a><span class="cm">  * @{</span>
-<a id="line-74" name="line-74"></a><span class="cm">  */</span>
-<a id="line-75" name="line-75"></a>
-<a id="line-76" name="line-76"></a><span class="cm">/* USER CODE BEGIN PRIVATE_MACRO */</span>
+<a id="line-71" name="line-71"></a><span class="cm">/* USER CODE BEGIN PRIVATE_DEFINES */</span>
+<a id="line-72" name="line-72"></a><span class="cm">/* USER CODE END PRIVATE_DEFINES */</span>
+<a id="line-73" name="line-73"></a>
+<a id="line-74" name="line-74"></a><span class="cm">/**</span>
+<a id="line-75" name="line-75"></a><span class="cm">  * @}</span>
+<a id="line-76" name="line-76"></a><span class="cm">  */</span>
 <a id="line-77" name="line-77"></a>
-<a id="line-78" name="line-78"></a><span class="cm">/* USER CODE END PRIVATE_MACRO */</span>
-<a id="line-79" name="line-79"></a>
-<a id="line-80" name="line-80"></a><span class="cm">/**</span>
-<a id="line-81" name="line-81"></a><span class="cm">  * @}</span>
-<a id="line-82" name="line-82"></a><span class="cm">  */</span>
-<a id="line-83" name="line-83"></a>
-<a id="line-84" name="line-84"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_Variables USBD_CDC_IF_Private_Variables</span>
-<a id="line-85" name="line-85"></a><span class="cm">  * @brief Private variables.</span>
-<a id="line-86" name="line-86"></a><span class="cm">  * @{</span>
-<a id="line-87" name="line-87"></a><span class="cm">  */</span>
-<a id="line-88" name="line-88"></a><span class="cm">/* Create buffer for reception and transmission           */</span>
-<a id="line-89" name="line-89"></a><span class="cm">/* It&#39;s up to user to redefine and/or remove those define */</span>
-<a id="line-90" name="line-90"></a><span class="cm">/** Received data over USB are stored in this buffer      */</span>
-<a id="line-91" name="line-91"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">UserRxBufferFS</span><span class="p">[</span><span class="n">APP_RX_DATA_SIZE</span><span class="p">];</span>
-<a id="line-92" name="line-92"></a>
-<a id="line-93" name="line-93"></a><span class="cm">/** Data to send over USB CDC are stored in this buffer   */</span>
-<a id="line-94" name="line-94"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">UserTxBufferFS</span><span class="p">[</span><span class="n">APP_TX_DATA_SIZE</span><span class="p">];</span>
-<a id="line-95" name="line-95"></a>
-<a id="line-96" name="line-96"></a><span class="cm">/* USER CODE BEGIN PRIVATE_VARIABLES */</span>
-<a id="line-97" name="line-97"></a>
-<a id="line-98" name="line-98"></a><span class="cm">/* USER CODE END PRIVATE_VARIABLES */</span>
+<a id="line-78" name="line-78"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_Macros USBD_CDC_IF_Private_Macros</span>
+<a id="line-79" name="line-79"></a><span class="cm">  * @brief Private macros.</span>
+<a id="line-80" name="line-80"></a><span class="cm">  * @{</span>
+<a id="line-81" name="line-81"></a><span class="cm">  */</span>
+<a id="line-82" name="line-82"></a>
+<a id="line-83" name="line-83"></a><span class="cm">/* USER CODE BEGIN PRIVATE_MACRO */</span>
+<a id="line-84" name="line-84"></a>
+<a id="line-85" name="line-85"></a><span class="cm">/* USER CODE END PRIVATE_MACRO */</span>
+<a id="line-86" name="line-86"></a>
+<a id="line-87" name="line-87"></a><span class="cm">/**</span>
+<a id="line-88" name="line-88"></a><span class="cm">  * @}</span>
+<a id="line-89" name="line-89"></a><span class="cm">  */</span>
+<a id="line-90" name="line-90"></a>
+<a id="line-91" name="line-91"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_Variables USBD_CDC_IF_Private_Variables</span>
+<a id="line-92" name="line-92"></a><span class="cm">  * @brief Private variables.</span>
+<a id="line-93" name="line-93"></a><span class="cm">  * @{</span>
+<a id="line-94" name="line-94"></a><span class="cm">  */</span>
+<a id="line-95" name="line-95"></a><span class="cm">/* Create buffer for reception and transmission           */</span>
+<a id="line-96" name="line-96"></a><span class="cm">/* It&#39;s up to user to redefine and/or remove those define */</span>
+<a id="line-97" name="line-97"></a><span class="cm">/** Received data over USB are stored in this buffer      */</span>
+<a id="line-98" name="line-98"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">UserRxBufferFS</span><span class="p">[</span><span class="n">APP_RX_DATA_SIZE</span><span class="p">];</span>
 <a id="line-99" name="line-99"></a>
-<a id="line-100" name="line-100"></a><span class="cm">/**</span>
-<a id="line-101" name="line-101"></a><span class="cm">  * @}</span>
-<a id="line-102" name="line-102"></a><span class="cm">  */</span>
-<a id="line-103" name="line-103"></a>
-<a id="line-104" name="line-104"></a><span class="cm">/** @defgroup USBD_CDC_IF_Exported_Variables USBD_CDC_IF_Exported_Variables</span>
-<a id="line-105" name="line-105"></a><span class="cm">  * @brief Public variables.</span>
-<a id="line-106" name="line-106"></a><span class="cm">  * @{</span>
-<a id="line-107" name="line-107"></a><span class="cm">  */</span>
-<a id="line-108" name="line-108"></a>
-<a id="line-109" name="line-109"></a><span class="k">extern</span><span class="w"> </span><span class="n">USBD_HandleTypeDef</span><span class="w"> </span><span class="n">hUsbDeviceFS</span><span class="p">;</span>
+<a id="line-100" name="line-100"></a><span class="cm">/** Data to send over USB CDC are stored in this buffer   */</span>
+<a id="line-101" name="line-101"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="n">UserTxBufferFS</span><span class="p">[</span><span class="n">APP_TX_DATA_SIZE</span><span class="p">];</span>
+<a id="line-102" name="line-102"></a>
+<a id="line-103" name="line-103"></a><span class="cm">/* USER CODE BEGIN PRIVATE_VARIABLES */</span>
+<a id="line-104" name="line-104"></a>
+<a id="line-105" name="line-105"></a><span class="cm">/* USER CODE END PRIVATE_VARIABLES */</span>
+<a id="line-106" name="line-106"></a>
+<a id="line-107" name="line-107"></a><span class="cm">/**</span>
+<a id="line-108" name="line-108"></a><span class="cm">  * @}</span>
+<a id="line-109" name="line-109"></a><span class="cm">  */</span>
 <a id="line-110" name="line-110"></a>
-<a id="line-111" name="line-111"></a><span class="cm">/* USER CODE BEGIN EXPORTED_VARIABLES */</span>
-<a id="line-112" name="line-112"></a>
-<a id="line-113" name="line-113"></a><span class="cm">/* USER CODE END EXPORTED_VARIABLES */</span>
-<a id="line-114" name="line-114"></a>
-<a id="line-115" name="line-115"></a><span class="cm">/**</span>
-<a id="line-116" name="line-116"></a><span class="cm">  * @}</span>
-<a id="line-117" name="line-117"></a><span class="cm">  */</span>
-<a id="line-118" name="line-118"></a>
-<a id="line-119" name="line-119"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_FunctionPrototypes USBD_CDC_IF_Private_FunctionPrototypes</span>
-<a id="line-120" name="line-120"></a><span class="cm">  * @brief Private functions declaration.</span>
-<a id="line-121" name="line-121"></a><span class="cm">  * @{</span>
-<a id="line-122" name="line-122"></a><span class="cm">  */</span>
-<a id="line-123" name="line-123"></a>
-<a id="line-124" name="line-124"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Init_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-<a id="line-125" name="line-125"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_DeInit_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-<a id="line-126" name="line-126"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Control_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">length</span><span class="p">);</span>
-<a id="line-127" name="line-127"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Receive_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">);</span>
-<a id="line-128" name="line-128"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_TransmitCplt_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">epnum</span><span class="p">);</span>
-<a id="line-129" name="line-129"></a>
-<a id="line-130" name="line-130"></a><span class="cm">/* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */</span>
-<a id="line-131" name="line-131"></a>
-<a id="line-132" name="line-132"></a><span class="cm">/* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */</span>
-<a id="line-133" name="line-133"></a>
-<a id="line-134" name="line-134"></a><span class="cm">/**</span>
-<a id="line-135" name="line-135"></a><span class="cm">  * @}</span>
-<a id="line-136" name="line-136"></a><span class="cm">  */</span>
-<a id="line-137" name="line-137"></a>
-<a id="line-138" name="line-138"></a><span class="n">USBD_CDC_ItfTypeDef</span><span class="w"> </span><span class="n">USBD_Interface_fops_FS</span><span class="w"> </span><span class="o">=</span>
-<a id="line-139" name="line-139"></a><span class="p">{</span>
-<a id="line-140" name="line-140"></a><span class="w">  </span><span class="n">CDC_Init_FS</span><span class="p">,</span>
-<a id="line-141" name="line-141"></a><span class="w">  </span><span class="n">CDC_DeInit_FS</span><span class="p">,</span>
-<a id="line-142" name="line-142"></a><span class="hll"><span class="w">  </span><span class="n">CDC_Control_FS</span><span class="p">,</span><span class="error2">&lt;--- You might need to cast the function pointer here</span>
-</span><a id="line-143" name="line-143"></a><span class="w">  </span><span class="n">CDC_Receive_FS</span><span class="p">,</span>
-<a id="line-144" name="line-144"></a><span class="w">  </span><span class="n">CDC_TransmitCplt_FS</span>
-<a id="line-145" name="line-145"></a><span class="p">};</span>
-<a id="line-146" name="line-146"></a>
-<a id="line-147" name="line-147"></a><span class="cm">/* Private functions ---------------------------------------------------------*/</span>
-<a id="line-148" name="line-148"></a><span class="cm">/**</span>
-<a id="line-149" name="line-149"></a><span class="cm">  * @brief  Initializes the CDC media low layer over the FS USB IP</span>
-<a id="line-150" name="line-150"></a><span class="cm">  * @retval USBD_OK if all operations are OK else USBD_FAIL</span>
-<a id="line-151" name="line-151"></a><span class="cm">  */</span>
-<a id="line-152" name="line-152"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Init_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-153" name="line-153"></a><span class="p">{</span>
-<a id="line-154" name="line-154"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 3 */</span>
-<a id="line-155" name="line-155"></a><span class="w">  </span><span class="cm">/* Set Application Buffers */</span>
-<a id="line-156" name="line-156"></a><span class="w">  </span><span class="n">USBD_CDC_SetTxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="n">UserTxBufferFS</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
-<a id="line-157" name="line-157"></a><span class="w">  </span><span class="n">USBD_CDC_SetRxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="n">UserRxBufferFS</span><span class="p">);</span>
-<a id="line-158" name="line-158"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
-<a id="line-159" name="line-159"></a><span class="w">  </span><span class="cm">/* USER CODE END 3 */</span>
-<a id="line-160" name="line-160"></a><span class="p">}</span>
-<a id="line-161" name="line-161"></a>
-<a id="line-162" name="line-162"></a><span class="cm">/**</span>
-<a id="line-163" name="line-163"></a><span class="cm">  * @brief  DeInitializes the CDC media low layer</span>
-<a id="line-164" name="line-164"></a><span class="cm">  * @retval USBD_OK if all operations are OK else USBD_FAIL</span>
-<a id="line-165" name="line-165"></a><span class="cm">  */</span>
-<a id="line-166" name="line-166"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_DeInit_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<a id="line-167" name="line-167"></a><span class="p">{</span>
-<a id="line-168" name="line-168"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 4 */</span>
-<a id="line-169" name="line-169"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
-<a id="line-170" name="line-170"></a><span class="w">  </span><span class="cm">/* USER CODE END 4 */</span>
-<a id="line-171" name="line-171"></a><span class="p">}</span>
-<a id="line-172" name="line-172"></a>
-<a id="line-173" name="line-173"></a><span class="cm">/**</span>
-<a id="line-174" name="line-174"></a><span class="cm">  * @brief  Manage the CDC class requests</span>
-<a id="line-175" name="line-175"></a><span class="cm">  * @param  cmd: Command code</span>
-<a id="line-176" name="line-176"></a><span class="cm">  * @param  pbuf: Buffer containing command data (request parameters)</span>
-<a id="line-177" name="line-177"></a><span class="cm">  * @param  length: Number of data to be sent (in bytes)</span>
-<a id="line-178" name="line-178"></a><span class="cm">  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL</span>
-<a id="line-179" name="line-179"></a><span class="cm">  */</span>
-<a id="line-180" name="line-180"></a><span class="hll"><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Control_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="error2">&lt;--- Parameter 'pbuf' can be declared as pointer to const</span>
-</span><a id="line-181" name="line-181"></a><span class="p">{</span>
-<a id="line-182" name="line-182"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 5 */</span>
-<a id="line-183" name="line-183"></a><span class="w">  </span><span class="k">switch</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-<a id="line-184" name="line-184"></a><span class="w">  </span><span class="p">{</span>
-<a id="line-185" name="line-185"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SEND_ENCAPSULATED_COMMAND</span><span class="p">:</span>
-<a id="line-186" name="line-186"></a>
-<a id="line-187" name="line-187"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-188" name="line-188"></a>
-<a id="line-189" name="line-189"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_GET_ENCAPSULATED_RESPONSE</span><span class="p">:</span>
-<a id="line-190" name="line-190"></a>
-<a id="line-191" name="line-191"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-192" name="line-192"></a>
-<a id="line-193" name="line-193"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SET_COMM_FEATURE</span><span class="p">:</span>
-<a id="line-194" name="line-194"></a>
-<a id="line-195" name="line-195"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-196" name="line-196"></a>
-<a id="line-197" name="line-197"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_GET_COMM_FEATURE</span><span class="p">:</span>
-<a id="line-198" name="line-198"></a>
-<a id="line-199" name="line-199"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-200" name="line-200"></a>
-<a id="line-201" name="line-201"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_CLEAR_COMM_FEATURE</span><span class="p">:</span>
-<a id="line-202" name="line-202"></a>
-<a id="line-203" name="line-203"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-204" name="line-204"></a>
-<a id="line-205" name="line-205"></a><span class="w">  </span><span class="cm">/*******************************************************************************/</span>
-<a id="line-206" name="line-206"></a><span class="w">  </span><span class="cm">/* Line Coding Structure                                                       */</span>
-<a id="line-207" name="line-207"></a><span class="w">  </span><span class="cm">/*-----------------------------------------------------------------------------*/</span>
-<a id="line-208" name="line-208"></a><span class="w">  </span><span class="cm">/* Offset | Field       | Size | Value  | Description                          */</span>
-<a id="line-209" name="line-209"></a><span class="w">  </span><span class="cm">/* 0      | dwDTERate   |   4  | Number |Data terminal rate, in bits per second*/</span>
-<a id="line-210" name="line-210"></a><span class="w">  </span><span class="cm">/* 4      | bCharFormat |   1  | Number | Stop bits                            */</span>
-<a id="line-211" name="line-211"></a><span class="w">  </span><span class="cm">/*                                        0 - 1 Stop bit                       */</span>
-<a id="line-212" name="line-212"></a><span class="w">  </span><span class="cm">/*                                        1 - 1.5 Stop bits                    */</span>
-<a id="line-213" name="line-213"></a><span class="w">  </span><span class="cm">/*                                        2 - 2 Stop bits                      */</span>
-<a id="line-214" name="line-214"></a><span class="w">  </span><span class="cm">/* 5      | bParityType |  1   | Number | Parity                               */</span>
-<a id="line-215" name="line-215"></a><span class="w">  </span><span class="cm">/*                                        0 - None                             */</span>
-<a id="line-216" name="line-216"></a><span class="w">  </span><span class="cm">/*                                        1 - Odd                              */</span>
-<a id="line-217" name="line-217"></a><span class="w">  </span><span class="cm">/*                                        2 - Even                             */</span>
-<a id="line-218" name="line-218"></a><span class="w">  </span><span class="cm">/*                                        3 - Mark                             */</span>
-<a id="line-219" name="line-219"></a><span class="w">  </span><span class="cm">/*                                        4 - Space                            */</span>
-<a id="line-220" name="line-220"></a><span class="w">  </span><span class="cm">/* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */</span>
-<a id="line-221" name="line-221"></a><span class="w">  </span><span class="cm">/*******************************************************************************/</span>
-<a id="line-222" name="line-222"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SET_LINE_CODING</span><span class="p">:</span>
-<a id="line-223" name="line-223"></a>
-<a id="line-224" name="line-224"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-225" name="line-225"></a>
-<a id="line-226" name="line-226"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_GET_LINE_CODING</span><span class="p">:</span>
-<a id="line-227" name="line-227"></a>
-<a id="line-228" name="line-228"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-229" name="line-229"></a>
-<a id="line-230" name="line-230"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SET_CONTROL_LINE_STATE</span><span class="p">:</span>
-<a id="line-231" name="line-231"></a>
-<a id="line-232" name="line-232"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-233" name="line-233"></a>
-<a id="line-234" name="line-234"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SEND_BREAK</span><span class="p">:</span>
-<a id="line-235" name="line-235"></a>
-<a id="line-236" name="line-236"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-237" name="line-237"></a>
-<a id="line-238" name="line-238"></a><span class="w">  </span><span class="k">default</span><span class="o">:</span>
+<a id="line-111" name="line-111"></a><span class="cm">/** @defgroup USBD_CDC_IF_Exported_Variables USBD_CDC_IF_Exported_Variables</span>
+<a id="line-112" name="line-112"></a><span class="cm">  * @brief Public variables.</span>
+<a id="line-113" name="line-113"></a><span class="cm">  * @{</span>
+<a id="line-114" name="line-114"></a><span class="cm">  */</span>
+<a id="line-115" name="line-115"></a>
+<a id="line-116" name="line-116"></a><span class="k">extern</span><span class="w"> </span><span class="n">USBD_HandleTypeDef</span><span class="w"> </span><span class="n">hUsbDeviceFS</span><span class="p">;</span>
+<a id="line-117" name="line-117"></a>
+<a id="line-118" name="line-118"></a><span class="cm">/* USER CODE BEGIN EXPORTED_VARIABLES */</span>
+<a id="line-119" name="line-119"></a>
+<a id="line-120" name="line-120"></a><span class="cm">/* USER CODE END EXPORTED_VARIABLES */</span>
+<a id="line-121" name="line-121"></a>
+<a id="line-122" name="line-122"></a><span class="cm">/**</span>
+<a id="line-123" name="line-123"></a><span class="cm">  * @}</span>
+<a id="line-124" name="line-124"></a><span class="cm">  */</span>
+<a id="line-125" name="line-125"></a>
+<a id="line-126" name="line-126"></a><span class="cm">/** @defgroup USBD_CDC_IF_Private_FunctionPrototypes USBD_CDC_IF_Private_FunctionPrototypes</span>
+<a id="line-127" name="line-127"></a><span class="cm">  * @brief Private functions declaration.</span>
+<a id="line-128" name="line-128"></a><span class="cm">  * @{</span>
+<a id="line-129" name="line-129"></a><span class="cm">  */</span>
+<a id="line-130" name="line-130"></a>
+<a id="line-131" name="line-131"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Init_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+<a id="line-132" name="line-132"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_DeInit_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+<a id="line-133" name="line-133"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Control_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">length</span><span class="p">);</span>
+<a id="line-134" name="line-134"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Receive_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">);</span>
+<a id="line-135" name="line-135"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_TransmitCplt_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">epnum</span><span class="p">);</span>
+<a id="line-136" name="line-136"></a>
+<a id="line-137" name="line-137"></a><span class="cm">/* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */</span>
+<a id="line-138" name="line-138"></a>
+<a id="line-139" name="line-139"></a><span class="cm">/* USER CODE END PRIVATE_FUNCTIONS_DECLARATION */</span>
+<a id="line-140" name="line-140"></a>
+<a id="line-141" name="line-141"></a><span class="cm">/**</span>
+<a id="line-142" name="line-142"></a><span class="cm">  * @}</span>
+<a id="line-143" name="line-143"></a><span class="cm">  */</span>
+<a id="line-144" name="line-144"></a>
+<a id="line-145" name="line-145"></a><span class="n">USBD_CDC_ItfTypeDef</span><span class="w"> </span><span class="n">USBD_Interface_fops_FS</span><span class="w"> </span><span class="o">=</span>
+<a id="line-146" name="line-146"></a><span class="p">{</span>
+<a id="line-147" name="line-147"></a><span class="w">  </span><span class="n">CDC_Init_FS</span><span class="p">,</span>
+<a id="line-148" name="line-148"></a><span class="w">  </span><span class="n">CDC_DeInit_FS</span><span class="p">,</span>
+<a id="line-149" name="line-149"></a><span class="hll"><span class="w">  </span><span class="n">CDC_Control_FS</span><span class="p">,</span><span class="error2">&lt;--- You might need to cast the function pointer here</span>
+</span><a id="line-150" name="line-150"></a><span class="hll"><span class="w">  </span><span class="n">CDC_Receive_FS</span><span class="p">,</span><span class="error2">&lt;--- You might need to cast the function pointer here</span>
+</span><a id="line-151" name="line-151"></a><span class="w">  </span><span class="n">CDC_TransmitCplt_FS</span>
+<a id="line-152" name="line-152"></a><span class="p">};</span>
+<a id="line-153" name="line-153"></a>
+<a id="line-154" name="line-154"></a><span class="cm">/* Private functions ---------------------------------------------------------*/</span>
+<a id="line-155" name="line-155"></a><span class="cm">/**</span>
+<a id="line-156" name="line-156"></a><span class="cm">  * @brief  Initializes the CDC media low layer over the FS USB IP</span>
+<a id="line-157" name="line-157"></a><span class="cm">  * @retval USBD_OK if all operations are OK else USBD_FAIL</span>
+<a id="line-158" name="line-158"></a><span class="cm">  */</span>
+<a id="line-159" name="line-159"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Init_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-160" name="line-160"></a><span class="p">{</span>
+<a id="line-161" name="line-161"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 3 */</span>
+<a id="line-162" name="line-162"></a><span class="w">  </span><span class="cm">/* Set Application Buffers */</span>
+<a id="line-163" name="line-163"></a><span class="w">  </span><span class="n">USBD_CDC_SetTxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="n">UserTxBufferFS</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<a id="line-164" name="line-164"></a><span class="w">  </span><span class="n">USBD_CDC_SetRxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="n">UserRxBufferFS</span><span class="p">);</span>
+<a id="line-165" name="line-165"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
+<a id="line-166" name="line-166"></a><span class="w">  </span><span class="cm">/* USER CODE END 3 */</span>
+<a id="line-167" name="line-167"></a><span class="p">}</span>
+<a id="line-168" name="line-168"></a>
+<a id="line-169" name="line-169"></a><span class="cm">/**</span>
+<a id="line-170" name="line-170"></a><span class="cm">  * @brief  DeInitializes the CDC media low layer</span>
+<a id="line-171" name="line-171"></a><span class="cm">  * @retval USBD_OK if all operations are OK else USBD_FAIL</span>
+<a id="line-172" name="line-172"></a><span class="cm">  */</span>
+<a id="line-173" name="line-173"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_DeInit_FS</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a id="line-174" name="line-174"></a><span class="p">{</span>
+<a id="line-175" name="line-175"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 4 */</span>
+<a id="line-176" name="line-176"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
+<a id="line-177" name="line-177"></a><span class="w">  </span><span class="cm">/* USER CODE END 4 */</span>
+<a id="line-178" name="line-178"></a><span class="p">}</span>
+<a id="line-179" name="line-179"></a>
+<a id="line-180" name="line-180"></a><span class="cm">/**</span>
+<a id="line-181" name="line-181"></a><span class="cm">  * @brief  Manage the CDC class requests</span>
+<a id="line-182" name="line-182"></a><span class="cm">  * @param  cmd: Command code</span>
+<a id="line-183" name="line-183"></a><span class="cm">  * @param  pbuf: Buffer containing command data (request parameters)</span>
+<a id="line-184" name="line-184"></a><span class="cm">  * @param  length: Number of data to be sent (in bytes)</span>
+<a id="line-185" name="line-185"></a><span class="cm">  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL</span>
+<a id="line-186" name="line-186"></a><span class="cm">  */</span>
+<a id="line-187" name="line-187"></a><span class="hll"><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Control_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">pbuf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="error2">&lt;--- Parameter 'pbuf' can be declared as pointer to const</span>
+</span><a id="line-188" name="line-188"></a><span class="p">{</span>
+<a id="line-189" name="line-189"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 5 */</span>
+<a id="line-190" name="line-190"></a><span class="w">  </span><span class="k">switch</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+<a id="line-191" name="line-191"></a><span class="w">  </span><span class="p">{</span>
+<a id="line-192" name="line-192"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SEND_ENCAPSULATED_COMMAND</span><span class="p">:</span>
+<a id="line-193" name="line-193"></a>
+<a id="line-194" name="line-194"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-195" name="line-195"></a>
+<a id="line-196" name="line-196"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_GET_ENCAPSULATED_RESPONSE</span><span class="p">:</span>
+<a id="line-197" name="line-197"></a>
+<a id="line-198" name="line-198"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-199" name="line-199"></a>
+<a id="line-200" name="line-200"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SET_COMM_FEATURE</span><span class="p">:</span>
+<a id="line-201" name="line-201"></a>
+<a id="line-202" name="line-202"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-203" name="line-203"></a>
+<a id="line-204" name="line-204"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_GET_COMM_FEATURE</span><span class="p">:</span>
+<a id="line-205" name="line-205"></a>
+<a id="line-206" name="line-206"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-207" name="line-207"></a>
+<a id="line-208" name="line-208"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_CLEAR_COMM_FEATURE</span><span class="p">:</span>
+<a id="line-209" name="line-209"></a>
+<a id="line-210" name="line-210"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-211" name="line-211"></a>
+<a id="line-212" name="line-212"></a><span class="w">  </span><span class="cm">/*******************************************************************************/</span>
+<a id="line-213" name="line-213"></a><span class="w">  </span><span class="cm">/* Line Coding Structure                                                       */</span>
+<a id="line-214" name="line-214"></a><span class="w">  </span><span class="cm">/*-----------------------------------------------------------------------------*/</span>
+<a id="line-215" name="line-215"></a><span class="w">  </span><span class="cm">/* Offset | Field       | Size | Value  | Description                          */</span>
+<a id="line-216" name="line-216"></a><span class="w">  </span><span class="cm">/* 0      | dwDTERate   |   4  | Number |Data terminal rate, in bits per second*/</span>
+<a id="line-217" name="line-217"></a><span class="w">  </span><span class="cm">/* 4      | bCharFormat |   1  | Number | Stop bits                            */</span>
+<a id="line-218" name="line-218"></a><span class="w">  </span><span class="cm">/*                                        0 - 1 Stop bit                       */</span>
+<a id="line-219" name="line-219"></a><span class="w">  </span><span class="cm">/*                                        1 - 1.5 Stop bits                    */</span>
+<a id="line-220" name="line-220"></a><span class="w">  </span><span class="cm">/*                                        2 - 2 Stop bits                      */</span>
+<a id="line-221" name="line-221"></a><span class="w">  </span><span class="cm">/* 5      | bParityType |  1   | Number | Parity                               */</span>
+<a id="line-222" name="line-222"></a><span class="w">  </span><span class="cm">/*                                        0 - None                             */</span>
+<a id="line-223" name="line-223"></a><span class="w">  </span><span class="cm">/*                                        1 - Odd                              */</span>
+<a id="line-224" name="line-224"></a><span class="w">  </span><span class="cm">/*                                        2 - Even                             */</span>
+<a id="line-225" name="line-225"></a><span class="w">  </span><span class="cm">/*                                        3 - Mark                             */</span>
+<a id="line-226" name="line-226"></a><span class="w">  </span><span class="cm">/*                                        4 - Space                            */</span>
+<a id="line-227" name="line-227"></a><span class="w">  </span><span class="cm">/* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */</span>
+<a id="line-228" name="line-228"></a><span class="w">  </span><span class="cm">/*******************************************************************************/</span>
+<a id="line-229" name="line-229"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SET_LINE_CODING</span><span class="p">:</span>
+<a id="line-230" name="line-230"></a>
+<a id="line-231" name="line-231"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-232" name="line-232"></a>
+<a id="line-233" name="line-233"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_GET_LINE_CODING</span><span class="p">:</span>
+<a id="line-234" name="line-234"></a>
+<a id="line-235" name="line-235"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-236" name="line-236"></a>
+<a id="line-237" name="line-237"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SET_CONTROL_LINE_STATE</span><span class="p">:</span>
+<a id="line-238" name="line-238"></a>
 <a id="line-239" name="line-239"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
-<a id="line-240" name="line-240"></a><span class="w">  </span><span class="p">}</span>
-<a id="line-241" name="line-241"></a>
-<a id="line-242" name="line-242"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
-<a id="line-243" name="line-243"></a><span class="w">  </span><span class="cm">/* USER CODE END 5 */</span>
-<a id="line-244" name="line-244"></a><span class="p">}</span>
-<a id="line-245" name="line-245"></a>
-<a id="line-246" name="line-246"></a><span class="cm">/**</span>
-<a id="line-247" name="line-247"></a><span class="cm">  * @brief  Data received over USB OUT endpoint are sent over CDC interface</span>
-<a id="line-248" name="line-248"></a><span class="cm">  *         through this function.</span>
-<a id="line-249" name="line-249"></a><span class="cm">  *</span>
-<a id="line-250" name="line-250"></a><span class="cm">  *         @note</span>
-<a id="line-251" name="line-251"></a><span class="cm">  *         This function will issue a NAK packet on any OUT packet received on</span>
-<a id="line-252" name="line-252"></a><span class="cm">  *         USB endpoint until exiting this function. If you exit this function</span>
-<a id="line-253" name="line-253"></a><span class="cm">  *         before transfer is complete on CDC interface (ie. using DMA controller)</span>
-<a id="line-254" name="line-254"></a><span class="cm">  *         it will result in receiving more data while previous ones are still</span>
-<a id="line-255" name="line-255"></a><span class="cm">  *         not sent.</span>
+<a id="line-240" name="line-240"></a>
+<a id="line-241" name="line-241"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">CDC_SEND_BREAK</span><span class="p">:</span>
+<a id="line-242" name="line-242"></a>
+<a id="line-243" name="line-243"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-244" name="line-244"></a>
+<a id="line-245" name="line-245"></a><span class="w">  </span><span class="k">default</span><span class="o">:</span>
+<a id="line-246" name="line-246"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<a id="line-247" name="line-247"></a><span class="w">  </span><span class="p">}</span>
+<a id="line-248" name="line-248"></a>
+<a id="line-249" name="line-249"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
+<a id="line-250" name="line-250"></a><span class="w">  </span><span class="cm">/* USER CODE END 5 */</span>
+<a id="line-251" name="line-251"></a><span class="p">}</span>
+<a id="line-252" name="line-252"></a>
+<a id="line-253" name="line-253"></a><span class="cm">/**</span>
+<a id="line-254" name="line-254"></a><span class="cm">  * @brief  Data received over USB OUT endpoint are sent over CDC interface</span>
+<a id="line-255" name="line-255"></a><span class="cm">  *         through this function.</span>
 <a id="line-256" name="line-256"></a><span class="cm">  *</span>
-<a id="line-257" name="line-257"></a><span class="cm">  * @param  Buf: Buffer of data to be received</span>
-<a id="line-258" name="line-258"></a><span class="cm">  * @param  Len: Number of data received (in bytes)</span>
-<a id="line-259" name="line-259"></a><span class="cm">  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL</span>
-<a id="line-260" name="line-260"></a><span class="cm">  */</span>
-<a id="line-261" name="line-261"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Receive_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">)</span>
-<a id="line-262" name="line-262"></a><span class="p">{</span>
-<a id="line-263" name="line-263"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 6 */</span>
-<a id="line-264" name="line-264"></a><span class="w">  </span><span class="n">USBD_CDC_SetRxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-<a id="line-265" name="line-265"></a><span class="w">  </span><span class="n">USBD_CDC_ReceivePacket</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">);</span>
-<a id="line-266" name="line-266"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
-<a id="line-267" name="line-267"></a><span class="w">  </span><span class="cm">/* USER CODE END 6 */</span>
-<a id="line-268" name="line-268"></a><span class="p">}</span>
-<a id="line-269" name="line-269"></a>
-<a id="line-270" name="line-270"></a><span class="cm">/**</span>
-<a id="line-271" name="line-271"></a><span class="cm">  * @brief  CDC_Transmit_FS</span>
-<a id="line-272" name="line-272"></a><span class="cm">  *         Data to send over USB IN endpoint are sent over CDC interface</span>
-<a id="line-273" name="line-273"></a><span class="cm">  *         through this function.</span>
-<a id="line-274" name="line-274"></a><span class="cm">  *         @note</span>
-<a id="line-275" name="line-275"></a><span class="cm">  *</span>
-<a id="line-276" name="line-276"></a><span class="cm">  *</span>
-<a id="line-277" name="line-277"></a><span class="cm">  * @param  Buf: Buffer of data to be sent</span>
-<a id="line-278" name="line-278"></a><span class="cm">  * @param  Len: Number of data to be sent (in bytes)</span>
-<a id="line-279" name="line-279"></a><span class="cm">  * @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY</span>
-<a id="line-280" name="line-280"></a><span class="cm">  */</span>
-<a id="line-281" name="line-281"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">CDC_Transmit_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">Len</span><span class="p">)</span>
-<a id="line-282" name="line-282"></a><span class="p">{</span>
-<a id="line-283" name="line-283"></a><span class="w">  </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">USBD_OK</span><span class="p">;</span>
-<a id="line-284" name="line-284"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 7 */</span>
-<a id="line-285" name="line-285"></a><span class="hll"><span class="w">  </span><span class="n">USBD_CDC_HandleTypeDef</span><span class="w"> </span><span class="o">*</span><span class="n">hcdc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_CDC_HandleTypeDef</span><span class="o">*</span><span class="p">)</span><span class="n">hUsbDeviceFS</span><span class="p">.</span><span class="n">pClassData</span><span class="p">;</span><span class="error2">&lt;--- Variable 'hcdc' can be declared as pointer to const</span>
-</span><a id="line-286" name="line-286"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hcdc</span><span class="o">-&gt;</span><span class="n">TxState</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
-<a id="line-287" name="line-287"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">USBD_BUSY</span><span class="p">;</span>
-<a id="line-288" name="line-288"></a><span class="w">  </span><span class="p">}</span>
-<a id="line-289" name="line-289"></a><span class="w">  </span><span class="n">USBD_CDC_SetTxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="n">Len</span><span class="p">);</span>
-<a id="line-290" name="line-290"></a><span class="w">  </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">USBD_CDC_TransmitPacket</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">);</span>
-<a id="line-291" name="line-291"></a><span class="w">  </span><span class="cm">/* USER CODE END 7 */</span>
-<a id="line-292" name="line-292"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-293" name="line-293"></a><span class="p">}</span>
-<a id="line-294" name="line-294"></a>
-<a id="line-295" name="line-295"></a><span class="cm">/**</span>
-<a id="line-296" name="line-296"></a><span class="cm">  * @brief  CDC_TransmitCplt_FS</span>
-<a id="line-297" name="line-297"></a><span class="cm">  *         Data transmitted callback</span>
-<a id="line-298" name="line-298"></a><span class="cm">  *</span>
-<a id="line-299" name="line-299"></a><span class="cm">  *         @note</span>
-<a id="line-300" name="line-300"></a><span class="cm">  *         This function is IN transfer complete callback used to inform user that</span>
-<a id="line-301" name="line-301"></a><span class="cm">  *         the submitted Data is successfully sent over USB.</span>
-<a id="line-302" name="line-302"></a><span class="cm">  *</span>
-<a id="line-303" name="line-303"></a><span class="cm">  * @param  Buf: Buffer of data to be received</span>
-<a id="line-304" name="line-304"></a><span class="cm">  * @param  Len: Number of data received (in bytes)</span>
-<a id="line-305" name="line-305"></a><span class="cm">  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL</span>
-<a id="line-306" name="line-306"></a><span class="cm">  */</span>
-<a id="line-307" name="line-307"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_TransmitCplt_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">epnum</span><span class="p">)</span>
-<a id="line-308" name="line-308"></a><span class="p">{</span>
-<a id="line-309" name="line-309"></a><span class="w">  </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">USBD_OK</span><span class="p">;</span>
-<a id="line-310" name="line-310"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 13 */</span>
-<a id="line-311" name="line-311"></a><span class="w">  </span><span class="n">UNUSED</span><span class="p">(</span><span class="n">Buf</span><span class="p">);</span>
-<a id="line-312" name="line-312"></a><span class="w">  </span><span class="n">UNUSED</span><span class="p">(</span><span class="n">Len</span><span class="p">);</span>
-<a id="line-313" name="line-313"></a><span class="w">  </span><span class="n">UNUSED</span><span class="p">(</span><span class="n">epnum</span><span class="p">);</span>
-<a id="line-314" name="line-314"></a><span class="w">  </span><span class="cm">/* USER CODE END 13 */</span>
-<a id="line-315" name="line-315"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
-<a id="line-316" name="line-316"></a><span class="p">}</span>
-<a id="line-317" name="line-317"></a>
-<a id="line-318" name="line-318"></a><span class="cm">/* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */</span>
-<a id="line-319" name="line-319"></a>
-<a id="line-320" name="line-320"></a><span class="cm">/* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */</span>
-<a id="line-321" name="line-321"></a>
-<a id="line-322" name="line-322"></a><span class="cm">/**</span>
-<a id="line-323" name="line-323"></a><span class="cm">  * @}</span>
-<a id="line-324" name="line-324"></a><span class="cm">  */</span>
-<a id="line-325" name="line-325"></a>
-<a id="line-326" name="line-326"></a><span class="cm">/**</span>
-<a id="line-327" name="line-327"></a><span class="cm">  * @}</span>
-<a id="line-328" name="line-328"></a><span class="cm">  */</span>
+<a id="line-257" name="line-257"></a><span class="cm">  *         @note</span>
+<a id="line-258" name="line-258"></a><span class="cm">  *         This function will issue a NAK packet on any OUT packet received on</span>
+<a id="line-259" name="line-259"></a><span class="cm">  *         USB endpoint until exiting this function. If you exit this function</span>
+<a id="line-260" name="line-260"></a><span class="cm">  *         before transfer is complete on CDC interface (ie. using DMA controller)</span>
+<a id="line-261" name="line-261"></a><span class="cm">  *         it will result in receiving more data while previous ones are still</span>
+<a id="line-262" name="line-262"></a><span class="cm">  *         not sent.</span>
+<a id="line-263" name="line-263"></a><span class="cm">  *</span>
+<a id="line-264" name="line-264"></a><span class="cm">  * @param  Buf: Buffer of data to be received</span>
+<a id="line-265" name="line-265"></a><span class="cm">  * @param  Len: Number of data received (in bytes)</span>
+<a id="line-266" name="line-266"></a><span class="cm">  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL</span>
+<a id="line-267" name="line-267"></a><span class="cm">  */</span>
+<a id="line-268" name="line-268"></a><span class="hll"><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_Receive_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">)</span><span class="error2">&lt;--- Parameter 'Len' can be declared as pointer to const</span>
+</span><a id="line-269" name="line-269"></a><span class="p">{</span>
+<a id="line-270" name="line-270"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 6 */</span>
+<a id="line-271" name="line-271"></a><span class="w">  </span><span class="cm">/*</span>
+<a id="line-272" name="line-272"></a><span class="cm">   * Push received bytes into the kernel cdc_rx ring before re-arming</span>
+<a id="line-273" name="line-273"></a><span class="cm">   * the endpoint, so any RTOS task that calls cdc_rx_read_byte() can</span>
+<a id="line-274" name="line-274"></a><span class="cm">   * drain them. __cdc_rx_push() is the privileged variant — we are</span>
+<a id="line-275" name="line-275"></a><span class="cm">   * already in the USB CDC ISR (privileged handler context) so we</span>
+<a id="line-276" name="line-276"></a><span class="cm">   * call it directly without going through an SVC.</span>
+<a id="line-277" name="line-277"></a><span class="cm">   */</span>
+<a id="line-278" name="line-278"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Len</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0U</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="line-279" name="line-279"></a><span class="w">    </span><span class="n">__cdc_rx_push</span><span class="p">(</span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">);</span>
+<a id="line-280" name="line-280"></a><span class="w">  </span><span class="p">}</span>
+<a id="line-281" name="line-281"></a><span class="w">  </span><span class="n">USBD_CDC_SetRxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<a id="line-282" name="line-282"></a><span class="w">  </span><span class="n">USBD_CDC_ReceivePacket</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">);</span>
+<a id="line-283" name="line-283"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_OK</span><span class="p">);</span>
+<a id="line-284" name="line-284"></a><span class="w">  </span><span class="cm">/* USER CODE END 6 */</span>
+<a id="line-285" name="line-285"></a><span class="p">}</span>
+<a id="line-286" name="line-286"></a>
+<a id="line-287" name="line-287"></a><span class="cm">/**</span>
+<a id="line-288" name="line-288"></a><span class="cm">  * @brief  CDC_Transmit_FS</span>
+<a id="line-289" name="line-289"></a><span class="cm">  *         Data to send over USB IN endpoint are sent over CDC interface</span>
+<a id="line-290" name="line-290"></a><span class="cm">  *         through this function.</span>
+<a id="line-291" name="line-291"></a><span class="cm">  *         @note</span>
+<a id="line-292" name="line-292"></a><span class="cm">  *</span>
+<a id="line-293" name="line-293"></a><span class="cm">  *</span>
+<a id="line-294" name="line-294"></a><span class="cm">  * @param  Buf: Buffer of data to be sent</span>
+<a id="line-295" name="line-295"></a><span class="cm">  * @param  Len: Number of data to be sent (in bytes)</span>
+<a id="line-296" name="line-296"></a><span class="cm">  * @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY</span>
+<a id="line-297" name="line-297"></a><span class="cm">  */</span>
+<a id="line-298" name="line-298"></a><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">CDC_Transmit_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="w"> </span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">Len</span><span class="p">)</span>
+<a id="line-299" name="line-299"></a><span class="p">{</span>
+<a id="line-300" name="line-300"></a><span class="w">  </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">USBD_OK</span><span class="p">;</span>
+<a id="line-301" name="line-301"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 7 */</span>
+<a id="line-302" name="line-302"></a><span class="hll"><span class="w">  </span><span class="n">USBD_CDC_HandleTypeDef</span><span class="w"> </span><span class="o">*</span><span class="n">hcdc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">USBD_CDC_HandleTypeDef</span><span class="o">*</span><span class="p">)</span><span class="n">hUsbDeviceFS</span><span class="p">.</span><span class="n">pClassData</span><span class="p">;</span><span class="error2">&lt;--- Variable 'hcdc' can be declared as pointer to const</span>
+</span><a id="line-303" name="line-303"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hcdc</span><span class="o">-&gt;</span><span class="n">TxState</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<a id="line-304" name="line-304"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">USBD_BUSY</span><span class="p">;</span>
+<a id="line-305" name="line-305"></a><span class="w">  </span><span class="p">}</span>
+<a id="line-306" name="line-306"></a><span class="w">  </span><span class="n">USBD_CDC_SetTxBuffer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">,</span><span class="w"> </span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="n">Len</span><span class="p">);</span>
+<a id="line-307" name="line-307"></a><span class="w">  </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">USBD_CDC_TransmitPacket</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hUsbDeviceFS</span><span class="p">);</span>
+<a id="line-308" name="line-308"></a><span class="w">  </span><span class="cm">/* USER CODE END 7 */</span>
+<a id="line-309" name="line-309"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-310" name="line-310"></a><span class="p">}</span>
+<a id="line-311" name="line-311"></a>
+<a id="line-312" name="line-312"></a><span class="cm">/**</span>
+<a id="line-313" name="line-313"></a><span class="cm">  * @brief  CDC_TransmitCplt_FS</span>
+<a id="line-314" name="line-314"></a><span class="cm">  *         Data transmitted callback</span>
+<a id="line-315" name="line-315"></a><span class="cm">  *</span>
+<a id="line-316" name="line-316"></a><span class="cm">  *         @note</span>
+<a id="line-317" name="line-317"></a><span class="cm">  *         This function is IN transfer complete callback used to inform user that</span>
+<a id="line-318" name="line-318"></a><span class="cm">  *         the submitted Data is successfully sent over USB.</span>
+<a id="line-319" name="line-319"></a><span class="cm">  *</span>
+<a id="line-320" name="line-320"></a><span class="cm">  * @param  Buf: Buffer of data to be received</span>
+<a id="line-321" name="line-321"></a><span class="cm">  * @param  Len: Number of data received (in bytes)</span>
+<a id="line-322" name="line-322"></a><span class="cm">  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL</span>
+<a id="line-323" name="line-323"></a><span class="cm">  */</span>
+<a id="line-324" name="line-324"></a><span class="k">static</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="nf">CDC_TransmitCplt_FS</span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="n">Buf</span><span class="p">,</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">Len</span><span class="p">,</span><span class="w"> </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">epnum</span><span class="p">)</span>
+<a id="line-325" name="line-325"></a><span class="p">{</span>
+<a id="line-326" name="line-326"></a><span class="w">  </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">USBD_OK</span><span class="p">;</span>
+<a id="line-327" name="line-327"></a><span class="w">  </span><span class="cm">/* USER CODE BEGIN 13 */</span>
+<a id="line-328" name="line-328"></a><span class="w">  </span><span class="n">UNUSED</span><span class="p">(</span><span class="n">Buf</span><span class="p">);</span>
+<a id="line-329" name="line-329"></a><span class="w">  </span><span class="n">UNUSED</span><span class="p">(</span><span class="n">Len</span><span class="p">);</span>
+<a id="line-330" name="line-330"></a><span class="w">  </span><span class="n">UNUSED</span><span class="p">(</span><span class="n">epnum</span><span class="p">);</span>
+<a id="line-331" name="line-331"></a><span class="w">  </span><span class="cm">/* USER CODE END 13 */</span>
+<a id="line-332" name="line-332"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<a id="line-333" name="line-333"></a><span class="p">}</span>
+<a id="line-334" name="line-334"></a>
+<a id="line-335" name="line-335"></a><span class="cm">/* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */</span>
+<a id="line-336" name="line-336"></a>
+<a id="line-337" name="line-337"></a><span class="cm">/* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */</span>
+<a id="line-338" name="line-338"></a>
+<a id="line-339" name="line-339"></a><span class="cm">/**</span>
+<a id="line-340" name="line-340"></a><span class="cm">  * @}</span>
+<a id="line-341" name="line-341"></a><span class="cm">  */</span>
+<a id="line-342" name="line-342"></a>
+<a id="line-343" name="line-343"></a><span class="cm">/**</span>
+<a id="line-344" name="line-344"></a><span class="cm">  * @}</span>
+<a id="line-345" name="line-345"></a><span class="cm">  */</span>
 </pre></div></td></tr></table></div>
 
     </div>

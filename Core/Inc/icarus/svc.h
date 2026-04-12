@@ -130,7 +130,7 @@ extern "C" {
 #define SVC_CS_REGION_COUNT             70
 
 /* Generic BKPRAM write gate (data in RAM_D3, priv-only by default MPU)   */
-#define SVC_BKPRAM_WRITE                71  /* bool: memcpy src→BKPRAM     */  /* uint8_t: registered count     */
+#define SVC_BKPRAM_WRITE                71  /* bool: memcpy src→BKPRAM       */
 
 /* ============================================================================
  * COMPILE-TIME SVC VALIDATION

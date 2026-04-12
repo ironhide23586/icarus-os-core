@@ -51,12 +51,17 @@
             <symbol>pDriver</symbol>
         </error>
         <error id="constParameterCallback" severity="style" msg="Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s)." verbose="Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s)." cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="180" column="52" info="Parameter &apos;pbuf&apos; can be declared as pointer to const"/>
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="142" column="3" info="You might need to cast the function pointer here"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="187" column="52" info="Parameter &apos;pbuf&apos; can be declared as pointer to const"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="149" column="3" info="You might need to cast the function pointer here"/>
             <symbol>pbuf</symbol>
         </error>
+        <error id="constParameterCallback" severity="style" msg="Parameter &apos;Len&apos; can be declared as pointer to const. However it seems that &apos;CDC_Receive_FS&apos; is a callback function, if &apos;Len&apos; is declared with const you might also need to cast function pointer(s)." verbose="Parameter &apos;Len&apos; can be declared as pointer to const. However it seems that &apos;CDC_Receive_FS&apos; is a callback function, if &apos;Len&apos; is declared with const you might also need to cast function pointer(s)." cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="268" column="54" info="Parameter &apos;Len&apos; can be declared as pointer to const"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="150" column="3" info="You might need to cast the function pointer here"/>
+            <symbol>Len</symbol>
+        </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;hcdc&apos; can be declared as pointer to const" verbose="Variable &apos;hcdc&apos; can be declared as pointer to const" cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="285" column="27" info="Variable &apos;hcdc&apos; can be declared as pointer to const"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="302" column="27" info="Variable &apos;hcdc&apos; can be declared as pointer to const"/>
             <symbol>hcdc</symbol>
         </error>
         <error id="unassignedVariable" severity="style" msg="Variable &apos;mem&apos; is not assigned a value." verbose="Variable &apos;mem&apos; is not assigned a value." cwe="665" file0="../USB_DEVICE/Target/usbd_conf.c">
@@ -77,6 +82,25 @@
         </error>
         <error id="invalidPrintfArgType_uint" severity="warning" msg="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." verbose="%lu in format string (no. 1) requires &apos;unsigned long&apos; but the argument type is &apos;unsigned int&apos;." cwe="686" file0="../Core/Src/interactive_tasks.c">
             <location file="../Core/Src/interactive_tasks.c" line="57" column="17"/>
+        </error>
+        <error id="arrayIndexOutOfBoundsCond" severity="warning" msg="Either the condition &apos;i&lt;12-1&apos; is redundant or the array &apos;n[8]&apos; is accessed at index 10, which is out of bounds." verbose="Either the condition &apos;i&lt;12-1&apos; is redundant or the array &apos;n[8]&apos; is accessed at index 10, which is out of bounds." cwe="788" file0="../Core/Src/showcase_tasks.c">
+            <location file="../Core/Src/showcase_tasks.c" line="92" column="50" info="Array index out of bounds"/>
+            <location file="../Core/Src/showcase_tasks.c" line="92" column="27" info="Assuming that condition &apos;i&lt;12-1&apos; is not redundant"/>
+        </error>
+        <error id="arrayIndexOutOfBounds" severity="error" msg="Array &apos;n[8]&apos; accessed at index 10, which is out of bounds." verbose="Array &apos;n[8]&apos; accessed at index 10, which is out of bounds." cwe="788" file0="../Core/Src/showcase_tasks.c">
+            <location file="../Core/Src/showcase_tasks.c" line="93" column="25" info="Array index out of bounds"/>
+        </error>
+        <error id="constVariable" severity="style" msg="Variable &apos;loaded_payload&apos; can be declared as const array" verbose="Variable &apos;loaded_payload&apos; can be declared as const array" cwe="398" file0="../Core/Src/showcase_tasks.c">
+            <location file="../Core/Src/showcase_tasks.c" line="162" column="17" info="Variable &apos;loaded_payload&apos; can be declared as const array"/>
+            <symbol>loaded_payload</symbol>
+        </error>
+        <error id="constVariable" severity="style" msg="Variable &apos;a_payload&apos; can be declared as const array" verbose="Variable &apos;a_payload&apos; can be declared as const array" cwe="398" file0="../Core/Src/showcase_tasks.c">
+            <location file="../Core/Src/showcase_tasks.c" line="166" column="21" info="Variable &apos;a_payload&apos; can be declared as const array"/>
+            <symbol>a_payload</symbol>
+        </error>
+        <error id="constVariable" severity="style" msg="Variable &apos;payload&apos; can be declared as const array" verbose="Variable &apos;payload&apos; can be declared as const array" cwe="398" file0="../Core/Src/showcase_tasks.c">
+            <location file="../Core/Src/showcase_tasks.c" line="205" column="21" info="Variable &apos;payload&apos; can be declared as const array"/>
+            <symbol>payload</symbol>
         </error>
         <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="0" column="0"/>
@@ -299,7 +323,7 @@
         </error>
         <error id="shadowFunction" severity="style" msg="Local variable &apos;__semaphore_get_count&apos; shadows outer function" verbose="Local variable &apos;__semaphore_get_count&apos; shadows outer function" cwe="398" file0="../Core/Src/stress_test.c">
             <location file="../Core/Src/stress_test.c" line="1197" column="21" info="Shadow variable"/>
-            <location file="../Core/Inc/icarus/semaphore.h" line="113" column="10" info="Shadowed declaration"/>
+            <location file="../Core/Inc/icarus/semaphore.h" line="125" column="10" info="Shadowed declaration"/>
             <symbol>__semaphore_get_count</symbol>
         </error>
         <error id="constVariable" severity="style" msg="Variable &apos;sleep_times&apos; can be declared as const array" verbose="Variable &apos;sleep_times&apos; can be declared as const array" cwe="398" file0="../Core/Src/stress_test.c">
@@ -364,17 +388,24 @@
             <location file="../Core/Src/bsp/stm32h7xx_it.c" line="192" column="15" info="Variable &apos;pc_ptr&apos; can be declared as pointer to const"/>
             <symbol>pc_ptr</symbol>
         </error>
+        <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/icarus/event.c">
+            <location file="../Core/Src/icarus/event.c" line="0" column="0"/>
+        </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
-            <location file="../Core/Src/icarus/svc.c" line="95" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/icarus/svc.c" line="102" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
             <symbol>ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
-            <location file="../Core/Src/icarus/svc.c" line="100" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/icarus/svc.c" line="107" column="23" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
             <symbol>ptr</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;ptr&apos; can be declared as pointer to const" verbose="Variable &apos;ptr&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/svc.c">
-            <location file="../Core/Src/icarus/svc.c" line="105" column="19" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/icarus/svc.c" line="112" column="19" info="Variable &apos;ptr&apos; can be declared as pointer to const"/>
             <symbol>ptr</symbol>
+        </error>
+        <error id="constVariablePointer" severity="style" msg="Variable &apos;slot&apos; can be declared as pointer to const" verbose="Variable &apos;slot&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/icarus/tables.c">
+            <location file="../Core/Src/icarus/tables.c" line="195" column="17" info="Variable &apos;slot&apos; can be declared as pointer to const"/>
+            <symbol>slot</symbol>
         </error>
         <error id="checkersReport" severity="information" msg="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 113/975 (use --checkers-report=&lt;filename&gt; to see details)"/>
     </errors>
