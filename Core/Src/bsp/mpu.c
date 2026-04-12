@@ -11,9 +11,9 @@
  *          | 0 | ITCM base     | 0x00000000 | 64KB  | Priv+User RO+exec   |
  *          | 1 | QSPI flash    | 0x90000000 | 8MB   | Priv+User RO+exec   |
  *          | 2 | Internal Flash| 0x08000000 | 128KB | Priv+User RO+exec   |
- *          | 3 | ITCM_PRIV     | 0x00000000 | 1KB*  | Priv-only RO+exec   |
+ *          | 3 | DTCM_OBC      | 0x20010000 | 64KB  | Priv+User RW         |
  *          | 4 | Task data     | dynamic    | 2KB   | Priv+User RW        |
- *          | 5 | DTCM          | 0x20000000 | 128KB | Priv RW             |
+ *          | 5 | DTCM          | 0x20000000 | 128KB | Priv RW (lower 64K) |
  *          | 6 | RAM_D1        | 0x24000000 | 512KB | Priv+User Full      |
  *          | 7 | Peripherals   | 0x40000000 | 512MB | Priv+User Device    |
  *
@@ -112,32 +112,31 @@ void MPU_Config(void)
     r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
-    /* ---- Region 3: ITCM_PRIV — DISABLED (no additional protection) ---- */
-    /* Region 0 already provides RO+exec for all ITCM                       */
-    /* Kernel handlers (SVC, PendSV, SysTick) are protected by ARM arch:    */
-    /*   - SVC_Handler only invoked via 'svc' instruction                   */
-    /*   - PendSV_Handler only invoked via PENDSVSET (privileged)           */
-    /*   - SysTick_Handler only invoked via SysTick interrupt               */
-    /* Unprivileged code cannot directly call these handlers                */
-    r.Enable           = MPU_REGION_DISABLE;
-    r.Number           = MPU_REGION_ITCM_PRIV;
-    r.BaseAddress      = BSP_ITCM_BASE;
-    r.Size             = MPU_REGION_SIZE_4KB;
-    r.AccessPermission = MPU_REGION_PRIV_RO_URO;
+    /* ---- Region 3: Upper DTCM 64KB — Priv+User RW (OBC hot data) ---- */
+    /* Region 5 (DTCM 128KB PRIV_RW) disables subregions 4-7 so this       */
+    /* lower-numbered region takes effect for the upper half.               */
+    /* OBC application data tagged DTCM_DATA_OBC lands here for zero        */
+    /* wait-state access from unprivileged task code.                       */
+    r.Enable           = MPU_REGION_ENABLE;
+    r.Number           = MPU_REGION_DTCM_OBC;
+    r.BaseAddress      = BSP_DTCM_OBC_BASE;
+    r.Size             = MPU_REGION_SIZE_64KB;
+    r.AccessPermission = MPU_REGION_FULL_ACCESS;
     r.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
     r.IsCacheable      = MPU_ACCESS_NOT_CACHEABLE;
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
-    r.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+    r.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
     r.TypeExtField     = MPU_TEX_LEVEL1;
-    r.SubRegionDisable = 0xE0;
+    r.SubRegionDisable = 0x00;
     HAL_MPU_ConfigRegion(&r);
 
     /* ---- Region 4: Task data (dynamic, configured per context switch) ---- */
     /* Left unconfigured here — set by MPU_ConfigureTaskData()              */
 
-    /* ---- Region 5: DTCM 128K — PRIV_RW (DTCM protection enabled) ---- */
-    /* Kernel data (.dtcm_priv) lives here.  */
-    /* Step 7: DTCM protection enabled - unprivileged tasks cannot access kernel data */
+    /* ---- Region 5: DTCM 128K — PRIV_RW (kernel data, lower 64K only) ---- */
+    /* Kernel data (.dtcm_priv) lives in the lower 64KB (subregions 0-3).   */
+    /* Subregions 4-7 disabled so Region 3 (FULL_ACCESS) governs the upper  */
+    /* 64KB where OBC application hot data (.dtcm_obc) is placed.           */
     r.Enable           = MPU_REGION_ENABLE;
     r.Number           = MPU_REGION_DTCM;
     r.BaseAddress      = BSP_DTCM_BASE;
@@ -148,7 +147,7 @@ void MPU_Config(void)
     r.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
     r.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
     r.TypeExtField     = MPU_TEX_LEVEL1;
-    r.SubRegionDisable = 0x00;
+    r.SubRegionDisable = 0xF0;
     HAL_MPU_ConfigRegion(&r);
 
     /* ---- Region 6: RAM_D1 512K — Priv+User Full Access ---- */

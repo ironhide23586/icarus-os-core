@@ -206,6 +206,7 @@ SECTIONS
   } >DTCMRAM
 
   /* DTCM privileged-only kernel state (task_list, scheduler vars, pools) */
+  /* Must stay within lower 64KB (0x20000000–0x2000FFFF, MPU Region 5)   */
   .dtcm_priv (NOLOAD) :
   {
     . = ALIGN(4);
@@ -214,6 +215,19 @@ SECTIONS
     *(.dtcm_priv*)
     . = ALIGN(4);
     _edtcm_priv = .;
+  } >DTCMRAM
+  ASSERT(_edtcm_priv <= 0x20010000, ".dtcm_priv overflows into OBC DTCM region")
+
+  /* DTCM OBC application hot data (upper 64KB, unprivileged RW)         */
+  /* MPU Region 3 grants full access to 0x20010000–0x2001FFFF            */
+  .dtcm_obc 0x20010000 (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _sdtcm_obc = .;
+    *(.dtcm_obc)
+    *(.dtcm_obc*)
+    . = ALIGN(4);
+    _edtcm_obc = .;
   } >DTCMRAM
 
   /* Remove information from the standard libraries */

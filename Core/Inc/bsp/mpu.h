@@ -30,6 +30,10 @@ extern "C" {
 /** @brief DTCM RAM base address (128KB, zero wait-state data) */
 #define BSP_DTCM_BASE           0x20000000UL
 #define BSP_DTCM_SIZE           (128 * 1024)
+
+/** @brief Upper DTCM for OBC application hot data (64KB, unprivileged RW) */
+#define BSP_DTCM_OBC_BASE      0x20010000UL
+#define BSP_DTCM_OBC_SIZE      (64 * 1024)
 /** @brief AXI SRAM (RAM_D1) base address (512KB) */
 #define BSP_RAM_D1_BASE         0x24000000UL
 #define BSP_RAM_D1_SIZE         (512 * 1024)
@@ -60,7 +64,7 @@ extern "C" {
 #define MPU_REGION_ITCM_BASE         MPU_REGION_NUMBER0
 #define MPU_REGION_QSPI_FLASH       MPU_REGION_NUMBER1
 #define MPU_REGION_FLASH             MPU_REGION_NUMBER2
-#define MPU_REGION_ITCM_PRIV        MPU_REGION_NUMBER3
+#define MPU_REGION_DTCM_OBC         MPU_REGION_NUMBER3
 #define MPU_REGION_TASK_DATA         MPU_REGION_NUMBER4
 #define MPU_REGION_DTCM              MPU_REGION_NUMBER5
 #define MPU_REGION_RAM_D1            MPU_REGION_NUMBER6
@@ -115,7 +119,7 @@ extern "C" {
  *      | 0      | 0x00000000 | 64KB  | Priv+User RO   | ITCM code protection   |
  *      | 1      | 0x90000000 | 8MB   | Priv+User RO   | QSPI Flash             |
  *      | 2      | 0x08000000 | 128KB | Priv+User RO   | Internal Flash         |
- *      | 3      | DISABLED   | -     | -              | Reserved               |
+ *      | 3      | 0x20010000 | 64KB  | Full Access    | DTCM OBC hot data      |
  *      | 4      | Dynamic    | 2KB   | Priv+User RW   | Task data isolation    |
  *      | 5      | 0x20000000 | 128KB | Priv RW        | DTCM kernel data       |
  *      | 6      | 0x24000000 | 512KB | Full Access    | RAM_D1 shared buffers  |
