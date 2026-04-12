@@ -140,6 +140,9 @@ USBD_DescriptorsTypeDef FS_Desc =
 , USBD_FS_SerialStrDescriptor
 , USBD_FS_ConfigStrDescriptor
 , USBD_FS_InterfaceStrDescriptor
+#if (USBD_LPM_ENABLED == 1U) || (USBD_CLASS_BOS_ENABLED == 1)
+, NULL
+#endif
 };
 
 #if defined ( __ICCARM__ ) /* IAR Compiler */
