@@ -138,22 +138,27 @@ extern "C" {
  *   ITCM_FUNC      → .itcm        (hot-path code: handlers, wrappers, context switch)
  *   DTCM_DATA_PRIV → .dtcm_priv   (privileged-only kernel data: task_list,
  *                                   semaphore_list, scheduler state)
+ *   DTCM_DATA_OBC  → .dtcm_obc    (OBC application hot data, unprivileged RW)
  *
  * MPU protection:
  *   - ITCM (.itcm): Read-only + Execute for all (Region 0)
  *     * Prevents code modification attacks
  *     * Kernel handlers protected by ARM exception architecture
- *   - DTCM (.dtcm_priv): Privileged-only RW (Region 5)
+ *   - DTCM (.dtcm_priv): Privileged-only RW (Region 5, subregions 0-3)
  *     * Kernel data isolated from unprivileged tasks
  *     * Access via SVC call gates only
+ *   - DTCM (.dtcm_obc): Full access RW (Region 3, upper 64KB)
+ *     * Zero wait-state data for OBC application hot paths
  * ========================================================================= */
 
 #ifndef HOST_TEST
 #  define ITCM_FUNC       __attribute__((section(".itcm")))
 #  define DTCM_DATA_PRIV  __attribute__((section(".dtcm_priv")))
+#  define DTCM_DATA_OBC   __attribute__((section(".dtcm_obc")))
 #else
 #  define ITCM_FUNC
 #  define DTCM_DATA_PRIV
+#  define DTCM_DATA_OBC
 #endif
 
 /* ============================================================================

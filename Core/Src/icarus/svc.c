@@ -308,15 +308,18 @@ void SVC_Handler_C(uint32_t *stack_frame) {
             break;
 
         /* ---- Timed semaphore ---- */
-        case SVC_SEMAPHORE_CONSUME_TIMEOUT:
-            stack_frame[0] = (uint32_t)__semaphore_consume_timeout(
-                (uint8_t)arg0, arg1);
+        case SVC_SEMAPHORE_CONSUME_TIMEOUT: {
+            bool ok = __semaphore_consume_timeout((uint8_t)arg0, arg1);
+            stack_frame[0] = ok ? 1u : 0u;
             break;
+        }
 
         /* ---- Task diagnostics ---- */
-        case SVC_GET_TASK_STATE:
-            stack_frame[0] = (uint32_t)__os_get_task_state((uint8_t)arg0);
+        case SVC_GET_TASK_STATE: {
+            icarus_task_state_t st = __os_get_task_state((uint8_t)arg0);
+            stack_frame[0] = (uint32_t)st;
             break;
+        }
         case SVC_GET_TASK_DISPATCH_COUNT:
             stack_frame[0] = __os_get_task_dispatch_count((uint8_t)arg0);
             break;
