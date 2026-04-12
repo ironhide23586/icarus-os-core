@@ -170,8 +170,8 @@ ITCM_FUNC uint8_t __sb_publish(sb_msg_id_t msg_id, const uint8_t *data,
     uint8_t delivered = 0;
     for (uint8_t i = 0; i < r->count; i++) {
         uint8_t pidx = r->pipes[i];
-        if (pipe_can_enqueue(pidx, len)) {
-            pipe_enqueue(pidx, (uint8_t *)(uintptr_t)data, len);
+        if (__pipe_can_enqueue(pidx, len)) {
+            __pipe_write_bytes(pidx, (uint8_t *)(uintptr_t)data, len);
             delivered++;
         }
     }

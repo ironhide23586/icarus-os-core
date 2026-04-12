@@ -50,18 +50,13 @@
             <location file="../Drivers/BSP/ST7735/st7735.c" line="49" column="3" info="You might need to cast the function pointer here"/>
             <symbol>pDriver</symbol>
         </error>
-        <error id="constParameterCallback" severity="style" msg="Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s)." verbose="Parameter &apos;pbuf&apos; can be declared as pointer to const. However it seems that &apos;CDC_Control_FS&apos; is a callback function, if &apos;pbuf&apos; is declared with const you might also need to cast function pointer(s)." cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="187" column="52" info="Parameter &apos;pbuf&apos; can be declared as pointer to const"/>
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="149" column="3" info="You might need to cast the function pointer here"/>
-            <symbol>pbuf</symbol>
-        </error>
         <error id="constParameterCallback" severity="style" msg="Parameter &apos;Len&apos; can be declared as pointer to const. However it seems that &apos;CDC_Receive_FS&apos; is a callback function, if &apos;Len&apos; is declared with const you might also need to cast function pointer(s)." verbose="Parameter &apos;Len&apos; can be declared as pointer to const. However it seems that &apos;CDC_Receive_FS&apos; is a callback function, if &apos;Len&apos; is declared with const you might also need to cast function pointer(s)." cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="268" column="54" info="Parameter &apos;Len&apos; can be declared as pointer to const"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="270" column="54" info="Parameter &apos;Len&apos; can be declared as pointer to const"/>
             <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="150" column="3" info="You might need to cast the function pointer here"/>
             <symbol>Len</symbol>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;hcdc&apos; can be declared as pointer to const" verbose="Variable &apos;hcdc&apos; can be declared as pointer to const" cwe="398" file0="../USB_DEVICE/App/usbd_cdc_if.c">
-            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="302" column="27" info="Variable &apos;hcdc&apos; can be declared as pointer to const"/>
+            <location file="../USB_DEVICE/App/usbd_cdc_if.c" line="304" column="27" info="Variable &apos;hcdc&apos; can be declared as pointer to const"/>
             <symbol>hcdc</symbol>
         </error>
         <error id="unassignedVariable" severity="style" msg="Variable &apos;mem&apos; is not assigned a value." verbose="Variable &apos;mem&apos; is not assigned a value." cwe="665" file0="../USB_DEVICE/Target/usbd_conf.c">
