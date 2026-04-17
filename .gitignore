@@ -62,6 +62,7 @@ Desktop.ini
 *.bak
 *.log
 *.cache
+*.dump
 
 # Compiled libraries
 *.a

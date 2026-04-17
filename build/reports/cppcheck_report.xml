@@ -369,7 +369,7 @@
             <location file="../Core/Src/bsp/display.c" line="0" column="0"/>
         </error>
         <error id="constVariablePointer" severity="style" msg="Variable &apos;entry&apos; can be declared as pointer to const" verbose="Variable &apos;entry&apos; can be declared as pointer to const" cwe="398" file0="../Core/Src/bsp/display.c">
-            <location file="../Core/Src/bsp/display.c" line="190" column="34" info="Variable &apos;entry&apos; can be declared as pointer to const"/>
+            <location file="../Core/Src/bsp/display.c" line="198" column="34" info="Variable &apos;entry&apos; can be declared as pointer to const"/>
             <symbol>entry</symbol>
         </error>
         <error id="normalCheckLevelMaxBranches" severity="information" msg="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." verbose="Limiting analysis of branches. Use --check-level=exhaustive to analyze all branches." file0="../Core/Src/bsp/stm32h7xx_it.c">
